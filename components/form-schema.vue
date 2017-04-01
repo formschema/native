@@ -86,7 +86,7 @@
   import { loadFields } from '../lib/parser'
 
   export default {
-    name: 'v-form',
+    name: 'form-schema',
     props: {
       schema: {
         type: Object,
