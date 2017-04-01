@@ -1,47 +1,47 @@
 'use strict'
 
 import Vue from 'vue'
-import Form from '../../components/form.vue'
+import FormSchema from '../../components/form-schema.vue'
 
 import SignupSchema from '../fixtures/signup'
 
 /* global describe it expect */
 
-describe('Form.vue', () => {
+describe('FormSchema.vue', () => {
   // Inspect the raw component options
   it('has a created hook', () => {
-    expect(typeof Form.created).toBe('function')
+    expect(typeof FormSchema.created).toBe('function')
   })
 
   it('has a mounted hook', () => {
-    expect(typeof Form.mounted).toBe('function')
+    expect(typeof FormSchema.mounted).toBe('function')
   })
 
   it('has a keyup method', () => {
-    expect(typeof Form.methods.keyup).toBe('function')
+    expect(typeof FormSchema.methods.keyup).toBe('function')
   })
 
   it('has a submit method', () => {
-    expect(typeof Form.methods.submit).toBe('function')
+    expect(typeof FormSchema.methods.submit).toBe('function')
   })
 
   it('has a reset method', () => {
-    expect(typeof Form.methods.reset).toBe('function')
+    expect(typeof FormSchema.methods.reset).toBe('function')
   })
 
   it('has a alertClosed method', () => {
-    expect(typeof Form.methods.alertClosed).toBe('function')
+    expect(typeof FormSchema.methods.alertClosed).toBe('function')
   })
 
   it('has a setErrorMessage method', () => {
-    expect(typeof Form.methods.setErrorMessage).toBe('function')
+    expect(typeof FormSchema.methods.setErrorMessage).toBe('function')
   })
 
   // Evaluate the results of functions in
   // the raw component options
   it('sets the correct default data', () => {
-    expect(typeof Form.data).toBe('function')
-    const defaultData = Form.data()
+    expect(typeof FormSchema.data).toBe('function')
+    const defaultData = FormSchema.data()
 
     expect(Object.keys(defaultData.default).length).toBe(0)
     expect(defaultData.fields.length).toBe(0)
@@ -51,7 +51,7 @@ describe('Form.vue', () => {
   // Inspect the component instance on mount
   it('correctly sets props', () => {
     // Extend the component to get the constructor, which we can then initialize directly.
-    const Constructor = Vue.extend(Form)
+    const Constructor = Vue.extend(FormSchema)
     const model = {}
     const component = new Constructor({
       propsData: {
@@ -105,7 +105,5 @@ describe('Form.vue', () => {
 
     expect(attr(button, 'type')).toBe('submit')
     expect(button.innerText).toBe('Submit')
-
-    console.log(model)
   })
 })
