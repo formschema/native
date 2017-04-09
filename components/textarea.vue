@@ -3,6 +3,7 @@
     :class="classes"
     :name="name"
     :value="value"
+    :title="title"
     :rows="rows" 
     :placeholder="placeholder"
     :maxlength="maxlength"
@@ -20,6 +21,7 @@
       name: { type: String },
       rows: { type: Number },
       value: { type: String },
+      title: { type: String },
       placeholder: { type: String },
       maxlength: {
         type: Number,
