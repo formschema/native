@@ -1,14 +1,15 @@
 language: node_js
 node_js:
-  - '4'
+- '4'
 script:
-  - npm install
-  - npm test
+- npm install
+- npm test
 deploy:
   provider: npm
   email: demsking@gmail.com
   api_key:
-    secure: ycQzQuzDNQshlZcqz2gyb+VMUUrkJDSWZxJJxhwKWNT2pAigMl7IKuYD/JEzrbRj0Ijm/K2OTQhpy1ESqf4rXtXhbb1gFlMJkhHZDYnBRfY+EQXv4NbMnDArb9+YQEIeroQrqdSK+EzKyW49Nk9tU+5DCCzMDqyJNgKH74cVOInFy5gcBLOqxt7ic6vCqBsQleBhE5+9ZafbPoPH0YFG679FLWIudBeZYBRDYqyebpeX9fpyBqHUa5ed5J367QKJnY96EdMlFHoWVw2afqajMq/0xVSVCQknSa/qRn9zgAUe5RgIdUqAXigikWwyGlH57XKq11wosN1i3XApEITT6VMBGrKrUgwtzp6677EaTDzUUKGyFvQoE9FlagUq2k1BP5Jhc3Z1NgrtczJnanzRCy5IKzWyjnj25ZaOAjchMbLOebLDSr+/tuQAnERbfK+Q9Lb1JX4UPY55A1a1XEFnGu5GgZ8qE6ArYJUh5f5nqs3DkkfDQf/GWjbSpufiUIxK6OSOcdoqZ+i5yUTT9Z7uWcQvUdQuZSY4BXyT50bn90KHUZrKqHNF30hlxb9cPKjhwywxUcmmJqBlyq6Futz3ypmVTGCIS2J/JpeaoCBLrXVntljDFvLd/af0CSz1ayrrNJ2ksu2/gy+gYxUu3F95oW3ihWpFVELbaYJalmliPhY=
+    secure: hzdYCbqaZf8CYmKBbv707wgQSpAuU54fqzrHBsffOxi12JROINllvHRAp06mngB5LfIerhXxBmuTLZ/FInfVB1wpi8M1AOtpUg6zj1ETBtFSTBQBoXyaL2OzPPCAKWeKyxnWSHHaakIxiJr26Ug+J0fQsb44KcRA8f2dceyTxxi6dkw6DDs6UcckAxrmsvppmAHr9eld2PpCB7zjPOpXfPAZ7S6QnwGFKqBUVw68LGp7bC/qKA5r1Sj38wP3KIgej8N38fQr+h38dD7NLX/DXGIJgsUX80qVxY9dv0WGeVIyrJj04a39EPgeAePj3R47Q6Dpjd9RzF5tTrWQ0Pr8XhrAKBAWtoXh7gOHNNAcMKQ0jrIg3Fx6+wQAXi9ihQIpObVvXI7Rla6ZJR3SlBzoVW0jPy/umsBQKAXFqOR291rvUHXBN7GpHHRFcuxDoySKcOYM9oRp/GcCvOC4/zAYxJD+7VXRA/NWJuH1KJrxps/zBoKWzR4O7K3ro1t6wjFHnu1zFoOKvbjQUExkmRWWlnd4YbF/F4tC4tuEiccqQtiEGiWjwlB96G06wxL8wOkTICNctIIo753+zllRKXZCy3Imfd07YzEV1Q0v1KMmN3EYEEfAEjoTVge41V+Qgm/J8jM9HzrHmI/4m2JcPbiQEbLEVq/y+9kCaChb54S1ebI=
   on:
-    tags: false
-    repo: demsking/vue-components-form
+    branch: master
+    tags: true
+    repo: demsking/vue-json-schema
