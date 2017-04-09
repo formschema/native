@@ -17,10 +17,6 @@ describe('FormSchema.vue', () => {
     expect(typeof FormSchema.mounted).toBe('function')
   })
 
-  it('has a keyup method', () => {
-    expect(typeof FormSchema.methods.keyup).toBe('function')
-  })
-
   it('has a submit method', () => {
     expect(typeof FormSchema.methods.submit).toBe('function')
   })

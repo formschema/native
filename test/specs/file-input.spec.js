@@ -22,10 +22,6 @@ describe('FileInput.vue', () => {
     expect(typeof FileInput.methods.input).toBe('function')
   })
 
-  it('has a keyup method', () => {
-    expect(typeof FileInput.methods.keyup).toBe('function')
-  })
-
   // Evaluate the results of functions in
   // the raw component options
   it('sets the correct default data', () => {
