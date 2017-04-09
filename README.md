@@ -51,7 +51,7 @@ Define your [JSON Schema](http://json-schema.org) file:
 
 In your Vue file:
 
-```vue
+```html
 <template>
   <form-schema :schema="schema" v-model="model" @submit="submit">
     <button type="submit">Subscribe</button>
