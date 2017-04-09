@@ -4,9 +4,11 @@
       :id="id" 
       :name="name"
       :value="value"
+      :title="title"
       :placeholder="placeholder" 
       :disabled="disabled"
-      :required="required">
+      :required="required"
+      @input="input">
     <label :for="id" class="uk-placeholder uk-text-center">
       {{ placeholder }}</label>
   </div>
@@ -19,6 +21,7 @@
       id: { type: String },
       name: { type: String },
       value: { type: String },
+      title: { type: String },
       placeholder: { type: String, default: 'Select a file' },
       disabled: { type: Boolean, default: false },
       required: { type: Boolean, default: false },
@@ -54,9 +57,6 @@
         if (this.value !== this.initialValue) {
           this.$emit('changed')
         }
-      },
-      keyup (e) {
-        this.$emit('keyup')
       }
     }
   }
