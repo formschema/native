@@ -3,8 +3,8 @@
   "version": "0.1.1",
   "description": "Vue component form based on JSON Schema",
   "scripts": {
-    "test": "karma start karma.conf.js",
-    "lint": "eslint --ext .js,.vue components test/specs"
+    "pretest": "eslint --ext .js,.vue components test/specs",
+    "test": "karma start karma.conf.js"
   },
   "repository": {
     "type": "git",

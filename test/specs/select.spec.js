@@ -70,7 +70,7 @@ describe('Select.vue', () => {
     }).$mount()
 
     const attr = (name) => component.$el.getAttribute(name)
-    
+
     expect(attr('name')).toBe(PROP_NAME)
     expect(component.value).toBe(PROP_VALUE)
     expect(component.$el.options[0].text).toBe(PROP_PLACEHOLDER)

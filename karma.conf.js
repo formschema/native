@@ -16,6 +16,12 @@ module.exports = function (config) {
     // use the webpack config
     webpack: webpackConfig,
     // avoid walls of useless text
+    loaders: [
+      {
+        test: /.vue$/,
+        loader: 'vue!eslint'
+      }
+    ],
     webpackMiddleware: {
       noInfo: true
     },

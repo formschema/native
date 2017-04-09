@@ -55,7 +55,7 @@
       input (e) {
         this.value = e.target.value
         this.hasError = false
-        
+
         this.$emit('input', this.value)
 
         if (this.value !== this.initialValue) {
