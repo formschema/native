@@ -1,7 +1,6 @@
 <template>
   <div>
     <h1 v-if="schema.title">{{ schema.title }}</h1>
-    <slot name="subtitle"></slot>
     <div v-if="error" class="uk-alert-danger" uk-alert>
       <a class="uk-alert-close" @click="alertClosed" uk-close></a>
       <h3 v-if="title">{{ title }}</h3>
@@ -11,12 +10,14 @@
       <template v-for="field in fields">
         <div class="uk-margin">
           <template v-if="field.type === 'checkbox'">
-            <label>
+            <label :title="field.title">
               <input v-model="value[field.name]" type="checkbox" class="uk-checkbox"
                 :name="field.name" 
+                :title="field.title"
                 :required="field.required"
                 :disabled="field.disabled" 
-                :checked="field.checked">
+                :checked="field.checked"
+                @changed="changed">
               {{ field.label }}
               <template v-if="field.description">
                 <br>
@@ -25,52 +26,57 @@
             </label>
           </template>
           <template v-else>
-            <label v-if="field.label" :for="field.id" class="uk-form-label">{{ field.label }}</label>
+            <label vx-if="field.label" :for="field.id" class="uk-form-label">{{ field.label }}</label>
             <small v-if="field.description">{{ field.description }}</small>
             <div class="uk-form-controls">
               <template v-if="field.type === 'textarea'">
                 <v-textarea v-model="value[field.name]"
                   :id="field.id"
                   :name="field.name"
+                  :title="field.title"
                   :placeholder="field.placeholder"
                   :rows="field.rows"
+                  :minlength="field.minlength"
                   :maxlength="field.maxlength"
                   :disabled="field.disabled" 
                   :required="field.required"
-                  @keyup="keyup"></v-textarea>
+                  @changed="changed"></v-textarea>
               </template>
               <template v-else-if="field.type === 'file'">
-                <v-file-input :id="field.id" :name="field.name"
+                <v-file-input v-model="value[field.name]" :id="field.id" :name="field.name"
                   :placeholder="field.placeholder" :disabled="field.disabled"
                   :required="field.required"/>
               </template>
               <template v-else-if="field.type === 'select'">
-                <select :id="field.id" :name="field.name" :multiple="field.multiple" class="uk-select">
-                  <option></option>
-                  <template v-for="item of field.items">
-                    <option :value="item.value" :selected="item.value === field.value">
-                      {{ item.label }}</option>
-                  </template>
-                </select>
+                <v-select v-model="field[field.name]" class="uk-select" 
+                  :id="field.id" 
+                  :name="field.name" 
+                  :options="field.items" 
+                  :multiple="field.multiple" 
+                  :required="field.required" 
+                  :disabled="field.disabled" 
+                  :placeholder="field.placeholder" 
+                  @change="changed"></v-select>
               </template>
               <template v-else>
                 <v-input v-model="value[field.name]"
                   :id="field.id"
                   :type="field.type"
                   :name="field.name"
+                  :title="field.title"
                   :placeholder="field.placeholder"
                   :minlength="field.minlength"
                   :maxlength="field.maxlength"
                   :disabled="field.disabled"
                   :required="field.required"
                   :autocomplete="field.autocomplete"
-                  @keyup="keyup"></v-input>
+                  @changed="changed"></v-input>
               </template>
             </div>
           </template>
         </div>
       </template>
-      <slot name="buttons">
+      <slot>
         <button type="submit" class="uk-button uk-button-default">Submit</button>
       </slot>
     </form>
@@ -79,6 +85,7 @@
 
 <script>
   import VInput from './input.vue'
+  import VSelect from './select.vue'
   import VTextarea from './textarea.vue'
   import VFileInput from './file-input.vue'
 
@@ -112,7 +119,7 @@
       this.reset()
     },
     methods: {
-      keyup () {
+      changed (e) {
         this.$emit('changed', true)
       },
       submit () {
@@ -134,7 +141,7 @@
       }
     },
     components: {
-      VInput, VTextarea, VFileInput
+      VInput, VSelect, VTextarea, VFileInput
     }
   }
 </script>
