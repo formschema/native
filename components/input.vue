@@ -4,7 +4,9 @@
     :type="type" 
     :name="name"
     :value="value"
+    :title="title"
     :placeholder="placeholder"
+    :minlength="minlength"
     :maxlength="maxlength"
     :disabled="disabled" 
     :required="required"
@@ -21,10 +23,15 @@
       type: { type: String, default: 'text' },
       name: { type: String },
       value: { type: String },
+      title: { type: String },
       placeholder: { type: String },
-      maxlength: {
+      minlength: {
         type: Number,
         validation: (value) => value > 0
+      },
+      maxlength: {
+        type: Number,
+        validation: (value) => value > 0 && value > this.minlenth
       },
       disabled: { type: Boolean, default: false },
       required: { type: Boolean, default: false },
