@@ -1,9 +1,9 @@
-# vue-form-schema
+# vue-json-schema
 Vue component form based on JSON Schema
 
 ## Install
 ```sh
-npm install --save vue-form-schema
+npm install --save vue-json-schema
 ```
 
 ## Usage
@@ -73,4 +73,4 @@ In your Vue file:
 
 ## License
 
-Under the MIT license. See [LICENSE](https://github.com/demsking/vue-form-schema/blob/master/LICENSE) file for more details.
+Under the MIT license. See [LICENSE](https://github.com/demsking/vue-json-schema/blob/master/LICENSE) file for more details.
