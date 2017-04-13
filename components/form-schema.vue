@@ -12,6 +12,7 @@
           <template v-if="field.type === 'checkbox'">
             <label :title="field.title">
               <input v-model="value[field.name]" type="checkbox" class="uk-checkbox"
+                :ref="field.name"
                 :name="field.name" 
                 :title="field.title"
                 :required="field.required"
@@ -26,12 +27,13 @@
             </label>
           </template>
           <template v-else>
-            <label vx-if="field.label" :for="field.id" class="uk-form-label">{{ field.label }}</label>
+            <label v-if="field.label" :for="field.id" class="uk-form-label">{{ field.label }}</label>
             <small v-if="field.description">{{ field.description }}</small>
             <div class="uk-form-controls">
               <template v-if="field.type === 'textarea'">
                 <v-textarea v-model="value[field.name]"
                   :id="field.id"
+                  :ref="field.name"
                   :name="field.name"
                   :title="field.title"
                   :placeholder="field.placeholder"
@@ -43,13 +45,18 @@
                   @changed="changed"></v-textarea>
               </template>
               <template v-else-if="field.type === 'file'">
-                <v-file-input v-model="value[field.name]" :id="field.id" :name="field.name"
-                  :placeholder="field.placeholder" :disabled="field.disabled"
+                <v-file-input v-model="value[field.name]" 
+                  :id="field.id" 
+                  :ref="field.name"
+                  :name="field.name"
+                  :placeholder="field.placeholder" 
+                  :disabled="field.disabled"
                   :required="field.required"/>
               </template>
               <template v-else-if="field.type === 'select'">
                 <v-select v-model="field[field.name]" class="uk-select" 
                   :id="field.id" 
+                  :ref="field.name" 
                   :name="field.name" 
                   :options="field.items" 
                   :multiple="field.multiple" 
@@ -61,6 +68,7 @@
               <template v-else>
                 <v-input v-model="value[field.name]"
                   :id="field.id"
+                  :ref="field.name"
                   :type="field.type"
                   :name="field.name"
                   :title="field.title"
@@ -138,6 +146,9 @@
       },
       setErrorMessage (message) {
         this.error = message
+      },
+      input (name) {
+        return this.$refs[name]
       }
     },
     components: {

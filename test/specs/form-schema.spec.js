@@ -33,6 +33,10 @@ describe('FormSchema.vue', () => {
     expect(typeof FormSchema.methods.setErrorMessage).toBe('function')
   })
 
+  it('has a input method', () => {
+    expect(typeof FormSchema.methods.input).toBe('function')
+  })
+
   // Evaluate the results of functions in
   // the raw component options
   it('sets the correct default data', () => {
