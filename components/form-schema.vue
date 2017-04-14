@@ -11,15 +11,16 @@
         <div class="uk-margin">
           <template v-if="field.type === 'checkbox'">
             <label :title="field.title">
-              <input v-model="value[field.name]" type="checkbox" class="uk-checkbox"
+              <v-checkbox v-model="value[field.name]" class="uk-checkbox"
+                :id="field.id"
                 :ref="field.name"
-                :name="field.name" 
+                :name="field.name"
                 :title="field.title"
-                :required="field.required"
-                :disabled="field.disabled" 
+                :label="field.label"
                 :checked="field.checked"
-                @changed="changed">
-              {{ field.label }}
+                :disabled="field.disabled"
+                :required="field.required"
+                @changed="changed"></v-checkbox>
               <template v-if="field.description">
                 <br>
                 <small>{{ field.description }}</small>
@@ -96,6 +97,7 @@
   import VSelect from './select.vue'
   import VTextarea from './textarea.vue'
   import VFileInput from './file-input.vue'
+  import VCheckbox from './checkbox.vue'
 
   import { clone } from '../lib/object'
   import { loadFields } from '../lib/parser'
@@ -152,7 +154,7 @@
       }
     },
     components: {
-      VInput, VSelect, VTextarea, VFileInput
+      VInput, VSelect, VTextarea, VFileInput, VCheckbox
     }
   }
 </script>
