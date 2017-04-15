@@ -20,6 +20,7 @@
                 :checked="field.checked"
                 :disabled="field.disabled"
                 :required="field.required"
+                :data-class-error="dataClassError"
                 @changed="changed"></v-checkbox>
               <template v-if="field.description">
                 <br>
@@ -43,6 +44,7 @@
                   :maxlength="field.maxlength"
                   :disabled="field.disabled" 
                   :required="field.required"
+                  :data-class-error="dataClassError"
                   @changed="changed"></v-textarea>
               </template>
               <template v-else-if="field.type === 'file'">
@@ -52,7 +54,8 @@
                   :name="field.name"
                   :placeholder="field.placeholder" 
                   :disabled="field.disabled"
-                  :required="field.required"/>
+                  :required="field.required"
+                  :data-class-error="dataClassError"/>
               </template>
               <template v-else-if="field.type === 'select'">
                 <v-select v-model="field[field.name]" class="uk-select" 
@@ -64,6 +67,7 @@
                   :required="field.required" 
                   :disabled="field.disabled" 
                   :placeholder="field.placeholder" 
+                  :data-class-error="dataClassError"
                   @change="changed"></v-select>
               </template>
               <template v-else>
@@ -79,6 +83,7 @@
                   :disabled="field.disabled"
                   :required="field.required"
                   :autocomplete="field.autocomplete"
+                  :data-class-error="dataClassError"
                   @changed="changed"></v-input>
               </template>
             </div>
@@ -112,6 +117,10 @@
       value: {
         type: Object,
         default: () => ({})
+      },
+      dataClassError: {
+        type: String,
+        default: 'uk-form-danger'
       }
     },
     data () {
