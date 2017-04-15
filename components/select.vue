@@ -1,6 +1,6 @@
 <template>
   <div>
-    <select class="uk-select"
+    <select class="uk-select" v-model="value"
       :id="id" 
       :name="name"
       :class="classes"
@@ -9,14 +9,10 @@
       :disabled="disabled" 
       @invalid="invalid"
       @change="input">
-      <option 
-        value="" 
-        class="placeholder" 
-        :selected.once="!value">
-          {{ placeholder }}</option>
+      <option value="" class="placeholder">
+        {{ placeholder }}</option>
       <option v-for="item of options"
-        :value="item.value || item.label" 
-        :selected="item.value === value">
+        :value="item.value || item.label">
           {{ item.label }}</option>
     </select>
     <div v-if="errorMessage" class="uk-alert-danger" uk-alert>
@@ -67,11 +63,10 @@
         this.$emit('invalid', e)
       },
       input (e) {
-        this.value = e.target.value
         this.clearError()
 
         this.$emit('input', this.value)
-        console.log(this.value)
+
         if (this.value !== this.initialValue) {
           this.$emit('changed')
         }
