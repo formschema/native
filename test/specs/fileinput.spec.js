@@ -41,6 +41,7 @@ describe('FileInput', () => {
     const defaultData = Input.data()
 
     expect(defaultData.initialValue).toBe(null)
+    expect(defaultData.hasError).toBe(false)
     expect(defaultData.errorMessage).toBe(null)
   })
 

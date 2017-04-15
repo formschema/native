@@ -36,6 +36,7 @@ describe('Checkbox', () => {
     expect(typeof Input.data).toBe('function')
     const defaultData = Input.data()
 
+    expect(defaultData.hasError).toBe(false)
     expect(defaultData.errorMessage).toBe(null)
   })
 })

@@ -45,13 +45,11 @@
     data () {
       return {
         initialValue: null,
+        hasError: false,
         errorMessage: null
       }
     },
     computed: {
-      hasError () {
-        return typeof this.errorMessage === 'string'
-      },
       classes () {
         return {
           [this.dataClassError]: this.hasError
@@ -80,9 +78,11 @@
         this.$emit('keyup')
       },
       setError (message) {
+        this.hasError = true
         this.errorMessage = message
       },
       clearError () {
+        this.hasError = false
         this.errorMessage = null
       }
     }

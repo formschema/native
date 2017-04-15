@@ -31,13 +31,11 @@
     },
     data () {
       return {
+        hasError: false,
         errorMessage: null
       }
     },
     computed: {
-      hasError () {
-        return typeof this.errorMessage === 'string'
-      },
       classes () {
         return {
           [this.dataClassError]: this.hasError
@@ -56,9 +54,11 @@
         this.$emit('changed', this.value)
       },
       setError (message) {
+        this.hasError = true
         this.errorMessage = message
       },
       clearError () {
+        this.hasError = false
         this.errorMessage = null
       }
     }
