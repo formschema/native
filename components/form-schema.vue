@@ -6,7 +6,7 @@
       <h3 v-if="title">{{ title }}</h3>
       <p>{{ error }}</p>
     </div>
-    <form v-if="fields.length" ref="form" class="uk-form-stacked" @submit.stop.prevent="submit">
+    <form v-if="fields.length" ref="__form" class="uk-form-stacked" @submit.stop.prevent="submit">
       <template v-for="field in fields">
         <div class="uk-margin">
           <template v-if="field.type === 'checkbox'">
@@ -143,7 +143,7 @@
         this.$emit('changed', true)
       },
       submit () {
-        if (this.$refs.form.checkValidity()) {
+        if (this.$refs.__form.checkValidity()) {
           this.$emit('input', this.value)
           this.$emit('submit')
         }
@@ -160,7 +160,10 @@
         this.error = message
       },
       input (name) {
-        return this.$refs[name]
+        if (!this.$refs[name]) {
+          throw new Error(`Undefined input reference '${name}'`)
+        }
+        return this.$refs[name][0]
       }
     },
     components: {
