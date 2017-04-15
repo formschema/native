@@ -55,7 +55,8 @@
                   :placeholder="field.placeholder" 
                   :disabled="field.disabled"
                   :required="field.required"
-                  :data-class-error="dataClassError"/>
+                  :data-class-error="dataClassError"
+                  @change="changed"/>
               </template>
               <template v-else-if="field.type === 'select'">
                 <v-select v-model="field[field.name]" class="uk-select" 
