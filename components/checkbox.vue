@@ -31,6 +31,7 @@
     },
     data () {
       return {
+        initialValue: null,
         hasError: false,
         errorMessage: null
       }
@@ -42,6 +43,9 @@
         }
       }
     },
+    created () {
+      this.initialValue = this.value
+    },
     methods: {
       invalid (e) {
         this.setError(this.title)
@@ -51,7 +55,11 @@
         this.value = e.target.value
         this.clearError()
 
-        this.$emit('changed', this.value)
+        this.$emit('input', this.value)
+
+        if (this.value !== this.initialValue) {
+          this.$emit('changed')
+        }
       },
       setError (message) {
         this.hasError = true

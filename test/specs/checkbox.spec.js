@@ -16,6 +16,10 @@ const PROP_CHECKED = true
 /* global describe it expect */
 
 describe('Checkbox', () => {
+  it('should have a created hook', () => {
+    expect(typeof Input.created).toBe('function')
+  })
+
   it('should have a invalid method', () => {
     expect(typeof Input.methods.invalid).toBe('function')
   })
@@ -36,6 +40,7 @@ describe('Checkbox', () => {
     expect(typeof Input.data).toBe('function')
     const defaultData = Input.data()
 
+    expect(defaultData.initialValue).toBe(null)
     expect(defaultData.hasError).toBe(false)
     expect(defaultData.errorMessage).toBe(null)
   })
