@@ -1,7 +1,7 @@
 'use strict'
 
 import Vue from 'vue'
-import Checkbox from '../../components/checkbox.vue'
+import Input from '../../components/checkbox.vue'
 
 const DEFAULT_CHECKED = false
 const DEFAULT_DISABLED = false
@@ -15,73 +15,85 @@ const PROP_CHECKED = true
 
 /* global describe it expect */
 
-describe('Checkbox.vue', () => {
-  // Inspect the raw component options
-  it('has a invalid method', () => {
-    expect(typeof Checkbox.methods.invalid).toBe('function')
+describe('Checkbox', () => {
+  it('should have a invalid method', () => {
+    expect(typeof Input.methods.invalid).toBe('function')
   })
 
-  it('has a changed method', () => {
-    expect(typeof Checkbox.methods.changed).toBe('function')
+  it('should have a changed method', () => {
+    expect(typeof Input.methods.changed).toBe('function')
   })
 
-  // Evaluate the results of functions in
-  // the raw component options
-  it('sets the correct default data', () => {
-    expect(typeof Checkbox.data).toBe('function')
-    const defaultData = Checkbox.data()
-
-    expect(defaultData.hasError).toBe(false)
+  it('should have a setError method', () => {
+    expect(typeof Input.methods.setError).toBe('function')
   })
 
-  // Inspect the component instance on mount
-  it('mount component with default props', () => {
-    // Extend the component to get the constructor, which we can then initialize directly.
-    const Constructor = Vue.extend(Checkbox)
-    const component = new Constructor({
-      propsData: {
-        name: PROP_NAME,
-        value: PROP_VALUE,
-        label: PROP_LABEL,
-        title: PROP_TITLE
-      }
-    }).$mount()
+  it('should have a clearError method', () => {
+    expect(typeof Input.methods.clearError).toBe('function')
+  })
 
-    const attr = (name) => {
-      return component.$el.querySelector('input').getAttribute(name)
+  it('should set the correct default data', () => {
+    expect(typeof Input.data).toBe('function')
+    const defaultData = Input.data()
+
+    expect(defaultData.errorMessage).toBe(null)
+  })
+})
+
+describe('Checkbox: mount with default props', () => {
+  const Constructor = Vue.extend(Input)
+  const component = new Constructor({
+    propsData: {
+      name: PROP_NAME,
+      value: PROP_VALUE,
+      label: PROP_LABEL,
+      title: PROP_TITLE
     }
+  }).$mount()
 
-    expect(attr('name')).toBe(PROP_NAME)
-    expect(attr('title')).toBe(PROP_TITLE)
-    expect(component.value).toBe(PROP_VALUE)
-    expect(component.$el.textContent.trim()).toBe(PROP_LABEL)
-    expect(component.disabled).toBe(DEFAULT_DISABLED)
-    expect(component.required).toBe(DEFAULT_REQUIRED)
-    expect(component.checked).toBe(DEFAULT_CHECKED)
-  })
+  it('should have default disabled prop value', () =>
+    expect(component.disabled).toBe(DEFAULT_DISABLED))
 
-  it('correctly sets props', () => {
-    const Constructor = Vue.extend(Checkbox)
-    const component = new Constructor({
-      propsData: {
-        name: PROP_NAME,
-        value: PROP_VALUE,
-        label: PROP_LABEL,
-        title: PROP_TITLE,
-        checked: PROP_CHECKED
-      }
-    }).$mount()
+  it('should have default required prop value', () =>
+    expect(component.required).toBe(DEFAULT_REQUIRED))
 
-    const attr = (name) => {
-      return component.$el.querySelector('input').getAttribute(name)
+  it('should have default checked prop value', () =>
+    expect(component.checked).toBe(DEFAULT_CHECKED))
+})
+
+describe('Checkbox: mount with user props', () => {
+  const Constructor = Vue.extend(Input)
+  const component = new Constructor({
+    propsData: {
+      name: PROP_NAME,
+      value: PROP_VALUE,
+      label: PROP_LABEL,
+      title: PROP_TITLE,
+      checked: PROP_CHECKED
     }
+  }).$mount()
 
-    expect(attr('name')).toBe(PROP_NAME)
-    expect(attr('title')).toBe(PROP_TITLE)
-    expect(component.value).toBe(PROP_VALUE)
-    expect(component.$el.textContent.trim()).toBe(PROP_LABEL)
-    expect(component.disabled).toBe(DEFAULT_DISABLED)
-    expect(component.required).toBe(DEFAULT_REQUIRED)
-    expect(component.checked).toBe(PROP_CHECKED)
-  })
+  const input = () => component.$el.querySelector('input')
+  const attr = (name) => input().getAttribute(name)
+
+  it('should correctly set name prop', () =>
+    expect(attr('name')).toBe(PROP_NAME))
+
+  it('should correctly set title prop', () =>
+    expect(attr('title')).toBe(PROP_TITLE))
+
+  it('should correctly set value prop', () =>
+    expect(component.value).toBe(PROP_VALUE))
+
+  it('should correctly set label', () =>
+    expect(component.$el.textContent.trim()).toBe(PROP_LABEL))
+
+  it('should have default disabled prop value', () =>
+    expect(component.disabled).toBe(DEFAULT_DISABLED))
+
+  it('should have default required prop value', () =>
+    expect(component.required).toBe(DEFAULT_REQUIRED))
+
+  it('should correctly set checked prop', () =>
+    expect(component.checked).toBe(PROP_CHECKED))
 })

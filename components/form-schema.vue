@@ -59,7 +59,7 @@
                   @change="changed"/>
               </template>
               <template v-else-if="field.type === 'select'">
-                <v-select v-model="field[field.name]" class="uk-select" 
+                <v-select v-model="field[field.name]" 
                   :id="field.id" 
                   :ref="field.name" 
                   :name="field.name" 

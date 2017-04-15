@@ -1,5 +1,5 @@
 <template>
-  <span>
+  <div>
     <input class="uk-input" type="checkbox" 
       :class="classes"
       :name="name"
@@ -11,7 +11,9 @@
       @invalid="invalid"
       @changed="changed">
     <slot>{{ label }}</slot>
-  </span>
+    <div v-if="errorMessage" class="uk-alert-danger" uk-alert>
+      {{ errorMessage }}</div>
+  </div>
 </template>
 
 <script>
@@ -29,10 +31,13 @@
     },
     data () {
       return {
-        hasError: false
+        errorMessage: null
       }
     },
     computed: {
+      hasError () {
+        return typeof this.errorMessage === 'string'
+      },
       classes () {
         return {
           [this.dataClassError]: this.hasError
@@ -41,15 +46,31 @@
     },
     methods: {
       invalid (e) {
-        this.hasError = true
+        this.setError(this.title)
         this.$emit('invalid', e)
       },
       changed (e) {
         this.value = e.target.value
-        this.hasError = false
+        this.clearError()
 
         this.$emit('changed', this.value)
+      },
+      setError (message) {
+        this.errorMessage = message
+      },
+      clearError () {
+        this.errorMessage = null
       }
     }
   }
 </script>
+
+<style scoped>
+  input + .uk-alert-danger {
+    font-size: .9em;
+    text-align: left;
+    margin-top: 0;
+    padding-top: 7px;
+    padding-bottom: 7px;
+  }
+</style>

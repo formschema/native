@@ -1,19 +1,23 @@
 <template>
-  <input class="uk-input"
-    :class="classes"
-    :type="type" 
-    :name="name"
-    :value="value"
-    :title="title"
-    :placeholder="placeholder"
-    :minlength="minlength"
-    :maxlength="maxlength"
-    :disabled="disabled" 
-    :required="required"
-    :autocomplete="autocomplete"
-    @invalid="invalid"
-    @keyup="keyup"
-    @input="input">
+  <div>
+    <input class="uk-input"
+      :class="classes"
+      :type="type" 
+      :name="name"
+      :value="value"
+      :title="title"
+      :placeholder="placeholder"
+      :minlength="minlength"
+      :maxlength="maxlength"
+      :disabled="disabled" 
+      :required="required"
+      :autocomplete="autocomplete"
+      @invalid="invalid"
+      @keyup="keyup"
+      @input="input">
+    <div v-if="errorMessage" class="uk-alert-danger" uk-alert>
+      {{ errorMessage }}</div>
+  </div>
 </template>
 
 <script>
@@ -41,10 +45,13 @@
     data () {
       return {
         initialValue: null,
-        hasError: false
+        errorMessage: null
       }
     },
     computed: {
+      hasError () {
+        return typeof this.errorMessage === 'string'
+      },
       classes () {
         return {
           [this.dataClassError]: this.hasError
@@ -56,12 +63,12 @@
     },
     methods: {
       invalid (e) {
-        this.hasError = true
+        this.setError(this.title)
         this.$emit('invalid', e)
       },
       input (e) {
         this.value = e.target.value
-        this.hasError = false
+        this.clearError()
 
         this.$emit('input', this.value)
 
@@ -71,7 +78,28 @@
       },
       keyup (e) {
         this.$emit('keyup')
+      },
+      setError (message) {
+        this.errorMessage = message
+      },
+      clearError () {
+        this.errorMessage = null
       }
     }
   }
 </script>
+
+<style scoped>
+  input {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  
+  input + .uk-alert-danger {
+    font-size: .9em;
+    text-align: left;
+    margin-top: 0;
+    padding-top: 7px;
+    padding-bottom: 7px;
+  }
+</style>

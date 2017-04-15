@@ -1,6 +1,6 @@
 {
   "name": "vue-json-schema",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Vue component form based on JSON Schema",
   "scripts": {
     "pretest": "eslint --ext .js,.vue components test/specs",

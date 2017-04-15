@@ -1,7 +1,7 @@
 'use strict'
 
 import Vue from 'vue'
-import Select from '../../components/select.vue'
+import Input from '../../components/select.vue'
 
 const DEFAULT_DISABLED = false
 const DEFAULT_REQUIRED = false
@@ -14,68 +14,87 @@ const PROP_MULTIPLE = 'multiple'
 
 /* global describe it expect */
 
-describe('Select.vue', () => {
+describe('Select', () => {
   // Inspect the raw component options
-  it('has a created hook', () => {
-    expect(typeof Select.created).toBe('function')
+  it('should have a created hook', () => {
+    expect(typeof Input.created).toBe('function')
   })
 
-  it('has a invalid method', () => {
-    expect(typeof Select.methods.invalid).toBe('function')
+  it('should have a invalid method', () => {
+    expect(typeof Input.methods.invalid).toBe('function')
   })
 
-  it('has a input method', () => {
-    expect(typeof Select.methods.input).toBe('function')
+  it('should have a input method', () => {
+    expect(typeof Input.methods.input).toBe('function')
+  })
+
+  it('should have a setError method', () => {
+    expect(typeof Input.methods.setError).toBe('function')
+  })
+
+  it('should have a clearError method', () => {
+    expect(typeof Input.methods.clearError).toBe('function')
   })
 
   // Evaluate the results of functions in
   // the raw component options
-  it('sets the correct default data', () => {
-    expect(typeof Select.data).toBe('function')
-    const defaultData = Select.data()
+  it('should set the correct default data', () => {
+    expect(typeof Input.data).toBe('function')
+    const defaultData = Input.data()
 
     expect(defaultData.initialValue).toBe(null)
-    expect(defaultData.hasError).toBe(false)
+    expect(defaultData.errorMessage).toBe(null)
   })
+})
 
-  // Inspect the component instance on mount
-  it('mount component with default props', () => {
-    // Extend the component to get the constructor, which we can then initialize directly.
-    const Constructor = Vue.extend(Select)
-    const component = new Constructor({
-      propsData: {
-        name: PROP_NAME,
-        value: PROP_VALUE
-      }
-    }).$mount()
+describe('Select: mount component with default props', () => {
+  const Constructor = Vue.extend(Input)
+  const component = new Constructor({
+    propsData: {
+      name: PROP_NAME,
+      value: PROP_VALUE
+    }
+  }).$mount()
 
-    const attr = (name) => component.$el.getAttribute(name)
+  it('should have default disabled prop value', () =>
+    expect(component.disabled).toBe(DEFAULT_DISABLED))
 
-    expect(attr('name')).toBe(PROP_NAME)
-    expect(component.value).toBe(PROP_VALUE)
-    expect(component.disabled).toBe(DEFAULT_DISABLED)
-    expect(component.required).toBe(DEFAULT_REQUIRED)
-    expect(component.multiple).toBe(DEFAULT_MULTIPLE)
-  })
+  it('should have default required prop value', () =>
+    expect(component.required).toBe(DEFAULT_REQUIRED))
 
-  it('correctly sets props', () => {
-    const Constructor = Vue.extend(Select)
-    const component = new Constructor({
-      propsData: {
-        name: PROP_NAME,
-        value: PROP_VALUE,
-        placeholder: PROP_PLACEHOLDER,
-        multiple: PROP_MULTIPLE
-      }
-    }).$mount()
+  it('should have default required prop value', () =>
+    expect(component.multiple).toBe(DEFAULT_MULTIPLE))
+})
 
-    const attr = (name) => component.$el.getAttribute(name)
+describe('Select: props usage', () => {
+  const Constructor = Vue.extend(Input)
+  const component = new Constructor({
+    propsData: {
+      name: PROP_NAME,
+      value: PROP_VALUE,
+      placeholder: PROP_PLACEHOLDER,
+      multiple: PROP_MULTIPLE
+    }
+  }).$mount()
 
-    expect(attr('name')).toBe(PROP_NAME)
-    expect(component.value).toBe(PROP_VALUE)
-    expect(component.$el.options[0].text).toBe(PROP_PLACEHOLDER)
-    expect(attr('multiple')).toBe(PROP_MULTIPLE)
-    expect(component.disabled).toBe(DEFAULT_DISABLED)
-    expect(component.required).toBe(DEFAULT_REQUIRED)
-  })
+  const input = () => component.$el.querySelector('select')
+  const attr = (name) => input().getAttribute(name)
+
+  it('should correctly set name prop', () =>
+    expect(attr('name')).toBe(PROP_NAME))
+
+  it('should correctly set value prop', () =>
+    expect(component.value).toBe(PROP_VALUE))
+
+  it('should correctly set placeholder prop', () =>
+    expect(input().options[0].text).toBe(PROP_PLACEHOLDER))
+
+  it('should correctly set multiple prop', () =>
+    expect(attr('multiple')).toBe(PROP_MULTIPLE))
+
+  it('should have default disabled prop value', () =>
+    expect(component.required).toBe(DEFAULT_DISABLED))
+
+  it('should have default required prop value', () =>
+    expect(component.required).toBe(DEFAULT_REQUIRED))
 })

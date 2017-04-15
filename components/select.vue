@@ -1,23 +1,27 @@
 <template>
-  <select 
-    :id="id" 
-    :name="name"
-    :class="classes"
-    :multiple="multiple" 
-    :required="required" 
-    :disabled="disabled" 
-    @invalid="invalid"
-    @change="input">
-    <option 
-      value="" 
-      class="placeholder" 
-      :selected.once="!value">
-        {{ placeholder }}</option>
-    <option v-for="item of options"
-      :value="item.value || item.label" 
-      :selected="item.value === value">
-        {{ item.label }}</option>
-  </select>
+  <div>
+    <select class="uk-select"
+      :id="id" 
+      :name="name"
+      :class="classes"
+      :multiple="multiple" 
+      :required="required" 
+      :disabled="disabled" 
+      @invalid="invalid"
+      @change="input">
+      <option 
+        value="" 
+        class="placeholder" 
+        :selected.once="!value">
+          {{ placeholder }}</option>
+      <option v-for="item of options"
+        :value="item.value || item.label" 
+        :selected="item.value === value">
+          {{ item.label }}</option>
+    </select>
+    <div v-if="errorMessage" class="uk-alert-danger" uk-alert>
+      {{ errorMessage }}</div>
+  </div>
 </template>
 
 <script>
@@ -38,13 +42,15 @@
     data () {
       return {
         initialValue: null,
-        hasError: false
+        errorMessage: null
       }
     },
     computed: {
+      hasError () {
+        return typeof this.errorMessage === 'string'
+      },
       classes () {
         return {
-          placeholder: !this.value,
           [this.dataClassError]: this.hasError
         }
       },
@@ -57,18 +63,24 @@
     },
     methods: {
       invalid (e) {
-        this.hasError = true
+        this.setError(this.title)
         this.$emit('invalid', e)
       },
       input (e) {
         this.value = e.target.value
-        this.hasError = false
+        this.clearError()
 
         this.$emit('input', this.value)
         console.log(this.value)
         if (this.value !== this.initialValue) {
           this.$emit('changed')
         }
+      },
+      setError (message) {
+        this.errorMessage = message
+      },
+      clearError () {
+        this.errorMessage = null
       }
     }
   }
@@ -79,7 +91,20 @@
     color: #999
   }
   
+  select {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  
   select.placeholder:focus {
     color: inherit
+  }
+  
+  select + .uk-alert-danger {
+    font-size: .9em;
+    text-align: left;
+    margin-top: 0;
+    padding-top: 7px;
+    padding-bottom: 7px;
   }
 </style>

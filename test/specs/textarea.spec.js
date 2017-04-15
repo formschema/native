@@ -1,70 +1,90 @@
 'use strict'
 
 import Vue from 'vue'
-import Textarea from '../../components/textarea.vue'
+import Input from '../../components/textarea.vue'
 
 const DEFAULT_DISABLED = false
 const DEFAULT_REQUIRED = false
 
 /* global describe it expect */
 
-describe('Textarea.vue', () => {
+describe('Textarea', () => {
   // Inspect the raw component options
-  it('has a created hook', () => {
-    expect(typeof Textarea.created).toBe('function')
+  it('should have a created hook', () => {
+    expect(typeof Input.created).toBe('function')
   })
 
-  it('has a invalid method', () => {
-    expect(typeof Textarea.methods.invalid).toBe('function')
+  it('should have a invalid method', () => {
+    expect(typeof Input.methods.invalid).toBe('function')
   })
 
-  it('has a input method', () => {
-    expect(typeof Textarea.methods.input).toBe('function')
+  it('should have a input method', () => {
+    expect(typeof Input.methods.input).toBe('function')
   })
 
-  it('has a keyup method', () => {
-    expect(typeof Textarea.methods.keyup).toBe('function')
+  it('should have a keyup method', () => {
+    expect(typeof Input.methods.keyup).toBe('function')
+  })
+
+  it('should have a setError method', () => {
+    expect(typeof Input.methods.setError).toBe('function')
+  })
+
+  it('should have a clearError method', () => {
+    expect(typeof Input.methods.clearError).toBe('function')
   })
 
   // Evaluate the results of functions in
   // the raw component options
-  it('sets the correct default data', () => {
-    expect(typeof Textarea.data).toBe('function')
-    const defaultData = Textarea.data()
+  it('should set the correct default data', () => {
+    expect(typeof Input.data).toBe('function')
+    const defaultData = Input.data()
 
     expect(defaultData.initialValue).toBe(null)
-    expect(defaultData.hasError).toBe(false)
+    expect(defaultData.errorMessage).toBe(null)
   })
+})
 
-  // Inspect the component instance on mount
-  it('correctly sets props', () => {
-    // Extend the component to get the constructor, which we can then initialize directly.
-    const Constructor = Vue.extend(Textarea)
+describe('Input.vue: correctly sets props', () => {
+  const Constructor = Vue.extend(Input)
 
-    const PROP_NAME = 'content'
-    const PROP_VALUE = 'Hello, World!'
-    const PROP_PLACEHOLDER = 'Content'
-    const PROP_ROWS = 5
-    const PROP_MAXLENGTH = 144
+  const PROP_NAME = 'content'
+  const PROP_VALUE = 'Hello, World!'
+  const PROP_PLACEHOLDER = 'Content'
+  const PROP_ROWS = 5
+  const PROP_MAXLENGTH = 144
 
-    const component = new Constructor({
-      propsData: {
-        name: PROP_NAME,
-        value: PROP_VALUE,
-        rows: PROP_ROWS,
-        placeholder: PROP_PLACEHOLDER,
-        maxlength: PROP_MAXLENGTH
-      }
-    }).$mount()
+  const component = new Constructor({
+    propsData: {
+      name: PROP_NAME,
+      value: PROP_VALUE,
+      rows: PROP_ROWS,
+      placeholder: PROP_PLACEHOLDER,
+      maxlength: PROP_MAXLENGTH
+    }
+  }).$mount()
 
-    const attr = (name) => component.$el.getAttribute(name)
+  const input = () => component.$el.querySelector('textarea')
+  const attr = (name) => input().getAttribute(name)
 
-    expect(attr('name')).toBe(PROP_NAME)
-    expect(component.value).toBe(PROP_VALUE)
-    expect(parseInt(attr('rows'))).toBe(PROP_ROWS)
-    expect(attr('placeholder')).toBe(PROP_PLACEHOLDER)
-    expect(parseInt(attr('maxlength'))).toBe(PROP_MAXLENGTH)
-    expect(component.disabled).toBe(DEFAULT_DISABLED)
-    expect(component.required).toBe(DEFAULT_REQUIRED)
-  })
+  it('should correctly set name prop', () =>
+    expect(attr('name')).toBe(PROP_NAME))
+
+  it('should correctly set value prop', () =>
+    expect(input().value).toBe(PROP_VALUE))
+
+  it('should correctly set rows prop', () =>
+    expect(parseInt(attr('rows'))).toBe(PROP_ROWS))
+
+  it('should correctly set placeholder prop', () =>
+    expect(attr('placeholder')).toBe(PROP_PLACEHOLDER))
+
+  it('should correctly set maxlength prop', () =>
+    expect(parseInt(attr('maxlength'))).toBe(PROP_MAXLENGTH))
+
+  it('should have default disabled prop value', () =>
+    expect(component.disabled).toBe(DEFAULT_DISABLED))
+
+  it('should have default required prop value', () =>
+    expect(component.required).toBe(DEFAULT_REQUIRED))
 })

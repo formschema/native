@@ -7,39 +7,39 @@ import SignupSchema from '../fixtures/signup'
 
 /* global describe it expect */
 
-describe('FormSchema.vue', () => {
+describe('FormSchema', () => {
   // Inspect the raw component options
-  it('has a created hook', () => {
+  it('should have a created hook', () => {
     expect(typeof FormSchema.created).toBe('function')
   })
 
-  it('has a mounted hook', () => {
+  it('should have a mounted hook', () => {
     expect(typeof FormSchema.mounted).toBe('function')
   })
 
-  it('has a submit method', () => {
+  it('should have a submit method', () => {
     expect(typeof FormSchema.methods.submit).toBe('function')
   })
 
-  it('has a reset method', () => {
+  it('should have a reset method', () => {
     expect(typeof FormSchema.methods.reset).toBe('function')
   })
 
-  it('has a alertClosed method', () => {
+  it('should have a alertClosed method', () => {
     expect(typeof FormSchema.methods.alertClosed).toBe('function')
   })
 
-  it('has a setErrorMessage method', () => {
+  it('should have a setErrorMessage method', () => {
     expect(typeof FormSchema.methods.setErrorMessage).toBe('function')
   })
 
-  it('has a input method', () => {
+  it('should have a input method', () => {
     expect(typeof FormSchema.methods.input).toBe('function')
   })
 
   // Evaluate the results of functions in
   // the raw component options
-  it('sets the correct default data', () => {
+  it('should set the correct default data', () => {
     expect(typeof FormSchema.data).toBe('function')
     const defaultData = FormSchema.data()
 
@@ -49,7 +49,7 @@ describe('FormSchema.vue', () => {
   })
 
   // Inspect the component instance on mount
-  it('correctly sets props', () => {
+  it('should correctly set props', () => {
     // Extend the component to get the constructor, which we can then initialize directly.
     const Constructor = Vue.extend(FormSchema)
     const model = {}

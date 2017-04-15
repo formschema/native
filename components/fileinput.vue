@@ -1,6 +1,6 @@
 <template>
   <div>
-    <input type="file" 
+    <input type="file"
       :id="id" 
       :name="name"
       :value="value"
@@ -11,6 +11,8 @@
       @input="input">
     <label :for="id" class="uk-placeholder uk-text-center">
       {{ placeholder }}</label>
+    <div v-if="errorMessage" class="uk-alert-danger" uk-alert>
+      {{ errorMessage }}</div>
   </div>
 </template>
 
@@ -30,10 +32,13 @@
     data () {
       return {
         initialValue: null,
-        hasError: false
+        errorMessage: null
       }
     },
     computed: {
+      hasError () {
+        return typeof this.errorMessage === 'string'
+      },
       classes () {
         return {
           [this.dataClassError]: this.hasError
@@ -45,18 +50,24 @@
     },
     methods: {
       invalid (e) {
-        this.hasError = true
+        this.setError(this.title)
         this.$emit('invalid', e)
       },
       input (e) {
         this.value = e.target.value
-        this.hasError = false
+        this.clearError()
 
         this.$emit('input', this.value)
 
         if (this.value !== this.initialValue) {
           this.$emit('changed')
         }
+      },
+      setError (message) {
+        this.errorMessage = message
+      },
+      clearError () {
+        this.errorMessage = null
       }
     }
   }
@@ -72,6 +83,17 @@
 
   input {
     position: absolute;
-    visibility: hidden
+    visibility: hidden;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  
+  
+  input + .uk-alert-danger {
+    font-size: .9em;
+    text-align: left;
+    margin-top: 0;
+    padding-top: 7px;
+    padding-bottom: 7px;
   }
 </style>

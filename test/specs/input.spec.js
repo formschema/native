@@ -16,32 +16,40 @@ const PROP_MAXLENGTH = 80
 
 /* global describe it expect */
 
-describe('Input.vue', () => {
+describe('Input', () => {
   // Inspect the raw component options
-  it('has a created hook', () => {
+  it('should have a created hook', () => {
     expect(typeof Input.created).toBe('function')
   })
 
-  it('has a invalid method', () => {
+  it('should have a invalid method', () => {
     expect(typeof Input.methods.invalid).toBe('function')
   })
 
-  it('has a input method', () => {
+  it('should have a input method', () => {
     expect(typeof Input.methods.input).toBe('function')
   })
 
-  it('has a keyup method', () => {
+  it('should have a keyup method', () => {
     expect(typeof Input.methods.keyup).toBe('function')
+  })
+
+  it('should have a setError method', () => {
+    expect(typeof Input.methods.setError).toBe('function')
+  })
+
+  it('should have a clearError method', () => {
+    expect(typeof Input.methods.clearError).toBe('function')
   })
 
   // Evaluate the results of functions in
   // the raw component options
-  it('sets the correct default data', () => {
+  it('should set the correct default data', () => {
     expect(typeof Input.data).toBe('function')
     const defaultData = Input.data()
 
     expect(defaultData.initialValue).toBe(null)
-    expect(defaultData.hasError).toBe(false)
+    expect(defaultData.errorMessage).toBe(null)
   })
 
   // Inspect the component instance on mount
@@ -55,11 +63,12 @@ describe('Input.vue', () => {
       }
     }).$mount()
 
-    const attr = (name) => component.$el.getAttribute(name)
+    const input = () => component.$el.querySelector('input')
+    const attr = (name) => input().getAttribute(name)
 
     expect(attr('type')).toBe(DEFAULT_TYPE)
     expect(attr('name')).toBe(PROP_NAME)
-    expect(component.value).toBe(PROP_VALUE)
+    expect(input().value).toBe(PROP_VALUE)
     expect(component.disabled).toBe(DEFAULT_DISABLED)
     expect(component.required).toBe(DEFAULT_REQUIRED)
     expect(component.autocomplete).toBe(DEFAULT_AUTOCOMPLETE)
@@ -77,11 +86,12 @@ describe('Input.vue', () => {
       }
     }).$mount()
 
-    const attr = (name) => component.$el.getAttribute(name)
+    const input = () => component.$el.querySelector('input')
+    const attr = (name) => input().getAttribute(name)
 
     expect(attr('type')).toBe(PROP_TYPE)
     expect(attr('name')).toBe(PROP_NAME)
-    expect(component.value).toBe(PROP_VALUE)
+    expect(input().value).toBe(PROP_VALUE)
     expect(attr('placeholder')).toBe(PROP_PLACEHOLDER)
     expect(parseInt(attr('maxlength'))).toBe(PROP_MAXLENGTH)
     expect(component.disabled).toBe(DEFAULT_DISABLED)
