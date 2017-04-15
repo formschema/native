@@ -14,6 +14,10 @@ describe('Textarea', () => {
     expect(typeof Input.created).toBe('function')
   })
 
+  it('should have a isEmpty method', () => {
+    expect(typeof Input.methods.isEmpty).toBe('function')
+  })
+
   it('should have a invalid method', () => {
     expect(typeof Input.methods.invalid).toBe('function')
   })
@@ -72,6 +76,9 @@ describe('Input.vue: correctly sets props', () => {
 
   it('should correctly set value prop', () =>
     expect(input().value).toBe(PROP_VALUE))
+
+  it('should not be empty', () =>
+    expect(component.isEmpty()).toBe(false))
 
   it('should correctly set rows prop', () =>
     expect(parseInt(attr('rows'))).toBe(PROP_ROWS))

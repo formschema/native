@@ -55,6 +55,9 @@
       this.initialValue = this.value
     },
     methods: {
+      isEmpty () {
+        return !this.value || this.value.length === 0
+      },
       invalid (e) {
         this.setError(this.title)
         this.$emit('invalid', e)

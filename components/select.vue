@@ -47,7 +47,8 @@
       },
       classes () {
         return {
-          [this.dataClassError]: this.hasError
+          [this.dataClassError]: this.hasError,
+          empty: this.isEmpty()
         }
       },
       currentValue () {
@@ -58,6 +59,9 @@
       this.initialValue = this.value
     },
     methods: {
+      isEmpty () {
+        return !this.value || this.value.length === 0
+      },
       invalid (e) {
         this.setError(this.title)
         this.$emit('invalid', e)
@@ -82,7 +86,7 @@
 </script>
 
 <style scoped>
-  .placeholder {
+  .empty, .placeholder {
     color: #999
   }
   

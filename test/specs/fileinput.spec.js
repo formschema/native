@@ -14,6 +14,10 @@ describe('FileInput', () => {
     expect(typeof Input.created).toBe('function')
   })
 
+  it('should have a isEmpty method', () => {
+    expect(typeof Input.methods.isEmpty).toBe('function')
+  })
+
   it('should have a invalid method', () => {
     expect(typeof Input.methods.invalid).toBe('function')
   })
