@@ -9,6 +9,7 @@ const DEFAULT_MULTIPLE = false
 
 const PROP_NAME = 'usergender'
 const PROP_VALUE = 'male'
+const PROP_TITLE = 'Please select an item'
 const PROP_PLACEHOLDER = 'your gender'
 const PROP_MULTIPLE = 'multiple'
 
@@ -77,6 +78,7 @@ describe('Select: props usage', () => {
     propsData: {
       name: PROP_NAME,
       value: PROP_VALUE,
+      title: PROP_TITLE,
       placeholder: PROP_PLACEHOLDER,
       multiple: PROP_MULTIPLE
     }
@@ -93,6 +95,12 @@ describe('Select: props usage', () => {
 
   it('should not be empty', () =>
     expect(component.isEmpty()).toBe(false))
+
+  it('should correctly set title prop', () =>
+    expect(component.title).toBe(PROP_TITLE))
+
+  it('should have title attribute', () =>
+    expect(attr('title')).toBe(PROP_TITLE))
 
   it('should correctly set placeholder prop', () =>
     expect(input().options[0].text).toBe(PROP_PLACEHOLDER))

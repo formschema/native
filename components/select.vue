@@ -3,6 +3,7 @@
     <select class="uk-select" v-model="value"
       :id="id" 
       :name="name"
+      :title="title"
       :class="classes"
       :multiple="multiple" 
       :required="required" 
