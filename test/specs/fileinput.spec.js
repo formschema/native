@@ -1,7 +1,7 @@
 'use strict'
 
 import Vue from 'vue'
-import FileInput from '../../components/file-input.vue'
+import FileInput from '../../components/fileinput.vue'
 
 const DEFAULT_DISABLED = false
 const DEFAULT_REQUIRED = false

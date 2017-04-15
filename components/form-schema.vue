@@ -48,7 +48,7 @@
                   @changed="changed"></v-textarea>
               </template>
               <template v-else-if="field.type === 'file'">
-                <v-file-input v-model="value[field.name]" 
+                <v-fileinput v-model="value[field.name]" 
                   :id="field.id" 
                   :ref="field.name"
                   :name="field.name"
@@ -102,7 +102,7 @@
   import VInput from './input.vue'
   import VSelect from './select.vue'
   import VTextarea from './textarea.vue'
-  import VFileInput from './file-input.vue'
+  import VFileinput from './fileinput.vue'
   import VCheckbox from './checkbox.vue'
 
   import { clone } from '../lib/object'
@@ -164,7 +164,7 @@
       }
     },
     components: {
-      VInput, VSelect, VTextarea, VFileInput, VCheckbox
+      VInput, VSelect, VTextarea, VFileinput, VCheckbox
     }
   }
 </script>

@@ -16,7 +16,7 @@
 
 <script>
   export default {
-    name: 'v-file-input',
+    name: 'v-fileinput',
     props: {
       id: { type: String },
       name: { type: String },
