@@ -1,10 +1,13 @@
 {
   "name": "vue-json-schema",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Vue component form based on JSON Schema",
+  "main": "component.vue",
   "scripts": {
     "pretest": "eslint --ext .js,.vue components test/specs",
-    "test": "karma start karma.conf.js"
+    "test": "karma start karma.conf.js",
+    "posttest": "make readme",
+    "prepublish": "npm test"
   },
   "repository": {
     "type": "git",
@@ -12,7 +15,6 @@
   },
   "keywords": [
     "vue",
-    "component",
     "form",
     "json",
     "schema"
@@ -24,33 +26,43 @@
   },
   "homepage": "https://github.com/demsking/vue-json-schema#readme",
   "devDependencies": {
-    "babel-core": "^6.0.0",
-    "babel-eslint": "^7.1.1",
-    "babel-loader": "^6.4.1",
+    "@vuedoc/md": "^0.3.3",
+    "babel-core": "^6.24.1",
+    "babel-eslint": "^7.2.3",
+    "babel-loader": "^7.0.0",
     "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-es2015": "^6.0.0",
-    "babel-preset-stage-2": "^6.0.0",
-    "babel-preset-vue-app": "^1.0.0",
-    "babel-runtime": "^6.0.0",
-    "css-loader": "^0.26.1",
-    "eslint": "^3.14.1",
-    "eslint-config-standard": "^6.2.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "babel-preset-vue-app": "^1.2.0",
+    "babel-runtime": "^6.23.0",
+    "css-loader": "^0.28.0",
+    "eslint": "^3.19.0",
+    "eslint-config-standard": "^10.2.1",
     "eslint-friendly-formatter": "^2.0.7",
-    "eslint-loader": "^1.6.1",
-    "eslint-plugin-html": "^2.0.0",
-    "eslint-plugin-promise": "^3.4.0",
-    "eslint-plugin-standard": "^2.0.1",
-    "jasmine-core": "^2.5.2",
+    "eslint-loader": "^1.7.1",
+    "eslint-plugin-html": "^2.0.1",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-node": "^4.2.2",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "jasmine-core": "^2.6.1",
     "karma": "^1.6.0",
     "karma-jasmine": "^1.1.0",
     "karma-phantomjs-launcher": "^1.0.4",
-    "karma-spec-reporter": "0.0.30",
+    "karma-spec-reporter": "0.0.31",
     "karma-webpack": "^2.0.3",
     "phantomjs": "^2.1.7",
-    "vue": "^2.0.1",
-    "vue-loader": "^11.3.4",
-    "vue-style-loader": "^2.0.5",
-    "vueify": "^9.0.0",
-    "webpack": "^2.3.3"
+    "vue": "^2.3.0",
+    "vue-loader": "^12.0.2",
+    "vue-style-loader": "^3.0.1",
+    "vueify": "^9.4.1",
+    "webpack": "^2.4.1"
+  },
+  "dependencies": {
+    "@vx-components/checkbox": "^0.1.1",
+    "@vx-components/fileinput": "^0.1.1",
+    "@vx-components/input": "^0.1.3",
+    "@vx-components/select": "^0.1.3",
+    "@vx-components/textarea": "^0.1.1"
   }
 }

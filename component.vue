@@ -2,16 +2,20 @@
   <div>
     <h1 v-if="schema.title">{{ schema.title }}</h1>
     <div v-if="error" class="uk-alert-danger" uk-alert>
-      <a class="uk-alert-close" @click="alertClosed" uk-close></a>
+      <a class="uk-alert-close" @click="clearErrorMessage" uk-close></a>
       <h3 v-if="title">{{ title }}</h3>
       <p>{{ error }}</p>
     </div>
-    <form v-if="fields.length" ref="__form" class="uk-form-stacked" @submit.stop.prevent="submit">
+    <form v-if="fields.length" ref="__form" class="uk-form-stacked"
+      :autocomplete="autocomplete"
+      :novalidate="novalidate"
+      @submit.stop.prevent="submit"
+      @invalid="invalid">
       <template v-for="field in fields">
         <div class="uk-margin">
           <template v-if="field.type === 'checkbox'">
             <label :title="field.title">
-              <v-checkbox v-model="value[field.name]" class="uk-checkbox"
+              <vx-checkbox v-model="value[field.name]" class="uk-checkbox"
                 :id="field.id"
                 :ref="field.name"
                 :name="field.name"
@@ -21,7 +25,7 @@
                 :disabled="field.disabled"
                 :required="field.required"
                 :data-class-error="dataClassError"
-                @changed="changed"></v-checkbox>
+                @change="changed"></vx-checkbox>
               <template v-if="field.description">
                 <br>
                 <small>{{ field.description }}</small>
@@ -33,7 +37,7 @@
             <small v-if="field.description">{{ field.description }}</small>
             <div class="uk-form-controls">
               <template v-if="field.type === 'textarea'">
-                <v-textarea v-model="value[field.name]"
+                <vx-textarea v-model="value[field.name]"
                   :id="field.id"
                   :ref="field.name"
                   :name="field.name"
@@ -45,10 +49,10 @@
                   :disabled="field.disabled" 
                   :required="field.required"
                   :data-class-error="dataClassError"
-                  @changed="changed"></v-textarea>
+                  @change="changed"></vx-textarea>
               </template>
               <template v-else-if="field.type === 'file'">
-                <v-fileinput v-model="value[field.name]" 
+                <vx-fileinput v-model="value[field.name]" 
                   :id="field.id" 
                   :ref="field.name"
                   :name="field.name"
@@ -60,7 +64,7 @@
                   @change="changed"/>
               </template>
               <template v-else-if="field.type === 'select'">
-                <v-select v-model="value[field.name]" 
+                <vx-select v-model="value[field.name]" 
                   :id="field.id" 
                   :ref="field.name" 
                   :name="field.name" 
@@ -71,10 +75,10 @@
                   :disabled="field.disabled" 
                   :placeholder="field.placeholder" 
                   :data-class-error="dataClassError"
-                  @change="changed"></v-select>
+                  @change="changed"></vx-select>
               </template>
               <template v-else>
-                <v-input v-model="value[field.name]"
+                <vx-input v-model="value[field.name]"
                   :id="field.id"
                   :ref="field.name"
                   :type="field.type"
@@ -87,12 +91,13 @@
                   :required="field.required"
                   :autocomplete="field.autocomplete"
                   :data-class-error="dataClassError"
-                  @changed="changed"></v-input>
+                  @change="changed"></vx-input>
               </template>
             </div>
           </template>
         </div>
       </template>
+      <!-- Use this slot to override the default form button -->
       <slot>
         <button type="submit" class="uk-button uk-button-default">Submit</button>
       </slot>
@@ -101,38 +106,46 @@
 </template>
 
 <script>
-  import VInput from './input.vue'
-  import VSelect from './select.vue'
-  import VTextarea from './textarea.vue'
-  import VFileinput from './fileinput.vue'
-  import VCheckbox from './checkbox.vue'
+  import VxInput from '@vx-components/input'
+  import VxSelect from '@vx-components/select'
+  import VxTextarea from '@vx-components/textarea'
+  import VxFileinput from '@vx-components/fileinput'
+  import VxCheckbox from '@vx-components/checkbox'
 
-  import { clone } from '../lib/object'
-  import { loadFields } from '../lib/parser'
+  import { clone } from './lib/object'
+  import { loadFields } from './lib/parser'
 
   export default {
     name: 'form-schema',
     props: {
-      schema: {
-        type: Object,
-        required: true
-      },
-      value: {
-        type: Object,
-        default: () => ({})
-      },
-      dataClassError: {
-        type: String,
-        default: 'uk-form-danger'
-      }
+      /**
+       * The JSON Schema object. Use the `v-if` directive to load asynchronous schema.
+       */
+      schema: { type: Object, required: true },
+
+      /**
+       * Use this directive to create two-way data bindings with the component. It automatically picks the correct way to update the element based on the input type.
+       * @model
+       */
+      value: { type: Object, default: () => ({}) },
+
+      /**
+       * This property indicates whether the value of the control can be automatically completed by the browser. Possible values are: `off` and `on`.
+       */
+      autocomplete: { type: String },
+
+      /**
+       * This Boolean attribute indicates that the form is not to be validated when submitted.
+       */
+      novalidate: { type: Boolean },
+
+      dataClassError: { type: String, default: 'uk-form-danger' }
     },
-    data () {
-      return {
-        default: {},
-        fields: [],
-        error: null
-      }
-    },
+    data: () => ({
+      default: {},
+      fields: [],
+      error: null
+    }),
     created () {
       loadFields(this, clone(this.schema))
       this.default = clone(this.value)
@@ -141,35 +154,73 @@
       this.reset()
     },
     methods: {
+      /**
+       * @private
+       */
       changed (e) {
-        this.$emit('changed', true)
+        /**
+         * Fired when an form input value is changed.
+         */
+        this.$emit('change', e)
       },
-      submit () {
-        if (this.$refs.__form.checkValidity()) {
-          this.$emit('input', this.value)
-          this.$emit('submit')
-        }
-      },
-      reset () {
-        for (let key in this.default) {
-          this.$set(this.value, key, this.default[key])
-        }
-      },
-      alertClosed () {
-        this.error = null
-      },
-      setErrorMessage (message) {
-        this.error = message
-      },
+
+      /**
+       * Get a form input component
+       */
       input (name) {
         if (!this.$refs[name]) {
           throw new Error(`Undefined input reference '${name}'`)
         }
         return this.$refs[name][0]
+      },
+
+      /**
+       * @private
+       */
+      invalid (e) {
+        /**
+         * Fired when a submittable element has been checked and doesn't satisfy its constraints. The validity of submittable elements is checked before submitting their owner form.
+         */
+        this.$emit('invalid', e)
+      },
+
+      /**
+       * Reset the value of all elements of the parent form.
+       */
+      reset () {
+        for (let key in this.default) {
+          this.$set(this.value, key, this.default[key])
+        }
+      },
+
+      /**
+       * Send the content of the form to the server
+       */
+      submit () {
+        if (this.$refs.__form.checkValidity()) {
+          /**
+           * Fired when a form is submitted
+           */
+          this.$emit('submit')
+        }
+      },
+
+      /**
+       * Set a message error.
+       */
+      setErrorMessage (message) {
+        this.error = message
+      },
+
+      /**
+       * clear the message error.
+       */
+      clearErrorMessage () {
+        this.error = null
       }
     },
     components: {
-      VInput, VSelect, VTextarea, VFileinput, VCheckbox
+      VxInput, VxSelect, VxTextarea, VxFileinput, VxCheckbox
     }
   }
 </script>

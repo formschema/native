@@ -1,14 +1,12 @@
 'use strict'
 
 import Vue from 'vue'
-import FormSchema from '../../components/form-schema.vue'
-
-import SignupSchema from '../fixtures/signup'
+import FormSchema from '../../component.vue'
+import Schema from '../fixtures/signup'
 
 /* global describe it expect */
 
-describe('FormSchema', () => {
-  // Inspect the raw component options
+describe('component', () => {
   it('should have a created hook', () => {
     expect(typeof FormSchema.created).toBe('function')
   })
@@ -17,24 +15,28 @@ describe('FormSchema', () => {
     expect(typeof FormSchema.mounted).toBe('function')
   })
 
-  it('should have a submit method', () => {
-    expect(typeof FormSchema.methods.submit).toBe('function')
+  it('should have a changed method', () => {
+    expect(typeof FormSchema.methods.changed).toBe('function')
+  })
+
+  it('should have a input method', () => {
+    expect(typeof FormSchema.methods.input).toBe('function')
   })
 
   it('should have a reset method', () => {
     expect(typeof FormSchema.methods.reset).toBe('function')
   })
 
-  it('should have a alertClosed method', () => {
-    expect(typeof FormSchema.methods.alertClosed).toBe('function')
+  it('should have a submit method', () => {
+    expect(typeof FormSchema.methods.submit).toBe('function')
   })
 
   it('should have a setErrorMessage method', () => {
     expect(typeof FormSchema.methods.setErrorMessage).toBe('function')
   })
 
-  it('should have a input method', () => {
-    expect(typeof FormSchema.methods.input).toBe('function')
+  it('should have a clearErrorMessage method', () => {
+    expect(typeof FormSchema.methods.clearErrorMessage).toBe('function')
   })
 
   // Evaluate the results of functions in
@@ -49,13 +51,12 @@ describe('FormSchema', () => {
   })
 })
 
-describe('FormSchema: inputs validation', () => {
-  // Extend the component to get the constructor, which we can then initialize directly.
+describe('schema', () => {
   const Constructor = Vue.extend(FormSchema)
   const model = {}
   const component = new Constructor({
     propsData: {
-      schema: SignupSchema,
+      schema: Schema,
       model: model
     }
   }).$mount()
@@ -66,11 +67,11 @@ describe('FormSchema: inputs validation', () => {
 
   const attr = (input, name) => input.getAttribute(name)
 
-  for (let fieldName in SignupSchema.properties) {
-    const field = SignupSchema.properties[fieldName]
+  for (let fieldName in Schema.properties) {
+    const field = Schema.properties[fieldName]
 
     if (field.visible === false) {
-      it(`invisible input '${fieldName}' should undefined`, () =>
+      it(`invisible input.${fieldName} should be undefined`, () =>
         expect(inputs[fieldName]).toBe(undefined))
       continue
     }
@@ -104,7 +105,7 @@ describe('FormSchema: inputs validation', () => {
     }
 
     for (let attrName in field.attrs) {
-      it(`input '${fieldName}' should have attribute '${attrName}'`, () =>
+      it(`input.${fieldName} should have attribute '${attrName}'`, () =>
         expect(attr(input, attrName)).toMatch(new RegExp(`${field.attrs[attrName]}`)))
     }
   }
