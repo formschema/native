@@ -1,110 +1,3 @@
-<template>
-  <div>
-    <h1 v-if="schema.title">{{ schema.title }}</h1>
-    <div v-if="error" class="uk-alert-danger" uk-alert>
-      <a class="uk-alert-close" @click="clearErrorMessage" uk-close></a>
-      <h3 v-if="title">{{ title }}</h3>
-      <p>{{ error }}</p>
-    </div>
-    <form v-if="fields.length" ref="__form" class="uk-form-stacked"
-      :autocomplete="autocomplete"
-      :novalidate="novalidate"
-      @submit.stop.prevent="submit"
-      @invalid="invalid">
-      <template v-for="field in fields">
-        <div class="uk-margin">
-          <template v-if="field.type === 'checkbox'">
-            <label :title="field.title">
-              <vx-checkbox v-model="value[field.name]" class="uk-checkbox"
-                :id="field.id"
-                :ref="field.name"
-                :name="field.name"
-                :title="field.title"
-                :label="field.label"
-                :checked="field.checked"
-                :disabled="field.disabled"
-                :required="field.required"
-                :data-class-error="dataClassError"
-                @change="changed"></vx-checkbox>
-              <template v-if="field.description">
-                <br>
-                <small>{{ field.description }}</small>
-              </template>
-            </label>
-          </template>
-          <template v-else>
-            <label v-if="field.label" :for="field.id" class="uk-form-label">{{ field.label }}</label>
-            <small v-if="field.description">{{ field.description }}</small>
-            <div class="uk-form-controls">
-              <template v-if="field.type === 'textarea'">
-                <vx-textarea v-model="value[field.name]"
-                  :id="field.id"
-                  :ref="field.name"
-                  :name="field.name"
-                  :title="field.title"
-                  :placeholder="field.placeholder"
-                  :rows="field.rows"
-                  :minlength="field.minlength"
-                  :maxlength="field.maxlength"
-                  :disabled="field.disabled" 
-                  :required="field.required"
-                  :data-class-error="dataClassError"
-                  @change="changed"></vx-textarea>
-              </template>
-              <template v-else-if="field.type === 'file'">
-                <vx-fileinput v-model="value[field.name]" 
-                  :id="field.id" 
-                  :ref="field.name"
-                  :name="field.name"
-                  :title="field.title"
-                  :placeholder="field.placeholder" 
-                  :disabled="field.disabled"
-                  :required="field.required"
-                  :data-class-error="dataClassError"
-                  @change="changed"/>
-              </template>
-              <template v-else-if="field.type === 'select'">
-                <vx-select v-model="value[field.name]" 
-                  :id="field.id" 
-                  :ref="field.name" 
-                  :name="field.name" 
-                  :title="field.title"
-                  :options="field.items" 
-                  :multiple="field.multiple" 
-                  :required="field.required" 
-                  :disabled="field.disabled" 
-                  :placeholder="field.placeholder" 
-                  :data-class-error="dataClassError"
-                  @change="changed"></vx-select>
-              </template>
-              <template v-else>
-                <vx-input v-model="value[field.name]"
-                  :id="field.id"
-                  :ref="field.name"
-                  :type="field.type"
-                  :name="field.name"
-                  :title="field.title"
-                  :placeholder="field.placeholder"
-                  :minlength="field.minlength"
-                  :maxlength="field.maxlength"
-                  :disabled="field.disabled"
-                  :required="field.required"
-                  :autocomplete="field.autocomplete"
-                  :data-class-error="dataClassError"
-                  @change="changed"></vx-input>
-              </template>
-            </div>
-          </template>
-        </div>
-      </template>
-      <!-- Use this slot to override the default form button -->
-      <slot>
-        <button type="submit" class="uk-button uk-button-default">Submit</button>
-      </slot>
-    </form>
-  </div>
-</template>
-
 <script>
   import VxInput from '@vx-components/input'
   import VxSelect from '@vx-components/select'
@@ -114,6 +7,19 @@
 
   import { clone } from './lib/object'
   import { loadFields } from './lib/parser'
+
+  const inputs = {
+    select: VxSelect,
+    checkbox: VxCheckbox,
+    textarea: VxTextarea,
+    input: VxInput,
+    file: VxFileinput
+  }
+  const components = {}
+
+  Object.keys(inputs).forEach((type) => {
+    components[inputs[type].name] = inputs[type]
+  })
 
   export default {
     name: 'form-schema',
@@ -149,6 +55,125 @@
     created () {
       loadFields(this, clone(this.schema))
       this.default = clone(this.value)
+    },
+    render (createElement) {
+      const nodes = []
+
+      if (this.schema.title) {
+        nodes.push(createElement('h1', this.schema.title))
+      }
+
+      if (this.error) {
+        nodes.push(createElement('div', {
+          class: this.dataClassError,
+          attrs: { 'uk-alert': 'uk-alert' }
+        }, [
+          createElement('a', {
+            class: 'uk-alert-close',
+            on: {
+              click: this.clearErrorMessage
+            },
+            attrs: { 'uk-close': 'uk-close' }
+          }),
+          createElement('p', this.title)
+        ]))
+      }
+
+      if (this.fields.length) {
+        const formNodes = []
+
+        this.fields.forEach((field) => {
+          if (!field.hasOwnProperty('data-class-error')) {
+            field['data-class-error'] = this.dataClassError
+          }
+
+          delete field.value
+
+          const component = inputs[field.type] || inputs.input
+          const input = createElement(component.name, {
+            ref: field.name,
+            props: field,
+            domProps: {
+              value: this.value[field.name]
+            },
+            on: {
+              input: () => {
+                this.value[field.name] = event.target.value
+              },
+              change: this.changed
+            },
+          })
+
+          const formControlsNodes = []
+
+          if (field.label) {
+            if (field.type !== 'checkbox' && field.type !== 'radio') {
+              formControlsNodes.push(createElement('label', {
+                class: 'uk-form-label',
+                attrs: {
+                  for: field.id
+                }
+              }, field.label))
+            }
+          }
+
+          if (field.description) {
+            formControlsNodes.push(createElement('br'))
+            formControlsNodes.push(createElement('small', field.description))
+          }
+
+          switch (field.type) {
+            case 'radio':
+            case 'checkbox':
+              const labelNode = createElement('label', {
+                attrs: { title: field.title }
+              }, [input])
+
+              formControlsNodes.push(labelNode)
+              break
+
+            default:
+              formControlsNodes.push(input)
+          }
+
+          const formControlsNode = createElement('div', {
+            class: 'uk-form-controls'
+          }, formControlsNodes)
+
+          const marginNode = createElement('div', {
+            class: 'uk-margin'
+          }, [formControlsNode])
+
+          formNodes.push(marginNode)
+        })
+
+        if (this.$slots.hasOwnProperty('default')) {
+          formNodes.push(this.$slots.default)
+        } else {
+          formNodes.push(createElement('button', {
+            class: 'uk-button uk-button-default',
+            attrs: { type: 'submit' }
+          }, 'Submit'))
+        }
+
+        nodes.push(createElement('form', {
+          ref: '__form',
+          class: 'uk-form-stacked',
+          attrs: {
+            autocomplete: this.autocomplete,
+            novalidate: this.novalidate
+          },
+          on: {
+            submit: (event) => {
+              event.stopPropagation()
+              this.submit(event)
+            },
+            invalid: this.invalid
+          }
+        }, formNodes))
+      }
+
+      return createElement('div', nodes)
     },
     mounted () {
       this.reset()
@@ -219,15 +244,6 @@
         this.error = null
       }
     },
-    components: {
-      VxInput, VxSelect, VxTextarea, VxFileinput, VxCheckbox
-    }
+    components: components
   }
 </script>
-
-<style scoped>
-  small {
-    display: inline-block;
-    margin-bottom: 5px
-  }
-</style>

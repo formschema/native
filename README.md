@@ -28,8 +28,6 @@ This property indicates whether the value of the control can be automatically co
 This Boolean attribute indicates that the form is not to be validated when submitted. 
 
 - `data-class-error` ***String*** (*optional*) `default: 'uk-form-danger'` 
-### slots 
-- `default` Use this slot to override the default form button 
 
 ### events 
 - `change` Fired when an form input value is changed. 

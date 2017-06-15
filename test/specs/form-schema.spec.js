@@ -100,7 +100,7 @@ describe('schema', () => {
       field.attrs.required = true
 
       if (field.attrs.placeholder) {
-//         field.attrs.placeholder += ' *'
+        // field.attrs.placeholder += ' *'
       }
     }
 
