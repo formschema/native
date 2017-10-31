@@ -54,7 +54,7 @@
     "karma-webpack": "^2.0.3",
     "vue": "^2.3.4",
     "vue-loader": "^12.2.1",
-    "vue-style-loader": "^3.0.1",
+    "vue-style-loader": "^3.0.3",
     "phantomjs-prebuilt": "^2.1.14",
     "vueify": "^9.4.1",
     "webpack": "^2.6.1"
