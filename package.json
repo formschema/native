@@ -37,7 +37,7 @@
     "babel-preset-vue-app": "^1.2.0",
     "babel-runtime": "^6.23.0",
     "css-loader": "^0.28.4",
-    "eslint": "^4.0.0",
+    "eslint": "^4.10.0",
     "eslint-config-standard": "^10.2.1",
     "eslint-friendly-formatter": "^3.0.0",
     "eslint-loader": "^1.8.0",
