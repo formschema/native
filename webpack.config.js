@@ -1,10 +1,14 @@
 var path = require('path')
 var webpack = require('webpack')
 
+function resolve (file) {
+  return path.join(__dirname, file)
+}
+
 module.exports = {
-  entry: path.resolve(__dirname, 'component.vue'),
+  entry: resolve('component.vue'),
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: resolve('dist'),
     filename: 'vue-json-schema.js',
     libraryTarget: 'umd',
     library: 'vue-json-schema',
@@ -13,10 +17,20 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.(js|vue)$/,
+        loader: 'eslint-loader',
+        enforce: 'pre',
+        include: [resolve('src'), resolve('test')],
+        options: {
+          formatter: require('eslint-friendly-formatter')
+        }
+      },
+      {
         test: /\.js$/,
         loader: 'babel-loader',
         include: __dirname,
-        exclude: /node_modules/
+        exclude: /node_modules/,
+        query: { compact: false }
       },
       {
         test: /\.vue$/,
