@@ -51,7 +51,7 @@
     "karma-jasmine": "^1.1.0",
     "karma-phantomjs-launcher": "^1.0.4",
     "karma-spec-reporter": "0.0.31",
-    "karma-webpack": "^2.0.3",
+    "karma-webpack": "^2.0.5",
     "vue": "^2.3.4",
     "vue-loader": "^12.2.1",
     "vue-style-loader": "^3.0.1",
