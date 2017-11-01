@@ -2,12 +2,13 @@
   "name": "vue-json-schema",
   "version": "0.7.0",
   "description": "Vue component form based on JSON Schema",
-  "main": "component.vue",
+  "main": "dist/vue-json-schema.js",
   "scripts": {
     "pretest": "eslint --ext .js,.vue components test/specs",
     "test": "karma start karma.conf.js",
     "posttest": "make readme",
     "prepublish": "npm test",
+    "build": "node build",
     "tag": "git tag `node -p 'require(\"./package\").version'`"
   },
   "repository": {
@@ -52,10 +53,12 @@
     "karma-phantomjs-launcher": "^1.0.4",
     "karma-spec-reporter": "0.0.31",
     "karma-webpack": "^2.0.3",
+    "ora": "^1.3.0",
+    "phantomjs-prebuilt": "^2.1.14",
+    "rimraf": "^2.6.2",
     "vue": "^2.3.4",
     "vue-loader": "^12.2.1",
     "vue-style-loader": "^3.0.1",
-    "phantomjs-prebuilt": "^2.1.14",
     "vueify": "^9.4.1",
     "webpack": "^2.6.1"
   },
