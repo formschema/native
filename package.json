@@ -59,7 +59,6 @@
     "vue": "^2.3.4",
     "vue-loader": "^12.2.1",
     "vue-style-loader": "^3.0.1",
-    "vueify": "^9.4.1",
     "webpack": "^2.6.1"
   },
   "dependencies": {
