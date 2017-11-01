@@ -1,0 +1,7 @@
+test
+src
+build
+config
+.*
+Makefile
+*.tgz
