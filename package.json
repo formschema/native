@@ -46,7 +46,7 @@
     "eslint-plugin-node": "^5.0.0",
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
-    "jasmine-core": "^2.6.3",
+    "jasmine-core": "^2.8.0",
     "karma": "^1.7.0",
     "karma-jasmine": "^1.1.0",
     "karma-phantomjs-launcher": "^1.0.4",
