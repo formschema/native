@@ -1,40 +1,45 @@
 var path = require('path')
 var webpack = require('webpack')
 
-function resolve (dir) {
-  return path.join(__dirname, dir)
-}
-
 module.exports = {
-  entry: './src/main.js',
+  entry: path.resolve(__dirname, 'component.vue'),
   output: {
-    path: path.resolve(__dirname, './dist'),
-    publicPath: '/dist/',
-    filename: 'build.js'
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'vue-json-schema.js',
+    libraryTarget: 'umd',
+    library: 'vue-json-schema',
+    umdNamedDefine: true
   },
   module: {
     rules: [
       {
-        test: /\.vue$/,
-        loader: 'vue-loader',
-        options: {
-          loaders: {
-          }
-          // other vue-loader options go here
-        }
-      },
-      {
         test: /\.js$/,
         loader: 'babel-loader',
-        exclude: /node_modules/,
-        include: [resolve('lib'), resolve('components'), resolve('test')]
+        include: __dirname,
+        exclude: /node_modules/
+      },
+      {
+        test: /\.vue$/,
+        loader: 'vue-loader'
       }
     ]
   },
-  resolve: {
-    alias: {
-      'vue$': 'vue/dist/vue.esm.js'
-    }
+  plugins: [
+    new webpack.optimize.UglifyJsPlugin( {
+      minimize : true,
+      sourceMap : false,
+      mangle: true,
+      compress: {
+        warnings: false
+      }
+    })
+  ],
+  externals: {
+    '@vx-components/input': '@vx-components/input',
+    '@vx-components/select': '@vx-components/select',
+    '@vx-components/textarea': '@vx-components/textarea',
+    '@vx-components/fileinput': '@vx-components/fileinput',
+    '@vx-components/checkbox': '@vx-components/checkbox'
   },
   devServer: {
     historyApiFallback: true,
