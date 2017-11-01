@@ -99,7 +99,7 @@ In your Vue file:
 </template>
 
 <script>
-  import FormSchema from 'vue-form-schema'
+  import FormSchema from 'vue-json-schema'
   import schema from './schema/newsletter-subscription.json'
 
   export default {
