@@ -1,6 +1,7 @@
 'use strict'
 
 import Vue from 'vue'
+
 import FormSchema from '../../component.vue'
 import Schema from '../fixtures/signup'
 

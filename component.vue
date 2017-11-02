@@ -1,25 +1,19 @@
 <script>
-  import VxInput from '@vx-components/input'
-  import VxSelect from '@vx-components/select'
-  import VxTextarea from '@vx-components/textarea'
-  import VxFileinput from '@vx-components/fileinput'
-  import VxCheckbox from '@vx-components/checkbox'
-
   import { clone } from './lib/object'
   import { loadFields } from './lib/parser'
 
-  const inputs = {
-    select: VxSelect,
-    checkbox: VxCheckbox,
-    textarea: VxTextarea,
-    input: VxInput,
-    file: VxFileinput
+  const components = {
+    file: 'input',
+    input: 'input',
+    radio: 'input',
+    select: 'select',
+    checkbox: 'input',
+    textarea: 'textarea'
   }
-  const components = {}
 
-  Object.keys(inputs).forEach((type) => {
-    components[inputs[type].name] = inputs[type]
-  })
+  export function set (type, component) {
+    components[type] = component
+  }
 
   export default {
     name: 'form-schema',
@@ -89,10 +83,11 @@
 
           delete field.value
 
-          const component = inputs[field.type] || inputs.input
-          const input = createElement(component.name, {
+          const component = components[field.type] || 'input'
+          const attrsName = typeof component === 'string' ? 'attrs' : 'props'
+          const input = createElement(component, {
             ref: field.name,
-            props: field,
+            [attrsName]: field,
             domProps: {
               value: this.value[field.name]
             },
@@ -101,7 +96,7 @@
                 this.value[field.name] = event.target.value
               },
               change: this.changed
-            },
+            }
           })
 
           const formControlsNodes = []
@@ -243,7 +238,6 @@
       clearErrorMessage () {
         this.error = null
       }
-    },
-    components: components
+    }
   }
 </script>
