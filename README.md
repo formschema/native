@@ -1,12 +1,9 @@
 # vue-json-schema
-
 Vue component form based on JSON Schema
-
 [![Build Status](https://travis-ci.org/demsking/vue-json-schema.svg?branch=master)](https://travis-ci.org/demsking/vue-json-schema)
 [![bitHound Overall Score](https://www.bithound.io/github/demsking/vue-json-schema/badges/score.svg)](https://www.bithound.io/github/demsking/vue-json-schema)
 [![bitHound Dependencies](https://www.bithound.io/github/demsking/vue-json-schema/badges/dependencies.svg)](https://www.bithound.io/github/demsking/vue-json-schema/master/dependencies/npm)
 [![bitHound Code](https://www.bithound.io/github/demsking/vue-json-schema/badges/code.svg)](https://www.bithound.io/github/demsking/vue-json-schema)
-
 
 ## Install
 ```sh
@@ -14,6 +11,7 @@ npm install --save vue-json-schema
 ```
 
 ## FormSchema API
+
 ### props 
 - `schema` ***Object*** (*required*) 
 The JSON Schema object. Use the `v-if` directive to load asynchronous schema. 
@@ -37,7 +35,7 @@ This Boolean attribute indicates that the form is not to be validated when submi
 - `submit` Fired when a form is submitted 
 
 ### methods 
-- `input()` 
+- `input(name)` 
 Get a form input component 
 
 - `reset()` 
@@ -46,16 +44,14 @@ Reset the value of all elements of the parent form.
 - `submit()` 
 Send the content of the form to the server 
 
-- `setErrorMessage()` 
+- `setErrorMessage(message)` 
 Set a message error. 
 
 - `clearErrorMessage()` 
 clear the message error. 
 
-
 ## Usage
 Define your [JSON Schema](http://json-schema.org) file:
-
 ```json
 {
     "$schema": "http://json-schema.org/draft-04/schema#",
@@ -88,9 +84,7 @@ Define your [JSON Schema](http://json-schema.org) file:
     "required": ["name", "email", "lists"]
 }
 ```
-
 In your Vue file:
-
 ```html
 <template>
   <form-schema :schema="schema" v-model="model" @submit="submit">
@@ -119,5 +113,4 @@ In your Vue file:
 ```
 
 ## License
-
 Under the MIT license. See [LICENSE](https://github.com/demsking/vue-json-schema/blob/master/LICENSE) file for more details.
