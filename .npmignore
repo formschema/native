@@ -1,7 +1,11 @@
 test
 src
+lib
 build
 config
 .*
 Makefile
 *.tgz
+*.js
+*.bak
+*.vue
