@@ -35,7 +35,7 @@
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
     "babel-preset-vue-app": "^1.2.0",
-    "babel-runtime": "^6.23.0",
+    "babel-runtime": "^6.26.0",
     "css-loader": "^0.28.4",
     "eslint": "^4.0.0",
     "eslint-config-standard": "^10.2.1",
