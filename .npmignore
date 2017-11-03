@@ -3,7 +3,10 @@ src
 lib
 build
 config
-.*
+.directory
+.eslintrc
+.gitignore
+.travis.yml
 Makefile
 *.tgz
 *.js
