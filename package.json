@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/demsking/vue-json-schema#readme",
   "devDependencies": {
-    "@vuedoc/md": "^0.3.3",
+    "@vuedoc/md": "^1.0.0",
     "babel-core": "^6.25.0",
     "babel-eslint": "^7.2.3",
     "babel-loader": "^7.0.0",
