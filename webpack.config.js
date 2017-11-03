@@ -43,24 +43,11 @@ module.exports = {
       minimize : true,
       sourceMap : false,
       mangle: true,
+      parallel: true,
       compress: {
         warnings: false
       }
     })
   ],
-  externals: {
-    '@vx-components/input': '@vx-components/input',
-    '@vx-components/select': '@vx-components/select',
-    '@vx-components/textarea': '@vx-components/textarea',
-    '@vx-components/fileinput': '@vx-components/fileinput',
-    '@vx-components/checkbox': '@vx-components/checkbox'
-  },
-  devServer: {
-    historyApiFallback: true,
-    noInfo: true
-  },
-  performance: {
-    hints: false
-  },
-  devtool: '#eval-source-map'
+  externals: {}
 }
