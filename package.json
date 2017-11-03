@@ -62,7 +62,7 @@
   "dependencies": {
     "@vx-components/checkbox": "^0.1.1",
     "@vx-components/fileinput": "^0.1.1",
-    "@vx-components/input": "^0.1.4",
+    "@vx-components/input": "^0.1.6",
     "@vx-components/select": "^0.1.4",
     "@vx-components/textarea": "^0.1.2"
   }
