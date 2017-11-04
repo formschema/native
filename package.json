@@ -9,7 +9,7 @@
     "posttest": "make readme",
     "prepublish": "npm test",
     "build": "npm test && node build",
-    "tag": "git tag `node -p 'require(\"./package\").version'`"
+    "tag": "git tag v`node -p 'require(\"./package\").version'`"
   },
   "repository": {
     "type": "git",
