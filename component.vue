@@ -11,10 +11,6 @@
     textarea: 'textarea'
   }
 
-  export function set (type, component) {
-    components[type] = component
-  }
-
   export default {
     name: 'form-schema',
     props: {
@@ -49,7 +45,7 @@
     }),
     created () {
       loadFields(this, clone(this.schema))
-      this.default = clone(this.value)
+      this.default = this.data = clone(this.value)
     },
     render (createElement) {
       const nodes = []
@@ -82,11 +78,11 @@
             field['data-class-error'] = this.dataClassError
           }
 
-          delete field.value
-
           const component = components[field.type] || 'input'
-          const attrsName = typeof component === 'string' ? 'attrs' : 'props'
+          const isNativeComponent = typeof component === 'string'
+          const attrsName = isNativeComponent ? 'attrs' : 'props'
           const children = []
+
           const input = {
             ref: field.name,
             [attrsName]: field,
@@ -95,14 +91,18 @@
             },
             on: {
               input: (event) => {
-                this.$set(this.data, field.name, event.target.value)
+                const value = typeof event === 'string'
+                  ? event
+                  : event.target.value
+
+                this.$set(this.data, field.name, value)
                 this.$emit('input', this.data)
               },
               change: this.changed
             }
           }
 
-          if (typeof component === 'string') {
+          if (isNativeComponent) {
             switch (component) {
               case 'textarea':
                 input.domProps.innerHTML = this.value[field.name]
@@ -197,6 +197,9 @@
     mounted () {
       this.reset()
     },
+    setComponent (type, component) {
+      components[type] = component
+    },
     methods: {
       /**
        * @private
@@ -240,12 +243,12 @@
       /**
        * Send the content of the form to the server
        */
-      submit () {
+      submit (e) {
         if (this.$refs.__form.checkValidity()) {
           /**
            * Fired when a form is submitted
            */
-          this.$emit('submit')
+          this.$emit('submit', e)
         }
       },
 
