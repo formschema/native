@@ -44,7 +44,8 @@
     data: () => ({
       default: {},
       fields: [],
-      error: null
+      error: null,
+      data: {}
     }),
     created () {
       loadFields(this, clone(this.schema))
@@ -85,20 +86,43 @@
 
           const component = components[field.type] || 'input'
           const attrsName = typeof component === 'string' ? 'attrs' : 'props'
-          const input = createElement(component, {
+          const children = []
+          const input = {
             ref: field.name,
             [attrsName]: field,
             domProps: {
               value: this.value[field.name]
             },
             on: {
-              input: () => {
-                this.value[field.name] = event.target.value
+              input: (event) => {
+                this.$set(this.data, field.name, event.target.value)
+                this.$emit('input', this.data)
               },
               change: this.changed
             }
-          })
+          }
 
+          if (typeof component === 'string') {
+            switch (component) {
+              case 'textarea':
+                input.domProps.innerHTML = this.value[field.name]
+                break
+
+              case 'select':
+                children.push(createElement('option', ''))
+
+                field.options.forEach((option) => {
+                  children.push(createElement('option', {
+                    domProps: {
+                      value: option.value
+                    }
+                  }, option.label))
+                })
+                break
+            }
+          }
+
+          const inputElement = createElement(component, input, children)
           const formControlsNodes = []
 
           if (field.label) {
@@ -122,13 +146,13 @@
             case 'checkbox':
               const labelNode = createElement('label', {
                 attrs: { title: field.title }
-              }, [input])
+              }, [inputElement])
 
               formControlsNodes.push(labelNode)
               break
 
             default:
-              formControlsNodes.push(input)
+              formControlsNodes.push(inputElement)
           }
 
           const formControlsNode = createElement('div', {
