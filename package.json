@@ -8,7 +8,7 @@
     "test": "karma start karma.conf.js",
     "posttest": "make readme",
     "prepublish": "npm test",
-    "build": "node build",
+    "build": "npm test && node build",
     "tag": "git tag `node -p 'require(\"./package\").version'`"
   },
   "repository": {
