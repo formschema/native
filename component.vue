@@ -170,15 +170,20 @@
 
             labelNodes.push(inputElement)
 
+            if (field.description) {
+              labelNodes.push(createElement('br'))
+              labelNodes.push(createElement('small', field.description))
+            }
+
             formControlsNodes.push(
               createElement(label.component, labelOption, labelNodes))
           } else {
             formControlsNodes.push(inputElement)
-          }
 
-          if (field.description) {
-            formControlsNodes.push(createElement('br'))
-            formControlsNodes.push(createElement('small', field.description))
+            if (field.description) {
+              formControlsNodes.push(createElement('br'))
+              formControlsNodes.push(createElement('small', field.description))
+            }
           }
 
           const formControlsNode = createElement('div', {
