@@ -85,6 +85,7 @@
       }
 
       if (this.fields.length) {
+        const label = components.label
         const formNodes = []
 
         this.fields.forEach((field) => {
@@ -148,7 +149,6 @@
           const formControlsNodes = []
 
           if (field.label) {
-            const label = components.label
             const isNativeLabel = typeof label.component === 'string'
             const attrsLabelName = isNativeLabel ? 'attrs' : 'props'
             const labelOption = {
@@ -191,30 +191,28 @@
           }
         })
 
-        if (this.$slots.hasOwnProperty('default')) {
-          formNodes.push(this.$slots.default)
+        const button = this.$slots.hasOwnProperty('default')
+          ? { component: this.$slots.default, option: {} }
+          : components.button
+
+        if (button.component instanceof Array) {
+          formNodes.push(
+            createElement(label.component, button.component))
         } else {
-          const button = components.button
           const isNativeButton = typeof button.component === 'string'
           const attrsButtonName = isNativeButton ? 'attrs' : 'props'
-
           const buttonElement = createElement(button.component, {
             [attrsButtonName]: button.option
           }, button.option.label)
 
-          if (isNativeButton) {
-            formNodes.push(buttonElement)
-          } else {
-            const label = components.label
-            const isNativeLabel = typeof label.component === 'string'
-            const attrsLabelName = isNativeLabel ? 'attrs' : 'props'
-            const labelOption = {
-              [attrsLabelName]: label.option
-            }
-
-            formNodes.push(
-              createElement(label.component, labelOption, [buttonElement]))
+          const isNativeLabel = typeof label.component === 'string'
+          const attrsLabelName = isNativeLabel ? 'attrs' : 'props'
+          const labelOption = {
+            [attrsLabelName]: label.option
           }
+
+          formNodes.push(
+            createElement(label.component, labelOption, [buttonElement]))
         }
 
         const form = components.form
