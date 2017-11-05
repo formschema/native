@@ -200,9 +200,23 @@
           const isNativeButton = typeof button.component === 'string'
           const attrsButtonName = isNativeButton ? 'attrs' : 'props'
 
-          formNodes.push(createElement(button.component, {
+          const buttonElement = createElement(button.component, {
             [attrsButtonName]: button.option
-          }, button.option.label))
+          }, button.option.label)
+
+          if (isNativeButton) {
+            formNodes.push(buttonElement)
+          } else {
+            const label = components.label
+            const isNativeLabel = typeof label.component === 'string'
+            const attrsLabelName = isNativeLabel ? 'attrs' : 'props'
+            const labelOption = {
+              [attrsLabelName]: label.option
+            }
+
+            formNodes.push(
+              createElement(label.component, labelOption, [buttonElement]))
+          }
         }
 
         const form = components.form
