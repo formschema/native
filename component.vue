@@ -151,9 +151,7 @@
           if (field.label) {
             const isNativeLabel = typeof label.component === 'string'
             const attrsLabelName = isNativeLabel ? 'attrs' : 'props'
-            const labelOption = {
-              [attrsLabelName]: { ...field, ...label.option }
-            }
+            const labelOption = this.optionValue(label.option)
             const labelNodes = []
 
             if (isNativeLabel) {
@@ -172,7 +170,9 @@
             }
 
             formControlsNodes.push(
-              createElement(label.component, labelOption, labelNodes))
+              createElement(label.component, {
+              [attrsLabelName]: { ...field, ...labelOption }
+            }, labelNodes))
           } else {
             formControlsNodes.push(inputElement)
 
@@ -202,7 +202,7 @@
           const isNativeButton = typeof button.component === 'string'
           const attrsButtonName = isNativeButton ? 'attrs' : 'props'
           const buttonElement = createElement(button.component, {
-            [attrsButtonName]: button.option
+            [attrsButtonName]: this.optionValue(button.option)
           }, button.option.label)
 
           const isNativeLabel = typeof label.component === 'string'
@@ -218,9 +218,7 @@
         const form = components.form
         const isNativeForm = typeof form.component === 'string'
         const attrsFormName = isNativeForm ? 'attrs' : 'props'
-        const formOption = typeof form.option === 'function'
-          ? form.option(this)
-          : form.option
+        const formOption = this.optionValue(form.option)
 
         nodes.push(createElement(form.component, {
           ref: '__form',
@@ -248,6 +246,13 @@
       components[type] = { component, option }
     },
     methods: {
+      /**
+       * @private
+       */
+      optionValue (target) {
+        return typeof target === 'function' ? target(this) : target
+      },
+
       /**
        * @private
        */
