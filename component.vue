@@ -152,15 +152,16 @@
             const isNativeLabel = typeof label.component === 'string'
             const attrsLabelName = isNativeLabel ? 'attrs' : 'props'
             const labelOption = {
-              [attrsLabelName]: {
-                label: field.label,
-                ...label.option
-              }
+              [attrsLabelName]: { ...field, ...label.option }
             }
             const labelNodes = []
 
             if (isNativeLabel) {
-              labelNodes.push(createElement('span', field.label))
+              labelNodes.push(createElement('span', {
+                attrs: {
+                  'data-required-field': field.required ? 'true' : 'false'
+                }
+              }, field.label))
             }
 
             labelNodes.push(inputElement)
