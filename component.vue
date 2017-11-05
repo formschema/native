@@ -7,6 +7,7 @@
     input: 'input',
     radio: 'input',
     select: 'select',
+    option: 'option',
     checkbox: 'input',
     textarea: 'textarea'
   }
@@ -45,7 +46,8 @@
     }),
     created () {
       loadFields(this, clone(this.schema))
-      this.default = this.data = clone(this.value)
+      this.default = clone(this.value)
+      this.data = clone(this.value)
     },
     render (createElement) {
       const nodes = []
@@ -102,24 +104,31 @@
             }
           }
 
-          if (isNativeComponent) {
-            switch (component) {
-              case 'textarea':
+          switch (field.type) {
+            case 'textarea':
+              if (isNativeComponent) {
                 input.domProps.innerHTML = this.value[field.name]
-                break
+              }
+              break
 
-              case 'select':
-                children.push(createElement('option', ''))
+            case 'select':
+              const optionComponent = components.option
+              const isNativeOption = typeof optionComponent === 'string'
+              const attrsOptionName = isNativeOption ? 'attrs' : 'props'
 
-                field.options.forEach((option) => {
-                  children.push(createElement('option', {
-                    domProps: {
-                      value: option.value
-                    }
-                  }, option.label))
-                })
-                break
-            }
+              if (!field.required) {
+                children.push(createElement(optionComponent))
+              }
+
+              field.options.forEach((option) => {
+                children.push(createElement(optionComponent, {
+                  [attrsOptionName]: option,
+                  domProps: {
+                    value: option.value
+                  }
+                }, option.label))
+              })
+              break
           }
 
           const inputElement = createElement(component, input, children)
