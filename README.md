@@ -8,6 +8,9 @@ Vue component form based on JSON Schema
 npm install --save vue-json-schema
 ```
 
+## Demo
+- [Demo with ElementUI](https://github.com/demsking/vue-json-schema-demo-elementui)
+
 ## FormSchema API
 
 ### props 
@@ -23,9 +26,14 @@ This property indicates whether the value of the control can be automatically co
 - `novalidate` ***Boolean*** (*optional*) 
 This Boolean attribute indicates that the form is not to be validated when submitted. 
 
-- `data-class-error` ***String*** (*optional*) `default: 'uk-form-danger'` 
+- `item-class` ***String*** (*optional*) 
+Use this prop to enable inputs wrapping 
+
+- `data-class-error` ***String*** (*optional*) `default: 'form-error'` 
 
 ### events 
+- `input` undefined 
+
 - `change` Fired when an form input value is changed. 
 
 - `invalid` Fired when a submittable element has been checked and doesn't satisfy its constraints. The validity of submittable elements is checked before submitting their owner form. 
@@ -39,7 +47,7 @@ Get a form input component
 - `reset()` 
 Reset the value of all elements of the parent form. 
 
-- `submit()` 
+- `submit(e)` 
 Send the content of the form to the server 
 
 - `setErrorMessage(message)` 
