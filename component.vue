@@ -3,7 +3,9 @@
   import { loadFields } from './lib/parser'
 
   const components = {
+    form: { component: 'form', option: {} },
     file: { component: 'input', option: {} },
+    label: { component: 'label', option: {} },
     input: { component: 'input', option: {} },
     radio: { component: 'input', option: {} },
     select: { component: 'select', option: {} },
@@ -93,7 +95,10 @@
 
           const input = {
             ref: field.name,
-            [attrsName]: field,
+            [attrsName]: {
+              ...field,
+              ...option
+            },
             domProps: {
               value: this.value[field.name]
             },
@@ -107,8 +112,7 @@
                 this.$emit('input', this.data)
               },
               change: this.changed
-            },
-            ...option
+            }
           }
 
           switch (field.type) {
@@ -133,9 +137,9 @@
                 children.push(createElement(optionComponent, {
                   [attrsOptionName]: option,
                   domProps: {
-                    value: option.value
-                  },
-                  ...optionOption
+                    value: option.value,
+                    ...optionOption
+                  }
                 }, option.label))
               })
               break
@@ -145,33 +149,32 @@
           const formControlsNodes = []
 
           if (field.label) {
-            if (field.type !== 'checkbox' && field.type !== 'radio') {
-              formControlsNodes.push(createElement('label', {
-                class: 'uk-form-label',
-                attrs: {
-                  for: field.id
-                }
-              }, field.label))
+            const label = components.label
+            const isNativeLabel = typeof label.component === 'string'
+            const attrsLabelName = isNativeLabel ? 'attrs' : 'props'
+            const labelOption = {
+              [attrsLabelName]: {
+                label: field.label,
+                ...label.option
+              }
             }
+            const labelNodes = []
+
+            if (isNativeLabel) {
+              labelNodes.push(createElement('span', field.label))
+            }
+
+            labelNodes.push(inputElement)
+
+            formControlsNodes.push(
+              createElement(label.component, labelOption, labelNodes))
+          } else {
+            formControlsNodes.push(inputElement)
           }
 
           if (field.description) {
             formControlsNodes.push(createElement('br'))
             formControlsNodes.push(createElement('small', field.description))
-          }
-
-          switch (field.type) {
-            case 'radio':
-            case 'checkbox':
-              const labelNode = createElement('label', {
-                attrs: { title: field.title }
-              }, [inputElement])
-
-              formControlsNodes.push(labelNode)
-              break
-
-            default:
-              formControlsNodes.push(inputElement)
           }
 
           const formControlsNode = createElement('div', {
@@ -194,18 +197,22 @@
 
           formNodes.push(createElement(button.component, {
             [attrsButtonName]: {
-              type: 'submit'
-            },
-            ...button.option
+              type: 'submit',
+              ...button.option
+            }
           }, button.option.label || 'Submit'))
         }
 
-        nodes.push(createElement('form', {
+        const form = components.form
+        const isNativeForm = typeof form.component === 'string'
+        const attrsFormName = isNativeForm ? 'attrs' : 'props'
+
+        nodes.push(createElement(form.component, {
           ref: '__form',
-          class: 'uk-form-stacked',
-          attrs: {
+          [attrsFormName]: {
             autocomplete: this.autocomplete,
-            novalidate: this.novalidate
+            novalidate: this.novalidate,
+            ...form.option
           },
           on: {
             submit: (event) => {
