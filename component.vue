@@ -3,14 +3,19 @@
   import { loadFields } from './lib/parser'
 
   const components = {
-    file: 'input',
-    input: 'input',
-    radio: 'input',
-    select: 'select',
-    option: 'option',
-    button: 'button',
-    checkbox: 'input',
-    textarea: 'textarea'
+    file: { component: 'input', option: {} },
+    input: { component: 'input', option: {} },
+    radio: { component: 'input', option: {} },
+    select: { component: 'select', option: {} },
+    option: { component: 'option', option: {} },
+    button: { component: 'button', option: {} },
+    checkbox: { component: 'input', option: {} },
+    textarea: { component: 'textarea', option: {} }
+  }
+
+  const defaultInput = {
+    component: 'input',
+    option: {}
   }
 
   export default {
@@ -81,7 +86,7 @@
             field['data-class-error'] = this.dataClassError
           }
 
-          const component = components[field.type] || 'input'
+          const { component, option } = components[field.type] || defaultInput
           const isNativeComponent = typeof component === 'string'
           const attrsName = isNativeComponent ? 'attrs' : 'props'
           const children = []
@@ -102,7 +107,8 @@
                 this.$emit('input', this.data)
               },
               change: this.changed
-            }
+            },
+            ...option
           }
 
           switch (field.type) {
@@ -113,7 +119,9 @@
               break
 
             case 'select':
-              const optionComponent = components.option
+              const optionEntry = components.option
+              const optionComponent = optionEntry.component
+              const optionOption = optionEntry.option
               const isNativeOption = typeof optionComponent === 'string'
               const attrsOptionName = isNativeOption ? 'attrs' : 'props'
 
@@ -126,7 +134,8 @@
                   [attrsOptionName]: option,
                   domProps: {
                     value: option.value
-                  }
+                  },
+                  ...optionOption
                 }, option.label))
               })
               break
@@ -179,14 +188,16 @@
         if (this.$slots.hasOwnProperty('default')) {
           formNodes.push(this.$slots.default)
         } else {
-          const isNativeButton = typeof components.button === 'string'
+          const button = components.button
+          const isNativeButton = typeof button.component === 'string'
           const attrsButtonName = isNativeButton ? 'attrs' : 'props'
 
-          formNodes.push(createElement(components.button, {
+          formNodes.push(createElement(button.component, {
             [attrsButtonName]: {
               type: 'submit'
-            }
-          }, 'Submit'))
+            },
+            ...button.option
+          }, button.option.label || 'Submit'))
         }
 
         nodes.push(createElement('form', {
@@ -211,8 +222,8 @@
     mounted () {
       this.reset()
     },
-    setComponent (type, component) {
-      components[type] = component
+    setComponent (type, component, option = {}) {
+      components[type] = { component, option }
     },
     methods: {
       /**
