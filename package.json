@@ -1,6 +1,6 @@
 {
   "name": "vue-json-schema",
-  "version": "0.7.0",
+  "version": "1.0.0",
   "description": "Vue component form based on JSON Schema",
   "main": "dist/vue-json-schema.js",
   "scripts": {
