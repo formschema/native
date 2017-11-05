@@ -1,19 +1,18 @@
 # vue-json-schema
-
 Vue component form based on JSON Schema
 
 [![Build Status](https://travis-ci.org/demsking/vue-json-schema.svg?branch=master)](https://travis-ci.org/demsking/vue-json-schema)
-[![bitHound Overall Score](https://www.bithound.io/github/demsking/vue-json-schema/badges/score.svg)](https://www.bithound.io/github/demsking/vue-json-schema)
-[![bitHound Dependencies](https://www.bithound.io/github/demsking/vue-json-schema/badges/dependencies.svg)](https://www.bithound.io/github/demsking/vue-json-schema/master/dependencies/npm)
-[![bitHound Code](https://www.bithound.io/github/demsking/vue-json-schema/badges/code.svg)](https://www.bithound.io/github/demsking/vue-json-schema)
-
 
 ## Install
 ```sh
 npm install --save vue-json-schema
 ```
 
+## Demo
+- [Demo with ElementUI](https://github.com/demsking/vue-json-schema-demo-elementui)
+
 ## FormSchema API
+
 ### props 
 - `schema` ***Object*** (*required*) 
 The JSON Schema object. Use the `v-if` directive to load asynchronous schema. 
@@ -27,9 +26,14 @@ This property indicates whether the value of the control can be automatically co
 - `novalidate` ***Boolean*** (*optional*) 
 This Boolean attribute indicates that the form is not to be validated when submitted. 
 
-- `data-class-error` ***String*** (*optional*) `default: 'uk-form-danger'` 
+- `item-class` ***String*** (*optional*) 
+Use this prop to enable inputs wrapping 
+
+- `data-class-error` ***String*** (*optional*) `default: 'form-error'` 
 
 ### events 
+- `input` undefined 
+
 - `change` Fired when an form input value is changed. 
 
 - `invalid` Fired when a submittable element has been checked and doesn't satisfy its constraints. The validity of submittable elements is checked before submitting their owner form. 
@@ -37,25 +41,23 @@ This Boolean attribute indicates that the form is not to be validated when submi
 - `submit` Fired when a form is submitted 
 
 ### methods 
-- `input()` 
+- `input(name)` 
 Get a form input component 
 
 - `reset()` 
 Reset the value of all elements of the parent form. 
 
-- `submit()` 
+- `submit(e)` 
 Send the content of the form to the server 
 
-- `setErrorMessage()` 
+- `setErrorMessage(message)` 
 Set a message error. 
 
 - `clearErrorMessage()` 
 clear the message error. 
 
-
 ## Usage
 Define your [JSON Schema](http://json-schema.org) file:
-
 ```json
 {
     "$schema": "http://json-schema.org/draft-04/schema#",
@@ -88,9 +90,7 @@ Define your [JSON Schema](http://json-schema.org) file:
     "required": ["name", "email", "lists"]
 }
 ```
-
 In your Vue file:
-
 ```html
 <template>
   <form-schema :schema="schema" v-model="model" @submit="submit">
@@ -99,7 +99,7 @@ In your Vue file:
 </template>
 
 <script>
-  import FormSchema from 'vue-form-schema'
+  import FormSchema from 'vue-json-schema'
   import schema from './schema/newsletter-subscription.json'
 
   export default {
@@ -118,6 +118,68 @@ In your Vue file:
 </script>
 ```
 
-## License
+## Use custom form elements
 
+Use `FormSchema.setComponent(type, component[, props = {}])` to define custom element to use for rendering.
+
+See [vue-json-schema-demo-elementui](https://github.com/demsking/vue-json-schema-demo-elementui) for a complete example.
+
+```js
+// an element-ui example
+
+import FormSchema from 'vue-json-schema'
+import {
+  Form,
+  FormItem,
+  Input,
+  Radio,
+  Checkbox,
+  Select,
+  Option,
+  Button
+} from 'element-ui'
+
+FormSchema.setComponent('label', FormItem)
+FormSchema.setComponent('email', Input)
+FormSchema.setComponent('text', Input)
+FormSchema.setComponent('textarea', Input)
+FormSchema.setComponent('checkbox', Checkbox)
+FormSchema.setComponent('radio', Radio)
+FormSchema.setComponent('select', Select)
+FormSchema.setComponent('option', Option)
+
+// Use the third argument to define props of the component
+FormSchema.setComponent('button', Button, {
+  type: 'primary',
+  label: 'Subscribe'
+})
+
+// The third argument can also be a function that return an object
+FormSchema.setComponent('form', Form, (vm) => {
+  // vm is the FormSchema VM
+
+  const labelWidth = '120px'
+  const model = vm.data
+  const rules = {}
+
+  vm.fields.forEach((field) => {
+    rules[field.name] = {
+      required: field.required,
+      message: field.title
+    }
+  })
+
+  return { labelWidth, rules, model }
+})
+
+export default {
+  data: () => ({
+    schema: {...}
+  }),
+  // ...
+  components: { FormSchema }
+}
+```
+
+## License
 Under the MIT license. See [LICENSE](https://github.com/demsking/vue-json-schema/blob/master/LICENSE) file for more details.

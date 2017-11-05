@@ -1,25 +1,29 @@
 <script>
-  import VxInput from '@vx-components/input'
-  import VxSelect from '@vx-components/select'
-  import VxTextarea from '@vx-components/textarea'
-  import VxFileinput from '@vx-components/fileinput'
-  import VxCheckbox from '@vx-components/checkbox'
-
   import { clone } from './lib/object'
   import { loadFields } from './lib/parser'
 
-  const inputs = {
-    select: VxSelect,
-    checkbox: VxCheckbox,
-    textarea: VxTextarea,
-    input: VxInput,
-    file: VxFileinput
+  const components = {
+    form: { component: 'form', option: {} },
+    file: { component: 'input', option: {} },
+    label: { component: 'label', option: {} },
+    input: { component: 'input', option: {} },
+    radio: { component: 'input', option: {} },
+    select: { component: 'select', option: {} },
+    option: { component: 'option', option: {} },
+    button: {
+      component: 'button',
+      option: {
+        type: 'submit', label: 'Submit'
+      }
+    },
+    checkbox: { component: 'input', option: {} },
+    textarea: { component: 'textarea', option: {} }
   }
-  const components = {}
 
-  Object.keys(inputs).forEach((type) => {
-    components[inputs[type].name] = inputs[type]
-  })
+  const defaultInput = {
+    component: 'input',
+    option: {}
+  }
 
   export default {
     name: 'form-schema',
@@ -45,16 +49,23 @@
        */
       novalidate: { type: Boolean },
 
-      dataClassError: { type: String, default: 'uk-form-danger' }
+      /**
+       * Use this prop to enable inputs wrapping
+       */
+      itemClass: { type: String },
+
+      dataClassError: { type: String, default: 'form-error' }
     },
     data: () => ({
       default: {},
       fields: [],
-      error: null
+      error: null,
+      data: {}
     }),
     created () {
       loadFields(this, clone(this.schema))
       this.default = clone(this.value)
+      this.data = clone(this.value)
     },
     render (createElement) {
       const nodes = []
@@ -63,23 +74,18 @@
         nodes.push(createElement('h1', this.schema.title))
       }
 
+      if (this.schema.description) {
+        nodes.push(createElement('p', this.schema.description))
+      }
+
       if (this.error) {
         nodes.push(createElement('div', {
-          class: this.dataClassError,
-          attrs: { 'uk-alert': 'uk-alert' }
-        }, [
-          createElement('a', {
-            class: 'uk-alert-close',
-            on: {
-              click: this.clearErrorMessage
-            },
-            attrs: { 'uk-close': 'uk-close' }
-          }),
-          createElement('p', this.title)
-        ]))
+          class: this.dataClassError
+        }, [ createElement('p', this.title) ]))
       }
 
       if (this.fields.length) {
+        const label = components.label
         const formNodes = []
 
         this.fields.forEach((field) => {
@@ -87,81 +93,139 @@
             field['data-class-error'] = this.dataClassError
           }
 
-          delete field.value
+          const { component, option } = components[field.type] || defaultInput
+          const isNativeComponent = typeof component === 'string'
+          const attrsName = isNativeComponent ? 'attrs' : 'props'
+          const children = []
 
-          const component = inputs[field.type] || inputs.input
-          const input = createElement(component.name, {
+          const input = {
             ref: field.name,
-            props: field,
+            [attrsName]: { ...field, ...option },
             domProps: {
               value: this.value[field.name]
             },
             on: {
-              input: () => {
-                this.value[field.name] = event.target.value
+              input: (event) => {
+                const value = event.target ? event.target.value : event
+
+                this.$set(this.data, field.name, value)
+                this.$emit('input', this.data)
               },
               change: this.changed
-            },
-          })
-
-          const formControlsNodes = []
-
-          if (field.label) {
-            if (field.type !== 'checkbox' && field.type !== 'radio') {
-              formControlsNodes.push(createElement('label', {
-                class: 'uk-form-label',
-                attrs: {
-                  for: field.id
-                }
-              }, field.label))
             }
           }
 
-          if (field.description) {
-            formControlsNodes.push(createElement('br'))
-            formControlsNodes.push(createElement('small', field.description))
-          }
-
           switch (field.type) {
-            case 'radio':
-            case 'checkbox':
-              const labelNode = createElement('label', {
-                attrs: { title: field.title }
-              }, [input])
-
-              formControlsNodes.push(labelNode)
+            case 'textarea':
+              if (isNativeComponent) {
+                input.domProps.innerHTML = this.value[field.name]
+              }
               break
 
-            default:
-              formControlsNodes.push(input)
+            case 'select':
+              const optionEntry = components.option
+              const optionComponent = optionEntry.component
+              const optionOption = optionEntry.option
+              const isNativeOption = typeof optionComponent === 'string'
+              const attrsOptionName = isNativeOption ? 'attrs' : 'props'
+
+              if (!field.required) {
+                children.push(createElement(optionComponent))
+              }
+
+              field.options.forEach((option) => {
+                children.push(createElement(optionComponent, {
+                  [attrsOptionName]: option,
+                  domProps: {
+                    value: option.value,
+                    ...optionOption
+                  }
+                }, option.label))
+              })
+              break
           }
 
-          const formControlsNode = createElement('div', {
-            class: 'uk-form-controls'
-          }, formControlsNodes)
+          const inputElement = createElement(component, input, children)
+          const formControlsNodes = []
 
-          const marginNode = createElement('div', {
-            class: 'uk-margin'
-          }, [formControlsNode])
+          if (field.label) {
+            const isNativeLabel = typeof label.component === 'string'
+            const attrsLabelName = isNativeLabel ? 'attrs' : 'props'
+            const labelOption = this.optionValue(label.option)
+            const labelNodes = []
 
-          formNodes.push(marginNode)
+            if (isNativeLabel) {
+              labelNodes.push(createElement('span', {
+                attrs: {
+                  'data-required-field': field.required ? 'true' : 'false'
+                }
+              }, field.label))
+            }
+
+            labelNodes.push(inputElement)
+
+            if (field.description) {
+              labelNodes.push(createElement('br'))
+              labelNodes.push(createElement('small', field.description))
+            }
+
+            formControlsNodes.push(
+              createElement(label.component, {
+              [attrsLabelName]: { ...field, ...labelOption }
+            }, labelNodes))
+          } else {
+            formControlsNodes.push(inputElement)
+
+            if (field.description) {
+              formControlsNodes.push(createElement('br'))
+              formControlsNodes.push(createElement('small', field.description))
+            }
+          }
+
+          if (this.itemClass) {
+            formNodes.push(createElement('div', {
+              class: this.itemClass
+            }, formControlsNodes))
+          } else {
+            formControlsNodes.forEach((node) => formNodes.push(node))
+          }
         })
 
-        if (this.$slots.hasOwnProperty('default')) {
-          formNodes.push(this.$slots.default)
+        const button = this.$slots.hasOwnProperty('default')
+          ? { component: this.$slots.default, option: {} }
+          : components.button
+
+        if (button.component instanceof Array) {
+          formNodes.push(
+            createElement(label.component, button.component))
         } else {
-          formNodes.push(createElement('button', {
-            class: 'uk-button uk-button-default',
-            attrs: { type: 'submit' }
-          }, 'Submit'))
+          const isNativeButton = typeof button.component === 'string'
+          const attrsButtonName = isNativeButton ? 'attrs' : 'props'
+          const buttonElement = createElement(button.component, {
+            [attrsButtonName]: this.optionValue(button.option)
+          }, button.option.label)
+
+          const isNativeLabel = typeof label.component === 'string'
+          const attrsLabelName = isNativeLabel ? 'attrs' : 'props'
+          const labelOption = {
+            [attrsLabelName]: label.option
+          }
+
+          formNodes.push(
+            createElement(label.component, labelOption, [buttonElement]))
         }
 
-        nodes.push(createElement('form', {
+        const form = components.form
+        const isNativeForm = typeof form.component === 'string'
+        const attrsFormName = isNativeForm ? 'attrs' : 'props'
+        const formOption = this.optionValue(form.option)
+
+        nodes.push(createElement(form.component, {
           ref: '__form',
-          class: 'uk-form-stacked',
-          attrs: {
+          [attrsFormName]: {
             autocomplete: this.autocomplete,
-            novalidate: this.novalidate
+            novalidate: this.novalidate,
+            ...formOption
           },
           on: {
             submit: (event) => {
@@ -178,7 +242,17 @@
     mounted () {
       this.reset()
     },
+    setComponent (type, component, option = {}) {
+      components[type] = { component, option }
+    },
     methods: {
+      /**
+       * @private
+       */
+      optionValue (target) {
+        return typeof target === 'function' ? target(this) : target
+      },
+
       /**
        * @private
        */
@@ -214,19 +288,19 @@
        */
       reset () {
         for (let key in this.default) {
-          this.$set(this.value, key, this.default[key])
+          this.$set(this.data, key, this.default[key])
         }
       },
 
       /**
        * Send the content of the form to the server
        */
-      submit () {
+      submit (e) {
         if (this.$refs.__form.checkValidity()) {
           /**
            * Fired when a form is submitted
            */
-          this.$emit('submit')
+          this.$emit('submit', e)
         }
       },
 
@@ -243,7 +317,6 @@
       clearErrorMessage () {
         this.error = null
       }
-    },
-    components: components
+    }
   }
 </script>

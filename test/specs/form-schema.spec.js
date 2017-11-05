@@ -1,8 +1,11 @@
 'use strict'
 
 import Vue from 'vue'
+
 import FormSchema from '../../component.vue'
 import Schema from '../fixtures/signup'
+
+Vue.config.productionTip = false
 
 /* global describe it expect */
 
