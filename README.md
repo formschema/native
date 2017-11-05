@@ -118,5 +118,68 @@ In your Vue file:
 </script>
 ```
 
+## Use custom form elements
+
+Use `FormSchema.setComponent(type, component[, props = {}])` to define custom element to use for rendering.
+
+See [vue-json-schema-demo-elementui](https://github.com/demsking/vue-json-schema-demo-elementui) for a complete example.
+
+```js
+// an element-ui example
+
+import FormSchema from 'vue-json-schema'
+import {
+  Form,
+  FormItem,
+  Input,
+  Radio,
+  Checkbox,
+  Select,
+  Option,
+  Button
+} from 'element-ui'
+
+FormSchema.setComponent('label', FormItem)
+FormSchema.setComponent('email', Input)
+FormSchema.setComponent('text', Input)
+FormSchema.setComponent('textarea', Input)
+FormSchema.setComponent('checkbox', Checkbox)
+FormSchema.setComponent('radio', Radio)
+FormSchema.setComponent('select', Select)
+FormSchema.setComponent('option', Option)
+
+// Use the third argument to define props of the component
+FormSchema.setComponent('button', Button, {
+  type: 'primary',
+  label: 'Subscribe'
+})
+
+// The third argument can also be a function that return an object
+FormSchema.setComponent('form', Form, (vm) => {
+  // vm is the FormSchema VM
+
+  const labelWidth = '120px'
+  const model = vm.data
+  const rules = {}
+
+  vm.fields.forEach((field) => {
+    rules[field.name] = {
+      required: field.required,
+      message: field.title
+    }
+  })
+
+  return { labelWidth, rules, model }
+})
+
+export default {
+  data: () => ({
+    schema: {...}
+  }),
+  // ...
+  components: { FormSchema }
+}
+```
+
 ## License
 Under the MIT license. See [LICENSE](https://github.com/demsking/vue-json-schema/blob/master/LICENSE) file for more details.
