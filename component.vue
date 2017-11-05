@@ -285,7 +285,7 @@
        */
       reset () {
         for (let key in this.default) {
-          this.$set(this.value, key, this.default[key])
+          this.$set(this.data, key, this.default[key])
         }
       },
 
