@@ -100,18 +100,13 @@
 
           const input = {
             ref: field.name,
-            [attrsName]: {
-              ...field,
-              ...option
-            },
+            [attrsName]: { ...field, ...option },
             domProps: {
               value: this.value[field.name]
             },
             on: {
               input: (event) => {
-                const value = typeof event === 'string'
-                  ? event
-                  : event.target.value
+                const value = event.target ? event.target.value : event
 
                 this.$set(this.data, field.name, value)
                 this.$emit('input', this.data)
