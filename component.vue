@@ -8,6 +8,7 @@
     radio: 'input',
     select: 'select',
     option: 'option',
+    button: 'button',
     checkbox: 'input',
     textarea: 'textarea'
   }
@@ -178,9 +179,13 @@
         if (this.$slots.hasOwnProperty('default')) {
           formNodes.push(this.$slots.default)
         } else {
-          formNodes.push(createElement('button', {
-            class: 'uk-button uk-button-default',
-            attrs: { type: 'submit' }
+          const isNativeButton = typeof components.button === 'string'
+          const attrsButtonName = isNativeButton ? 'attrs' : 'props'
+
+          formNodes.push(createElement(components.button, {
+            [attrsButtonName]: {
+              type: 'submit'
+            }
           }, 'Submit'))
         }
 
