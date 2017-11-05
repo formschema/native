@@ -54,7 +54,7 @@
        */
       itemClass: { type: String },
 
-      dataClassError: { type: String, default: 'uk-form-danger' }
+      dataClassError: { type: String, default: 'form-error' }
     },
     data: () => ({
       default: {},
@@ -80,18 +80,8 @@
 
       if (this.error) {
         nodes.push(createElement('div', {
-          class: this.dataClassError,
-          attrs: { 'uk-alert': 'uk-alert' }
-        }, [
-          createElement('a', {
-            class: 'uk-alert-close',
-            on: {
-              click: this.clearErrorMessage
-            },
-            attrs: { 'uk-close': 'uk-close' }
-          }),
-          createElement('p', this.title)
-        ]))
+          class: this.dataClassError
+        }, [ createElement('p', this.title) ]))
       }
 
       if (this.fields.length) {
