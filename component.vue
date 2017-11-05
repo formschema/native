@@ -49,6 +49,11 @@
        */
       novalidate: { type: Boolean },
 
+      /**
+       * Use this prop to enable inputs wrapping
+       */
+      itemClass: { type: String },
+
       dataClassError: { type: String, default: 'uk-form-danger' }
     },
     data: () => ({
@@ -186,15 +191,13 @@
             }
           }
 
-          const formControlsNode = createElement('div', {
-            class: 'uk-form-controls'
-          }, formControlsNodes)
-
-          const marginNode = createElement('div', {
-            class: 'uk-margin'
-          }, [formControlsNode])
-
-          formNodes.push(marginNode)
+          if (this.itemClass) {
+            formNodes.push(createElement('div', {
+              class: this.itemClass
+            }, formControlsNodes))
+          } else {
+            formControlsNodes.forEach((node) => formNodes.push(node))
+          }
         })
 
         if (this.$slots.hasOwnProperty('default')) {
