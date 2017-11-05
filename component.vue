@@ -10,7 +10,12 @@
     radio: { component: 'input', option: {} },
     select: { component: 'select', option: {} },
     option: { component: 'option', option: {} },
-    button: { component: 'button', option: {} },
+    button: {
+      component: 'button',
+      option: {
+        type: 'submit', label: 'Submit'
+      }
+    },
     checkbox: { component: 'input', option: {} },
     textarea: { component: 'textarea', option: {} }
   }
@@ -196,11 +201,8 @@
           const attrsButtonName = isNativeButton ? 'attrs' : 'props'
 
           formNodes.push(createElement(button.component, {
-            [attrsButtonName]: {
-              type: 'submit',
-              ...button.option
-            }
-          }, button.option.label || 'Submit'))
+            [attrsButtonName]: button.option
+          }, button.option.label))
         }
 
         const form = components.form
