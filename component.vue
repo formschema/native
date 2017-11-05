@@ -69,6 +69,10 @@
         nodes.push(createElement('h1', this.schema.title))
       }
 
+      if (this.schema.description) {
+        nodes.push(createElement('p', this.schema.description))
+      }
+
       if (this.error) {
         nodes.push(createElement('div', {
           class: this.dataClassError,
