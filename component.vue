@@ -219,13 +219,16 @@
         const form = components.form
         const isNativeForm = typeof form.component === 'string'
         const attrsFormName = isNativeForm ? 'attrs' : 'props'
+        const formOption = typeof form.option === 'function'
+          ? form.option(this)
+          : form.option
 
         nodes.push(createElement(form.component, {
           ref: '__form',
           [attrsFormName]: {
             autocomplete: this.autocomplete,
             novalidate: this.novalidate,
-            ...form.option
+            ...formOption
           },
           on: {
             submit: (event) => {
