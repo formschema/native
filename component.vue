@@ -153,7 +153,7 @@
           const inputElement = createElement(component, input, children)
           const formControlsNodes = []
 
-          if (field.label) {
+          if (field.label && !option.disableWrappingLabel) {
             const isNativeLabel = typeof label.component === 'string'
             const attrsLabelName = isNativeLabel ? 'attrs' : 'props'
             const labelOption = this.optionValue(label.option)
