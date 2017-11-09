@@ -281,6 +281,13 @@
       },
 
       /**
+       * Get the form reference
+       */
+      form () {
+        return this.$refs.__form
+      },
+
+      /**
        * @private
        */
       invalid (e) {
