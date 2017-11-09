@@ -120,6 +120,8 @@
             }
           }
 
+          delete field.value
+
           switch (field.type) {
             case 'textarea':
               if (isNativeComponent) {
