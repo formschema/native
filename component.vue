@@ -64,6 +64,7 @@
     }),
     created () {
       loadFields(this, clone(this.schema))
+
       this.default = clone(this.value)
       this.data = clone(this.value)
     },
@@ -91,6 +92,10 @@
         this.fields.forEach((field) => {
           if (!field.hasOwnProperty('data-class-error')) {
             field['data-class-error'] = this.dataClassError
+          }
+
+          if (!field.value) {
+            field.value = this.value[field.name]
           }
 
           const { component, option } = components[field.type] || defaultInput
