@@ -276,7 +276,10 @@
        */
       elementOptions (element, extendingOptions = {}, field = {}) {
         const attrsName = element.option.native ? 'attrs' : 'props'
-        const options = this.optionValue(field, element.option)
+        const elementProps = typeof element.option === 'function'
+          ? element.option
+          : { ...element.option, native: undefined }
+        const options = this.optionValue(field, elementProps)
 
         return { [attrsName]: { ...options, ...extendingOptions } }
       },
