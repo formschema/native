@@ -20,10 +20,13 @@
       }
     },
     checkbox: { component: 'input', option },
-    textarea: { component: 'textarea', option }
+    textarea: { component: 'textarea', option },
+    radiogroup: { component: 'div', option },
+    checkboxgroup: { component: 'div', option }
   }
 
   const defaultInput = { component: 'input', option }
+  const defaultGroup = { component: 'div', option }
 
   export default {
     name: 'form-schema',
@@ -99,9 +102,13 @@
             field.value = this.value[field.name]
           }
 
-          const element = components[field.type] || defaultInput
+          const element = field.hasOwnProperty('items') && field.type !== 'select'
+            ? components[`${field.type}group`] || defaultGroup
+            : components[field.type] || defaultInput
+
           const fieldOptions = this.elementOptions(element, field, field)
           const children = []
+          let hasMultitpleElements = false
 
           const input = {
             ref: field.name,
@@ -133,12 +140,25 @@
               }
               break
 
+            case 'radio':
+            case 'checkbox':
+              if (field.hasOwnProperty('items')) {
+                field.items.forEach((item) => {
+                  const itemOptions = this.elementOptions(
+                    components[field.type], item, item)
+
+                  children.push(createElement(
+                    components[field.type].component, itemOptions, item.label))
+                })
+              }
+              break
+
             case 'select':
               if (!field.required) {
                 children.push(createElement(components.option.component))
               }
 
-              field.options.forEach((option) => {
+              field.items.forEach((option) => {
                 const optionOptions = this.elementOptions(components.option, {
                   value: option.value
                 }, field)
@@ -153,7 +173,10 @@
               break
           }
 
-          const inputElement = createElement(element.component, input, children)
+          const inputElement = hasMultitpleElements
+            ? createElement(element.component, input, children)
+            : createElement(element.component, input, children)
+
           const formControlsNodes = []
 
           if (field.label && !option.disableWrappingLabel) {
