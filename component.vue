@@ -1,5 +1,4 @@
 <script>
-  import { clone } from './lib/object'
   import { loadFields } from './lib/parser'
 
   const components = {
@@ -63,10 +62,10 @@
       data: {}
     }),
     created () {
-      loadFields(this, clone(this.schema))
+      loadFields(this, JSON.parse(JSON.stringify(this.schema)))
 
-      this.default = clone(this.value)
-      this.data = clone(this.value)
+      this.default = { ...this.value }
+      this.data = { ...this.value }
     },
     render (createElement) {
       const nodes = []
