@@ -3,6 +3,9 @@
 
   const option = { native: true }
   const components = {
+    title: { component: 'h1', option },
+    description: { component: 'p', option },
+    error: { component: 'div', option },
     form: { component: 'form', option },
     file: { component: 'input', option },
     label: { component: 'label', option },
@@ -69,17 +72,25 @@
       const nodes = []
 
       if (this.schema.title) {
-        nodes.push(createElement('h1', this.schema.title))
+        nodes.push(createElement(
+          components.title.component, this.schema.title))
       }
 
       if (this.schema.description) {
-        nodes.push(createElement('p', this.schema.description))
+        nodes.push(createElement(
+          components.description.component, this.schema.description))
       }
 
       if (this.error) {
-        nodes.push(createElement('div', {
-          class: this.dataClassError
-        }, [ createElement('p', this.error) ]))
+        const errorOptions = this.elementOptions(components.error)
+        const errorNodes = []
+
+        if (components.error.option.native) {
+          errorNodes.push(this.error)
+        }
+
+        nodes.push(createElement(
+          components.error.component, errorOptions, errorNodes))
       }
 
       if (this.fields.length) {
