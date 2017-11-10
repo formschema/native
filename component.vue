@@ -291,6 +291,13 @@
       },
 
       /**
+       * Checks whether the form has any constraints and whether it satisfies them. If the form fails its constraints, the browser fires a cancelable `invalid` event at the element, and then returns false.
+       */
+      checkValidity () {
+        return this.$refs.__form.checkValidity()
+      },
+
+      /**
        * @private
        */
       invalid (e) {
@@ -313,7 +320,7 @@
        * Send the content of the form to the server
        */
       submit (e) {
-        if (this.$refs.__form.checkValidity()) {
+        if (this.checkValidity()) {
           /**
            * Fired when a form is submitted
            */
