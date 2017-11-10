@@ -4,7 +4,7 @@
   "description": "Vue component form based on JSON Schema",
   "main": "dist/vue-json-schema.js",
   "scripts": {
-    "pretest": "eslint --ext .js,.vue components test/specs",
+    "pretest": "eslint --ext .js,.vue component.vue test/specs",
     "test": "karma start karma.conf.js",
     "posttest": "make readme",
     "prepublish": "npm test",
