@@ -295,7 +295,7 @@
       },
 
       /**
-       * Get a form input component
+       * Get a form input reference
        */
       input (name) {
         if (!this.$refs[name]) {
