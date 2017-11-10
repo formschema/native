@@ -16,7 +16,9 @@
     button: {
       component: 'button',
       option: {
-        type: 'submit', label: 'Submit'
+        ...option,
+        type: 'submit',
+        label: 'Submit'
       }
     },
     checkbox: { component: 'input', option },
