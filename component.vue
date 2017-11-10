@@ -81,7 +81,7 @@
       if (this.error) {
         nodes.push(createElement('div', {
           class: this.dataClassError
-        }, [ createElement('p', this.title) ]))
+        }, [ createElement('p', this.error) ]))
       }
 
       if (this.fields.length) {
