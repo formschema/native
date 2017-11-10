@@ -32,17 +32,23 @@ Use this prop to enable inputs wrapping
 - `data-class-error` ***String*** (*optional*) `default: 'form-error'` 
 
 ### events 
-- `input` undefined 
+- `input` Fired synchronously when the value of an element is changed. 
 
-- `change` Fired when an form input value is changed. 
+- `change` Fired when a change to the element's value is committed by the user. 
 
-- `invalid` Fired when a submittable element has been checked and doesn't satisfy its constraints. The validity of submittable elements is checked before submitting their owner form. 
+- `invalid` Fired when a submittable element has been checked and doesn't satisfy its constraints. The validity of submittable elements is checked before submitting their owner form, or after the `checkValidity()` of the element or its owner form is called. 
 
 - `submit` Fired when a form is submitted 
 
 ### methods 
 - `input(name)` 
-Get a form input component 
+Get a form input reference
+
+- `form()` 
+Get the form reference 
+
+- `checkValidity()` 
+Checks whether the form has any constraints and whether it satisfies them. If the form fails its constraints, the browser fires a cancelable `invalid` event at the element, and then returns false. 
 
 - `reset()` 
 Reset the value of all elements of the parent form. 
@@ -119,11 +125,8 @@ In your Vue file:
 ```
 
 ## Use custom form elements
-
 Use `FormSchema.setComponent(type, component[, props = {}])` to define custom element to use for rendering.
-
 See [vue-json-schema-demo-elementui](https://github.com/demsking/vue-json-schema-demo-elementui) for a complete example.
-
 ```js
 // an element-ui example
 
