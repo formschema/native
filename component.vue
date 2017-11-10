@@ -199,7 +199,7 @@
             }
 
             formControlsNodes.push(createElement(
-              components.label.component, { ...labelOptions }, labelNodes))
+              components.label.component, labelOptions, labelNodes))
           } else {
             formControlsNodes.push(inputElement)
 
@@ -218,16 +218,16 @@
           }
         })
 
+        const labelOptions = this.elementOptions(components.label)
         const button = this.$slots.hasOwnProperty('default')
           ? { component: this.$slots.default, option }
           : components.button
 
         if (button.component instanceof Array) {
-          formNodes.push(
-            createElement(components.label.component, button.component))
+          formNodes.push(createElement(
+            components.label.component, labelOptions, button.component))
         } else {
-          const buttonOptions = this.elementOptions(button, field)
-          const labelOptions = this.elementOptions(components.label, field)
+          const buttonOptions = this.elementOptions(button)
           const buttonElement = createElement(button.component, buttonOptions, button.option.label)
 
           formNodes.push(createElement(
