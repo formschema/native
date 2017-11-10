@@ -1,6 +1,5 @@
 # vue-json-schema
 Vue component form based on JSON Schema
-
 [![Build Status](https://travis-ci.org/demsking/vue-json-schema.svg?branch=master)](https://travis-ci.org/demsking/vue-json-schema)
 
 ## Install
@@ -26,10 +25,8 @@ This property indicates whether the value of the control can be automatically co
 - `novalidate` ***Boolean*** (*optional*) 
 This Boolean attribute indicates that the form is not to be validated when submitted. 
 
-- `item-class` ***String*** (*optional*) 
-Use this prop to enable inputs wrapping 
-
-- `data-class-error` ***String*** (*optional*) `default: 'form-error'` 
+- `input-wrapping-class` ***String*** (*optional*) 
+Define the inputs wrapping class. Leave `undefined` to disable input wrapping. 
 
 ### events 
 - `input` Fired synchronously when the value of an element is changed. 
@@ -42,7 +39,7 @@ Use this prop to enable inputs wrapping
 
 ### methods 
 - `input(name)` 
-Get a form input reference
+Get a form input reference 
 
 - `form()` 
 Get the form reference 
