@@ -1,28 +1,26 @@
 <script>
   import { loadFields } from './lib/parser'
 
+  const option = { native: true }
   const components = {
-    form: { component: 'form', option: {} },
-    file: { component: 'input', option: {} },
-    label: { component: 'label', option: {} },
-    input: { component: 'input', option: {} },
-    radio: { component: 'input', option: {} },
-    select: { component: 'select', option: {} },
-    option: { component: 'option', option: {} },
+    form: { component: 'form', option },
+    file: { component: 'input', option },
+    label: { component: 'label', option },
+    input: { component: 'input', option },
+    radio: { component: 'input', option },
+    select: { component: 'select', option },
+    option: { component: 'option', option },
     button: {
       component: 'button',
       option: {
         type: 'submit', label: 'Submit'
       }
     },
-    checkbox: { component: 'input', option: {} },
-    textarea: { component: 'textarea', option: {} }
+    checkbox: { component: 'input', option },
+    textarea: { component: 'textarea', option }
   }
 
-  const defaultInput = {
-    component: 'input',
-    option: {}
-  }
+  const defaultInput = { component: 'input', option }
 
   export default {
     name: 'form-schema',
@@ -85,7 +83,6 @@
       }
 
       if (this.fields.length) {
-        const label = components.label
         const formNodes = []
 
         this.fields.forEach((field) => {
@@ -97,20 +94,18 @@
             field.value = this.value[field.name]
           }
 
-          const { component, option } = components[field.type] || defaultInput
-          const isNativeComponent = typeof component === 'string'
-          const attrsName = isNativeComponent ? 'attrs' : 'props'
+          const element = components[field.type] || defaultInput
+          const fieldOptions = this.elementOptions(element, field, field)
           const children = []
 
           const input = {
             ref: field.name,
-            [attrsName]: { ...field, ...option },
             domProps: {
               value: this.value[field.name]
             },
             on: {
               input: (event) => {
-                const value = event.target ? event.target.value : event
+                const value = event && event.target ? event.target.value : event
 
                 this.$set(this.data, field.name, value)
 
@@ -120,51 +115,47 @@
                 this.$emit('input', this.data)
               },
               change: this.changed
-            }
+            },
+            ...fieldOptions
           }
 
           delete field.value
 
           switch (field.type) {
             case 'textarea':
-              if (isNativeComponent) {
+              if (element.option.native) {
                 input.domProps.innerHTML = this.value[field.name]
               }
               break
 
             case 'select':
-              const optionEntry = components.option
-              const optionComponent = optionEntry.component
-              const optionOption = optionEntry.option
-              const isNativeOption = typeof optionComponent === 'string'
-              const attrsOptionName = isNativeOption ? 'attrs' : 'props'
-
               if (!field.required) {
-                children.push(createElement(optionComponent))
+                children.push(createElement(components.option.component))
               }
 
               field.options.forEach((option) => {
-                children.push(createElement(optionComponent, {
-                  [attrsOptionName]: option,
+                const optionOptions = this.elementOptions(components.option, {
+                  value: option.value
+                }, field)
+
+                children.push(createElement(components.option.component, {
                   domProps: {
-                    value: option.value,
-                    ...optionOption
-                  }
+                    value: option.value
+                  },
+                  ...optionOptions
                 }, option.label))
               })
               break
           }
 
-          const inputElement = createElement(component, input, children)
+          const inputElement = createElement(element.component, input, children)
           const formControlsNodes = []
 
           if (field.label && !option.disableWrappingLabel) {
-            const isNativeLabel = typeof label.component === 'string'
-            const attrsLabelName = isNativeLabel ? 'attrs' : 'props'
-            const labelOption = this.optionValue(field, label.option)
+            const labelOptions = this.elementOptions(components.label, field, field)
             const labelNodes = []
 
-            if (isNativeLabel) {
+            if (components.label.option.native) {
               labelNodes.push(createElement('span', {
                 attrs: {
                   'data-required-field': field.required ? 'true' : 'false'
@@ -179,10 +170,8 @@
               labelNodes.push(createElement('small', field.description))
             }
 
-            formControlsNodes.push(
-              createElement(label.component, {
-              [attrsLabelName]: { ...field, ...labelOption }
-            }, labelNodes))
+            formControlsNodes.push(createElement(
+              components.label.component, { ...labelOptions }, labelNodes))
           } else {
             formControlsNodes.push(inputElement)
 
@@ -202,48 +191,36 @@
         })
 
         const button = this.$slots.hasOwnProperty('default')
-          ? { component: this.$slots.default, option: {} }
+          ? { component: this.$slots.default, option }
           : components.button
 
         if (button.component instanceof Array) {
           formNodes.push(
-            createElement(label.component, button.component))
+            createElement(components.label.component, button.component))
         } else {
-          const isNativeButton = typeof button.component === 'string'
-          const attrsButtonName = isNativeButton ? 'attrs' : 'props'
-          const buttonElement = createElement(button.component, {
-            [attrsButtonName]: this.optionValue(button, button.option)
-          }, button.option.label)
+          const buttonOptions = this.elementOptions(button, field)
+          const labelOptions = this.elementOptions(components.label, field)
+          const buttonElement = createElement(button.component, buttonOptions, button.option.label)
 
-          const isNativeLabel = typeof label.component === 'string'
-          const attrsLabelName = isNativeLabel ? 'attrs' : 'props'
-          const labelOption = {
-            [attrsLabelName]: label.option
-          }
-
-          formNodes.push(
-            createElement(label.component, labelOption, [buttonElement]))
+          formNodes.push(createElement(
+            components.label.component, labelOptions, [buttonElement]))
         }
 
-        const form = components.form
-        const isNativeForm = typeof form.component === 'string'
-        const attrsFormName = isNativeForm ? 'attrs' : 'props'
-        const formOption = this.optionValue(form, form.option)
+        const formOptions = this.elementOptions(components.form, {
+          autocomplete: this.autocomplete,
+          novalidate: this.novalidate
+        })
 
-        nodes.push(createElement(form.component, {
+        nodes.push(createElement(components.form.component, {
           ref: '__form',
-          [attrsFormName]: {
-            autocomplete: this.autocomplete,
-            novalidate: this.novalidate,
-            ...formOption
-          },
           on: {
             submit: (event) => {
               event.stopPropagation()
               this.submit(event)
             },
             invalid: this.invalid
-          }
+          },
+          ...formOptions
         }, formNodes))
       }
 
@@ -261,6 +238,16 @@
        */
       optionValue (field, target) {
         return typeof target === 'function' ? target(this, field) : target
+      },
+
+      /**
+       * @private
+       */
+      elementOptions (element, extendingOptions = {}, field = {}) {
+        const attrsName = element.option.native ? 'attrs' : 'props'
+        const options = this.optionValue(field, element.option)
+
+        return { [attrsName]: { ...options, ...extendingOptions } }
       },
 
       /**
