@@ -113,6 +113,10 @@
                 const value = event.target ? event.target.value : event
 
                 this.$set(this.data, field.name, value)
+
+                /**
+                 * Fired synchronously when the value of an element is changed.
+                 */
                 this.$emit('input', this.data)
               },
               change: this.changed
@@ -264,7 +268,7 @@
        */
       changed (e) {
         /**
-         * Fired when an form input value is changed.
+         * Fired when a change to the element's value is committed by the user.
          */
         this.$emit('change', e)
       },
@@ -291,7 +295,7 @@
        */
       invalid (e) {
         /**
-         * Fired when a submittable element has been checked and doesn't satisfy its constraints. The validity of submittable elements is checked before submitting their owner form.
+         * Fired when a submittable element has been checked and doesn't satisfy its constraints. The validity of submittable elements is checked before submitting their owner form, or after the `checkValidity()` of the element or its owner form is called.
          */
         this.$emit('invalid', e)
       },
