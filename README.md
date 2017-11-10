@@ -156,7 +156,7 @@ FormSchema.setComponent('button', Button, {
 })
 
 // The third argument can also be a function that return an object
-FormSchema.setComponent('form', Form, (vm) => {
+FormSchema.setComponent('form', Form, ({ vm }) => {
   // vm is the FormSchema VM
 
   const labelWidth = '120px'
@@ -170,8 +170,24 @@ FormSchema.setComponent('form', Form, (vm) => {
     }
   })
 
+  // returning the form props
   return { labelWidth, rules, model }
 })
+
+// By default `<h1/>` is used to render the form title.
+// To override this, use the `title` type:
+FormSchema.setComponent('title', 'h2')
+
+// By default `<p/>` is used to render the form description.
+// To override this, use the `description` type:
+FormSchema.setComponent('description', 'small')
+
+// By default `<div/>` is used to render the message error.
+// To override this, use the `error` type:
+FormSchema.setComponent('error', 'el-alert', ({ vm }) => ({
+  type: 'error',
+  title: vm.error
+}))
 
 export default {
   data: () => ({
@@ -184,6 +200,8 @@ export default {
 
 ## Multiple Checkbox elements
 To define multiple checkbox, use the [JSON Schema keyword `anyOf`](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.27):
+
+**schema.json**
 ```json
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
@@ -191,7 +209,6 @@ To define multiple checkbox, use the [JSON Schema keyword `anyOf`](http://json-s
   "properties": {
     "multipleCheckbox": {
       "type": "array",
-      "title": "Lists subscription",
       "anyOf": [
         { "value": "daily", "label": "Daily New" },
         { "value": "promotion", "label": "Promotion" }
@@ -202,23 +219,58 @@ To define multiple checkbox, use the [JSON Schema keyword `anyOf`](http://json-s
 
 ```
 
+**component.vue**
+```html
+<script>
+  import FormSchema from 'vue-json-schema'
+
+  FormSchema.setComponent('select', 'el-select', ({ item }) => {
+    return { label: item.value }
+  })
+
+  FormSchema.setComponent('checkboxgroup', 'el-checkbox-group')
+
+  export default { ... }
+</script>
+```
+
 ## Grouped Radio elements
-To group radio elements, use the [JSON Schema keyword `oneOf`](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.28):
+To group radio elements, use the [JSON Schema keyword `enum`](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.23) and `attrs.type === 'radio'`:
+
+**schema.json**
 ```json
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
     "groupedRadio": {
-      "type": "array",
-      "oneOf": [
+      "type": "string",
+      "enum": [
         { "value": "daily", "label": "Daily New" },
         { "value": "promotion", "label": "Promotion" }
-      ]
+      ],
+      "attrs": {
+        "type": "radio"
+      }
     }
   }
 }
 
+```
+
+**component.vue**
+```html
+<script>
+  import FormSchema from 'vue-json-schema'
+
+  FormSchema.setComponent('select', 'el-radio', ({ item }) => {
+    return { label: item.value }
+  })
+
+  FormSchema.setComponent('radiogroup', 'el-radio-group')
+
+  export default { ... }
+</script>
 ```
 
 ## License
