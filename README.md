@@ -26,28 +26,32 @@ This property indicates whether the value of the control can be automatically co
 - `novalidate` ***Boolean*** (*optional*) 
 This Boolean attribute indicates that the form is not to be validated when submitted. 
 
-- `item-class` ***String*** (*optional*) 
-Use this prop to enable inputs wrapping 
-
-- `data-class-error` ***String*** (*optional*) `default: 'form-error'` 
+- `input-wrapping-class` ***String*** (*optional*) 
+Define the inputs wrapping class. Leave `undefined` to disable input wrapping. 
 
 ### events 
-- `input` undefined 
+- `input` Fired synchronously when the value of an element is changed. 
 
-- `change` Fired when an form input value is changed. 
+- `change` Fired when a change to the element's value is committed by the user. 
 
-- `invalid` Fired when a submittable element has been checked and doesn't satisfy its constraints. The validity of submittable elements is checked before submitting their owner form. 
+- `invalid` Fired when a submittable element has been checked and doesn't satisfy its constraints. The validity of submittable elements is checked before submitting their owner form, or after the `checkValidity()` of the element or its owner form is called. 
 
 - `submit` Fired when a form is submitted 
 
 ### methods 
 - `input(name)` 
-Get a form input component 
+Get a form input reference 
+
+- `form()` 
+Get the form reference 
+
+- `checkValidity()` 
+Checks whether the form has any constraints and whether it satisfies them. If the form fails its constraints, the browser fires a cancelable `invalid` event at the element, and then returns false. 
 
 - `reset()` 
 Reset the value of all elements of the parent form. 
 
-- `submit(e)` 
+- `submit(event)` 
 Send the content of the form to the server 
 
 - `setErrorMessage(message)` 
@@ -119,11 +123,8 @@ In your Vue file:
 ```
 
 ## Use custom form elements
-
 Use `FormSchema.setComponent(type, component[, props = {}])` to define custom element to use for rendering.
-
 See [vue-json-schema-demo-elementui](https://github.com/demsking/vue-json-schema-demo-elementui) for a complete example.
-
 ```js
 // an element-ui example
 
@@ -155,7 +156,7 @@ FormSchema.setComponent('button', Button, {
 })
 
 // The third argument can also be a function that return an object
-FormSchema.setComponent('form', Form, (vm) => {
+FormSchema.setComponent('form', Form, ({ vm }) => {
   // vm is the FormSchema VM
 
   const labelWidth = '120px'
@@ -169,8 +170,24 @@ FormSchema.setComponent('form', Form, (vm) => {
     }
   })
 
+  // returning the form props
   return { labelWidth, rules, model }
 })
+
+// By default `<h1/>` is used to render the form title.
+// To override this, use the `title` type:
+FormSchema.setComponent('title', 'h2')
+
+// By default `<p/>` is used to render the form description.
+// To override this, use the `description` type:
+FormSchema.setComponent('description', 'small')
+
+// By default `<div/>` is used to render the message error.
+// To override this, use the `error` type:
+FormSchema.setComponent('error', 'el-alert', ({ vm }) => ({
+  type: 'error',
+  title: vm.error
+}))
 
 export default {
   data: () => ({
@@ -179,6 +196,81 @@ export default {
   // ...
   components: { FormSchema }
 }
+```
+
+## Multiple Checkbox elements
+To define multiple checkbox, use the [JSON Schema keyword `anyOf`](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.27):
+
+**schema.json**
+```json
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "multipleCheckbox": {
+      "type": "array",
+      "anyOf": [
+        { "value": "daily", "label": "Daily New" },
+        { "value": "promotion", "label": "Promotion" }
+      ]
+    }
+  }
+}
+
+```
+
+**component.vue**
+```html
+<script>
+  import FormSchema from 'vue-json-schema'
+
+  FormSchema.setComponent('select', 'el-select', ({ item }) => {
+    return { label: item.value }
+  })
+
+  FormSchema.setComponent('checkboxgroup', 'el-checkbox-group')
+
+  export default { ... }
+</script>
+```
+
+## Grouped Radio elements
+To group radio elements, use the [JSON Schema keyword `enum`](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.23) and `attrs.type === 'radio'`:
+
+**schema.json**
+```json
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "groupedRadio": {
+      "type": "string",
+      "enum": [
+        { "value": "daily", "label": "Daily New" },
+        { "value": "promotion", "label": "Promotion" }
+      ],
+      "attrs": {
+        "type": "radio"
+      }
+    }
+  }
+}
+
+```
+
+**component.vue**
+```html
+<script>
+  import FormSchema from 'vue-json-schema'
+
+  FormSchema.setComponent('select', 'el-radio', ({ item }) => {
+    return { label: item.value }
+  })
+
+  FormSchema.setComponent('radiogroup', 'el-radio-group')
+
+  export default { ... }
+</script>
 ```
 
 ## License
