@@ -39,6 +39,7 @@
       /**
        * Use this directive to create two-way data bindings with the component. It automatically picks the correct way to update the element based on the input type.
        * @model
+       * @default {}
        */
       value: { type: Object, default: () => ({}) },
 
@@ -53,9 +54,9 @@
       novalidate: { type: Boolean },
 
       /**
-       * Use this prop to enable inputs wrapping
+       * Define the inputs wrapping class. Leave `undefined` to disable input wrapping.
        */
-      itemClass: { type: String }
+      inputWrappingClass: { type: String }
     },
     data: () => ({
       default: {},
@@ -209,9 +210,9 @@
             }
           }
 
-          if (this.itemClass) {
+          if (this.inputWrappingClass) {
             formNodes.push(createElement('div', {
-              class: this.itemClass
+              class: this.inputWrappingClass
             }, formControlsNodes))
           } else {
             formControlsNodes.forEach((node) => formNodes.push(node))
