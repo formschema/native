@@ -148,7 +148,7 @@
               if (field.hasOwnProperty('items')) {
                 field.items.forEach((item) => {
                   const itemOptions = this.elementOptions(
-                    components[field.type], item, item)
+                    components[field.type], item, item, item)
 
                   children.push(createElement(
                     components[field.type].component, itemOptions, item.label))
@@ -267,21 +267,23 @@
       /**
        * @private
        */
-      optionValue (field, target) {
-        return typeof target === 'function' ? target(this, field) : target
+      optionValue (field, target, item = {}) {
+        return typeof target === 'function'
+          ? target({ vm: this, field, item })
+          : target
       },
 
       /**
        * @private
        */
-      elementOptions (element, extendingOptions = {}, field = {}) {
-        const attrsName = element.option.native ? 'attrs' : 'props'
+      elementOptions (element, extendingOptions = {}, field = {}, item = {}) {
+        const attrName = element.option.native ? 'attrs' : 'props'
         const elementProps = typeof element.option === 'function'
           ? element.option
           : { ...element.option, native: undefined }
-        const options = this.optionValue(field, elementProps)
+        const options = this.optionValue(field, elementProps, item)
 
-        return { [attrsName]: { ...options, ...extendingOptions } }
+        return { [attrName]: { ...extendingOptions, ...options } }
       },
 
       /**
