@@ -52,9 +52,7 @@
       /**
        * Use this prop to enable inputs wrapping
        */
-      itemClass: { type: String },
-
-      dataClassError: { type: String, default: 'form-error' }
+      itemClass: { type: String }
     },
     data: () => ({
       default: {},
@@ -97,10 +95,6 @@
         const formNodes = []
 
         this.fields.forEach((field) => {
-          if (!field.hasOwnProperty('data-class-error')) {
-            field['data-class-error'] = this.dataClassError
-          }
-
           if (!field.value) {
             field.value = this.value[field.name]
           }
