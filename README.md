@@ -181,5 +181,44 @@ export default {
 }
 ```
 
+## Multiple Checkbox elements
+To define multiple checkbox, use the [JSON Schema keyword `anyOf`](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.27):
+```json
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "multipleCheckbox": {
+      "type": "array",
+      "title": "Lists subscription",
+      "anyOf": [
+        { "value": "daily", "label": "Daily New" },
+        { "value": "promotion", "label": "Promotion" }
+      ]
+    }
+  }
+}
+
+```
+
+## Grouped Radio elements
+To group radio elements, use the [JSON Schema keyword `oneOf`](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.28):
+```json
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "groupedRadio": {
+      "type": "array",
+      "oneOf": [
+        { "value": "daily", "label": "Daily New" },
+        { "value": "promotion", "label": "Promotion" }
+      ]
+    }
+  }
+}
+
+```
+
 ## License
 Under the MIT license. See [LICENSE](https://github.com/demsking/vue-json-schema/blob/master/LICENSE) file for more details.
