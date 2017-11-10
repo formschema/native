@@ -1,5 +1,6 @@
 # vue-json-schema
 Vue component form based on JSON Schema
+
 [![Build Status](https://travis-ci.org/demsking/vue-json-schema.svg?branch=master)](https://travis-ci.org/demsking/vue-json-schema)
 
 ## Install
@@ -50,7 +51,7 @@ Checks whether the form has any constraints and whether it satisfies them. If th
 - `reset()` 
 Reset the value of all elements of the parent form. 
 
-- `submit(e)` 
+- `submit(event)` 
 Send the content of the form to the server 
 
 - `setErrorMessage(message)` 

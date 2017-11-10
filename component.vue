@@ -340,12 +340,12 @@
       /**
        * Send the content of the form to the server
        */
-      submit (e) {
+      submit (event) {
         if (this.checkValidity()) {
           /**
            * Fired when a form is submitted
            */
-          this.$emit('submit', e)
+          this.$emit('submit', event)
         }
       },
 
