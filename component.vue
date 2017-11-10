@@ -157,7 +157,7 @@
           if (field.label && !option.disableWrappingLabel) {
             const isNativeLabel = typeof label.component === 'string'
             const attrsLabelName = isNativeLabel ? 'attrs' : 'props'
-            const labelOption = this.optionValue(label.option)
+            const labelOption = this.optionValue(field, label.option)
             const labelNodes = []
 
             if (isNativeLabel) {
@@ -208,7 +208,7 @@
           const isNativeButton = typeof button.component === 'string'
           const attrsButtonName = isNativeButton ? 'attrs' : 'props'
           const buttonElement = createElement(button.component, {
-            [attrsButtonName]: this.optionValue(button.option)
+            [attrsButtonName]: this.optionValue(button, button.option)
           }, button.option.label)
 
           const isNativeLabel = typeof label.component === 'string'
@@ -224,7 +224,7 @@
         const form = components.form
         const isNativeForm = typeof form.component === 'string'
         const attrsFormName = isNativeForm ? 'attrs' : 'props'
-        const formOption = this.optionValue(form.option)
+        const formOption = this.optionValue(form, form.option)
 
         nodes.push(createElement(form.component, {
           ref: '__form',
@@ -255,8 +255,8 @@
       /**
        * @private
        */
-      optionValue (target) {
-        return typeof target === 'function' ? target(this) : target
+      optionValue (field, target) {
+        return typeof target === 'function' ? target(this, field) : target
       },
 
       /**
