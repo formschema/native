@@ -1,6 +1,7 @@
 # vue-json-schema
 Vue component form based on JSON Schema
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/9295802c1f73489caae989323980beb9)](https://www.codacy.com/app/demsking/vue-json-schema?utm_source=github.com&utm_medium=referral&utm_content=demsking/vue-json-schema&utm_campaign=badger)
 [![Build Status](https://travis-ci.org/demsking/vue-json-schema.svg?branch=master)](https://travis-ci.org/demsking/vue-json-schema)
 
 ## Install
