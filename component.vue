@@ -169,6 +169,7 @@
         nodes.push(createElement(components.form.component, {
           ref: '__form',
           on: {
+            reset: this.reset,
             submit: (event) => {
               event.stopPropagation()
               this.submit(event)
