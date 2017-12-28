@@ -44,7 +44,7 @@
   const groupedArrayTypes = ['radio', 'checkbox', 'input', 'textarea']
   const fieldTypesAsNotArray = ['radio', 'checkbox', 'textarea', 'select']
 
-  export const inputName = (field, index) => `${field.name}-${index}`
+  export const inputName = (field, index) => `${field.attrs.name}-${index}`
 
   export default {
     name: 'form-schema',
@@ -84,19 +84,21 @@
       inputValues: {}
     }),
     created () {
-      loadFields(this, JSON.parse(JSON.stringify(this.schema)))
+      loadFields(this, { ...this.schema })
 
       this.fields.forEach((field) => {
-        this.$set(this.data, field.name, this.value[field.name] || field.value)
+        const attrs = field.attrs
 
-        if (!fieldTypesAsNotArray.includes(field.type) && field.schemaType === 'array') {
+        this.$set(this.data, attrs.name, this.value[attrs.name] || attrs.value)
+
+        if (!fieldTypesAsNotArray.includes(attrs.type) && field.schemaType === 'array') {
           field.isArrayField = true
 
-          if (!Array.isArray(this.data[field.name])) {
-            this.data[field.name] = []
+          if (!Array.isArray(this.data[attrs.name])) {
+            this.data[attrs.name] = []
           }
 
-          this.data[field.name].forEach((value, i) => {
+          this.data[attrs.name].forEach((value, i) => {
             this.inputValues[inputName(field, i)] = value
           })
 
@@ -105,6 +107,7 @@
       })
 
       this.data = Object.seal(this.data)
+
       Object.keys(this.data).forEach((key) => {
         this.default[key] = typeof this.data[key] === 'object' && this.data[key] !== null
           ? Object.freeze(this.data[key])
@@ -113,6 +116,7 @@
     },
     render (createElement) {
       const nodes = []
+      console.log('>>>>>>>>>><')
 
       if (this.schema.title) {
         nodes.push(createElement(
@@ -238,6 +242,8 @@
        */
       renderInput (input, field, element, container, children, createElement) {
         if (field.isArrayField) {
+          const attrs = field.attrs
+
           for (let i = 0; i < field.itemsNum; i++) {
             const name = inputName(field, i)
             const value = this.inputValues[name]
@@ -266,7 +272,7 @@
 
                   console.log('values>', values)
 
-                  this.data[field.name] = values
+                  this.data[attrs.name] = values
 
                   /**
                    * Fired synchronously when the value of an element is changed.
@@ -308,25 +314,27 @@
        * @private
        */
       renderField (field, formNodes, createElement) {
-        if (!field.value) {
-          field.value = this.data[field.name]
+        const attrs = field.attrs
+
+        if (!attrs.value) {
+          attrs.value = this.data[attrs.name]
         }
 
-        const element = field.hasOwnProperty('items') && groupedArrayTypes.includes(field.type)
-          ? components[`${field.type}group`] || defaultGroup
-          : components[field.type] || defaultInput
+        const element = field.hasOwnProperty('items') && groupedArrayTypes.includes(attrs.type)
+          ? components[`${attrs.type}group`] || defaultGroup
+          : components[attrs.type] || defaultInput
 
         const fieldOptions = this.elementOptions(element, field, field)
         const children = []
 
         const input = {
-          ref: field.name,
+          ref: attrs.name,
           domProps: {
-            value: this.data[field.name]
+            value: this.data[attrs.name]
           },
           on: {
             input: (event) => {
-              this.data[field.name] = event && event.target
+              this.data[attrs.name] = event && event.target
                 ? event.target.value
                 : event
 
@@ -340,12 +348,10 @@
           ...fieldOptions
         }
 
-        delete field.value
-
-        switch (field.type) {
+        switch (attrs.type) {
           case 'textarea':
             if (element.option.native) {
-              input.domProps.innerHTML = this.data[field.name]
+              input.domProps.innerHTML = this.data[attrs.name]
             }
             break
 
@@ -354,10 +360,10 @@
             if (field.hasOwnProperty('items')) {
               field.items.forEach((item) => {
                 const itemOptions = this.elementOptions(
-                  components[field.type], item, item, item)
+                  components[attrs.type], item, item, item)
 
                 children.push(createElement(
-                  components[field.type].component, itemOptions, item.label))
+                  components[attrs.type].component, itemOptions, item.label))
               })
             }
             break
@@ -430,7 +436,7 @@
       },
 
       /**
-       * Get a form input reference
+       * Get a form input reference.
        */
       input (name) {
         if (!this.$refs[name]) {
@@ -440,7 +446,7 @@
       },
 
       /**
-       * Get the form reference
+       * Get the form reference.
        */
       form () {
         return this.$refs.__form
@@ -472,10 +478,12 @@
         }
 
         this.fields.forEach((field) => {
-          this.$set(this.data, field.name, this.default[field.name])
+          const attrs = field.attrs
 
-          if (!fieldTypesAsNotArray.includes(field.type) && field.schemaType === 'array') {
-            this.data[field.name].forEach((value, i) => {
+          this.$set(this.data, attrs.name, this.default[attrs.name])
+
+          if (!fieldTypesAsNotArray.includes(attrs.type) && field.schemaType === 'array') {
+            this.data[attrs.name].forEach((value, i) => {
               this.inputValues[inputName(field, i)] = value
             })
           }
@@ -483,7 +491,7 @@
       },
 
       /**
-       * Send the content of the form to the server
+       * Send the content of the form to the server.
        */
       submit (event) {
         if (this.checkValidity()) {
