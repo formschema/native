@@ -227,7 +227,8 @@
         if (field.isArrayField) {
           for (let i = 0; i < field.itemsNum; i++) {
             const name = inputName(field, i)
-            const propsValue = { name }
+            const value = this.inputValues[name]
+            const propsValue = { name, value }
 
             container.push(createElement(element.component, {
               ...input,
