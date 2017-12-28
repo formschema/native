@@ -216,7 +216,6 @@ To define multiple checkbox, use the [JSON Schema keyword `anyOf`](http://json-s
     }
   }
 }
-
 ```
 
 **component.vue**
@@ -255,7 +254,6 @@ To group radio elements, use the [JSON Schema keyword `enum`](http://json-schema
     }
   }
 }
-
 ```
 
 **component.vue**
@@ -268,6 +266,41 @@ To group radio elements, use the [JSON Schema keyword `enum`](http://json-schema
   })
 
   FormSchema.setComponent('radiogroup', 'el-radio-group')
+
+  export default { ... }
+</script>
+```
+
+## Array Inputs Elements
+To render a [array field](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4), define your schema like:
+
+**schema.json**
+```json
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "arrayInput": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
+```
+
+**component.vue**
+`vue-json-schema` will render a text input by adding a button to add more inputs.
+
+```html
+<script>
+  import FormSchema from 'vue-json-schema'
+
+  // To override the default array button props
+  FormSchema.setComponent('arraybutton', 'button', {
+    label: 'Add more item'
+  })
 
   export default { ... }
 </script>
