@@ -1,5 +1,6 @@
 <script>
   import { loadFields } from './lib/parser'
+  import { equals } from './lib/object'
 
   const option = { native: true }
   const components = {
@@ -31,7 +32,7 @@
         label: 'Add'
       }
     },
-    checkbox: { component: 'input', option },
+    checkbox: { component: 'input', option } },
     textarea: { component: 'textarea', option },
     textgroup: { component: 'div', option },
     radiogroup: { component: 'div', option },
@@ -429,10 +430,12 @@
        * @private
        */
       changed () {
-        /**
-         * Fired when a change to the element's value is committed by the user.
-         */
-        this.$emit('change', this.data)
+        if (!equals(this.data, this.default)) {
+          /**
+           * Fired when a change to the element's value is committed by the user.
+           */
+          this.$emit('change', this.data)
+        }
       },
 
       /**
