@@ -467,9 +467,19 @@
        * Reset the value of all elements of the parent form.
        */
       reset () {
-        for (let key in this.default) {
-          this.$set(this.data, key, this.default[key])
+        for (let key in this.inputValues) {
+          delete this.inputValues[key]
         }
+
+        this.fields.forEach((field) => {
+          this.$set(this.data, field.name, this.default[field.name])
+
+          if (!fieldTypesAsNotArray.includes(field.type) && field.schemaType === 'array') {
+            this.data[field.name].forEach((value, i) => {
+              this.inputValues[inputName(field, i)] = value
+            })
+          }
+        })
       },
 
       /**
