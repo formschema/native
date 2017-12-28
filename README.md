@@ -299,6 +299,7 @@ To render a [array field](http://json-schema.org/latest/json-schema-validation.h
 
   // To override the default array button props
   FormSchema.setComponent('arraybutton', 'button', {
+    native: true, // required to force button rendering as HTML native element
     label: 'Add more item'
   })
 
