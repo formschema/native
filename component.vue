@@ -143,20 +143,22 @@
       })
 
       if (formNodes.length) {
-        const labelOptions = this.elementOptions(components.label)
+        const buttonWrapper = components.button.option.native
+          ? defaultGroup : components.label
+        const labelOptions = this.elementOptions(buttonWrapper)
         const button = this.$slots.hasOwnProperty('default')
           ? { component: this.$slots.default, option }
           : components.button
 
         if (button.component instanceof Array) {
           formNodes.push(createElement(
-            components.label.component, labelOptions, button.component))
+            buttonWrapper.component, labelOptions, button.component))
         } else {
           const buttonOptions = this.elementOptions(button)
           const buttonElement = createElement(button.component, buttonOptions, button.option.label)
 
           formNodes.push(createElement(
-            components.label.component, labelOptions, [buttonElement]))
+            buttonWrapper.component, labelOptions, [buttonElement]))
         }
 
         const formOptions = this.elementOptions(components.form, {
