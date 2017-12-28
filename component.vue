@@ -175,9 +175,6 @@
 
       return createElement('div', nodes)
     },
-    mounted () {
-      this.reset()
-    },
     setComponent (type, component, option = {}) {
       const defaultOption = components[type]
         ? { ...components[type].option }
