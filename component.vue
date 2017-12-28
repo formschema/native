@@ -9,6 +9,8 @@
     form: { component: 'form', option },
     file: { component: 'input', option },
     label: { component: 'label', option },
+    text: { component: 'input', option },
+    password: { component: 'input', option },
     input: { component: 'input', option },
     radio: { component: 'input', option },
     select: { component: 'select', option },
