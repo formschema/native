@@ -259,8 +259,6 @@
                     }
                   }
 
-                  console.log('values>', values)
-
                   this.data[attrs.name] = values
 
                   /**
