@@ -104,10 +104,6 @@
         }
       })
 
-      for (let key in this.value) {
-        this.data[key] = this.value[key]
-      }
-
       this.data = Object.seal(this.data)
       this.default = Object.freeze(this.value)
     },
