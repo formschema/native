@@ -106,7 +106,6 @@
     },
     render (createElement) {
       const nodes = []
-      console.log('>>>>>>>>>><')
 
       if (this.schema.title) {
         nodes.push(createElement(
@@ -314,7 +313,7 @@
           ? components[`${attrs.type}group`] || defaultGroup
           : components[attrs.type] || defaultInput
 
-        const fieldOptions = this.elementOptions(element, field, field)
+        const fieldOptions = this.elementOptions(element, attrs, field)
         const children = []
 
         const input = {
@@ -381,7 +380,7 @@
         const formControlsNodes = []
 
         if (field.label && !option.disableWrappingLabel) {
-          const labelOptions = this.elementOptions(components.label, field, field)
+          const labelOptions = this.elementOptions(components.label, {}, field)
           const labelNodes = []
 
           if (components.label.option.native) {
