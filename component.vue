@@ -105,7 +105,11 @@
       })
 
       this.data = Object.seal(this.data)
-      this.default = Object.freeze(this.value)
+      Object.keys(this.data).forEach((key) => {
+        this.default[key] = typeof this.data[key] === 'object' && this.data[key] !== null
+          ? Object.freeze(this.data[key])
+          : this.data[key]
+      })
     },
     render (createElement) {
       const nodes = []
