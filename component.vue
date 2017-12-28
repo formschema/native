@@ -23,14 +23,28 @@
         label: 'Submit'
       }
     },
+    arraybutton: {
+      component: 'button',
+      option: {
+        ...option,
+        type: 'button',
+        label: 'Add'
+      }
+    },
     checkbox: { component: 'input', option },
     textarea: { component: 'textarea', option },
+    textgroup: { component: 'div', option },
     radiogroup: { component: 'div', option },
     checkboxgroup: { component: 'div', option }
   }
 
   const defaultInput = { component: 'input', option }
   const defaultGroup = { component: 'div', option }
+
+  const groupedArrayTypes = ['radio', 'checkbox', 'input', 'textarea']
+  const fieldTypesAsNotArray = ['radio', 'checkbox', 'textarea', 'select']
+
+  export const inputName = (field, index) => `${field.name}-${index}`
 
   export default {
     name: 'form-schema',
@@ -66,13 +80,36 @@
       default: {},
       fields: [],
       error: null,
-      data: {}
+      data: {},
+      inputValues: {}
     }),
     created () {
       loadFields(this, JSON.parse(JSON.stringify(this.schema)))
 
-      this.default = { ...this.value }
-      this.data = { ...this.value }
+      this.fields.forEach((field) => {
+        this.$set(this.data, field.name, this.value[field.name] || field.value)
+
+        if (!fieldTypesAsNotArray.includes(field.type) && field.schemaType === 'array') {
+          field.isArrayField = true
+
+          if (!Array.isArray(this.data[field.name])) {
+            this.data[field.name] = []
+          }
+
+          this.data[field.name].forEach((value, i) => {
+            this.inputValues[inputName(field, i)] = value
+          })
+
+          field.itemsNum = field.minItems
+        }
+      })
+
+      for (let key in this.value) {
+        this.data[key] = this.value[key]
+      }
+
+      this.data = Object.seal(this.data)
+      this.default = Object.freeze(this.value)
     },
     render (createElement) {
       const nodes = []
@@ -104,27 +141,26 @@
 
         this.fields.forEach((field) => {
           if (!field.value) {
-            field.value = this.value[field.name]
+            field.value = this.data[field.name]
           }
 
-          const element = field.hasOwnProperty('items') && field.type !== 'select'
+          const element = field.hasOwnProperty('items') && groupedArrayTypes.includes(field.type)
             ? components[`${field.type}group`] || defaultGroup
             : components[field.type] || defaultInput
 
           const fieldOptions = this.elementOptions(element, field, field)
           const children = []
-          let hasMultitpleElements = false
 
           const input = {
             ref: field.name,
             domProps: {
-              value: this.value[field.name]
+              value: this.data[field.name]
             },
             on: {
               input: (event) => {
-                const value = event && event.target ? event.target.value : event
-
-                this.$set(this.data, field.name, value)
+                this.data[field.name] = event && event.target
+                  ? event.target.value
+                  : event
 
                 /**
                  * Fired synchronously when the value of an element is changed.
@@ -141,7 +177,7 @@
           switch (field.type) {
             case 'textarea':
               if (element.option.native) {
-                input.domProps.innerHTML = this.value[field.name]
+                input.domProps.innerHTML = this.data[field.name]
               }
               break
 
@@ -178,10 +214,6 @@
               break
           }
 
-          const inputElement = hasMultitpleElements
-            ? createElement(element.component, input, children)
-            : createElement(element.component, input, children)
-
           const formControlsNodes = []
 
           if (field.label && !option.disableWrappingLabel) {
@@ -196,22 +228,14 @@
               }, field.label))
             }
 
-            labelNodes.push(inputElement)
-
-            if (field.description) {
-              labelNodes.push(createElement('br'))
-              labelNodes.push(createElement('small', field.description))
-            }
+            this.renderInputAndDescription(
+              input, field, element, labelNodes, children, createElement)
 
             formControlsNodes.push(createElement(
               components.label.component, labelOptions, labelNodes))
           } else {
-            formControlsNodes.push(inputElement)
-
-            if (field.description) {
-              formControlsNodes.push(createElement('br'))
-              formControlsNodes.push(createElement('small', field.description))
-            }
+            this.renderInputAndDescription(
+              input, field, element, formControlsNodes, children, createElement)
           }
 
           if (this.inputWrappingClass) {
@@ -263,7 +287,13 @@
       this.reset()
     },
     setComponent (type, component, option = {}) {
-      components[type] = { component, option }
+      const defaultOption = components[type]
+        ? { ...components[type].option }
+        : {}
+
+      delete defaultOption.native
+
+      components[type] = { type, component, option, defaultOption }
     },
     methods: {
       /**
@@ -285,7 +315,88 @@
           : { ...element.option, native: undefined }
         const options = this.optionValue(field, elementProps, item)
 
-        return { [attrName]: { ...extendingOptions, ...options } }
+        return {
+          [attrName]: {
+            ...element.defaultOption,
+            ...extendingOptions,
+            ...options
+          }
+        }
+      },
+
+      /**
+       * @private
+       */
+      renderInputAndDescription (input, field, element, container, children, createElement) {
+        if (field.isArrayField) {
+          for (let i = 0; i < field.itemsNum; i++) {
+            const name = inputName(field, i)
+            const propsValue = { name }
+
+            container.push(createElement(element.component, {
+              ...input,
+              ref: name,
+              props: propsValue,
+              domProps: propsValue,
+              on: {
+                input: (event) => {
+                  this.inputValues[name] = event && event.target
+                    ? event.target.value
+                    : event
+
+                  const values = []
+
+                  for (let j = 0; j < field.itemsNum; j++) {
+                    const currentValue = this.inputValues[inputName(field, j)]
+
+                    if (currentValue) {
+                      values.push(currentValue)
+                    }
+                  }
+
+                  console.log('values>', values)
+
+                  this.data[field.name] = values
+
+                  /**
+                   * Fired synchronously when the value of an element is changed.
+                   */
+                  this.$emit('input', this.data)
+                },
+                change: this.changed
+              }
+            }, children))
+          }
+
+          const labelOptions = this.elementOptions(components.label)
+          const button = components.arraybutton
+          const buttonOptions = {
+            ...this.elementOptions(button, {
+              disabled: field.maxItems <= field.itemsNum
+            }),
+            on: {
+              click: () => {
+                if (field.itemsNum < field.maxItems) {
+                  field.itemsNum++
+                  this.$forceUpdate()
+                }
+              }
+            }
+          }
+          const label = button.option.label || button.defaultOption.label
+          const buttonElement = createElement(
+            button.component, buttonOptions, label)
+
+          container.push(createElement(
+            components.label.component, labelOptions, [buttonElement]))
+        } else {
+          container.push(createElement(element.component, input, children))
+        }
+
+        if (field.description) {
+          container.push(createElement('br'))
+          container.push(createElement('small', field.description))
+        }
       },
 
       /**
