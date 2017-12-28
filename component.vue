@@ -223,7 +223,17 @@
       /**
        * @private
        */
-      renderInputAndDescription (input, field, element, container, children, createElement) {
+      renderInputDescription (field, container, createElement) {
+        if (field.description) {
+          container.push(createElement('br'))
+          container.push(createElement('small', field.description))
+        }
+      },
+
+      /**
+       * @private
+       */
+      renderInput (input, field, element, container, children, createElement) {
         if (field.isArrayField) {
           for (let i = 0; i < field.itemsNum; i++) {
             const name = inputName(field, i)
@@ -288,11 +298,6 @@
             components.label.component, labelOptions, [buttonElement]))
         } else {
           container.push(createElement(element.component, input, children))
-        }
-
-        if (field.description) {
-          container.push(createElement('br'))
-          container.push(createElement('small', field.description))
         }
       },
 
@@ -388,14 +393,18 @@
             }, field.label))
           }
 
-          this.renderInputAndDescription(
+          this.renderInput(
             input, field, element, labelNodes, children, createElement)
+
+          this.renderInputDescription(field, labelNodes, createElement)
 
           formControlsNodes.push(createElement(
             components.label.component, labelOptions, labelNodes))
         } else {
-          this.renderInputAndDescription(
+          this.renderInput(
             input, field, element, formControlsNodes, children, createElement)
+
+          this.renderInputDescription(field, formControlsNodes, createElement)
         }
 
         if (this.inputWrappingClass) {
