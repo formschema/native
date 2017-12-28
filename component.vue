@@ -422,11 +422,11 @@
       /**
        * @private
        */
-      changed (e) {
+      changed () {
         /**
          * Fired when a change to the element's value is committed by the user.
          */
-        this.$emit('change', e)
+        this.$emit('change', this.data)
       },
 
       /**
