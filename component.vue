@@ -136,117 +136,13 @@
           components.error.component, errorOptions, errorNodes))
       }
 
-      if (this.fields.length) {
-        const formNodes = []
+      const formNodes = []
 
-        this.fields.forEach((field) => {
-          if (!field.value) {
-            field.value = this.data[field.name]
-          }
+      this.fields.forEach((field) => {
+        this.renderField(field, formNodes, createElement)
+      })
 
-          const element = field.hasOwnProperty('items') && groupedArrayTypes.includes(field.type)
-            ? components[`${field.type}group`] || defaultGroup
-            : components[field.type] || defaultInput
-
-          const fieldOptions = this.elementOptions(element, field, field)
-          const children = []
-
-          const input = {
-            ref: field.name,
-            domProps: {
-              value: this.data[field.name]
-            },
-            on: {
-              input: (event) => {
-                this.data[field.name] = event && event.target
-                  ? event.target.value
-                  : event
-
-                /**
-                 * Fired synchronously when the value of an element is changed.
-                 */
-                this.$emit('input', this.data)
-              },
-              change: this.changed
-            },
-            ...fieldOptions
-          }
-
-          delete field.value
-
-          switch (field.type) {
-            case 'textarea':
-              if (element.option.native) {
-                input.domProps.innerHTML = this.data[field.name]
-              }
-              break
-
-            case 'radio':
-            case 'checkbox':
-              if (field.hasOwnProperty('items')) {
-                field.items.forEach((item) => {
-                  const itemOptions = this.elementOptions(
-                    components[field.type], item, item, item)
-
-                  children.push(createElement(
-                    components[field.type].component, itemOptions, item.label))
-                })
-              }
-              break
-
-            case 'select':
-              if (!field.required) {
-                children.push(createElement(components.option.component))
-              }
-
-              field.items.forEach((option) => {
-                const optionOptions = this.elementOptions(components.option, {
-                  value: option.value
-                }, field)
-
-                children.push(createElement(components.option.component, {
-                  domProps: {
-                    value: option.value
-                  },
-                  ...optionOptions
-                }, option.label))
-              })
-              break
-          }
-
-          const formControlsNodes = []
-
-          if (field.label && !option.disableWrappingLabel) {
-            const labelOptions = this.elementOptions(components.label, field, field)
-            const labelNodes = []
-
-            if (components.label.option.native) {
-              labelNodes.push(createElement('span', {
-                attrs: {
-                  'data-required-field': field.required ? 'true' : 'false'
-                }
-              }, field.label))
-            }
-
-            this.renderInputAndDescription(
-              input, field, element, labelNodes, children, createElement)
-
-            formControlsNodes.push(createElement(
-              components.label.component, labelOptions, labelNodes))
-          } else {
-            this.renderInputAndDescription(
-              input, field, element, formControlsNodes, children, createElement)
-          }
-
-          if (this.inputWrappingClass) {
-            formNodes.push(createElement('div', {
-              class: this.inputWrappingClass
-            }, formControlsNodes))
-          } else {
-            formControlsNodes.forEach((node) => formNodes.push(node))
-          }
-        })
-
+      if (formNodes.length) {
         const labelOptions = this.elementOptions(components.label)
         const button = this.$slots.hasOwnProperty('default')
           ? { component: this.$slots.default, option }
@@ -396,6 +292,117 @@
         if (field.description) {
           container.push(createElement('br'))
           container.push(createElement('small', field.description))
+        }
+      },
+
+      /**
+       * @private
+       */
+      renderField (field, formNodes, createElement) {
+        if (!field.value) {
+          field.value = this.data[field.name]
+        }
+
+        const element = field.hasOwnProperty('items') && groupedArrayTypes.includes(field.type)
+          ? components[`${field.type}group`] || defaultGroup
+          : components[field.type] || defaultInput
+
+        const fieldOptions = this.elementOptions(element, field, field)
+        const children = []
+
+        const input = {
+          ref: field.name,
+          domProps: {
+            value: this.data[field.name]
+          },
+          on: {
+            input: (event) => {
+              this.data[field.name] = event && event.target
+                ? event.target.value
+                : event
+
+              /**
+               * Fired synchronously when the value of an element is changed.
+               */
+              this.$emit('input', this.data)
+            },
+            change: this.changed
+          },
+          ...fieldOptions
+        }
+
+        delete field.value
+
+        switch (field.type) {
+          case 'textarea':
+            if (element.option.native) {
+              input.domProps.innerHTML = this.data[field.name]
+            }
+            break
+
+          case 'radio':
+          case 'checkbox':
+            if (field.hasOwnProperty('items')) {
+              field.items.forEach((item) => {
+                const itemOptions = this.elementOptions(
+                  components[field.type], item, item, item)
+
+                children.push(createElement(
+                  components[field.type].component, itemOptions, item.label))
+              })
+            }
+            break
+
+          case 'select':
+            if (!field.required) {
+              children.push(createElement(components.option.component))
+            }
+
+            field.items.forEach((option) => {
+              const optionOptions = this.elementOptions(components.option, {
+                value: option.value
+              }, field)
+
+              children.push(createElement(components.option.component, {
+                domProps: {
+                  value: option.value
+                },
+                ...optionOptions
+              }, option.label))
+            })
+            break
+        }
+
+        const formControlsNodes = []
+
+        if (field.label && !option.disableWrappingLabel) {
+          const labelOptions = this.elementOptions(components.label, field, field)
+          const labelNodes = []
+
+          if (components.label.option.native) {
+            labelNodes.push(createElement('span', {
+              attrs: {
+                'data-required-field': field.required ? 'true' : 'false'
+              }
+            }, field.label))
+          }
+
+          this.renderInputAndDescription(
+            input, field, element, labelNodes, children, createElement)
+
+          formControlsNodes.push(createElement(
+            components.label.component, labelOptions, labelNodes))
+        } else {
+          this.renderInputAndDescription(
+            input, field, element, formControlsNodes, children, createElement)
+        }
+
+        if (this.inputWrappingClass) {
+          formNodes.push(createElement('div', {
+            class: this.inputWrappingClass
+          }, formControlsNodes))
+        } else {
+          formControlsNodes.forEach((node) => formNodes.push(node))
         }
       },
 
