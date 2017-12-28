@@ -3,6 +3,9 @@
   import { equals } from './lib/object'
 
   const option = { native: true }
+  const optionType = (type) => ({ ...option, type })
+  const optionButton = (label) => ({ ...option, type: 'button', label })
+
   const components = {
     title: { component: 'h1', option },
     description: { component: 'p', option },
@@ -11,28 +14,14 @@
     file: { component: 'input', option },
     label: { component: 'label', option },
     text: { component: 'input', option },
-    password: { component: 'input', option },
+    password: { component: 'input', option: optionType('password') },
     input: { component: 'input', option },
-    radio: { component: 'input', option },
+    radio: { component: 'input', option: optionType('radio') },
     select: { component: 'select', option },
     option: { component: 'option', option },
-    button: {
-      component: 'button',
-      option: {
-        ...option,
-        type: 'submit',
-        label: 'Submit'
-      }
-    },
-    arraybutton: {
-      component: 'button',
-      option: {
-        ...option,
-        type: 'button',
-        label: 'Add'
-      }
-    },
-    checkbox: { component: 'input', option } },
+    button: { component: 'button', option: optionButton('Submit') },
+    arraybutton: { component: 'button', option: optionButton('Add') },
+    checkbox: { component: 'input', option: optionType('checkbox') },
     textarea: { component: 'textarea', option },
     textgroup: { component: 'div', option },
     radiogroup: { component: 'div', option },
