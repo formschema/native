@@ -214,6 +214,13 @@ export default {
 
       this.data = Object.seal(this.data)
 
+      if (!equals(this.data, this.value)) {
+        /**
+         * @private
+         */
+        this.$emit('input', this.data)
+      }
+
       Object.keys(this.data).forEach((key) => {
         this.default[key] = typeof this.data[key] === 'object' && this.data[key] !== null
           ? Object.freeze(this.data[key])
