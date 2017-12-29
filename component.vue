@@ -189,27 +189,16 @@
       /**
        * @private
        */
-      optionValue (field, target, item = {}) {
-        return typeof target === 'function'
-          ? target({ vm: this, field, item })
-          : target
-      },
-
-      /**
-       * @private
-       */
       elementOptions (element, extendingOptions = {}, field = {}, item = {}) {
         const attrName = element.option.native ? 'attrs' : 'props'
         const elementProps = typeof element.option === 'function'
-          ? element.option
-          : { ...element.option, native: undefined }
-        const options = this.optionValue(field, elementProps, item)
+          ? { ...extendingOptions, ...element.option({ vm: this, field, item }) }
+          : { ...element.option, native: undefined, ...extendingOptions }
 
         return {
           [attrName]: {
             ...element.defaultOption,
-            ...extendingOptions,
-            ...options
+            ...elementProps
           }
         }
       },
