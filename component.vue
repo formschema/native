@@ -147,8 +147,9 @@
           formNodes.push(createElement(
             buttonWrapper.component, labelOptions, button.component))
         } else {
-          const buttonOptions = this.elementOptions(button)
-          const buttonElement = createElement(button.component, buttonOptions, button.option.label)
+          const buttonOptions = this.elementOptions(button, { type: 'submit' })
+          const buttonElement = createElement(
+            button.component, buttonOptions, button.option.label)
 
           formNodes.push(createElement(
             buttonWrapper.component, labelOptions, [buttonElement]))
