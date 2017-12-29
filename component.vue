@@ -222,6 +222,10 @@
        * @private
        */
       elementOptions (element, extendingOptions = {}, field = {}, item = {}) {
+        if (!field.attrs) {
+          field.attrs = {}
+        }
+
         const attrName = element.option.native ? 'attrs' : 'props'
         const elementProps = typeof element.option === 'function'
           ? { ...extendingOptions, ...element.option({ vm: this, field, item }) }
@@ -290,12 +294,12 @@
             }, children))
           }
 
-          const labelOptions = this.elementOptions(components.label)
+          const labelOptions = this.elementOptions(components.label, {}, field)
           const button = components.arraybutton
           const buttonOptions = {
             ...this.elementOptions(button, {
               disabled: field.maxItems <= field.itemsNum
-            }),
+            }, field),
             on: {
               click: () => {
                 if (field.itemsNum < field.maxItems) {
