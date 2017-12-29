@@ -88,6 +88,8 @@
       inputWrappingClass: { type: String }
     },
     data: () => ({
+      title: null,
+      description: null,
       default: {},
       fields: [],
       error: null,
@@ -104,14 +106,14 @@
     render (createElement) {
       const nodes = []
 
-      if (this.schema.title) {
+      if (this.title) {
         nodes.push(createElement(
-          components.title.component, this.schema.title))
+          components.title.component, this.title))
       }
 
-      if (this.schema.description) {
+      if (this.description) {
         nodes.push(createElement(
-          components.description.component, this.schema.description))
+          components.description.component, this.description))
       }
 
       if (this.error) {
@@ -188,6 +190,9 @@
        */
       init (schema) {
         loadFields(this, { ...schema })
+
+        this.title = schema.title
+        this.description = schema.description
 
         this.fields.forEach((field) => {
           const attrs = field.attrs
