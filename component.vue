@@ -2,34 +2,55 @@
   import { loadFields } from './lib/parser'
   import { equals } from './lib/object'
 
-  const option = { native: true }
-  const optionType = (type) => ({ ...option, type })
-  const optionButton = (label) => ({ ...option, type: 'button', label })
-
-  const components = {
-    title: { component: 'h1', option },
-    description: { component: 'p', option },
-    error: { component: 'div', option },
-    form: { component: 'form', option },
-    file: { component: 'input', option },
-    label: { component: 'label', option },
-    text: { component: 'input', option },
-    password: { component: 'input', option: optionType('password') },
-    input: { component: 'input', option },
-    radio: { component: 'input', option: optionType('radio') },
-    select: { component: 'select', option },
-    option: { component: 'option', option },
-    button: { component: 'button', option: optionButton('Submit') },
-    arraybutton: { component: 'button', option: optionButton('Add') },
-    checkbox: { component: 'input', option: optionType('checkbox') },
-    textarea: { component: 'textarea', option },
-    textgroup: { component: 'div', option },
-    radiogroup: { component: 'div', option },
-    checkboxgroup: { component: 'div', option }
+  const tags = {
+    h1: ['title'],
+    p: ['description'],
+    div: ['error', 'textgroup', 'radiogroup', 'checkboxgroup', 'defaultGroup'],
+    form: ['form'],
+    input: {
+      typed: [
+        'checkbox', 'color', 'date', 'datetime', 'datetime-local',
+        'email', 'file', 'hidden', 'image', 'month', 'number',
+        'password', 'radio', 'range', 'search', 'tel', 'text',
+        'time', 'url', 'week'
+      ]
+    },
+    textarea: ['textarea'],
+    select: ['select'],
+    option: ['option'],
+    label: ['label'],
+    button: [
+      { component: 'button', option: { type: 'submit', label: 'Submit' } },
+      { component: 'arraybutton', option: { type: 'button', label: 'Add' } }
+    ]
   }
 
-  const defaultInput = { component: 'input', option }
-  const defaultGroup = { component: 'div', option }
+  const option = { native: true }
+  const components = {}
+
+  const defineComponent = (tag, item) => {
+    if (typeof item === 'object') {
+      components[item.component] = {
+        component: tag,
+        option: { ...option, ...item.option }
+      }
+    } else {
+      components[item] = {
+        component: tag,
+        option
+      }
+    }
+  }
+
+  for (let tag in tags) {
+    if (tags[tag] instanceof Array) {
+      tags[tag].forEach((item) => defineComponent(tag, item))
+    } else {
+      tags[tag].typed.forEach((type) => {
+        defineComponent(tag, { component: type, option: { type } })
+      })
+    }
+  }
 
   const groupedArrayTypes = ['radio', 'checkbox', 'input', 'textarea']
   const fieldTypesAsNotArray = ['radio', 'checkbox', 'textarea', 'select']
@@ -137,7 +158,7 @@
 
       if (formNodes.length) {
         const buttonWrapper = components.button.option.native
-          ? defaultGroup : components.label
+          ? components.defaultGroup : components.label
         const labelOptions = this.elementOptions(buttonWrapper)
         const button = this.$slots.hasOwnProperty('default')
           ? { component: this.$slots.default, option }
@@ -295,8 +316,8 @@
         }
 
         const element = field.hasOwnProperty('items') && groupedArrayTypes.includes(attrs.type)
-          ? components[`${attrs.type}group`] || defaultGroup
-          : components[attrs.type] || defaultInput
+          ? components[`${attrs.type}group`] || components.defaultGroup
+          : components[attrs.type] || components.text
 
         const fieldOptions = this.elementOptions(element, attrs, field)
         const children = []
