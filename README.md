@@ -329,5 +329,22 @@ To render a [array field](http://json-schema.org/latest/json-schema-validation.h
 </script>
 ```
 
+## Regex Inputs
+To render a [regex input](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.3.3), define your schema like:
+
+**schema.json**
+```json
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "regexInput": {
+      "type": "string",
+      "pattern": "[a-e]+"
+    }
+  }
+}
+```
+
 ## License
 Under the MIT license. See [LICENSE](https://github.com/demsking/vue-json-schema/blob/master/LICENSE) file for more details.
