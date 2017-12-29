@@ -365,7 +365,9 @@
 
           case 'select':
             if (!field.required) {
-              children.push(createElement(components.option.component))
+              children.push(createElement(components.option.component, {
+                attrs: { value: '' }
+              }))
             }
 
             field.items.forEach((option) => {
