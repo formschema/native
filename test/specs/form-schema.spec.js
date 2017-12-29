@@ -3,7 +3,7 @@
 import Vue from 'vue'
 
 import FormSchema from '../../component.vue'
-import Schema from '../fixtures/signup'
+import schema from '../fixtures/signup'
 
 Vue.config.productionTip = false
 
@@ -12,10 +12,6 @@ Vue.config.productionTip = false
 describe('component', () => {
   it('should have a created hook', () => {
     expect(typeof FormSchema.created).toBe('function')
-  })
-
-  it('should have a mounted hook', () => {
-    expect(typeof FormSchema.mounted).toBe('function')
   })
 
   it('should have a changed method', () => {
@@ -58,10 +54,7 @@ describe('schema', () => {
   const Constructor = Vue.extend(FormSchema)
   const model = {}
   const component = new Constructor({
-    propsData: {
-      schema: Schema,
-      model: model
-    }
+    propsData: { schema, model }
   }).$mount()
 
   const form = component.$el.getElementsByTagName('form')[0]
@@ -70,8 +63,10 @@ describe('schema', () => {
 
   const attr = (input, name) => input.getAttribute(name)
 
-  for (let fieldName in Schema.properties) {
-    const field = Schema.properties[fieldName]
+  const clonedSchema = JSON.parse(JSON.stringify(schema))
+
+  for (let fieldName in clonedSchema.properties) {
+    const field = clonedSchema.properties[fieldName]
 
     if (field.visible === false) {
       it(`invisible input.${fieldName} should be undefined`, () =>
@@ -91,25 +86,19 @@ describe('schema', () => {
       field.attrs.type = 'checkbox'
     }
 
-    if (field.minLength) {
-      field.attrs.minlength = field.minLength
-    }
-
-    if (field.maxLength) {
-      field.attrs.maxlength = field.maxLength
-    }
-
-    if (field.required) {
-      field.attrs.required = true
-
-      if (field.attrs.placeholder) {
-        // field.attrs.placeholder += ' *'
-      }
-    }
-
     for (let attrName in field.attrs) {
-      it(`input.${fieldName} should have attribute '${attrName}'`, () =>
-        expect(attr(input, attrName)).toMatch(new RegExp(`${field.attrs[attrName]}`)))
+      it(`input.${fieldName} should have attribute '${attrName}'`, () => {
+        if (typeof field.attrs[attrName] === 'boolean') {
+          if (field.attrs[attrName] === true) {
+            return expect(attr(input, attrName)).toEqual(attrName)
+          }
+
+          return expect(attr(input, attrName)).toEqual(null)
+        }
+
+        return expect(attr(input, attrName))
+          .toMatch(new RegExp(`${field.attrs[attrName]}`))
+      })
     }
   }
 
