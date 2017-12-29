@@ -122,3 +122,4 @@ const schemaCase = (schema) => () => {
 }
 
 describe('schema', schemaCase(schema))
+describe('async schema', schemaCase(Promise.resolve(schemaClone)))
