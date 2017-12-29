@@ -1,57 +1,6 @@
 import { loadFields } from '../lib/parser'
 import { equals } from '../lib/object'
-import { loadFields } from './lib/parser'
-import { equals } from './lib/object'
-
-const tags = {
-  h1: ['title'],
-  p: ['description'],
-  div: ['error', 'textgroup', 'radiogroup', 'checkboxgroup', 'defaultGroup'],
-  form: ['form'],
-  input: {
-    typed: [
-      'checkbox', 'color', 'date', 'datetime', 'datetime-local',
-      'email', 'file', 'hidden', 'image', 'month', 'number',
-      'password', 'radio', 'range', 'search', 'tel', 'text',
-      'time', 'url', 'week'
-    ]
-  },
-  textarea: ['textarea'],
-  select: ['select'],
-  option: ['option'],
-  label: ['label'],
-  button: [
-    { component: 'button', option: { type: 'submit', label: 'Submit' } },
-    { component: 'arraybutton', option: { type: 'button', label: 'Add' } }
-  ]
-}
-
-const option = { native: true }
-const components = {}
-
-const defineComponent = (tag, item) => {
-  if (typeof item === 'object') {
-    components[item.component] = {
-      component: tag,
-      option: { ...option, ...item.option }
-    }
-  } else {
-    components[item] = {
-      component: tag,
-      option
-    }
-  }
-}
-
-for (let tag in tags) {
-  if (tags[tag] instanceof Array) {
-    tags[tag].forEach((item) => defineComponent(tag, item))
-  } else {
-    tags[tag].typed.forEach((type) => {
-      defineComponent(tag, { component: type, option: { type } })
-    })
-  }
-}
+import { components, option } from '../lib/components'
 
 const groupedArrayTypes = ['radio', 'checkbox', 'input', 'textarea']
 const fieldTypesAsNotArray = ['radio', 'checkbox', 'textarea', 'select']
