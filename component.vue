@@ -63,7 +63,7 @@
       /**
        * The JSON Schema object. Use the `v-if` directive to load asynchronous schema.
        */
-      schema: { type: Object, required: true },
+      schema: { type: [Object, Promise], required: true },
 
       /**
        * Use this directive to create two-way data bindings with the component. It automatically picks the correct way to update the element based on the input type.
@@ -95,35 +95,11 @@
       inputValues: {}
     }),
     created () {
-      loadFields(this, { ...this.schema })
-
-      this.fields.forEach((field) => {
-        const attrs = field.attrs
-
-        this.$set(this.data, attrs.name, this.value[attrs.name] || attrs.value)
-
-        if (!fieldTypesAsNotArray.includes(attrs.type) && field.schemaType === 'array') {
-          field.isArrayField = true
-
-          if (!Array.isArray(this.data[attrs.name])) {
-            this.data[attrs.name] = []
-          }
-
-          this.data[attrs.name].forEach((value, i) => {
-            this.inputValues[inputName(field, i)] = value
-          })
-
-          field.itemsNum = field.minItems
-        }
-      })
-
-      this.data = Object.seal(this.data)
-
-      Object.keys(this.data).forEach((key) => {
-        this.default[key] = typeof this.data[key] === 'object' && this.data[key] !== null
-          ? Object.freeze(this.data[key])
-          : this.data[key]
-      })
+      if (this.schema instanceof Promise) {
+        this.schema.then(this.init)
+      } else {
+        this.init(this.schema)
+      }
     },
     render (createElement) {
       const nodes = []
@@ -207,6 +183,41 @@
       components[type] = { type, component, option, defaultOption }
     },
     methods: {
+      /**
+       * @private
+       */
+      init (schema) {
+        loadFields(this, { ...schema })
+
+        this.fields.forEach((field) => {
+          const attrs = field.attrs
+
+          this.$set(this.data, attrs.name, this.value[attrs.name] || attrs.value)
+
+          if (!fieldTypesAsNotArray.includes(attrs.type) && field.schemaType === 'array') {
+            field.isArrayField = true
+
+            if (!Array.isArray(this.data[attrs.name])) {
+              this.data[attrs.name] = []
+            }
+
+            this.data[attrs.name].forEach((value, i) => {
+              this.inputValues[inputName(field, i)] = value
+            })
+
+            field.itemsNum = field.minItems
+          }
+        })
+
+        this.data = Object.seal(this.data)
+
+        Object.keys(this.data).forEach((key) => {
+          this.default[key] = typeof this.data[key] === 'object' && this.data[key] !== null
+            ? Object.freeze(this.data[key])
+            : this.data[key]
+        })
+      },
+
       /**
        * @private
        */
