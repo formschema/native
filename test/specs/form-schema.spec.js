@@ -1,11 +1,10 @@
 'use strict'
 
-import Vue from 'vue'
+import { mount } from 'vue-test-utils'
+import FormSchema from '../../component.js'
+import schema from '../fixtures/signup.json'
 
-import FormSchema from '../../component.vue'
-import schema from '../fixtures/signup'
-
-Vue.config.productionTip = false
+const schemaClone = JSON.parse(JSON.stringify(schema))
 
 /* global describe it expect */
 
@@ -50,31 +49,34 @@ describe('component', () => {
   })
 })
 
-describe('schema', () => {
-  const Constructor = Vue.extend(FormSchema)
+const schemaCase = (schema) => () => {
   const model = {}
-  const component = new Constructor({
-    propsData: { schema, model }
-  }).$mount()
-
-  const form = component.$el.getElementsByTagName('form')[0]
-  const inputs = form.elements
-  const button = form.getElementsByTagName('button')[0]
-
+  const wrapper = mount(FormSchema, {
+    propsData: {
+      schema, model
+    }
+  })
+  const vm = wrapper.vm
   const attr = (input, name) => input.getAttribute(name)
 
-  const clonedSchema = JSON.parse(JSON.stringify(schema))
+  const clonedSchema = JSON.parse(JSON.stringify(vm.schemaLoaded))
 
   for (let fieldName in clonedSchema.properties) {
     const field = clonedSchema.properties[fieldName]
+    const selector = `input[name="${fieldName}"]`
 
     if (field.visible === false) {
-      it(`invisible input.${fieldName} should be undefined`, () =>
-        expect(inputs[fieldName]).toBe(undefined))
+      it(`invisible input.${fieldName} should be undefined`, () => {
+        expect(wrapper.contains(selector)).toBe(false)
+      })
       continue
     }
 
-    const input = inputs[fieldName]
+    it(`should contain ${selector}`, () => {
+      expect(wrapper.contains(selector)).toBe(true)
+    })
+
+    const input = wrapper.find(selector).element
 
     if (!field.attrs) {
       field.attrs = {}
@@ -87,24 +89,36 @@ describe('schema', () => {
     }
 
     for (let attrName in field.attrs) {
-      it(`input.${fieldName} should have attribute '${attrName}'`, () => {
-        if (typeof field.attrs[attrName] === 'boolean') {
-          if (field.attrs[attrName] === true) {
+      if (typeof field.attrs[attrName] === 'boolean') {
+        if (field.attrs[attrName] === true) {
+          it(`input.${fieldName} should have attribute '${attrName}'`, () => {
             return expect(attr(input, attrName)).toEqual(attrName)
-          }
-
-          return expect(attr(input, attrName)).toEqual(null)
+          })
+        } else {
+          it(`input.${fieldName} should not have attribute '${attrName}'`, () => {
+            return expect(attr(input, attrName)).toEqual(null)
+          })
         }
-
-        return expect(attr(input, attrName))
-          .toMatch(new RegExp(`${field.attrs[attrName]}`))
-      })
+      } else {
+        it(`input.${fieldName} should have attribute '${attrName}'`, () => {
+          return expect(attr(input, attrName))
+            .toMatch(new RegExp(`${field.attrs[attrName]}`))
+        })
+      }
     }
   }
 
-  it('should have a submit button', () =>
-    expect(attr(button, 'type')).toBe('submit'))
+  it('should have a button', () => {
+    expect(wrapper.contains('button')).toBe(true)
+  })
 
-  it('should have a button with Submit label', () =>
-    expect(button.innerText).toBe('Submit'))
-})
+  it('should have a submit button', () => {
+    expect(wrapper.find('button').element.getAttribute('type')).toBe('submit')
+  })
+
+  it('should have a button with Submit label', () => {
+    expect(wrapper.find('button').text()).toBe('Submit')
+  })
+}
+
+describe('schema', schemaCase(schema))
