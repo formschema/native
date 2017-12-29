@@ -1,3 +1,5 @@
+import { loadFields } from '../lib/parser'
+import { equals } from '../lib/object'
 import { loadFields } from './lib/parser'
 import { equals } from './lib/object'
 

@@ -6,7 +6,7 @@ function resolve (file) {
 }
 
 module.exports = {
-  entry: resolve('component.js'),
+  entry: resolve('src/FormSchema.js'),
   output: {
     path: resolve('dist'),
     filename: 'vue-json-schema.js',
@@ -20,7 +20,7 @@ module.exports = {
         test: /\.(js|vue)$/,
         loader: 'eslint-loader',
         enforce: 'pre',
-        include: [resolve('.'), resolve('test')]
+        include: [resolve('src'), resolve('test')]
       },
       {
         test: /\.js$/,
