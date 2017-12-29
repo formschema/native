@@ -14,7 +14,7 @@ npm install --save vue-json-schema
 ## FormSchema API
 
 ### props 
-- `schema` ***Object*** (*required*) 
+- `schema` ***\[Object, Promise\]*** (*required*) 
 The JSON Schema object. Use the `v-if` directive to load asynchronous schema. 
 
 - `v-model` ***Object*** (*optional*) `default: [object Object]` 
@@ -120,6 +120,23 @@ In your Vue file:
         // You can submit your model to the server here
       }
     },
+    components: { FormSchema }
+  }
+</script>
+```
+
+## Async Schema
+To asynchronously load a schema, just set a promise that returns it.
+
+```html
+<script>
+  import axios from 'axios'
+  import FormSchema from 'vue-json-schema'
+
+  export default {
+    data: () => ({
+      schema: axios.get('/api/schema/subscription.json'),
+    }),
     components: { FormSchema }
   }
 </script>
