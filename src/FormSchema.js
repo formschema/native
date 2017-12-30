@@ -1,11 +1,13 @@
 import { loadFields } from '../lib/parser'
 import { equals } from '../lib/object'
-import { components, elementOptions } from '../lib/components'
+import { init, components, elementOptions } from '../lib/components'
 import { inputName } from './FormSchemaInput'
 import FormSchemaField from './FormSchemaField'
 import FormSchemaButtons from './FormSchemaButtons'
 
 const fieldTypesAsNotArray = ['radio', 'checkbox', 'textarea', 'select']
+
+init()
 
 export default {
   name: 'form-schema',
