@@ -16,7 +16,7 @@ export default {
     })
 
     if (field.isArrayField) {
-      const vm = context.parent
+      const vm = context.props.vm
       const attrs = field.attrs
       const nodes = Array.apply(null, Array(field.itemsNum)).map((v, i) => {
         const name = inputName(field, i)

@@ -1,16 +1,9 @@
 import { loadFields } from '../lib/parser'
 import { equals } from '../lib/object'
-import {
-  components,
-  option,
-  elementOptions
-} from '../lib/components'
-import {
-  inputName,
-  default as FormSchemaInput
-} from './FormSchemaInput'
+import { components, option, elementOptions } from '../lib/components'
+import { inputName } from './FormSchemaInput'
+import FormSchemaField from './FormSchemaField'
 
-const groupedArrayTypes = ['radio', 'checkbox', 'input', 'textarea']
 const fieldTypesAsNotArray = ['radio', 'checkbox', 'textarea', 'select']
 
 export default {
@@ -84,10 +77,10 @@ export default {
         components.error.component, errorOptions, errorNodes))
     }
 
-    const formNodes = []
-
-    this.fields.forEach((field) => {
-      this.renderField(field, formNodes, createElement)
+    const formNodes = this.fields.map((field) => {
+      return createElement(FormSchemaField, {
+        props: { field }
+      })
     })
 
     if (formNodes.length) {
@@ -183,132 +176,6 @@ export default {
           ? Object.freeze(this.data[key])
           : this.data[key]
       })
-    },
-
-    /**
-     * @private
-     */
-    renderField (field, formNodes, createElement) {
-      const attrs = field.attrs
-
-      if (!attrs.value) {
-        attrs.value = this.data[attrs.name]
-      }
-
-      const element = field.hasOwnProperty('items') && groupedArrayTypes.includes(attrs.type)
-        ? components[`${attrs.type}group`] || components.defaultGroup
-        : components[attrs.type] || components.text
-
-      const fieldOptions = elementOptions(this, element, attrs, field)
-      const children = []
-
-      const input = {
-        ref: attrs.name,
-        domProps: {
-          value: this.data[attrs.name]
-        },
-        on: {
-          input: (event) => {
-            this.data[attrs.name] = event && event.target
-              ? event.target.value
-              : event
-
-            /**
-             * Fired synchronously when the value of an element is changed.
-             */
-            this.$emit('input', this.data)
-          },
-          change: this.changed
-        },
-        ...fieldOptions
-      }
-
-      switch (attrs.type) {
-        case 'textarea':
-          if (element.option.native) {
-            input.domProps.innerHTML = this.data[attrs.name]
-          }
-          break
-
-        case 'radio':
-        case 'checkbox':
-          if (field.hasOwnProperty('items')) {
-            field.items.forEach((item) => {
-              const itemOptions = elementOptions(
-                this, components[attrs.type], item, item, item)
-
-              children.push(createElement(
-                components[attrs.type].component, itemOptions, item.label))
-            })
-          }
-          break
-
-        case 'select':
-          if (!field.required) {
-            children.push(createElement(components.option.component, {
-              attrs: { value: '' }
-            }))
-          }
-
-          field.items.forEach((option) => {
-            const optionOptions = elementOptions(this, components.option, {
-              value: option.value
-            }, field)
-
-            children.push(createElement(components.option.component, {
-              domProps: {
-                value: option.value
-              },
-              ...optionOptions
-            }, option.label))
-          })
-          break
-      }
-
-      const formControlsNodes = []
-
-      if (field.label && !option.disableWrappingLabel) {
-        const extendingOptions = components.label.native
-          ? {}
-          : { label: field.label }
-        const labelOptions = elementOptions(
-          this, components.label, extendingOptions, field)
-        const labelNodes = []
-
-        if (components.label.option.native) {
-          labelNodes.push(createElement('span', {
-            attrs: {
-              'data-required-field': field.required ? 'true' : 'false'
-            }
-          }, field.label))
-        }
-
-        labelNodes.push(createElement(FormSchemaInput, {
-          props: {
-            field, input, element
-          }
-        }))
-
-        formControlsNodes.push(createElement(
-          components.label.component, labelOptions, labelNodes))
-      } else {
-        this.renderInput(
-          input, field, element, formControlsNodes, children, createElement)
-
-        formControlsNodes.push(createElement(FormSchemaInput, {
-          props: {
-            field, input, element
-          }
-        }))
-      }
-
-      if (this.inputWrappingClass) {
-        formNodes.push(createElement('div', {
-          class: this.inputWrappingClass
-        }, formControlsNodes))
-      } else {
-        formControlsNodes.forEach((node) => formNodes.push(node))
-      }
     },
 
     /**
