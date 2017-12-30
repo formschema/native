@@ -1,8 +1,9 @@
 import { loadFields } from '../lib/parser'
 import { equals } from '../lib/object'
-import { components, option, elementOptions } from '../lib/components'
+import { components, elementOptions } from '../lib/components'
 import { inputName } from './FormSchemaInput'
 import FormSchemaField from './FormSchemaField'
+import FormSchemaButtons from './FormSchemaButtons'
 
 const fieldTypesAsNotArray = ['radio', 'checkbox', 'textarea', 'select']
 
@@ -84,24 +85,7 @@ export default {
     })
 
     if (formNodes.length) {
-      const buttonWrapper = components.button.option.native
-        ? components.defaultGroup : components.label
-      const labelOptions = elementOptions(this, buttonWrapper)
-      const button = this.$slots.hasOwnProperty('default')
-        ? { component: this.$slots.default, option }
-        : components.button
-
-      if (button.component instanceof Array) {
-        formNodes.push(createElement(
-          buttonWrapper.component, labelOptions, button.component))
-      } else {
-        const buttonOptions = elementOptions(this, button, { type: 'submit' })
-        const buttonElement = createElement(
-          button.component, buttonOptions, button.option.label)
-
-        formNodes.push(createElement(
-          buttonWrapper.component, labelOptions, [buttonElement]))
-      }
+      formNodes.push(createElement(FormSchemaButtons, this.$slots.default))
 
       const formOptions = elementOptions(this, components.form, {
         autocomplete: this.autocomplete,
