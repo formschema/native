@@ -3,10 +3,10 @@ import { equals } from '../lib/object'
 import {
   components,
   option,
-  elementOptions,
-  inputName
+  elementOptions
 } from '../lib/components'
 import FormSchemaInputDescription from './FormSchemaInputDescription'
+import { inputName } from './FormSchemaInput'
 
 const groupedArrayTypes = ['radio', 'checkbox', 'input', 'textarea']
 const fieldTypesAsNotArray = ['radio', 'checkbox', 'textarea', 'select']
