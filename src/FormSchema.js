@@ -1,12 +1,15 @@
 import { loadFields } from '../lib/parser'
 import { equals } from '../lib/object'
-import { components, option, elementOptions } from '../lib/components'
+import {
+  components,
+  option,
+  elementOptions,
+  inputName
+} from '../lib/components'
 import FormSchemaInputDescription from './FormSchemaInputDescription'
 
 const groupedArrayTypes = ['radio', 'checkbox', 'input', 'textarea']
 const fieldTypesAsNotArray = ['radio', 'checkbox', 'textarea', 'select']
-
-export const inputName = (field, index) => `${field.attrs.name}-${index}`
 
 export default {
   name: 'form-schema',
