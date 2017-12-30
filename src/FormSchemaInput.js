@@ -1,5 +1,6 @@
-import { components } from '../lib/components'
+import { components, elementOptions } from '../lib/components'
 import { equals } from '../lib/object'
+import FormSchemaInputDescription from './FormSchemaInputDescription'
 
 export const inputName = (field, index) => `${field.attrs.name}-${index}`
 
@@ -10,11 +11,16 @@ export default {
     const input = context.props.input
     const element = context.props.element
 
+    const descriptionElement = createElement(FormSchemaInputDescription, {
+      props: { field }
+    })
+
     if (field.isArrayField) {
+      const vm = context.parent
       const attrs = field.attrs
-      const nodes = new Array(field.itemsNum).map((v, i) => {
+      const nodes = Array.apply(null, Array(field.itemsNum)).map((v, i) => {
         const name = inputName(field, i)
-        const value = this.inputValues[name]
+        const value = vm.inputValues[name]
         const propsValue = { name, value }
 
         return createElement(element.component, {
@@ -24,50 +30,50 @@ export default {
           domProps: propsValue,
           on: {
             input: (event) => {
-              this.inputValues[name] = event && event.target
+              vm.inputValues[name] = event && event.target
                 ? event.target.value
                 : event
 
               const values = []
 
               for (let j = 0; j < field.itemsNum; j++) {
-                const currentValue = this.inputValues[inputName(field, j)]
+                const currentValue = vm.inputValues[inputName(field, j)]
 
                 if (currentValue) {
                   values.push(currentValue)
                 }
               }
 
-              this.data[attrs.name] = values
+              vm.data[attrs.name] = values
 
               /**
                 * Fired synchronously when the value of an element is changed.
                 */
-              this.$emit('input', this.data)
+              vm.$emit('input', vm.data)
             },
             change: () => {
-              if (!equals(this.data, this.default)) {
+              if (!equals(vm.data, vm.default)) {
                 /**
                  * Fired when a change to the element's value is committed by the user.
                  */
-                this.$emit('change', this.data)
+                vm.$emit('change', vm.data)
               }
             }
           }
         }, context.slots.default)
       })
 
-      const labelOptions = this.elementOptions(components.label, {}, field)
+      const labelOptions = elementOptions(vm, components.label, {}, field)
       const button = components.arraybutton
       const buttonOptions = {
-        ...this.elementOptions(button, {
+        ...elementOptions(vm, button, {
           disabled: field.maxItems <= field.itemsNum
         }, field),
         on: {
           click: () => {
             if (field.itemsNum < field.maxItems) {
               field.itemsNum++
-              this.$forceUpdate()
+              vm.$forceUpdate()
             }
           }
         }
@@ -79,9 +85,14 @@ export default {
       nodes.push(createElement(
         components.label.component, labelOptions, [buttonElement]))
 
+      nodes.push(descriptionElement)
+
       return nodes
     }
 
-    return createElement(element.component, input, context.slots.default)
+    return [
+      createElement(element.component, input),
+      descriptionElement
+    ]
   }
 }

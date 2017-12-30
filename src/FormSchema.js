@@ -5,8 +5,10 @@ import {
   option,
   elementOptions
 } from '../lib/components'
-import FormSchemaInputDescription from './FormSchemaInputDescription'
-import { inputName } from './FormSchemaInput'
+import {
+  inputName,
+  default as FormSchemaInput
+} from './FormSchemaInput'
 
 const groupedArrayTypes = ['radio', 'checkbox', 'input', 'textarea']
 const fieldTypesAsNotArray = ['radio', 'checkbox', 'textarea', 'select']
@@ -186,77 +188,6 @@ export default {
     /**
      * @private
      */
-    renderInput (input, field, element, container, children, createElement) {
-      if (field.isArrayField) {
-        const attrs = field.attrs
-
-        for (let i = 0; i < field.itemsNum; i++) {
-          const name = inputName(field, i)
-          const value = this.inputValues[name]
-          const propsValue = { name, value }
-
-          container.push(createElement(element.component, {
-            ...input,
-            ref: name,
-            props: propsValue,
-            domProps: propsValue,
-            on: {
-              input: (event) => {
-                this.inputValues[name] = event && event.target
-                  ? event.target.value
-                  : event
-
-                const values = []
-
-                for (let j = 0; j < field.itemsNum; j++) {
-                  const currentValue = this.inputValues[inputName(field, j)]
-
-                  if (currentValue) {
-                    values.push(currentValue)
-                  }
-                }
-
-                this.data[attrs.name] = values
-
-                /**
-                 * Fired synchronously when the value of an element is changed.
-                 */
-                this.$emit('input', this.data)
-              },
-              change: this.changed
-            }
-          }, children))
-        }
-
-        const labelOptions = elementOptions(this, components.label, {}, field)
-        const button = components.arraybutton
-        const buttonOptions = {
-          ...elementOptions(this, button, {
-            disabled: field.maxItems <= field.itemsNum
-          }, field),
-          on: {
-            click: () => {
-              if (field.itemsNum < field.maxItems) {
-                field.itemsNum++
-                this.$forceUpdate()
-              }
-            }
-          }
-        }
-        const label = button.option.label || button.defaultOption.label
-        const buttonElement = createElement(
-          button.component, buttonOptions, label)
-
-        container.push(createElement(
-          components.label.component, labelOptions, [buttonElement]))
-      } else {
-        container.push(createElement(element.component, input, children))
-      }
-    },
-
-    /**
-     * @private
-     */
     renderField (field, formNodes, createElement) {
       const attrs = field.attrs
 
@@ -352,11 +283,10 @@ export default {
           }, field.label))
         }
 
-        this.renderInput(
-          input, field, element, labelNodes, children, createElement)
-
-        labelNodes.push(createElement(FormSchemaInputDescription, {
-          props: { field }
+        labelNodes.push(createElement(FormSchemaInput, {
+          props: {
+            field, input, element
+          }
         }))
 
         formControlsNodes.push(createElement(
@@ -365,8 +295,10 @@ export default {
         this.renderInput(
           input, field, element, formControlsNodes, children, createElement)
 
-        formControlsNodes.push(createElement(FormSchemaInputDescription, {
-          props: { field }
+        formControlsNodes.push(createElement(FormSchemaInput, {
+          props: {
+            field, input, element
+          }
         }))
       }
 
