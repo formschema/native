@@ -1,6 +1,6 @@
 import { components, elementOptions } from '../lib/components'
-import { equals } from '../lib/object'
 import FormSchemaInputDescription from './FormSchemaInputDescription'
+import FormSchemaInputArrayElement from './FormSchemaInputArrayElement'
 
 export const inputName = (field, index) => `${field.attrs.name}-${index}`
 
@@ -19,48 +19,12 @@ export default {
 
     if (field.isArrayField) {
       const vm = context.props.vm
-      const attrs = field.attrs
       const nodes = Array.apply(null, Array(field.itemsNum)).map((v, i) => {
-        const name = inputName(field, i)
-        const value = vm.inputValues[name]
-        const propsValue = { name, value }
+        const ref = inputName(field, i)
 
-        return createElement(element.component, {
-          ...input,
-          ref: name,
-          props: propsValue,
-          domProps: propsValue,
-          on: {
-            input: (event) => {
-              vm.inputValues[name] = event && event.target
-                ? event.target.value
-                : event
-
-              const values = []
-
-              for (let j = 0; j < field.itemsNum; j++) {
-                const currentValue = vm.inputValues[inputName(field, j)]
-
-                if (currentValue) {
-                  values.push(currentValue)
-                }
-              }
-
-              vm.data[attrs.name] = values
-
-              /**
-                * Fired synchronously when the value of an element is changed.
-                */
-              vm.$emit('input', vm.data)
-            },
-            change: () => {
-              if (!equals(vm.data, vm.default)) {
-                /**
-                 * Fired when a change to the element's value is committed by the user.
-                 */
-                vm.$emit('change', vm.data)
-              }
-            }
+        return createElement(FormSchemaInputArrayElement, {
+          props: {
+            vm, ref, field, input, element
           }
         }, children)
       })
