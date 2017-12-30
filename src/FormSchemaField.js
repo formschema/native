@@ -106,7 +106,7 @@ export default {
         props: {
           vm, field, input, element
         }
-      }))
+      }, children))
 
       formControlsNodes.push(createElement(
         components.label.component, labelOptions, labelNodes))
@@ -115,7 +115,7 @@ export default {
         props: {
           vm, field, input, element
         }
-      }))
+      }, children))
     }
 
     if (context.props.inputWrappingClass) {
