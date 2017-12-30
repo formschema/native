@@ -1,6 +1,7 @@
 import { loadFields } from '../lib/parser'
 import { equals } from '../lib/object'
-import { components, option } from '../lib/components'
+import { components, option, elementOptions } from '../lib/components'
+import FormSchemaInputDescription from './FormSchemaInputDescription'
 
 const groupedArrayTypes = ['radio', 'checkbox', 'input', 'textarea']
 const fieldTypesAsNotArray = ['radio', 'checkbox', 'textarea', 'select']
@@ -67,7 +68,7 @@ export default {
     }
 
     if (this.error) {
-      const errorOptions = this.elementOptions(components.error)
+      const errorOptions = elementOptions(this, components.error)
       const errorNodes = []
 
       if (components.error.option.native) {
@@ -87,7 +88,7 @@ export default {
     if (formNodes.length) {
       const buttonWrapper = components.button.option.native
         ? components.defaultGroup : components.label
-      const labelOptions = this.elementOptions(buttonWrapper)
+      const labelOptions = elementOptions(this, buttonWrapper)
       const button = this.$slots.hasOwnProperty('default')
         ? { component: this.$slots.default, option }
         : components.button
@@ -96,7 +97,7 @@ export default {
         formNodes.push(createElement(
           buttonWrapper.component, labelOptions, button.component))
       } else {
-        const buttonOptions = this.elementOptions(button, { type: 'submit' })
+        const buttonOptions = elementOptions(this, button, { type: 'submit' })
         const buttonElement = createElement(
           button.component, buttonOptions, button.option.label)
 
@@ -104,7 +105,7 @@ export default {
           buttonWrapper.component, labelOptions, [buttonElement]))
       }
 
-      const formOptions = this.elementOptions(components.form, {
+      const formOptions = elementOptions(this, components.form, {
         autocomplete: this.autocomplete,
         novalidate: this.novalidate
       })
@@ -182,37 +183,6 @@ export default {
     /**
      * @private
      */
-    elementOptions (element, extendingOptions = {}, field = {}, item = {}) {
-      if (!field.attrs) {
-        field.attrs = {}
-      }
-
-      const attrName = element.option.native ? 'attrs' : 'props'
-      const elementProps = typeof element.option === 'function'
-        ? { ...extendingOptions, ...element.option({ vm: this, field, item }) }
-        : { ...element.option, native: undefined, ...extendingOptions }
-
-      return {
-        [attrName]: {
-          ...element.defaultOption,
-          ...elementProps
-        }
-      }
-    },
-
-    /**
-     * @private
-     */
-    renderInputDescription (field, container, createElement) {
-      if (field.description) {
-        container.push(createElement('br'))
-        container.push(createElement('small', field.description))
-      }
-    },
-
-    /**
-     * @private
-     */
     renderInput (input, field, element, container, children, createElement) {
       if (field.isArrayField) {
         const attrs = field.attrs
@@ -255,10 +225,10 @@ export default {
           }, children))
         }
 
-        const labelOptions = this.elementOptions(components.label, {}, field)
+        const labelOptions = elementOptions(this, components.label, {}, field)
         const button = components.arraybutton
         const buttonOptions = {
-          ...this.elementOptions(button, {
+          ...elementOptions(this, button, {
             disabled: field.maxItems <= field.itemsNum
           }, field),
           on: {
@@ -295,7 +265,7 @@ export default {
         ? components[`${attrs.type}group`] || components.defaultGroup
         : components[attrs.type] || components.text
 
-      const fieldOptions = this.elementOptions(element, attrs, field)
+      const fieldOptions = elementOptions(this, element, attrs, field)
       const children = []
 
       const input = {
@@ -330,8 +300,8 @@ export default {
         case 'checkbox':
           if (field.hasOwnProperty('items')) {
             field.items.forEach((item) => {
-              const itemOptions = this.elementOptions(
-                components[attrs.type], item, item, item)
+              const itemOptions = elementOptions(
+                this, components[attrs.type], item, item, item)
 
               children.push(createElement(
                 components[attrs.type].component, itemOptions, item.label))
@@ -347,7 +317,7 @@ export default {
           }
 
           field.items.forEach((option) => {
-            const optionOptions = this.elementOptions(components.option, {
+            const optionOptions = elementOptions(this, components.option, {
               value: option.value
             }, field)
 
@@ -367,8 +337,8 @@ export default {
         const extendingOptions = components.label.native
           ? {}
           : { label: field.label }
-        const labelOptions = this.elementOptions(
-          components.label, extendingOptions, field)
+        const labelOptions = elementOptions(
+          this, components.label, extendingOptions, field)
         const labelNodes = []
 
         if (components.label.option.native) {
@@ -382,7 +352,9 @@ export default {
         this.renderInput(
           input, field, element, labelNodes, children, createElement)
 
-        this.renderInputDescription(field, labelNodes, createElement)
+        labelNodes.push(createElement(FormSchemaInputDescription, {
+          props: { field }
+        }))
 
         formControlsNodes.push(createElement(
           components.label.component, labelOptions, labelNodes))
@@ -390,7 +362,9 @@ export default {
         this.renderInput(
           input, field, element, formControlsNodes, children, createElement)
 
-        this.renderInputDescription(field, formControlsNodes, createElement)
+        formControlsNodes.push(createElement(FormSchemaInputDescription, {
+          props: { field }
+        }))
       }
 
       if (this.inputWrappingClass) {
