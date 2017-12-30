@@ -15,6 +15,8 @@ export default {
       props: { field }
     })
 
+    const children = context.slots().default
+
     if (field.isArrayField) {
       const vm = context.props.vm
       const attrs = field.attrs
@@ -60,7 +62,7 @@ export default {
               }
             }
           }
-        }, context.slots.default)
+        }, children)
       })
 
       const labelOptions = elementOptions(vm, components.label, {}, field)
@@ -91,7 +93,7 @@ export default {
     }
 
     return [
-      createElement(element.component, input),
+      createElement(element.component, input, children),
       descriptionElement
     ]
   }
