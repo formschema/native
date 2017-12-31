@@ -17,10 +17,15 @@ export default {
         buttonWrapper.component, labelOptions, button.component)
     }
 
+    const label = button.option.label || button.defaultOption.label
     const buttonOptions = elementOptions(vm, button, { type: 'submit' })
 
+    if (button.option.native) {
+      delete buttonOptions.attrs.label
+    }
+
     return createElement(buttonWrapper.component, labelOptions, [
-      createElement(button.component, buttonOptions, button.option.label)
+      createElement(button.component, buttonOptions, label)
     ])
   }
 }
