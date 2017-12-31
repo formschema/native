@@ -13,7 +13,7 @@ import {
 
 describe('lib/parser', () => {
   describe('setCommonFields(schema, field)', () => {
-    it ('should successfully set common fields with default values', () => {
+    it('should successfully set common fields with default values', () => {
       const field = { attrs: {} }
       const schema = { type: 'string' }
       const expected = {
@@ -32,7 +32,7 @@ describe('lib/parser', () => {
       expect(field).toEqual(expected)
     })
 
-    it ('should successfully set common fields with filled schema', () => {
+    it('should successfully set common fields with filled schema', () => {
       const field = { attrs: { value: 'value' } }
       const schema = {
         type: 'string',
@@ -57,11 +57,11 @@ describe('lib/parser', () => {
       expect(field).toEqual(expected)
     })
 
-    it ('should successfully set common fields with default schema value', () => {
+    it('should successfully set common fields with default schema value', () => {
       const field = { attrs: {} }
       const schema = {
         type: 'string',
-        default: 'value',
+        default: 'value'
       }
       const expected = {
         schemaType: 'string',
@@ -81,7 +81,7 @@ describe('lib/parser', () => {
   })
 
   describe('parseBoolean(schema, name = null)', () => {
-    it ('should successfully parse an empty schema', () => {
+    it('should successfully parse an empty schema', () => {
       const schema = { type: 'boolean' }
       const expected = {
         schemaType: 'boolean',
@@ -99,7 +99,7 @@ describe('lib/parser', () => {
       expect(parseBoolean(schema)).toEqual(expected)
     })
 
-    it ('should successfully parse with custom input type', () => {
+    it('should successfully parse with custom input type', () => {
       const schema = {
         type: 'boolean',
         attrs: {
@@ -122,7 +122,7 @@ describe('lib/parser', () => {
       expect(parseBoolean(schema)).toEqual(expected)
     })
 
-    it ('should successfully parse with defined input name', () => {
+    it('should successfully parse with defined input name', () => {
       const schema = {
         type: 'boolean',
         attrs: {
@@ -148,7 +148,7 @@ describe('lib/parser', () => {
   })
 
   describe('parseString(schema, name = null)', () => {
-    it ('should successfully parse an empty schema', () => {
+    it('should successfully parse an empty schema', () => {
       const schema = { type: 'string' }
       const expected = {
         schemaType: 'string',
@@ -165,7 +165,7 @@ describe('lib/parser', () => {
       expect(parseString(schema)).toEqual(expected)
     })
 
-    it ('should successfully parse with custom input type', () => {
+    it('should successfully parse with custom input type', () => {
       const schema = {
         type: 'string',
         attrs: {
@@ -187,7 +187,7 @@ describe('lib/parser', () => {
       expect(parseString(schema)).toEqual(expected)
     })
 
-    it ('should successfully parse with defined input name', () => {
+    it('should successfully parse with defined input name', () => {
       const schema = {
         type: 'string',
         attrs: {
@@ -210,7 +210,7 @@ describe('lib/parser', () => {
       expect(parseString(schema, 'name')).toEqual(expected)
     })
 
-    it ('should successfully parse with filled schema', () => {
+    it('should successfully parse with filled schema', () => {
       const schema = {
         type: 'string',
         minLength: 2,
@@ -235,7 +235,7 @@ describe('lib/parser', () => {
       expect(parseString(schema)).toEqual(expected)
     })
 
-    it ('should successfully parse with defined format.email', () => {
+    it('should successfully parse with defined format.email', () => {
       const schema = {
         type: 'string',
         format: 'email'
@@ -260,7 +260,7 @@ describe('lib/parser', () => {
       expect(parseString(schema)).toEqual(expected)
     })
 
-    it ('should successfully parse with defined format.uri', () => {
+    it('should successfully parse with defined format.uri', () => {
       const schema = {
         type: 'string',
         format: 'uri'
@@ -285,7 +285,7 @@ describe('lib/parser', () => {
       expect(parseString(schema)).toEqual(expected)
     })
 
-    it ('should successfully parse with schema.type === number', () => {
+    it('should successfully parse with schema.type === number', () => {
       const schema = { type: 'number' }
       const expected = {
         schemaType: 'number',
@@ -302,7 +302,7 @@ describe('lib/parser', () => {
       expect(parseString(schema)).toEqual(expected)
     })
 
-    it ('should successfully parse with schema.type === integer', () => {
+    it('should successfully parse with schema.type === integer', () => {
       const schema = { type: 'integer' }
       const expected = {
         schemaType: 'integer',
@@ -321,13 +321,13 @@ describe('lib/parser', () => {
   })
 
   describe('parseItems(items)', () => {
-    it ('should successfully parse array with object items', () => {
+    it('should successfully parse array with object items', () => {
       const items = [{ value: 'v', label: 'l' }]
 
       expect(parseItems(items)).toEqual(items)
     })
 
-    it ('should successfully parse array with non object items', () => {
+    it('should successfully parse array with non object items', () => {
       const items = ['a', 'b']
       const expected = [
         { value: 'a', label: 'a' },
@@ -339,7 +339,7 @@ describe('lib/parser', () => {
   })
 
   describe('parseArray(schema, name = null)', () => {
-    it ('should successfully parse an empty schema', () => {
+    it('should successfully parse an empty schema', () => {
       const schema = { type: 'array' }
       const expected = {
         schemaType: 'array',
@@ -359,7 +359,7 @@ describe('lib/parser', () => {
       expect(parseArray(schema)).toEqual(expected)
     })
 
-    it ('should successfully parse with custom input type', () => {
+    it('should successfully parse with custom input type', () => {
       const schema = {
         type: 'array',
         attrs: {
@@ -385,7 +385,7 @@ describe('lib/parser', () => {
       expect(parseArray(schema)).toEqual(expected)
     })
 
-    it ('should successfully parse with defined input name', () => {
+    it('should successfully parse with defined input name', () => {
       const schema = { type: 'array' }
       const expected = {
         schemaType: 'array',
@@ -406,7 +406,7 @@ describe('lib/parser', () => {
       expect(parseArray(schema, 'name')).toEqual(expected)
     })
 
-    it ('should successfully parse with filled schema', () => {
+    it('should successfully parse with filled schema', () => {
       const schema = {
         type: 'array',
         minItems: 2,
@@ -434,7 +434,7 @@ describe('lib/parser', () => {
       expect(parseArray(schema)).toEqual(expected)
     })
 
-    it ('should successfully parse with defined schema.enum', () => {
+    it('should successfully parse with defined schema.enum', () => {
       const schema = {
         type: 'array',
         enum: [{ value: 'v', label: 'l' }],
@@ -466,7 +466,7 @@ describe('lib/parser', () => {
       expect(parseArray(schema)).toEqual(expected)
     })
 
-    it ('should successfully parse with defined schema.oneOf', () => {
+    it('should successfully parse with defined schema.oneOf', () => {
       const schema = {
         type: 'array',
         oneOf: [{ value: 'v', label: 'l' }]
@@ -490,7 +490,7 @@ describe('lib/parser', () => {
       expect(parseArray(schema)).toEqual(expected)
     })
 
-    it ('should successfully parse with defined schema.anyOf', () => {
+    it('should successfully parse with defined schema.anyOf', () => {
       const schema = {
         type: 'array',
         anyOf: [{ value: 'v', label: 'l' }]
@@ -516,7 +516,7 @@ describe('lib/parser', () => {
   })
 
   describe('loadFields(vm, schema, name = null)', () => {
-    it ('should ignore schema.visible === false', () => {
+    it('should ignore schema.visible === false', () => {
       const vm = { fields: [] }
       const schema = { type: 'boolean', visible: false }
       const expected = []
@@ -526,8 +526,8 @@ describe('lib/parser', () => {
       expect(vm.fields).toEqual(expected)
     })
 
-    describe ('schema.type === boolean', () => {
-      it ('should successfully load the schema', () => {
+    describe('schema.type === boolean', () => {
+      it('should successfully load the schema', () => {
         const vm = { fields: [] }
         const schema = { type: 'boolean' }
         const expected = [{
@@ -549,8 +549,8 @@ describe('lib/parser', () => {
       })
     })
 
-    describe ('schema.type === array', () => {
-      it ('should successfully load the schema', () => {
+    describe('schema.type === array', () => {
+      it('should successfully load the schema', () => {
         const vm = { fields: [] }
         const schema = { type: 'array' }
         const expected = [{
@@ -574,8 +574,8 @@ describe('lib/parser', () => {
       })
     })
 
-    describe ('schema.type === integer', () => {
-      it ('should successfully load the schema', () => {
+    describe('schema.type === integer', () => {
+      it('should successfully load the schema', () => {
         const vm = { fields: [] }
         const schema = { type: 'integer' }
         const expected = [{
@@ -596,8 +596,8 @@ describe('lib/parser', () => {
       })
     })
 
-    describe ('schema.type === string', () => {
-      it ('should successfully load the schema', () => {
+    describe('schema.type === string', () => {
+      it('should successfully load the schema', () => {
         const vm = { fields: [] }
         const schema = {
           type: 'string',
@@ -625,8 +625,8 @@ describe('lib/parser', () => {
       })
     })
 
-    describe ('schema.type === object', () => {
-      it ('should successfully load the schema', () => {
+    describe('schema.type === object', () => {
+      it('should successfully load the schema', () => {
         const vm = { fields: [] }
         const schema = {
           type: 'object',
@@ -653,7 +653,7 @@ describe('lib/parser', () => {
         expect(vm.fields).toEqual(expected)
       })
 
-      it ('should successfully load the schema with required fields', () => {
+      it('should successfully load the schema with required fields', () => {
         const vm = { fields: [] }
         const schema = {
           type: 'object',

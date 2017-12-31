@@ -8,7 +8,7 @@ import {
   defineComponent
 } from '../../lib/components'
 
-/* global describe it expect */
+/* global describe it expect beforeEach */
 
 describe('lib/components', () => {
   describe('defineComponent(tag, item)', () => {
@@ -18,7 +18,7 @@ describe('lib/components', () => {
       }
     })
 
-    it ('should successfully define object component', () => {
+    it('should successfully define object component', () => {
       const tag = 'div'
       const item = {
         component: 'vx-button',
@@ -34,7 +34,7 @@ describe('lib/components', () => {
       expect(components['vx-button']).toEqual(expected)
     })
 
-    it ('should successfully define string component', () => {
+    it('should successfully define string component', () => {
       const tag = 'div'
       const item = 'button'
       const expected = { component: tag, option }
@@ -59,32 +59,32 @@ describe('lib/components', () => {
       'time', 'url', 'week'
     ]
 
-    it ('should contain the generic title component', () => {
+    it('should contain the generic title component', () => {
       expect(components.title).toEqual({ component: 'h1', option })
     })
 
-    it ('should contain the generic description component', () => {
+    it('should contain the generic description component', () => {
       expect(components.description).toEqual({ component: 'p', option })
     })
 
-    it ('should contain the generic error component', () => {
+    it('should contain the generic error component', () => {
       expect(components.error).toEqual({ component: 'div', option })
     })
 
     divInputs.forEach((tag) => {
-      it (`should contain the generic div ${tag} component`, () => {
+      it(`should contain the generic div ${tag} component`, () => {
         expect(components[tag]).toEqual({ component: 'div', option })
       })
     })
 
     tagInputs.forEach((tag) => {
-      it (`should contain the generic tagged ${tag} component`, () => {
+      it(`should contain the generic tagged ${tag} component`, () => {
         expect(components[tag]).toEqual({ component: tag, option })
       })
     })
 
     typedInputs.forEach((type) => {
-      it (`should contain the generic typed ${type} component`, () => {
+      it(`should contain the generic typed ${type} component`, () => {
         const expected = {
           component: 'input',
           option: { ...option, type }
@@ -94,7 +94,7 @@ describe('lib/components', () => {
       })
     })
 
-    it ('should contain the generic button component', () => {
+    it('should contain the generic button component', () => {
       const expected = {
         component: 'button',
         option: { ...option, type: 'submit', label: 'Submit' }
@@ -103,7 +103,7 @@ describe('lib/components', () => {
       expect(components.button).toEqual(expected)
     })
 
-    it ('should contain the generic arraybutton component', () => {
+    it('should contain the generic arraybutton component', () => {
       const expected = {
         component: 'button',
         option: { ...option, type: 'button', label: 'Add' }
@@ -116,7 +116,7 @@ describe('lib/components', () => {
   describe('elementOptions(vm, el, extendingOptions = {}, field = {}, item = {})', () => {
     beforeEach(init)
 
-    it ('should successfully return option with default args', () => {
+    it('should successfully return option with default args', () => {
       const vm = {}
       const el = components.title
       const expected = {
@@ -126,7 +126,7 @@ describe('lib/components', () => {
       expect(elementOptions(vm, el)).toEqual(expected)
     })
 
-    it ('should successfully return option with the extendingOptions arg', () => {
+    it('should successfully return option with the extendingOptions arg', () => {
       const vm = {}
       const el = components.title
       const extendingOptions = { title: 'Hello' }
@@ -139,7 +139,7 @@ describe('lib/components', () => {
       expect(elementOptions(vm, el, extendingOptions)).toEqual(expected)
     })
 
-    it ('should successfully return option with el.option as function', (done) => {
+    it('should successfully return option with el.option as function', (done) => {
       const vm = { x: 1 }
       const field = { y: 2 }
       const item = { z: 3 }
@@ -158,7 +158,7 @@ describe('lib/components', () => {
       elementOptions(vm, el, {}, field, item)
     })
 
-    it ('should successfully return option with the field arg', () => {
+    it('should successfully return option with the field arg', () => {
       const vm = {}
       const el = { ...components.title, option: ({ field }) => field.attrs }
       const field = { attrs: { title: 'Hello' } }
