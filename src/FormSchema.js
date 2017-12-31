@@ -1,6 +1,6 @@
 import { loadFields } from '../lib/parser'
 import { equals } from '../lib/object'
-import { init, components, elementOptions } from '../lib/components'
+import { init, components, set, elementOptions } from '../lib/components'
 import { inputName } from './FormSchemaInput'
 import FormSchemaField from './FormSchemaField'
 import FormSchemaButtons from './FormSchemaButtons'
@@ -8,6 +8,8 @@ import FormSchemaButtons from './FormSchemaButtons'
 const fieldTypesAsNotArray = ['radio', 'checkbox', 'textarea', 'select']
 
 init()
+
+export const setComponent = set
 
 export default {
   name: 'form-schema',
@@ -110,15 +112,7 @@ export default {
 
     return createElement('div', nodes)
   },
-  setComponent (type, component, option = {}) {
-    const defaultOption = components[type]
-      ? { ...components[type].option }
-      : {}
-
-    delete defaultOption.native
-
-    components[type] = { type, component, option, defaultOption }
-  },
+  setComponent: set,
   methods: {
     /**
       * @private
