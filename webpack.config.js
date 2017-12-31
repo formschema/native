@@ -37,9 +37,7 @@ module.exports = {
       sourceMap : false,
       mangle: true,
       parallel: true,
-      compress: {
-        warnings: false
-      }
+      compress: true
     })
   ],
   externals: {}

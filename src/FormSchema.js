@@ -112,7 +112,7 @@ export default {
 
     return createElement('div', nodes)
   },
-  setComponent: set,
+  setComponent: setComponent,
   methods: {
     /**
       * @private
