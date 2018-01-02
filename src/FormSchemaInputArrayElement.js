@@ -11,13 +11,12 @@ export default {
 
     const attrs = field.attrs
     const value = vm.inputValues[name]
-    const propsValue = { name, value }
+    const attrName = element.option.native ? 'attrs' : 'props'
 
     return createElement(element.component, {
       ...input,
       ref: name,
-      props: propsValue,
-      domProps: propsValue,
+      [attrName]: { ...input[attrName], name, value },
       on: {
         input: (event) => {
           vm.inputValues[name] = event && event.target
