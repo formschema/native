@@ -6,7 +6,7 @@ function resolve (file) {
 }
 
 module.exports = {
-  entry: resolve('src/FormSchema.js'),
+  entry: resolve('src/components/FormSchema.js'),
   output: {
     path: resolve('dist'),
     filename: 'vue-json-schema.js',
