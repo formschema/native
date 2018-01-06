@@ -46,6 +46,8 @@ export default {
       case 'textarea':
         if (element.option.native) {
           delete input.attrs.type
+          delete input.attrs.value
+
           input.domProps.innerHTML = vm.data[attrs.name]
         }
         break
