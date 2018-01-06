@@ -6,7 +6,7 @@ const groupedArrayTypes = ['radio', 'checkbox', 'input', 'textarea']
 export default {
   functional: true,
   render (createElement, context) {
-    const vm = context.parent
+    const vm = context.props.vm
     const field = context.props.field
     const attrs = field.attrs
 

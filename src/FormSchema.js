@@ -84,7 +84,7 @@ export default {
 
     const formNodes = this.fields.map((field) => {
       return createElement(FormSchemaField, {
-        props: { field }
+        props: { field, vm: this }
       })
     })
 
