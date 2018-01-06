@@ -1,7 +1,7 @@
 'use strict'
 
 import { mount } from 'vue-test-utils'
-import component from '../../src/FormSchemaInputDescription.js'
+import component from '../../src/components/FormSchemaInputDescription.js'
 
 /* global describe it expect */
 

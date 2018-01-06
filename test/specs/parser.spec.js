@@ -7,7 +7,7 @@ import {
   parseItems,
   parseArray,
   loadFields
-} from '../../lib/parser'
+} from '../../src/lib/parser'
 
 /* global describe it expect */
 

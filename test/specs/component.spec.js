@@ -1,7 +1,7 @@
 'use strict'
 
 import { mount } from 'vue-test-utils'
-import FormSchema from '../../src/FormSchema.js'
+import FormSchema from '../../src/components/FormSchema.js'
 import schema from '../fixtures/signup.json'
 
 const schemaClone = JSON.parse(JSON.stringify(schema))

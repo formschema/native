@@ -6,7 +6,7 @@ import {
   components,
   elementOptions,
   defineComponent
-} from '../../lib/components'
+} from '../../src/lib/components'
 
 /* global describe it expect beforeEach */
 

@@ -1,6 +1,6 @@
 'use strict'
 
-import { equals } from '../../lib/object'
+import { equals } from '../../src/lib/object'
 
 /* global describe it expect */
 
