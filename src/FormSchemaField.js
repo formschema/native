@@ -45,6 +45,7 @@ export default {
     switch (attrs.type) {
       case 'textarea':
         if (element.option.native) {
+          delete input.attrs.type
           input.domProps.innerHTML = vm.data[attrs.name]
         }
         break
