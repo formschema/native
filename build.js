@@ -8,11 +8,12 @@ const path = require('path')
 const chalk = require('chalk')
 const webpack = require('webpack')
 const webpackConfig = require('./webpack.config')
+const main = require('./package').main
 
 const spinner = ora('building for production...')
 spinner.start()
 
-rm(path.join(__dirname, 'dist'), err => {
+rm(path.join(__dirname, main), err => {
   if (err) {
     throw err
   }
