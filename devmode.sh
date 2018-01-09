@@ -2,7 +2,7 @@
 
 package=`node -p 'require("./package").name'`
 
-# docker build --build-arg cwd="$(pwd)" -t $package .
+docker build --build-arg cwd="$(pwd)" -t $package .
 
 # create a new session. Note the -d flag, we do not want to attach just yet!
 tmux new-session -s $package -n $package -d
