@@ -93,6 +93,7 @@ export function input ({ vm, field, ref }) {
 
   return {
     ref: ref || attrs.name,
+    element: element,
     domProps: {
       value: vm.data[attrs.name]
     },

@@ -1,4 +1,4 @@
-import { components, elementOptions, groupedArrayTypes } from '../lib/components'
+import { input as getInput } from '../lib/components'
 import FormSchemaInput from './FormSchemaInput'
 import FormSchemaWrappingInput from './FormSchemaWrappingInput'
 import FormSchemaFieldCheckboxItem from './FormSchemaFieldCheckboxItem'
@@ -12,37 +12,9 @@ const FormSchemaField = {
     const field = context.props.field
     const attrs = field.attrs
 
-    if (!attrs.value) {
-      attrs.value = vm.data[attrs.name]
-    }
-
-    const element = field.hasOwnProperty('items') && groupedArrayTypes.includes(attrs.type)
-      ? components[`${attrs.type}group`] || components.defaultGroup
-      : components[attrs.type] || components.text
-
-    const fieldOptions = elementOptions(vm, element, attrs, field)
+    const input = getInput({ vm, field })
+    const element = input.element
     const children = []
-
-    const input = {
-      ref: attrs.name,
-      domProps: {
-        value: vm.data[attrs.name]
-      },
-      on: {
-        input: (event) => {
-          vm.data[attrs.name] = event && event.target
-            ? event.target.value
-            : event
-
-          /**
-            * Fired synchronously when the value of an element is changed.
-            */
-          vm.$emit('input', vm.data)
-        },
-        change: vm.changed
-      },
-      ...fieldOptions
-    }
 
     switch (attrs.type) {
       case 'textarea':
