@@ -82,9 +82,11 @@ export default {
         components.error.component, errorOptions, errorNodes))
     }
 
+    const vm = this
+    const inputWrappingClass = this.inputWrappingClass
     const formNodes = this.fields.map((field) => {
       return createElement(FormSchemaField, {
-        props: { field, vm: this }
+        props: { field, vm, inputWrappingClass }
       })
     })
 

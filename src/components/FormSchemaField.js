@@ -1,12 +1,14 @@
-import { components, option, elementOptions } from '../lib/components'
+import { components, elementOptions, groupedArrayTypes } from '../lib/components'
 import FormSchemaInput from './FormSchemaInput'
+import FormSchemaWrappingInput from './FormSchemaWrappingInput'
+import FormSchemaFieldCheckboxItem from './FormSchemaFieldCheckboxItem'
+import FormSchemaFieldSelectOption from './FormSchemaFieldSelectOption'
 
-const groupedArrayTypes = ['radio', 'checkbox', 'input', 'textarea']
-
-export default {
+const FormSchemaField = {
   functional: true,
   render (createElement, context) {
     const vm = context.props.vm
+    const inputWrappingClass = context.props.inputWrappingClass
     const field = context.props.field
     const attrs = field.attrs
 
@@ -55,78 +57,43 @@ export default {
       case 'radio':
       case 'checkbox':
         if (field.hasOwnProperty('items')) {
-          field.items.forEach((item) => {
-            const itemOptions = elementOptions(
-              this, components[attrs.type], item, item, item)
-
-            children.push(createElement(
-              components[attrs.type].component, itemOptions, item.label))
+          field.items.forEach((item, i) => {
+            children.push(createElement(FormSchemaFieldCheckboxItem, {
+              props: { vm, field, item, disableWrappingLabel: true }
+            }))
           })
         }
         break
 
       case 'select':
         if (!field.required) {
-          children.push(createElement(components.option.component, {
-            attrs: { value: '' }
+          const option = { label: null, value: '' }
+
+          children.push(createElement(FormSchemaFieldSelectOption, {
+            props: { vm, field, option, disableWrappingLabel: true }
           }))
         }
 
         field.items.forEach((option) => {
-          const optionOptions = elementOptions(this, components.option, {
-            value: option.value
-          }, field)
-
-          children.push(createElement(components.option.component, {
-            domProps: {
-              value: option.value
-            },
-            ...optionOptions
-          }, option.label))
+          children.push(createElement(FormSchemaFieldSelectOption, {
+            props: { vm, field, option, disableWrappingLabel: true }
+          }))
         })
         break
     }
 
-    const formControlsNodes = []
-
-    if (field.label && !option.disableWrappingLabel) {
-      const extendingOptions = components.label.native
-        ? {}
-        : { label: field.label }
-      const labelOptions = elementOptions(
-        vm, components.label, extendingOptions, field)
-      const labelNodes = []
-
-      if (components.label.option.native) {
-        labelNodes.push(createElement('span', {
-          attrs: {
-            'data-required-field': field.required ? 'true' : 'false'
-          }
-        }, field.label))
+    return createElement(FormSchemaWrappingInput, {
+      props: {
+        vm, field, inputWrappingClass
       }
-
-      labelNodes.push(createElement(FormSchemaInput, {
+    }, [
+      createElement(FormSchemaInput, {
         props: {
           vm, field, input, element
         }
-      }, children))
-
-      formControlsNodes.push(createElement(
-        components.label.component, labelOptions, labelNodes))
-    } else {
-      formControlsNodes.push(createElement(FormSchemaInput, {
-        props: {
-          vm, field, input, element
-        }
-      }, children))
-    }
-
-    if (context.props.inputWrappingClass) {
-      return createElement('div', {
-        class: context.props.inputWrappingClass
-      }, formControlsNodes)
-    }
-
-    return formControlsNodes
+      }, children)
+    ])
   }
 }
+
+export default FormSchemaField

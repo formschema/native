@@ -75,3 +75,40 @@ export function elementOptions (vm, el, extendingOptions = {}, field = { attrs: 
     }
   }
 }
+
+export const groupedArrayTypes = ['radio', 'checkbox', 'input', 'textarea']
+
+export function input ({ vm, field, ref }) {
+  const attrs = field.attrs
+
+  if (!attrs.value) {
+    attrs.value = vm.data[attrs.name]
+  }
+
+  const element = field.hasOwnProperty('items') && groupedArrayTypes.includes(attrs.type)
+    ? components[`${attrs.type}group`] || components.defaultGroup
+    : components[attrs.type] || components.text
+
+  const fieldOptions = elementOptions(vm, element, attrs, field)
+
+  return {
+    ref: ref || attrs.name,
+    domProps: {
+      value: vm.data[attrs.name]
+    },
+    on: {
+      input: (event) => {
+        vm.data[attrs.name] = event && event.target
+          ? event.target.value
+          : event
+
+        /**
+          * Fired synchronously when the value of an element is changed.
+          */
+        vm.$emit('input', vm.data)
+      },
+      change: vm.changed
+    },
+    ...fieldOptions
+  }
+}
