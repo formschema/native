@@ -10,7 +10,7 @@ tmux new-session -s $package -n $package -d
 # Adress the first pane using the -t flag.
 # for the <enter> key, use either C-m (linefeed) or C-j (newline)
 tmux send-keys -t $package:$package.0 \
-  "nodemon -w src -w test -x 'docker run --rm -v $(pwd)/src:$(pwd)/src -v $(pwd)/test:$(pwd)/test -v $(pwd)/coverage:$(pwd)/coverage $package $(pwd)/node_modules/.bin/jest --colors --roots $(pwd) test/specs/FormSchemaField.spec.js'" C-j
+  "nodemon -w src -w test -x 'docker run --rm -v $(pwd)/src:$(pwd)/src -v $(pwd)/test:$(pwd)/test -v $(pwd)/coverage:$(pwd)/coverage $package ./node_modules/.bin/jest --colors --roots src test test/specs/FormSchemaField.spec.js'" C-j
 
 # split the window *vertically*
 tmux split-window -v
