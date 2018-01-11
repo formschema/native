@@ -11,18 +11,16 @@ const FormSchemaField = {
     const field = context.props.field
     const attrs = field.attrs
 
-    if (!attrs.value) {
-      attrs.value = vm.inputValues[attrs.name]
-    }
-
     const element = components[attrs.type] || components.text
     const input = getInput({
       vm,
       field: {
         label: item.label,
         attrs: {
+          name: attrs.name,
           type: attrs.type,
-          value: item.value
+          value: item.value,
+          checked: item.value === vm.inputValues[attrs.name]
         }
       }
     })
