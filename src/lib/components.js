@@ -81,7 +81,7 @@ export const groupedArrayTypes = ['radio', 'checkbox', 'input', 'textarea']
 export function input ({ vm, field, ref }) {
   const attrs = field.attrs
 
-  if (!attrs.value) {
+  if (!attrs.hasOwnProperty('value')) {
     attrs.value = vm.data[attrs.name]
   }
 
@@ -104,8 +104,8 @@ export function input ({ vm, field, ref }) {
           : event
 
         /**
-          * Fired synchronously when the value of an element is changed.
-          */
+         * Fired synchronously when the value of an element is changed.
+         */
         vm.$emit('input', vm.data)
       },
       change: vm.changed
