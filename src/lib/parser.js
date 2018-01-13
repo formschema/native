@@ -16,7 +16,7 @@ export function setCommonFields (schema, field) {
   field.attrs.disabled = schema.disabled || false
 }
 
-export function loadFields (vm, schema, name = null) {
+export function loadFields (schema, fields, name = null) {
   if (!schema || schema.visible === false) {
     return
   }
@@ -30,16 +30,16 @@ export function loadFields (vm, schema, name = null) {
           }
         }
 
-        loadFields(vm, schema.properties[key], key)
+        loadFields(schema.properties[key], fields, key)
       }
       break
 
     case 'boolean':
-      vm.fields.push(parseBoolean(schema, name))
+      fields.push(parseBoolean(schema, name))
       break
 
     case 'array':
-      vm.fields.push(parseArray(schema, name))
+      fields.push(parseArray(schema, name))
       break
 
     case 'integer':
@@ -51,11 +51,12 @@ export function loadFields (vm, schema, name = null) {
             type: schema.type,
             enum: schema[keyword]
           }
-          vm.fields.push(parseArray(schema, name))
+          fields.push(parseArray(schema, name))
+
           return
         }
       }
-      vm.fields.push(parseString(schema, name))
+      fields.push(parseString(schema, name))
       break
   }
 }

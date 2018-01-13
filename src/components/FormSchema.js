@@ -122,7 +122,7 @@ export default {
     init (schema) {
       this.schemaLoaded = schema || {}
 
-      loadFields(this, this.schemaLoaded)
+      loadFields(this.schemaLoaded, this.fields)
 
       this.fields.forEach((field) => {
         const attrs = field.attrs

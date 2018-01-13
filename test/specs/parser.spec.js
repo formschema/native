@@ -515,20 +515,20 @@ describe('lib/parser', () => {
     })
   })
 
-  describe('loadFields(vm, schema, name = null)', () => {
+  describe('loadFields(schema, fields, name = null)', () => {
     it('should ignore schema.visible === false', () => {
-      const vm = { fields: [] }
+      const fields = []
       const schema = { type: 'boolean', visible: false }
       const expected = []
 
-      loadFields(vm, schema)
+      loadFields(schema, fields)
 
-      expect(vm.fields).toEqual(expected)
+      expect(fields).toEqual(expected)
     })
 
     describe('schema.type === boolean', () => {
       it('should successfully load the schema', () => {
-        const vm = { fields: [] }
+        const fields = []
         const schema = { type: 'boolean' }
         const expected = [{
           schemaType: 'boolean',
@@ -543,15 +543,15 @@ describe('lib/parser', () => {
           }
         }]
 
-        loadFields(vm, schema)
+        loadFields(schema, fields)
 
-        expect(vm.fields).toEqual(expected)
+        expect(fields).toEqual(expected)
       })
     })
 
     describe('schema.type === array', () => {
       it('should successfully load the schema', () => {
-        const vm = { fields: [] }
+        const fields = []
         const schema = { type: 'array' }
         const expected = [{
           schemaType: 'array',
@@ -568,15 +568,15 @@ describe('lib/parser', () => {
           }
         }]
 
-        loadFields(vm, schema)
+        loadFields(schema, fields)
 
-        expect(vm.fields).toEqual(expected)
+        expect(fields).toEqual(expected)
       })
     })
 
     describe('schema.type === integer', () => {
       it('should successfully load the schema', () => {
-        const vm = { fields: [] }
+        const fields = []
         const schema = { type: 'integer' }
         const expected = [{
           schemaType: 'integer',
@@ -590,15 +590,15 @@ describe('lib/parser', () => {
           }
         }]
 
-        loadFields(vm, schema)
+        loadFields(schema, fields)
 
-        expect(vm.fields).toEqual(expected)
+        expect(fields).toEqual(expected)
       })
     })
 
     describe('schema.type === string', () => {
       it('should successfully load the schema', () => {
-        const vm = { fields: [] }
+        const fields = []
         const schema = {
           type: 'string',
           enum: [{ value: 'v', label: 'l' }]
@@ -619,15 +619,15 @@ describe('lib/parser', () => {
           }
         }]
 
-        loadFields(vm, schema)
+        loadFields(schema, fields)
 
-        expect(vm.fields).toEqual(expected)
+        expect(fields).toEqual(expected)
       })
     })
 
     describe('schema.type === object', () => {
       it('should successfully load the schema', () => {
-        const vm = { fields: [] }
+        const fields = []
         const schema = {
           type: 'object',
           properties: {
@@ -648,13 +648,13 @@ describe('lib/parser', () => {
           }
         }]
 
-        loadFields(vm, schema)
+        loadFields(schema, fields)
 
-        expect(vm.fields).toEqual(expected)
+        expect(fields).toEqual(expected)
       })
 
       it('should successfully load the schema with required fields', () => {
-        const vm = { fields: [] }
+        const fields = []
         const schema = {
           type: 'object',
           properties: {
@@ -676,9 +676,9 @@ describe('lib/parser', () => {
           }
         }]
 
-        loadFields(vm, schema)
+        loadFields(schema, fields)
 
-        expect(vm.fields).toEqual(expected)
+        expect(fields).toEqual(expected)
       })
     })
   })
