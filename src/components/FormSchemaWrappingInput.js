@@ -9,7 +9,7 @@ export default {
     let nodes = []
 
     if (field.label && !option.disableWrappingLabel) {
-      const extendingOptions = components.label.native
+      const extendingOptions = components.label.option.native
         ? {}
         : { label: field.label }
       const labelOptions = elementOptions(
