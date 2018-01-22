@@ -50,20 +50,19 @@ export default {
       nodes.push(createElement(
         components.label.component, labelOptions, [buttonElement]))
 
-      nodes.push(descriptionElement)
-
       if (element.render) {
-        return element.render(createElement, context, nodes)
+        return element.render(createElement, {
+          ...context, slots: () => ({ default: nodes })
+        }, nodes)
       }
+
+      nodes.push(descriptionElement)
 
       return nodes
     }
 
     if (element.render) {
-      return [
-        element.render(createElement, context),
-        descriptionElement
-      ]
+      return element.render(createElement, context)
     }
 
     return [
