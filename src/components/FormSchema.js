@@ -27,9 +27,29 @@ export default {
     value: { type: Object, default: () => ({}) },
 
     /**
+     * The URI of a program that processes the form information.
+     */
+    action: { type: String },
+
+    /**
      * This property indicates whether the value of the control can be automatically completed by the browser. Possible values are: `off` and `on`.
      */
     autocomplete: { type: String },
+
+    /**
+     * When the value of the method attribute is post, enctype is the MIME type of content that is used to submit the form to the server. Possible values are:
+     * - application/x-www-form-urlencoded: The default value if the attribute is not specified.
+     * - multipart/form-data: The value used for an <input> element with the type attribute set to "file".
+     * - text/plain (HTML5)
+     */
+    enctype: { type: String, default: 'application/x-www-form-urlencoded' },
+
+    /**
+     * The HTTP method that the browser uses to submit the form. Possible values are:
+     * - post: Corresponds to the HTTP POST method ; form data are included in the body of the form and sent to the server.
+     * - get: Corresponds to the HTTP GET method; form data are appended to the action attribute URI with a '?' as separator, and the resulting URI is sent to the server. Use this method when the form has no side-effects and contains only ASCII characters.
+     */
+    method: { type: String, default: 'post' },
 
     /**
      * This Boolean attribute indicates that the form is not to be validated when submitted.
@@ -93,6 +113,9 @@ export default {
       formNodes.push(createElement(FormSchemaButtons, this.$slots.default))
 
       const formOptions = elementOptions(this, components.form, {
+        action: this.action,
+        enctype: this.enctype,
+        method: this.method,
         autocomplete: this.autocomplete,
         novalidate: this.novalidate
       })
