@@ -1,21 +1,20 @@
-import { components, elementOptions } from '../lib/components'
+import { components, elementOptions, inputName } from '../lib/components'
 import FormSchemaInputDescription from './FormSchemaInputDescription'
 import FormSchemaInputArrayElement from './FormSchemaInputArrayElement'
-
-export const inputName = (field, index) => `${field.attrs.name}-${index}`
 
 export default {
   functional: true,
   render (createElement, context) {
     const field = context.props.field
-    const input = context.props.input
     const element = context.props.element
+    const children = context.slots().default || []
+    const input = children.length
+      ? element.option.native ? {} : context.props.input
+      : context.props.input
 
     const descriptionElement = createElement(FormSchemaInputDescription, {
       props: { field }
     })
-
-    const children = context.slots().default
 
     if (field.isArrayField) {
       const vm = context.props.vm
@@ -53,7 +52,18 @@ export default {
 
       nodes.push(descriptionElement)
 
+      if (element.render) {
+        return element.render(createElement, context, nodes)
+      }
+
       return nodes
+    }
+
+    if (element.render) {
+      return [
+        element.render(createElement, context),
+        descriptionElement
+      ]
     }
 
     return [

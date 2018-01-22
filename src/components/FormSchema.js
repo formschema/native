@@ -1,7 +1,6 @@
 import { loadFields } from '../lib/parser'
 import { equals } from '../lib/object'
-import { init, components, set, elementOptions } from '../lib/components'
-import { inputName } from './FormSchemaInput'
+import { init, components, set, elementOptions, inputName } from '../lib/components'
 import FormSchemaField from './FormSchemaField'
 import FormSchemaButtons from './FormSchemaButtons'
 
