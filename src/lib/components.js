@@ -54,12 +54,12 @@ export function renderFieldset (createElement, { props, slots }) {
       inputswrapper.component, inputswrapperOptions, slots().default)
   ]
 
-  if (props.field.label) {
+  if (props.field.description) {
     const legend = components.legend
     const legendOptions = elementOptions(vm, legend)
 
     children.unshift(createElement(
-      legend.component, legendOptions, props.field.label))
+      legend.component, legendOptions, props.field.description))
   }
 
   return createElement('fieldset', {
