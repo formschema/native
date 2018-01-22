@@ -1,4 +1,4 @@
-import { input as getInput } from '../lib/components'
+import { input as getInput, inputName } from '../lib/components'
 import FormSchemaInput from './FormSchemaInput'
 import FormSchemaWrappingInput from './FormSchemaWrappingInput'
 import FormSchemaFieldCheckboxItem from './FormSchemaFieldCheckboxItem'
@@ -27,13 +27,36 @@ const FormSchemaField = {
         break
 
       case 'radio':
-      case 'checkbox':
         if (field.hasOwnProperty('items')) {
           field.items.forEach((item, i) => {
             children.push(createElement(FormSchemaFieldCheckboxItem, {
               props: { vm, field, item, disableWrappingLabel: true }
             }))
           })
+
+          return createElement(FormSchemaInput, {
+            props: { vm, field, input, element }
+          }, children)
+        }
+        break
+
+      case 'checkbox':
+        if (field.hasOwnProperty('items')) {
+          field.items.forEach((item, i) => {
+            children.push(createElement(FormSchemaFieldCheckboxItem, {
+              props: {
+                vm,
+                item,
+                ref: inputName(field, i),
+                field: { ...field, label: item.label },
+                checked: item.value === vm.data[field.attrs.name]
+              }
+            }))
+          })
+
+          return createElement(FormSchemaInput, {
+            props: { vm, field, input, element }
+          }, children)
         }
         break
 
@@ -55,14 +78,10 @@ const FormSchemaField = {
     }
 
     return createElement(FormSchemaWrappingInput, {
-      props: {
-        vm, field, inputWrappingClass
-      }
+      props: { vm, field, inputWrappingClass }
     }, [
       createElement(FormSchemaInput, {
-        props: {
-          vm, field, input, element
-        }
+        props: { vm, field, input, element }
       }, children)
     ])
   }
