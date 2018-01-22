@@ -44,7 +44,7 @@ export const defineComponent = (tag, item) => {
   }
 }
 
-export function renderFieldset(createElement, { props, slots }) {
+export function renderFieldset (createElement, { props, slots }) {
   const inputswrapper = components.inputswrapper
   const vm = {}
 
