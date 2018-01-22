@@ -144,6 +144,15 @@ export function parseItems (items) {
   })
 }
 
+export const setItemName = (name) => (item) => {
+  if (!item.name) {
+    item.name = name ? `${name}-` : ''
+    item.name += item.label.replace(/\s+/g, '-')
+  }
+
+  return item
+}
+
 export function parseArray (schema, name = null) {
   const field = {
     attrs: schema.attrs || {}
@@ -168,13 +177,13 @@ export function parseArray (schema, name = null) {
         case 'oneOf':
           field.attrs.type = 'radio'
           field.attrs.value = field.attrs.value || ''
-          field.items = parseItems(schema[keyword])
+          field.items = parseItems(schema[keyword]).map(setItemName(name))
           break loop
 
         case 'anyOf':
           field.attrs.type = 'checkbox'
           field.attrs.value = field.attrs.value || []
-          field.items = parseItems(schema[keyword])
+          field.items = parseItems(schema[keyword]).map(setItemName(name))
           break loop
       }
     }
