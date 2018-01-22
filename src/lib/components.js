@@ -1,9 +1,13 @@
 'use strict'
 
+import { equals } from './object'
+
 const tags = {
   h1: ['title'],
   p: ['description'],
-  div: ['error', 'textgroup', 'radiogroup', 'checkboxgroup', 'defaultGroup'],
+  div: ['error', 'textgroup', 'inputswrapper', 'defaultGroup'],
+  legend: ['legend'],
+  fieldset: ['radiogroup', 'checkboxgroup'],
   form: ['form'],
   input: {
     typed: [
@@ -40,6 +44,31 @@ export const defineComponent = (tag, item) => {
   }
 }
 
+export function renderFieldset(createElement, { props, slots }) {
+  const inputswrapper = components.inputswrapper
+  const vm = {}
+
+  const inputswrapperOptions = elementOptions(vm, inputswrapper)
+  const children = [
+    createElement(
+      inputswrapper.component, inputswrapperOptions, slots().default)
+  ]
+
+  if (props.field.label) {
+    const legend = components.legend
+    const legendOptions = elementOptions(vm, legend)
+
+    children.unshift(createElement(
+      legend.component, legendOptions, props.field.label))
+  }
+
+  return createElement('fieldset', {
+    attrs: {
+      name: props.field.attrs.name
+    }
+  }, children)
+}
+
 export function init () {
   for (let tag in tags) {
     if (tags[tag] instanceof Array) {
@@ -50,6 +79,9 @@ export function init () {
       })
     }
   }
+
+  components.radiogroup.render = renderFieldset
+  components.checkboxgroup.render = renderFieldset
 }
 
 export function set (type, component, option = {}) {
@@ -76,7 +108,9 @@ export function elementOptions (vm, el, extendingOptions = {}, field = { attrs: 
   }
 }
 
-export const groupedArrayTypes = ['radio', 'checkbox', 'input', 'textarea']
+export const groupedArrayTypes = [
+  'radio', 'checkbox', 'input', 'textarea'
+]
 
 export function input ({ vm, field, ref }) {
   const attrs = field.attrs
@@ -110,4 +144,47 @@ export function input ({ vm, field, ref }) {
     },
     ...fieldOptions
   }
+}
+
+export const fieldTypesAsNotArray = [
+  'radio', 'checkbox', 'textarea', 'select'
+]
+
+export const inputName = (field, index) => `${field.attrs.name}-${index}`
+
+export function initFields (vm) {
+  vm.fields.forEach((field) => {
+    const attrs = field.attrs
+
+    vm.data[attrs.name] = vm.value[attrs.name] || attrs.value
+
+    if (!fieldTypesAsNotArray.includes(attrs.type) && field.schemaType === 'array') {
+      field.isArrayField = true
+
+      if (!Array.isArray(vm.data[attrs.name])) {
+        vm.data[attrs.name] = []
+      }
+
+      vm.data[attrs.name].forEach((value, i) => {
+        vm.inputValues[inputName(field, i)] = value
+      })
+
+      field.itemsNum = field.minItems
+    }
+  })
+
+  vm.data = Object.seal(vm.data)
+
+  if (!equals(vm.data, vm.value)) {
+    /**
+     * @private
+     */
+    vm.$emit('input', vm.data)
+  }
+
+  Object.keys(vm.data).forEach((key) => {
+    vm.default[key] = typeof vm.data[key] === 'object' && vm.data[key] !== null
+      ? Object.freeze(vm.data[key])
+      : vm.data[key]
+  })
 }
