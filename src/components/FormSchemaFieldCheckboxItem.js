@@ -2,25 +2,25 @@ import { components, input as getInput } from '../lib/components'
 import FormSchemaInput from './FormSchemaInput'
 import FormSchemaWrappingInput from './FormSchemaWrappingInput'
 
-const FormSchemaField = {
+export default {
   functional: true,
   render (createElement, context) {
-    const vm = context.props.vm
-    const item = context.props.item
-    const inputWrappingClass = context.props.inputWrappingClass
-    const field = context.props.field
-    const attrs = field.attrs
+    const { vm, item, ref, field, inputWrappingClass } = context.props
 
+    const attrs = field.attrs
     const element = components[attrs.type] || components.text
     const input = getInput({
+      ref,
       vm,
       field: {
         label: item.label,
         attrs: {
-          name: attrs.name,
+          name: item.name || context.props.name || attrs.name,
           type: attrs.type,
           value: item.value,
-          checked: item.value === vm.inputValues[attrs.name]
+          checked: typeof context.props.checked === 'undefined'
+            ? item.value === vm.inputValues[attrs.name]
+            : context.props.checked
         }
       }
     })
@@ -38,5 +38,3 @@ const FormSchemaField = {
     ])
   }
 }
-
-export default FormSchemaField

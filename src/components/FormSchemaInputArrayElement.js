@@ -1,4 +1,4 @@
-import { inputName } from './FormSchemaInput'
+import { inputName } from '../lib/components'
 
 export default {
   functional: true,
