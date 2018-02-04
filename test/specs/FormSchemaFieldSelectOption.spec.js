@@ -1,7 +1,6 @@
 'use strict'
 
 import { mount } from 'vue-test-utils'
-import { loadFields } from '../../src/lib/parser'
 import { init, initFields } from '../../src/lib/components'
 
 import component from '../../src/components/FormSchemaFieldSelectOption.js'
