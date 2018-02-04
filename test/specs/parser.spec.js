@@ -377,8 +377,7 @@ describe('lib/parser', () => {
           type: 'file',
           value: '',
           required: false,
-          disabled: false,
-          multiple: false
+          disabled: false
         }
       }
 
@@ -453,15 +452,16 @@ describe('lib/parser', () => {
           type: 'text',
           value: '',
           required: false,
-          disabled: false,
-          multiple: false
+          disabled: false
         }
       }
 
       expect(parseArray(schema)).toEqual(expected)
 
       delete schema.attrs
+
       expected.attrs.type = 'select'
+      expected.attrs.multiple = false
 
       expect(parseArray(schema)).toEqual(expected)
     })
@@ -477,13 +477,12 @@ describe('lib/parser', () => {
         description: '',
         minItems: 1,
         maxItems: 1000,
-        items: [{ value: 'v', label: 'l' }],
+        items: [{ value: 'v', label: 'l', name: 'l' }],
         attrs: {
           type: 'radio',
           value: '',
           required: false,
-          disabled: false,
-          multiple: false
+          disabled: false
         }
       }
 
@@ -501,13 +500,12 @@ describe('lib/parser', () => {
         description: '',
         minItems: 1,
         maxItems: 1000,
-        items: [{ value: 'v', label: 'l' }],
+        items: [{ value: 'v', label: 'l', name: 'l' }],
         attrs: {
           type: 'checkbox',
-          value: [],
+          value: [undefined],
           required: false,
-          disabled: false,
-          multiple: false
+          disabled: false
         }
       }
 

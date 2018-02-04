@@ -49,7 +49,10 @@ describe('lib/components', () => {
     beforeEach(init)
 
     const divInputs = [
-      'error', 'textgroup', 'radiogroup', 'checkboxgroup', 'defaultGroup'
+      'error', 'textgroup', 'defaultGroup'
+    ]
+    const fieldsetInputs = [
+      'radiogroup', 'checkboxgroup'
     ]
     const tagInputs = ['form', 'textarea', 'select', 'option', 'label']
     const typedInputs = [
@@ -74,6 +77,12 @@ describe('lib/components', () => {
     divInputs.forEach((tag) => {
       it(`should contain the generic div ${tag} component`, () => {
         expect(components[tag]).toEqual({ component: 'div', option })
+      })
+    })
+
+    fieldsetInputs.forEach((tag) => {
+      it(`should contain the fieldset ${tag} component`, () => {
+        expect({ ...components[tag], render: undefined }).toEqual({ component: 'fieldset', option })
       })
     })
 

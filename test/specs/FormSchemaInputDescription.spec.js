@@ -14,9 +14,7 @@ describe('component', () => {
     const wrapper = mount(component, {
       context: {
         props: {
-          field: {
-            description: 'Hello'
-          }
+          description: 'Hello'
         }
       }
     })
@@ -27,9 +25,7 @@ describe('component', () => {
   it('should successfully render with an undefined description', () => {
     const wrapper = mount(component, {
       context: {
-        props: {
-          field: {}
-        }
+        props: {}
       }
     })
 
