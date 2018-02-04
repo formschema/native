@@ -28,7 +28,7 @@ const FormSchemaField = {
 
       case 'radio':
         if (field.hasOwnProperty('items')) {
-          field.items.forEach((item, i) => {
+          field.items.forEach((item) => {
             children.push(createElement(FormSchemaFieldCheckboxItem, {
               props: { vm, field, item, disableWrappingLabel: true }
             }))
@@ -49,7 +49,7 @@ const FormSchemaField = {
                 item,
                 ref: inputName(field, i),
                 field: { ...field, label: item.label },
-                checked: item.value === vm.data[field.attrs.name]
+                checked: vm.data[field.attrs.name].includes(item.value)
               }
             }))
           })
@@ -61,15 +61,13 @@ const FormSchemaField = {
         break
 
       case 'select':
-        if (!field.required) {
-          const option = { label: null, value: '' }
+        const items = [ ...field.items ]
 
-          children.push(createElement(FormSchemaFieldSelectOption, {
-            props: { vm, field, option, disableWrappingLabel: true }
-          }))
+        if (!attrs.required) {
+          items.unshift({ label: null, value: '' })
         }
 
-        field.items.forEach((option) => {
+        items.forEach((option) => {
           children.push(createElement(FormSchemaFieldSelectOption, {
             props: { vm, field, option, disableWrappingLabel: true }
           }))
