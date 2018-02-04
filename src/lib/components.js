@@ -147,7 +147,7 @@ export function input ({ vm, field, ref }) {
 }
 
 export const fieldTypesAsNotArray = [
-  'radio', 'checkbox', 'textarea', 'select'
+  'radio', 'textarea', 'select'
 ]
 
 export const inputName = (field, index) => `${field.attrs.name}-${index}`
@@ -165,15 +165,18 @@ export function initFields (vm) {
         vm.data[attrs.name] = []
       }
 
-      vm.data[attrs.name].forEach((value, i) => {
+      vm.data[attrs.name] = vm.data[attrs.name].filter((value, i) => {
         vm.inputValues[inputName(field, i)] = value
+        return value !== undefined
       })
 
-      field.itemsNum = field.minItems
+      field.itemsNum = attrs.type === 'checkbox'
+        ? field.items.length
+        : field.minItems
     }
   })
 
-  vm.data = Object.seal(vm.data)
+  // vm.data = Object.seal(vm.data)
 
   if (!equals(vm.data, vm.value)) {
     /**

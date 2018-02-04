@@ -153,6 +153,16 @@ export const setItemName = (name) => (item) => {
   return item
 }
 
+export function arrayValues (field) {
+  return field.items.map((item) => item.checked ? item.value : undefined)
+}
+
+export function singleValue (field) {
+  const item = field.items.reverse().find((item) => item.checked || item.selected)
+
+  return item ? item.value : ''
+}
+
 export function parseArray (schema, name = null) {
   const field = {
     attrs: schema.attrs || {}
@@ -160,7 +170,13 @@ export function parseArray (schema, name = null) {
 
   setCommonFields(schema, field)
 
+  if (name) {
+    field.attrs.name = name
+  }
+
   field.items = []
+  field.minItems = parseInt(schema.minItems) || 1
+  field.maxItems = parseInt(schema.maxItems) || 1000
 
   loop:
   for (let keyword of ARRAY_KEYWORDS) {
@@ -170,7 +186,7 @@ export function parseArray (schema, name = null) {
           if (!field.attrs.type) {
             field.attrs.type = 'select'
           }
-          field.attrs.value = field.attrs.value || ''
+
           field.items = parseItems(schema[keyword])
           break loop
 
@@ -178,32 +194,36 @@ export function parseArray (schema, name = null) {
           field.attrs.type = 'radio'
           field.attrs.value = field.attrs.value || ''
           field.items = parseItems(schema[keyword]).map(setItemName(name))
+
+          if (field.attrs.value.length === 0) {
+            field.attrs.value = singleValue(field)
+          }
           break loop
 
         case 'anyOf':
           field.attrs.type = 'checkbox'
           field.attrs.value = field.attrs.value || []
           field.items = parseItems(schema[keyword]).map(setItemName(name))
+
+          if (field.attrs.value.length === 0) {
+            field.attrs.value = arrayValues(field)
+          }
           break loop
       }
     }
   }
 
-  field.minItems = parseInt(schema.minItems) || 1
-  field.maxItems = parseInt(schema.maxItems) || 1000
-
   if (!field.attrs.type) {
     field.attrs.type = 'text'
-  } else {
+  } else if (field.attrs.type === 'select') {
     field.attrs.multiple = field.minItems > 1
+    field.attrs.value = field.attrs.value || field.attrs.multiple ? [] : ''
 
-    if (field.attrs.multiple && !Array.isArray(field.attrs.value)) {
-      field.attrs.value = []
+    if (field.attrs.value.length === 0) {
+      field.attrs.value = field.attrs.multiple
+        ? arrayValues(field)
+        : singleValue(field)
     }
-  }
-
-  if (name) {
-    field.attrs.name = name
   }
 
   return field
