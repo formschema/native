@@ -8,7 +8,7 @@ export default {
     const { vm, item, ref, field, inputWrappingClass } = context.props
 
     const attrs = field.attrs
-    const element = components[attrs.type] || components.text
+    const element = components.checkbox
     const description = item.description
     const input = getInput({
       ref,
@@ -16,11 +16,13 @@ export default {
       field: {
         label: item.label,
         attrs: {
-          name: item.name || context.props.name || attrs.name,
+          name: item.name || attrs.name,
           type: attrs.type,
           value: item.value,
           checked: typeof context.props.checked === 'undefined'
-            ? item.value === vm.inputValues[attrs.name]
+            ? vm.data[attrs.name] instanceof Array
+              ? vm.data[attrs.name].includes(item.value)
+              : item.value === vm.data[attrs.name]
             : context.props.checked
         }
       }
