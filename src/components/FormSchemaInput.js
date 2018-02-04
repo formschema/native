@@ -5,19 +5,38 @@ import FormSchemaInputArrayElement from './FormSchemaInputArrayElement'
 export default {
   functional: true,
   render (createElement, context) {
-    const field = context.props.field
-    const element = context.props.element
+    const { description, field, element } = context.props
     const children = context.slots().default || []
     const input = children.length
       ? element.option.native ? {} : context.props.input
       : context.props.input
 
     const descriptionElement = createElement(FormSchemaInputDescription, {
-      props: { field }
+      props: {
+        text: description || field.description
+      }
     })
 
     if (field.isArrayField) {
       const vm = context.props.vm
+
+      if (field.attrs.type === 'checkbox') {
+        if (element.render) {
+          return element.render(createElement, context)
+        }
+
+        const ref = input.ref
+
+        return [
+          createElement(FormSchemaInputArrayElement, {
+            props: {
+              vm, ref, field, input, element
+            }
+          }, children),
+          descriptionElement
+        ]
+      }
+
       const nodes = Array.apply(null, Array(field.itemsNum)).map((v, i) => {
         const ref = inputName(field, i)
 

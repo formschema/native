@@ -10,8 +10,10 @@ export default {
     const name = context.props.ref
 
     const attrs = field.attrs
-    const value = vm.inputValues[name]
     const attrName = element.option.native ? 'attrs' : 'props'
+    const value = attrs.type === 'checkbox'
+      ? input[attrName].value
+      : vm.inputValues[name]
 
     return createElement(element.component, {
       ...input,
@@ -19,9 +21,13 @@ export default {
       [attrName]: { ...input[attrName], name, value },
       on: {
         input: (event) => {
-          vm.inputValues[name] = event && event.target
+          const value = event && event.target
             ? event.target.value
             : event
+
+          vm.inputValues[name] = attrs.type === 'checkbox' && vm.inputValues[name] !== undefined
+            ? undefined
+            : value
 
           const values = []
 
