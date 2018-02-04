@@ -9,6 +9,7 @@ export default {
 
     const attrs = field.attrs
     const element = components[attrs.type] || components.text
+    const description = item.description
     const input = getInput({
       ref,
       vm,
@@ -32,7 +33,7 @@ export default {
     }, [
       createElement(FormSchemaInput, {
         props: {
-          vm, field, input, element
+          vm, field, input, element, description
         }
       })
     ])

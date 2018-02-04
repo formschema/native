@@ -1,8 +1,8 @@
 export default {
   functional: true,
   render (createElement, context) {
-    if (context.props.field.description) {
-      return createElement('small', context.props.field.description)
+    if (context.props.description) {
+      return createElement('small', context.props.description)
     }
 
     return null
