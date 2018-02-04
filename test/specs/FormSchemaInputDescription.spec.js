@@ -14,7 +14,7 @@ describe('component', () => {
     const wrapper = mount(component, {
       context: {
         props: {
-          description: 'Hello'
+          text: 'Hello'
         }
       }
     })
