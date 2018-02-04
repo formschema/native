@@ -9,7 +9,7 @@ import component from '../../src/components/FormSchemaButtons.js'
 init()
 
 describe('component', () => {
-  it('should a functional component', () => {
+  it('should be a functional component', () => {
     expect(component.functional).toBe(true)
   })
 

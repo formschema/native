@@ -11,7 +11,7 @@ import component from '../../src/components/FormSchemaField.js'
 init()
 
 describe('component', () => {
-  it('should a functional component', () => {
+  it('should be a functional component', () => {
     expect(component.functional).toBe(true)
   })
 

@@ -13,7 +13,7 @@ init()
 let schema, vm, field, ref, item, inputWrappingClass
 
 describe('component', () => {
-  it('should a functional component', () => {
+  it('should be a functional component', () => {
     expect(component.functional).toBe(true)
   })
 
