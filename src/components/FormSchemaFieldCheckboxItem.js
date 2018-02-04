@@ -8,7 +8,7 @@ export default {
     const { vm, item, ref, field, inputWrappingClass } = context.props
 
     const attrs = field.attrs
-    const element = components.checkbox
+    const element = components[attrs.type]
     const description = item.description
     const input = getInput({
       ref,
