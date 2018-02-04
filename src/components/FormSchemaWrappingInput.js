@@ -2,40 +2,31 @@ import { components, option, elementOptions } from '../lib/components'
 
 export default {
   functional: true,
-  render (createElement, context) {
-    const vm = context.props.vm
-    const field = context.props.field
-
+  render (createElement, { props, children }) {
+    const { vm, field } = props
     let nodes = []
 
     if (field.label && !option.disableWrappingLabel) {
-      const extendingOptions = components.label.option.native
-        ? null
-        : { label: field.label }
-      const labelOptions = extendingOptions
-        ? elementOptions(vm, components.label, extendingOptions, field)
-        : {}
+      const labelOptions = elementOptions(vm, components.label, {}, field)
       let labelNodes = []
 
-      if (components.label.option.native) {
-        labelNodes.push(createElement('span', {
-          attrs: {
-            'data-required-field': field.required ? 'true' : 'false'
-          }
-        }, field.label))
-      }
+      labelNodes.push(createElement('span', {
+        attrs: {
+          'data-required-field': field.attrs.required ? 'true' : 'false'
+        }
+      }, field.label))
 
-      labelNodes = labelNodes.concat(context.children)
+      labelNodes = labelNodes.concat(children)
 
       nodes.push(createElement(
         components.label.component, labelOptions, labelNodes))
     } else {
-      nodes = context.children
+      nodes = children
     }
 
-    if (context.props.inputWrappingClass) {
+    if (props.inputWrappingClass) {
       return createElement('div', {
-        class: context.props.inputWrappingClass
+        class: props.inputWrappingClass
       }, nodes)
     }
 
