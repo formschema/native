@@ -67,6 +67,12 @@ const FormSchemaField = {
           items.unshift({ label: null, value: '' })
         }
 
+        if (input.attrs) {
+          delete input.attrs.type
+          delete input.attrs.value
+          delete input.attrs.native
+        }
+
         items.forEach((option) => {
           children.push(createElement(FormSchemaFieldSelectOption, {
             props: { vm, field, option, disableWrappingLabel: true }

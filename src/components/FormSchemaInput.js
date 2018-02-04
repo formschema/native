@@ -5,11 +5,8 @@ import FormSchemaInputArrayElement from './FormSchemaInputArrayElement'
 export default {
   functional: true,
   render (createElement, context) {
-    const { description, field, element } = context.props
+    const { description, field, element, input } = context.props
     const children = context.slots().default || []
-    const input = children.length
-      ? element.option.native ? {} : context.props.input
-      : context.props.input
 
     const descriptionElement = createElement(FormSchemaInputDescription, {
       props: {
