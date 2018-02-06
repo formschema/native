@@ -1,6 +1,6 @@
 import { loadFields } from '../lib/parser'
 import { equals } from '../lib/object'
-import { init, components, set, elementOptions, inputName } from '../lib/components'
+import { init, components, set, elementOptions, inputName, initFields } from '../lib/components'
 import FormSchemaField from './FormSchemaField'
 import FormSchemaButtons from './FormSchemaButtons'
 
@@ -145,41 +145,9 @@ export default {
       this.schemaLoaded = schema || {}
 
       loadFields(this.schemaLoaded, this.fields)
-
-      this.fields.forEach((field) => {
-        const attrs = field.attrs
-
-        this.$set(this.data, attrs.name, this.value[attrs.name] || attrs.value)
-
-        if (!fieldTypesAsNotArray.includes(attrs.type) && field.schemaType === 'array') {
-          field.isArrayField = true
-
-          if (!Array.isArray(this.data[attrs.name])) {
-            this.data[attrs.name] = []
-          }
-
-          this.data[attrs.name].forEach((value, i) => {
-            this.inputValues[inputName(field, i)] = value
-          })
-
-          field.itemsNum = field.minItems
-        }
-      })
+      initFields(this)
 
       this.data = Object.seal(this.data)
-
-      if (!equals(this.data, this.value)) {
-        /**
-         * @private
-         */
-        this.$emit('input', this.data)
-      }
-
-      Object.keys(this.data).forEach((key) => {
-        this.default[key] = typeof this.data[key] === 'object' && this.data[key] !== null
-          ? Object.freeze(this.data[key])
-          : this.data[key]
-      })
     },
 
     /**
@@ -198,10 +166,12 @@ export default {
      * Get a form input reference.
      */
     input (name) {
-      if (!this.$refs[name]) {
+      const controls = this.form().elements
+
+      if (!controls[name]) {
         throw new Error(`Undefined input reference '${name}'`)
       }
-      return this.$refs[name][0]
+      return controls[name]
     },
 
     /**
@@ -212,10 +182,27 @@ export default {
     },
 
     /**
+     * Returns true if the element's child controls satisfy their validation constraints. When false is returned, cancelable invalid events are fired for each invalid child and validation problems are reported to the user.
+     */
+    reportValidity () {
+      const controls = this.form().elements
+      let validity = true
+
+      for (let i = 0; i < controls.length; i++) {
+        if ('checkValidity' in controls[i]) {
+          validity = validity && controls[i].checkValidity()
+        }
+      }
+
+      return validity
+    },
+
+    /**
      * Checks whether the form has any constraints and whether it satisfies them. If the form fails its constraints, the browser fires a cancelable `invalid` event at the element, and then returns false.
+     * @aliasof reportValidity
      */
     checkValidity () {
-      return this.$refs.__form.checkValidity()
+      return this.reportValidity()
     },
 
     /**
