@@ -91,14 +91,9 @@ export default {
 
     if (this.error) {
       const errorOptions = elementOptions(this, components.error)
-      const errorNodes = []
-
-      if (components.error.option.native) {
-        errorNodes.push(this.error)
-      }
 
       nodes.push(createElement(
-        components.error.component, errorOptions, errorNodes))
+        components.error.component, errorOptions, this.error))
     }
 
     const vm = this
