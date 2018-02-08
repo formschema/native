@@ -4,7 +4,7 @@
   "description": "Vue component form based on JSON Schema",
   "main": "dist/vue-json-schema.js",
   "scripts": {
-    "pretest": "eslint --ext .js component.js test/specs",
+    "pretest": "eslint --ext .js src test/specs",
     "test": "jest --colors",
     "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls",
     "posttest": "make readme",
