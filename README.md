@@ -1,7 +1,7 @@
 # vue-json-schema
 Vue component form based on JSON Schema
 
-[![Build Status](https://travis-ci.org/demsking/vue-json-schema.svg?branch=master)](https://travis-ci.org/demsking/vue-json-schema)
+[![Build Status](https://travis-ci.org/demsking/vue-json-schema.svg?branch=master)](https://travis-ci.org/demsking/vue-json-schema) [![Coverage Status](https://coveralls.io/repos/github/demsking/vue-json-schema/badge.svg?branch=master)](https://coveralls.io/github/demsking/vue-json-schema?branch=master)
 
 ## Install
 ```sh
