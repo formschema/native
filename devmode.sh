@@ -11,6 +11,8 @@ fi
 existsOrExited=`docker inspect -f {{.State.Running}} $container 2> /dev/null`
 
 if [ "$existsOrExited" = '' ]; then
+  mkdir -p $(pwd)/coverage
+
   docker run -d -it --name $container \
     -v "$(pwd)/src":"$cwd/src" \
     -v "$(pwd)/test":"$cwd/test" \
@@ -29,7 +31,7 @@ tmux new-session -s $tag -n $tag -d
 # Adress the first pane using the -t flag.
 # for the <enter> key, use either C-m (linefeed) or C-j (newline)
 tmux send-keys -t $tag:$tag.0 \
-  "docker exec $container nodemon -w src -w test -x './node_modules/.bin/jest --colors test/specs/FormSchemaField.spec.js'" C-j
+  "docker exec $container nodemon -w src -w test -x './node_modules/.bin/jest --colors'" C-j
 
 # split the window *vertically*
 tmux split-window -v
