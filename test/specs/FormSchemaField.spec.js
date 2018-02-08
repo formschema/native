@@ -1,6 +1,6 @@
 'use strict'
 
-import { mount } from 'vue-test-utils'
+import { mount } from '@vue/test-utils'
 import { loadFields } from '../../src/lib/parser'
 import { init, set, initFields, inputName } from '../../src/lib/components'
 

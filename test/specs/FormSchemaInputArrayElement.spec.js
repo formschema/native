@@ -1,6 +1,6 @@
 'use strict'
 
-import { mount } from 'vue-test-utils'
+import { mount } from '@vue/test-utils'
 import { init, components } from '../../src/lib/components'
 import component from '../../src/components/FormSchemaInputArrayElement.js'
 

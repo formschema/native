@@ -1,6 +1,6 @@
 'use strict'
 
-import { mount } from 'vue-test-utils'
+import { mount } from '@vue/test-utils'
 import FormSchema from '../../src/components/FormSchema.js'
 import schema from '../fixtures/signup.json'
 
