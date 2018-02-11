@@ -30,7 +30,7 @@
   "homepage": "https://github.com/demsking/vue-json-schema#readme",
   "devDependencies": {
     "@vue/test-utils": "^1.0.0-beta.11",
-    "@vuedoc/md": "^1.0.1",
+    "@vuedoc/md": "^1.1.1",
     "babel-eslint": "^8.2.1",
     "babel-jest": "^22.0.6",
     "babel-loader": "^7.1.2",
