@@ -8,11 +8,12 @@ const path = require('path')
 const chalk = require('chalk')
 const webpack = require('webpack')
 const webpackConfig = require('./webpack.config')
+const main = require('./package').main
 
 const spinner = ora('building for production...')
 spinner.start()
 
-rm(path.join(__dirname, 'dist'), err => {
+rm(path.join(__dirname, main), err => {
   if (err) {
     throw err
   }
@@ -38,9 +39,5 @@ rm(path.join(__dirname, 'dist'), err => {
     }
 
     console.log(chalk.cyan('  Build complete.\n'))
-    console.log(chalk.yellow(
-      '  Tip: built files are meant to be served over an HTTP server.\n' +
-      '  Opening index.html over file:// won\'t work.\n'
-    ))
   })
 })

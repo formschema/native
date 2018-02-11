@@ -3,6 +3,7 @@ src
 lib
 build
 config
+coverage
 .directory
 .eslintrc
 .gitignore

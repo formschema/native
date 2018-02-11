@@ -6,7 +6,7 @@ function resolve (file) {
 }
 
 module.exports = {
-  entry: resolve('component.vue'),
+  entry: resolve('src/components/FormSchema.js'),
   output: {
     path: resolve('dist'),
     filename: 'vue-json-schema.js',
@@ -20,10 +20,7 @@ module.exports = {
         test: /\.(js|vue)$/,
         loader: 'eslint-loader',
         enforce: 'pre',
-        include: [resolve('src'), resolve('test')],
-        options: {
-          formatter: require('eslint-friendly-formatter')
-        }
+        include: [resolve('src'), resolve('test')]
       },
       {
         test: /\.js$/,
@@ -31,10 +28,6 @@ module.exports = {
         include: __dirname,
         exclude: /node_modules/,
         query: { compact: false }
-      },
-      {
-        test: /\.vue$/,
-        loader: 'vue-loader'
       }
     ]
   },
@@ -44,9 +37,7 @@ module.exports = {
       sourceMap : false,
       mangle: true,
       parallel: true,
-      compress: {
-        warnings: false
-      }
+      compress: true
     })
   ],
   externals: {}
