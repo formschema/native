@@ -1,5 +1,6 @@
 # vue-json-schema
 Vue component form based on JSON Schema
+
 [![Build Status](https://travis-ci.org/demsking/vue-json-schema.svg?branch=master)](https://travis-ci.org/demsking/vue-json-schema) [![Coverage Status](https://coveralls.io/repos/github/demsking/vue-json-schema/badge.svg?branch=master)](https://coveralls.io/github/demsking/vue-json-schema?branch=master)
 
 ## Install
@@ -73,6 +74,7 @@ clear the message error.
 
 ## Usage
 Define your [JSON Schema](http://json-schema.org) file:
+
 ```json
 {
     "$schema": "http://json-schema.org/draft-04/schema#",
@@ -105,7 +107,9 @@ Define your [JSON Schema](http://json-schema.org) file:
     "required": ["name", "email", "lists"]
 }
 ```
+
 In your Vue file:
+
 ```html
 <template>
   <form-schema :schema="schema" v-model="model" @submit="submit">
@@ -135,6 +139,7 @@ In your Vue file:
 
 ## Async Schema
 To asynchronously load a schema, just set a promise that returns it.
+
 ```html
 <script>
   import axios from 'axios'
@@ -151,7 +156,9 @@ To asynchronously load a schema, just set a promise that returns it.
 
 ## Use custom form elements
 Use `FormSchema.setComponent(type, component[, props = {}])` to define custom element to use for rendering.
+
 See [vue-json-schema-demo-elementui](https://github.com/demsking/vue-json-schema-demo-elementui) for a complete example.
+
 ```js
 // an element-ui example
 
@@ -227,7 +234,9 @@ export default {
 
 ## Multiple Checkbox elements
 To define multiple checkbox, use the [JSON Schema keyword `anyOf`](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.27):
+
 **schema.json**
+
 ```json
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
@@ -243,7 +252,9 @@ To define multiple checkbox, use the [JSON Schema keyword `anyOf`](http://json-s
   }
 }
 ```
+
 **component.vue**
+
 ```html
 <script>
   import FormSchema from 'vue-json-schema'
@@ -260,7 +271,9 @@ To define multiple checkbox, use the [JSON Schema keyword `anyOf`](http://json-s
 
 ## Grouped Radio elements
 To group radio elements, use the [JSON Schema keyword `enum`](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.23) and `attrs.type === 'radio'`:
+
 **schema.json**
+
 ```json
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
@@ -279,7 +292,9 @@ To group radio elements, use the [JSON Schema keyword `enum`](http://json-schema
   }
 }
 ```
+
 **component.vue**
+
 ```html
 <script>
   import FormSchema from 'vue-json-schema'
@@ -296,7 +311,9 @@ To group radio elements, use the [JSON Schema keyword `enum`](http://json-schema
 
 ## Array Inputs Elements
 To render a [array field](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4), define your schema like:
+
 **schema.json**
+
 ```json
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
@@ -311,8 +328,11 @@ To render a [array field](http://json-schema.org/latest/json-schema-validation.h
   }
 }
 ```
+
 **component.vue**
+
 `vue-json-schema` will render a text input by adding a button to add more inputs.
+
 ```html
 <script>
   import FormSchema from 'vue-json-schema'
@@ -329,7 +349,9 @@ To render a [array field](http://json-schema.org/latest/json-schema-validation.h
 
 ## Regex Inputs
 To render a [regex input](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.3.3), define your schema like:
+
 **schema.json**
+
 ```json
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
