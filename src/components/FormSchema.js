@@ -134,8 +134,8 @@ export default {
   setComponent: setComponent,
   methods: {
     /**
-      * @private
-      */
+     * @private
+     */
     init (schema) {
       this.schemaLoaded = schema || {}
 
