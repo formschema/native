@@ -30,7 +30,7 @@ export default {
 
     return createElement(FormSchemaWrappingInput, {
       props: {
-        vm, field, inputWrappingClass
+        vm, field, element, inputWrappingClass
       }
     }, [
       createElement(FormSchemaInput, {
