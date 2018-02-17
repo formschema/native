@@ -1,15 +1,15 @@
 # vue-json-schema
 Vue component form based on JSON Schema
 
-[![Build Status](https://travis-ci.org/demsking/vue-json-schema.svg?branch=master)](https://travis-ci.org/demsking/vue-json-schema) [![Coverage Status](https://coveralls.io/repos/github/demsking/vue-json-schema/badge.svg?branch=master)](https://coveralls.io/github/demsking/vue-json-schema?branch=master)
+[![Build Status](https://travis-ci.org/vue-json-schema/form-schema.svg?branch=master)](https://travis-ci.org/vue-json-schema/form-schema) [![Coverage Status](https://coveralls.io/repos/github/vue-json-schema/form-schema/badge.svg?branch=master)](https://coveralls.io/github/vue-json-schema/form-schema?branch=master)
 
 ## Install
 ```sh
-npm install --save vue-json-schema
+npm install --save @vue-json-schema/form-schema
 ```
 
 ## Demo
-- [Demo with ElementUI](https://github.com/demsking/vue-json-schema-demo-elementui)
+- [Demo with ElementUI](https://github.com/vue-json-schema/wrap-elementui)
 
 ## FormSchema API
 
@@ -157,7 +157,7 @@ To asynchronously load a schema, just set a promise that returns it.
 ## Use custom form elements
 Use `FormSchema.setComponent(type, component[, props = {}])` to define custom element to use for rendering.
 
-See [vue-json-schema-demo-elementui](https://github.com/demsking/vue-json-schema-demo-elementui) for a complete example.
+See [vue-json-schema-demo-elementui](https://github.com/vue-json-schema/form-schema-demo-elementui) for a complete example.
 
 ```js
 // an element-ui example
@@ -366,4 +366,4 @@ To render a [regex input](http://json-schema.org/latest/json-schema-validation.h
 ```
 
 ## License
-Under the MIT license. See [LICENSE](https://github.com/demsking/vue-json-schema/blob/master/LICENSE) file for more details.
+Under the MIT license. See [LICENSE](https://github.com/vue-json-schema/form-schema/blob/master/LICENSE) file for more details.
