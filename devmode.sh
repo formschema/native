@@ -39,7 +39,7 @@ tmux split-window -v -t 0
 tmux split-window -h -t 2
 
 # again, specifying pane 1 with '-t 1' is optional
-tmux send-keys -t 2 'cd ../vue-json-schema-demo-elementui && npm run dev' C-j
+# tmux send-keys -t 2 'cd ../vue-json-schema-demo-elementui && npm run dev' C-j
 tmux send-keys -t 3 "docker exec $container nodemon -w src -x 'node build'" C-j
 tmux send-keys -t 1 'git status' C-j
 
