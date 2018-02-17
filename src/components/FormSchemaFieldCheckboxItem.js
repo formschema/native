@@ -35,7 +35,7 @@ export default {
     }, [
       createElement(FormSchemaInput, {
         props: {
-          vm, field, input, element, description
+          vm, field: { ...field, ...item }, input, element, description
         }
       })
     ])
