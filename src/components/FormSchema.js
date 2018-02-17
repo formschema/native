@@ -10,7 +10,7 @@ init()
 
 export const setComponent = set
 
-export default {
+export const FormSchema = {
   name: 'form-schema',
   props: {
     /**
@@ -258,3 +258,5 @@ export default {
     }
   }
 }
+
+export default FormSchema
