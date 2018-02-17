@@ -35,12 +35,14 @@ describe('component', () => {
     initFields(vm)
 
     const field = vm.fields[0]
+    const option = { disableWrappingLabel: false }
+    const element = { option }
 
     const wrapper = mount({
       render (createElement) {
         return createElement('form', [
           createElement(component, {
-            props: { vm, field }
+            props: { vm, field, element }
           })
         ])
       }
@@ -77,12 +79,14 @@ describe('component', () => {
     initFields(vm)
 
     const field = vm.fields[0]
+    const option = { disableWrappingLabel: false }
+    const element = { option }
 
     const wrapper = mount({
       render (createElement) {
         return createElement('form', [
           createElement(component, {
-            props: { vm, field }
+            props: { vm, field, element }
           })
         ])
       }
@@ -119,13 +123,15 @@ describe('component', () => {
     initFields(vm)
 
     const field = vm.fields[0]
+    const option = { disableWrappingLabel: false }
+    const element = { option }
     const inputWrappingClass = 'wrapping-class'
 
     const wrapper = mount({
       render (createElement) {
         return createElement('form', [
           createElement(component, {
-            props: { vm, field, inputWrappingClass }
+            props: { vm, field, element, inputWrappingClass }
           })
         ])
       }
