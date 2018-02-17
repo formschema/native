@@ -82,7 +82,7 @@ const FormSchemaField = {
     }
 
     return createElement(FormSchemaWrappingInput, {
-      props: { vm, field, inputWrappingClass }
+      props: { vm, field, element, inputWrappingClass }
     }, [
       createElement(FormSchemaInput, {
         props: { vm, field, input, element }

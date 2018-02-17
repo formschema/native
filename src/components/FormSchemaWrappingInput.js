@@ -1,12 +1,12 @@
-import { components, option, elementOptions } from '../lib/components'
+import { components, elementOptions } from '../lib/components'
 
 export default {
   functional: true,
   render (createElement, { props, children }) {
-    const { vm, field } = props
+    const { vm, field, element } = props
     let nodes = []
 
-    if (field.label && !option.disableWrappingLabel) {
+    if (field.label && !element.option.disableWrappingLabel) {
       const labelOptions = elementOptions(vm, components.label, {}, field)
       let labelNodes = []
 
