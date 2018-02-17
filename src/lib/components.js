@@ -85,13 +85,14 @@ export function init () {
 }
 
 export function set (type, component, option = {}) {
+  const render = option.render
   const defaultOption = components[type]
     ? { ...components[type].option }
     : {}
 
   delete defaultOption.native
 
-  components[type] = { type, component, option, defaultOption }
+  components[type] = { type, component, option, render, defaultOption }
 }
 
 export function elementOptions (vm, el, extendingOptions = {}, field = { attrs: {} }, item = {}) {
