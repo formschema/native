@@ -85,6 +85,11 @@ export function init () {
 }
 
 export function set (type, component, option = {}) {
+  if (typeof component !== 'string') {
+    option = component
+    component = undefined
+  }
+
   const render = option.render
   const defaultOption = components[type]
     ? { ...components[type].option }
