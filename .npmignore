@@ -13,3 +13,4 @@ Makefile
 *.js
 *.bak
 *.vue
+dist/demo.html
