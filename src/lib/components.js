@@ -5,7 +5,10 @@ import { equals } from './object'
 const tags = {
   h1: ['title'],
   p: ['description'],
-  div: ['error', 'textgroup', 'inputswrapper', 'defaultGroup'],
+  div: [
+    'error', 'textgroup', 'inputswrapper',
+    'buttonswrapper', 'defaultGroup'
+  ],
   legend: ['legend'],
   fieldset: ['radiogroup', 'checkboxgroup'],
   form: ['form'],

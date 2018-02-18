@@ -24,7 +24,7 @@ describe('component', () => {
     set('button', 'button')
 
     const wrapper = mount(component)
-    const expected = '<label><button>Submit</button></label>'
+    const expected = '<div><button>Submit</button></div>'
 
     expect(wrapper.html()).toEqual(expected)
   })
@@ -35,7 +35,7 @@ describe('component', () => {
         default: '<button>Submit</button>'
       }
     })
-    const expected = '<label><button>Submit</button></label>'
+    const expected = '<div><button>Submit</button></div>'
 
     expect(wrapper.html()).toEqual(expected)
   })

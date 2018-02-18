@@ -4,8 +4,7 @@ export default {
   functional: true,
   render (createElement, context) {
     const vm = context.parent
-    const buttonWrapper = components.button.option.native
-      ? components.defaultGroup : components.label
+    const buttonWrapper = components.buttonswrapper
     const labelOptions = elementOptions(vm, buttonWrapper)
     const slots = context.slots()
     const button = slots.default
