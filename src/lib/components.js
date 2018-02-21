@@ -130,6 +130,16 @@ export function elementOptions (vm, el, extendingOptions = {}, field = { attrs: 
   }
 }
 
+export function render (createElement, context, c, vm = {}, nodes = []) {
+  if (c.render) {
+    const slots = () => ({ default: nodes })
+
+    return c.render(createElement, { ...context, slots })
+  }
+
+  return createElement(c.component, elementOptions(vm, c), nodes)
+}
+
 export const groupedArrayTypes = [
   'radio', 'checkbox', 'input', 'textarea'
 ]
