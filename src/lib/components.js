@@ -6,8 +6,7 @@ const tags = {
   h1: ['title'],
   p: ['description'],
   div: [
-    'error', 'textgroup', 'inputswrapper',
-    'buttonswrapper', 'defaultGroup'
+    'error', 'textgroup', 'buttonswrapper', 'defaultGroup'
   ],
   legend: ['legend'],
   fieldset: ['radiogroup', 'checkboxgroup'],
@@ -23,9 +22,9 @@ const tags = {
   textarea: ['textarea'],
   select: ['select'],
   option: ['option'],
-  label: ['label'],
+  label: ['label', 'inputswrapper'],
   button: [
-    { component: 'button', option: { type: 'submit', label: 'Submit' } },
+    { component: 'submitbutton', option: { type: 'submit', label: 'Submit' } },
     { component: 'arraybutton', option: { type: 'button', label: 'Add' } }
   ]
 }
@@ -72,6 +71,18 @@ export function renderFieldset (createElement, { props, slots }) {
   }, children)
 }
 
+export function renderLabel (createElement, { props, slots }) {
+  const nodes = [
+    createElement('span', {
+      attrs: {
+        'data-required-field': props.field.attrs.required ? 'true' : 'false'
+      }
+    }, props.field.label)
+  ]
+
+  return createElement('label', nodes.concat(slots().default || []))
+}
+
 export function init () {
   for (let tag in tags) {
     if (tags[tag] instanceof Array) {
@@ -85,6 +96,8 @@ export function init () {
 
   components.radiogroup.render = renderFieldset
   components.checkboxgroup.render = renderFieldset
+  components.label.render = renderLabel
+  components.inputswrapper.render = renderLabel
 }
 
 export function set (type, component, option = {}) {
