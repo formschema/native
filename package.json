@@ -1,9 +1,11 @@
 {
-  "name": "vue-json-schema",
-  "version": "2.0.0-alpha1",
+  "name": "@formschema/native",
+  "version": "2.0.0-alpha.1",
   "description": "Vue component form based on JSON Schema",
   "main": "dist/FormSchema.js",
   "scripts": {
+    "demo": "cd demo && npm run serve",
+    "postinstall": "cd demo && npm install",
     "pretest": "npm run lint",
     "test": "vue-cli-service test --colors --testMatch '<rootDir>/test/specs/*.spec.js'",
     "lint": "vue-cli-service lint",
@@ -14,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/demsking/vue-json-schema.git"
+    "url": "git+https://github.com/formschema/native.git"
   },
   "keywords": [
     "vue",
@@ -25,9 +27,9 @@
   "author": "Sébastien Demanou",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/demsking/vue-json-schema/issues"
+    "url": "https://github.com/formschema/native/issues"
   },
-  "homepage": "https://github.com/demsking/vue-json-schema#readme",
+  "homepage": "https://github.com/formschema/native#readme",
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.40",
     "@babel/plugin-transform-runtime": "^7.0.0-beta.40",
