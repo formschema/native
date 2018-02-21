@@ -1,30 +1,22 @@
-import { components, option, elementOptions } from '../lib/components'
+import { components, render } from '../lib/components'
 
 export default {
   functional: true,
   render (createElement, context) {
     const vm = context.parent
-    const buttonWrapper = components.buttonswrapper
-    const labelOptions = elementOptions(vm, buttonWrapper)
     const slots = context.slots()
-    const button = slots.default
-      ? { component: slots.default, option }
-      : components.button
+    const buttonswrapper = components.buttonswrapper
 
-    if (button.component instanceof Array) {
-      return createElement(
-        buttonWrapper.component, labelOptions, button.component)
+    if (slots.default) {
+      return render(createElement, context, buttonswrapper, vm, slots.default)
     }
 
+    const button = components.submitbutton
     const label = button.option.label || button.defaultOption.label
-    const buttonOptions = elementOptions(vm, button, { type: 'submit' })
+    const nodes = [
+      render(createElement, context, button, vm, label)
+    ]
 
-    if (button.option.native) {
-      delete buttonOptions.attrs.label
-    }
-
-    return createElement(buttonWrapper.component, labelOptions, [
-      createElement(button.component, buttonOptions, label)
-    ])
+    return render(createElement, context, buttonswrapper, vm, nodes)
   }
 }
