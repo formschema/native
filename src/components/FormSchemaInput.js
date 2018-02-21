@@ -60,18 +60,8 @@ export default {
         }
       }
       const label = button.option.label || button.defaultOption.label
-      const buttonElement = createElement(
-        button.component, buttonOptions, label)
 
-      nodes.push(createElement(
-        components.label.component, labelOptions, [buttonElement]))
-
-      if (element.render) {
-        return element.render(createElement, {
-          ...context, slots: () => ({ default: nodes })
-        }, nodes)
-      }
-
+      nodes.push(createElement(button.component, buttonOptions, label))
       nodes.push(descriptionElement)
 
       return nodes

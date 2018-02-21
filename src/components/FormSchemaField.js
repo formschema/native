@@ -1,6 +1,5 @@
-import { input as getInput, inputName } from '../lib/components'
+import { components, input as getInput, inputName, render } from '../lib/components'
 import FormSchemaInput from './FormSchemaInput'
-import FormSchemaWrappingInput from './FormSchemaWrappingInput'
 import FormSchemaFieldCheckboxItem from './FormSchemaFieldCheckboxItem'
 import FormSchemaFieldSelectOption from './FormSchemaFieldSelectOption'
 
@@ -8,7 +7,6 @@ const FormSchemaField = {
   functional: true,
   render (createElement, context) {
     const vm = context.props.vm
-    const inputWrappingClass = context.props.inputWrappingClass
     const field = context.props.field
     const attrs = field.attrs
 
@@ -81,13 +79,14 @@ const FormSchemaField = {
         break
     }
 
-    return createElement(FormSchemaWrappingInput, {
-      props: { vm, field, element, inputWrappingClass }
-    }, [
+    const inputswrapper = components.inputswrapper
+    const nodes = [
       createElement(FormSchemaInput, {
         props: { vm, field, input, element }
       }, children)
-    ])
+    ]
+
+    return render(createElement, context, inputswrapper, vm, nodes)
   }
 }
 

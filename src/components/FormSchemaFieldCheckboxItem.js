@@ -1,11 +1,10 @@
-import { components, input as getInput } from '../lib/components'
+import { components, input as getInput, render } from '../lib/components'
 import FormSchemaInput from './FormSchemaInput'
-import FormSchemaWrappingInput from './FormSchemaWrappingInput'
 
 export default {
   functional: true,
   render (createElement, context) {
-    const { vm, item, ref, field, inputWrappingClass } = context.props
+    const { vm, item, ref, field } = context.props
 
     const attrs = field.attrs
     const element = components[attrs.type]
@@ -28,16 +27,15 @@ export default {
       }
     })
 
-    return createElement(FormSchemaWrappingInput, {
-      props: {
-        vm, field, element, inputWrappingClass
-      }
-    }, [
+    const inputswrapper = components.inputswrapper
+    const nodes = [
       createElement(FormSchemaInput, {
         props: {
           vm, field: { ...field, ...item }, input, element, description
         }
       })
-    ])
+    ]
+
+    return render(createElement, context, inputswrapper, vm, nodes)
   }
 }

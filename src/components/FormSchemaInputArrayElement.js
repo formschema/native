@@ -15,39 +15,47 @@ export default {
       ? input[attrName].value
       : vm.inputValues[name]
 
-    return createElement(element.component, {
-      ...input,
-      ref: name,
-      [attrName]: { ...input[attrName], name, value },
-      on: {
-        input: (event) => {
-          const value = event && event.target
-            ? event.target.value
-            : event
+    input[attrName].name = name
+    input[attrName].value = value
 
-          vm.inputValues[name] = attrs.type === 'checkbox' && vm.inputValues[name] !== undefined
-            ? undefined
-            : value
+    input.ref = name
+    input.on = {
+      input (event) {
+        const value = event && event.target
+          ? event.target.value
+          : event
 
-          const values = []
+        vm.inputValues[name] = attrs.type === 'checkbox' && vm.inputValues[name] !== undefined
+          ? undefined
+          : value
 
-          for (let j = 0; j < field.itemsNum; j++) {
-            const currentValue = vm.inputValues[inputName(field, j)]
+        const values = []
 
-            if (currentValue) {
-              values.push(currentValue)
-            }
+        for (let j = 0; j < field.itemsNum; j++) {
+          const currentValue = vm.inputValues[inputName(field, j)]
+
+          if (currentValue) {
+            values.push(currentValue)
           }
+        }
 
-          vm.data[attrs.name] = values
+        vm.data[attrs.name] = values
 
-          /**
-           * Fired synchronously when the value of an element is changed.
-           */
-          vm.$emit('input', vm.data)
-        },
-        change: vm.changed
+        /**
+        * Fired synchronously when the value of an element is changed.
+        */
+        vm.$emit('input', vm.data)
+      },
+      change (event) {
+        this.input(event)
       }
-    }, context.slots().default)
+    }
+
+    if (element.render) {
+      return element.render(createElement, context)
+    }
+
+    return createElement(
+      element.component, context, context.slots().default)
   }
 }
