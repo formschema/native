@@ -130,11 +130,19 @@ export function elementOptions (vm, el, extendingOptions = {}, field = { attrs: 
   }
 }
 
-export function render (createElement, context, c, vm = {}, nodes = []) {
+export function render (createElement, context, c, vm = {}, nodes) {
   if (c.render) {
-    const slots = () => ({ default: nodes })
+    if (nodes) {
+      const slots = () => ({ default: nodes })
 
-    return c.render(createElement, { ...context, slots })
+      return c.render(createElement, { ...context, slots })
+    }
+
+    return c.render(createElement, context)
+  }
+
+  if (!nodes) {
+    nodes = context.slots().default
   }
 
   return createElement(c.component, elementOptions(vm, c), nodes)
