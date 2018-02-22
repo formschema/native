@@ -23,28 +23,11 @@ const tags = {
   select: ['select'],
   option: ['option'],
   label: ['label', 'inputswrapper'],
-  button: [
-    { component: 'submitbutton', option: { type: 'submit', label: 'Submit' } },
-    { component: 'arraybutton', option: { type: 'button', label: 'Add' } }
-  ]
+  button: ['submitbutton', 'arraybutton']
 }
 
 export const option = { native: true }
 export const components = {}
-
-export const defineComponent = (tag, item) => {
-  if (typeof item === 'object') {
-    components[item.component] = {
-      component: tag,
-      option: { ...option, ...item.option }
-    }
-  } else {
-    components[item] = {
-      component: tag,
-      option
-    }
-  }
-}
 
 export function renderFieldset (createElement, { props, slots }) {
   const inputswrapper = components.inputswrapper
@@ -83,13 +66,21 @@ export function renderLabel (createElement, { props, slots }) {
   return createElement('label', nodes.concat(slots().default || []))
 }
 
+export const renderButton = (type, label) => (createElement) => {
+  return createElement('button', { attrs: { type } }, label)
+}
+
 export function init () {
-  for (let tag in tags) {
-    if (tags[tag] instanceof Array) {
-      tags[tag].forEach((item) => defineComponent(tag, item))
+  for (let component in tags) {
+    delete components[component]
+
+    if (tags[component] instanceof Array) {
+      tags[component].forEach((name) => {
+        components[name] = { component, option: { ...option } }
+      })
     } else {
-      tags[tag].typed.forEach((type) => {
-        defineComponent(tag, { component: type, option: { type } })
+      tags[component].typed.forEach((type) => {
+        components[type] = { component, option: { ...option, type } }
       })
     }
   }
@@ -98,6 +89,8 @@ export function init () {
   components.checkboxgroup.render = renderFieldset
   components.label.render = renderLabel
   components.inputswrapper.render = renderLabel
+  components.submitbutton.render = renderButton('submit', 'Submit')
+  components.arraybutton.render = renderButton('button', 'Add')
 }
 
 export function set (type, component, option = {}) {
@@ -174,6 +167,7 @@ export function input ({ vm, field, ref }) {
         vm.data[attrs.name] = event && event.target
           ? event.target.value
           : event
+        console.log('input>', vm.data[attrs.name])
 
         /**
          * Fired synchronously when the value of an element is changed.

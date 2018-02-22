@@ -1,50 +1,10 @@
 'use strict'
 
-import {
-  init,
-  option,
-  components,
-  elementOptions,
-  defineComponent
-} from '../../src/lib/components'
+import { init, option, components, elementOptions } from '../../src/lib/components'
 
 /* global describe it expect beforeEach */
 
 describe('lib/components', () => {
-  describe('defineComponent(tag, item)', () => {
-    beforeEach(() => {
-      for (let key in components) {
-        delete components[key]
-      }
-    })
-
-    it('should successfully define object component', () => {
-      const tag = 'div'
-      const item = {
-        component: 'vx-button',
-        option: {}
-      }
-      const expected = {
-        component: tag,
-        option: { ...option, ...item.option }
-      }
-
-      defineComponent(tag, item)
-
-      expect(components['vx-button']).toEqual(expected)
-    })
-
-    it('should successfully define string component', () => {
-      const tag = 'div'
-      const item = 'button'
-      const expected = { component: tag, option }
-
-      defineComponent(tag, item)
-
-      expect(components.button).toEqual(expected)
-    })
-  })
-
   describe('init()', () => {
     beforeEach(init)
 
