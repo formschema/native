@@ -26,7 +26,6 @@ const tags = {
   button: ['submitbutton', 'arraybutton']
 }
 
-export const option = { native: true }
 export const components = {}
 
 export function renderFieldset (createElement, { props, slots }) {
@@ -76,11 +75,11 @@ export function init () {
 
     if (tags[component] instanceof Array) {
       tags[component].forEach((name) => {
-        components[name] = { component, option: { ...option } }
+        components[name] = { component, native: true, option: {} }
       })
     } else {
       tags[component].typed.forEach((type) => {
-        components[type] = { component, option: { ...option, type } }
+        components[type] = { component, native: true, option: { type } }
       })
     }
   }
@@ -99,21 +98,23 @@ export function set (type, component, option = {}) {
     component = undefined
   }
 
+  const native = false
   const render = option.render
   const defaultOption = components[type]
     ? { ...components[type].option }
     : {}
 
   delete defaultOption.native
+  delete option.render
 
-  components[type] = { type, component, option, render, defaultOption }
+  components[type] = { component, option, native, render, defaultOption }
 }
 
 export function elementOptions (vm, el, extendingOptions = {}, field = { attrs: {} }, item = {}) {
-  const attrName = el.option.native ? 'attrs' : 'props'
+  const attrName = el.native ? 'attrs' : 'props'
   const elProps = typeof el.option === 'function'
     ? { ...extendingOptions, ...el.option({ vm, field, item }) }
-    : { ...el.option, native: undefined, ...extendingOptions }
+    : { ...el.option, ...extendingOptions }
 
   return {
     [attrName]: {
@@ -138,7 +139,7 @@ export function render (createElement, context, c, vm = {}, nodes) {
     nodes = context.slots().default
   }
 
-  return createElement(c.component, elementOptions(vm, c), nodes)
+  return createElement(c.component, context.props.input, nodes)
 }
 
 export const groupedArrayTypes = [
