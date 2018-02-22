@@ -1,16 +1,13 @@
-import { inputName } from '../lib/components'
+import { inputName, render } from '../lib/components'
 
 export default {
   functional: true,
   render (createElement, context) {
-    const field = context.props.field
-    const input = context.props.input
-    const element = context.props.element
-    const vm = context.props.vm
+    const { field, input, element, vm } = context.props
     const name = context.props.ref
 
     const attrs = field.attrs
-    const attrName = element.option.native ? 'attrs' : 'props'
+    const attrName = element.native ? 'attrs' : 'props'
     const value = attrs.type === 'checkbox'
       ? input[attrName].value
       : vm.inputValues[name]
@@ -42,8 +39,8 @@ export default {
         vm.data[attrs.name] = values
 
         /**
-        * Fired synchronously when the value of an element is changed.
-        */
+         * Fired synchronously when the value of an element is changed.
+         */
         vm.$emit('input', vm.data)
       },
       change (event) {
@@ -51,11 +48,6 @@ export default {
       }
     }
 
-    if (element.render) {
-      return element.render(createElement, context)
-    }
-
-    return createElement(
-      element.component, context, context.slots().default)
+    return render(createElement, context, element, vm)
   }
 }
