@@ -8,6 +8,7 @@ module.exports = {
     '!.eslintrc.js',
     '!*.js',
     '!test/**',
+    '!demo/**',
     '!dist/**',
     '!coverage/**',
     '!**/node_modules/**'
