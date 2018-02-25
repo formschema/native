@@ -1,14 +1,15 @@
 'use strict'
 
 import { mount } from '@vue/test-utils'
-import { init, components } from '../../src/lib/components'
-import component from '../../src/components/FormSchemaInputArrayElement.js'
+import { init, components } from '@/lib/components'
+
+import component from '@/components/FormSchemaInputArrayElement.js'
 
 /* global describe it expect */
 
 init()
 
-describe('component', () => {
+describe('FormSchemaInputArrayElement', () => {
   it('should be a functional component', () => {
     expect(component.functional).toBe(true)
   })
@@ -20,26 +21,29 @@ describe('component', () => {
       }
     }
     const input = {
-      ref: 'field-0',
-      attrs: {
-        type: 'text',
-        value: 'Hello'
-      }
+      data: {
+        attrs: {
+          type: 'text',
+          value: 'Hello'
+        }
+      },
+      element: components.text,
+      native: true
     }
-    const element = components.text
-    const ref = field.attrs.name
+    const name = field.attrs.name
     const vm = {
       inputValues: {
-        [ref]: 'Hello'
+        [name]: 'Hello'
       }
     }
     const wrapper = mount(component, {
       context: {
-        props: { field, input, element, vm, ref }
+        props: { field, input, vm, name }
       }
     })
     const expected = '<input type="text" value="Hello" name="fieldName">'
 
+    expect(wrapper.isVueInstance()).toBeTruthy()
     expect(wrapper.html()).toEqual(expected)
   })
 
@@ -51,13 +55,15 @@ describe('component', () => {
       itemsNum: 2
     }
     const input = {
-      ref: 'fieldName-0',
-      attrs: {
-        type: 'text'
-      }
+      data: {
+        attrs: {
+          type: 'text'
+        }
+      },
+      element: components.text,
+      native: true
     }
-    const element = components.text
-    const ref = `${field.attrs.name}-0`
+    const name = `${field.attrs.name}-0`
     const vm = {
       inputValues: {
         'fieldName-0': 'Value 1',
@@ -73,7 +79,7 @@ describe('component', () => {
     }
     const wrapper = mount(component, {
       context: {
-        props: { field, input, element, vm, ref }
+        props: { field, input, vm, name }
       }
     })
 
@@ -102,13 +108,15 @@ describe('component', () => {
       itemsNum: 2
     }
     const input = {
-      ref: 'fieldName-0',
-      attrs: {
-        type: 'text'
-      }
+      data: {
+        attrs: {
+          type: 'text'
+        }
+      },
+      element: components.text,
+      native: true
     }
-    const element = components.text
-    const ref = `${field.attrs.name}-0`
+    const name = `${field.attrs.name}-0`
     const vm = {
       inputValues: {
         'fieldName-0': 'Value 1',
@@ -124,7 +132,7 @@ describe('component', () => {
     }
     const wrapper = mount(component, {
       context: {
-        props: { field, input, element, vm, ref }
+        props: { field, input, vm, name }
       }
     })
 

@@ -1,14 +1,15 @@
 'use strict'
 
 import { mount } from '@vue/test-utils'
-import { init, components, set } from '../../src/lib/components'
-import component from '../../src/components/FormSchemaInput.js'
+import { init, components, set } from '@/lib/components'
+
+import component from '@/components/FormSchemaInput.js'
 
 /* global describe it expect */
 
 init()
 
-describe('component', () => {
+describe('FormSchemaInput', () => {
   it('should be a functional component', () => {
     expect(component.functional).toBe(true)
   })
@@ -16,30 +17,29 @@ describe('component', () => {
   it('should successfully render the component', () => {
     const field = {}
     const input = {
-      attrs: {
-        name: 'fieldName',
-        type: 'text',
-        value: 'Hello'
-      }
+      data: {
+        attrs: {
+          name: 'fieldName',
+          type: 'text',
+          value: 'Hello'
+        }
+      },
+      element: components.text,
+      native: true
     }
-    const element = components.text
     const vm = {
       inputValues: {
-        [input.attrs.name]: 'Hello'
+        [input.data.attrs.name]: 'Hello'
       }
     }
-    const form = {
-      render (createElement) {
-        return createElement('form', [
-          createElement(component, {
-            props: { field, input, element, vm }
-          })
-        ])
+    const wrapper = mount(component, {
+      context: {
+        props: { field, input, vm }
       }
-    }
-    const wrapper = mount(form)
-    const expected = '<form><input name="fieldName" type="text" value="Hello"><!----></form>'
+    })
+    const expected = '<input name="fieldName" type="text" value="Hello">'
 
+    expect(wrapper.isVueInstance()).toBeTruthy()
     expect(wrapper.html()).toEqual(expected)
   })
 
@@ -52,11 +52,14 @@ describe('component', () => {
       isArrayField: true
     }
     const input = {
-      ref: field.attrs.name,
-      attrs: {
-        name: field.attrs.name,
-        type: 'text'
-      }
+      data: {
+        attrs: {
+          name: field.attrs.name,
+          type: 'text'
+        }
+      },
+      element: components.text,
+      native: true
     }
     const vm = {
       inputValues: {
@@ -68,43 +71,27 @@ describe('component', () => {
       },
       changed: () => {}
     }
-    const element = components.text
-    const form = {
-      render (createElement) {
-        return createElement('form', [
-          createElement(component, {
-            props: { field, input, element, vm }
-          })
-        ])
+    const wrapper = mount(component, {
+      context: {
+        props: { field, input, vm }
       }
-    }
-    const wrapper = mount(form)
+    })
 
-    expect(wrapper.findAll('form').length).toEqual(1)
-    expect(wrapper.find('form').findAll('input').length).toEqual(2)
-    expect(wrapper.find('form').findAll('button').length).toEqual(1)
+    const expected = '<div><input name="fieldName-0" type="text" value="Value 1"><input name="fieldName-1" type="text" value="Value 2"><button type="button">Add</button></div>'
+
+    expect(wrapper.html()).toEqual(expected)
 
     const inputs = wrapper.findAll('input')
     let i = 0
 
     while (i < inputs.length) {
-      const input = inputs.at(i)
-      const name = `${field.attrs.name}-${i}`
-
-      expect(input.is('input')).toBe(true)
-      expect(input.isEmpty()).toBe(true)
-      expect(input.vnode.data.ref).toEqual(name)
-      expect(input.vnode.data.attrs.name).toEqual(name)
-      expect(input.vnode.data.attrs.type).toEqual('text')
-      expect(input.vnode.data.attrs.value).toEqual(vm.inputValues[name])
-      expect(Object.keys(input.vnode.data.on)).toEqual(['input', 'change'])
-
-      i++
+      expect(Object.keys(inputs.at(i++).vnode.data.on))
+        .toEqual(['input', 'change'])
     }
   })
 
   it('should successfully render a array field for custom component', () => {
-    set('text', 'input', { type: 'text' })
+    set('text', 'input', { attrs: { type: 'password' } })
 
     const field = {
       attrs: {
@@ -114,10 +101,13 @@ describe('component', () => {
       isArrayField: true
     }
     const input = {
-      ref: field.attrs.name,
-      attrs: {
-        type: 'text'
-      }
+      data: {
+        attrs: {
+          type: 'password'
+        }
+      },
+      element: components.text,
+      native: true
     }
     const vm = {
       inputValues: {
@@ -129,40 +119,28 @@ describe('component', () => {
       },
       changed: () => {}
     }
-    const element = components.text
-    const form = {
-      render (createElement) {
-        return createElement('form', [
-          createElement(component, {
-            props: { field, input, element, vm }
-          })
-        ])
+    const wrapper = mount(component, {
+      context: {
+        props: { field, input, vm }
       }
-    }
-    const wrapper = mount(form)
+    })
 
-    expect(wrapper.findAll('form').length).toEqual(1)
-    expect(wrapper.find('form').findAll('input').length).toEqual(2)
-    expect(wrapper.find('form').findAll('button').length).toEqual(1)
+    const expected = '<div><input type="password" name="fieldName-0" value="Value 1"><input type="password" name="fieldName-1" value="Value 2"><button type="button">Add</button></div>'
+
+    expect(wrapper.html()).toEqual(expected)
 
     const inputs = wrapper.findAll('input')
     let i = 0
 
     while (i < inputs.length) {
-      const input = inputs.at(i)
-      const name = `${field.attrs.name}-${i}`
-
-      expect(input.is('input')).toBe(true)
-      expect(input.isEmpty()).toBe(true)
-      expect(input.vnode.data.ref).toEqual(name)
-      expect(input.vnode.data.attrs.type).toEqual('text')
-      expect(Object.keys(input.vnode.data.on)).toEqual(['input', 'change'])
-
-      i++
+      expect(Object.keys(inputs.at(i++).vnode.data.on))
+        .toEqual(['input', 'change'])
     }
   })
 
   it('should successfully emit the click event', () => {
+    init()
+
     const field = {
       attrs: {
         name: 'fieldName'
@@ -172,11 +150,14 @@ describe('component', () => {
       isArrayField: true
     }
     const input = {
-      ref: field.attrs.name,
-      attrs: {
-        name: field.attrs.name,
-        type: 'password'
-      }
+      data: {
+        attrs: {
+          name: field.attrs.name,
+          type: 'password'
+        }
+      },
+      element: components.text,
+      native: true
     }
     const vm = {
       inputValues: {
@@ -188,53 +169,38 @@ describe('component', () => {
       },
       changed: () => {}
     }
-    const element = components.password
-    const form = {
-      render (createElement) {
-        return createElement('form', [
-          createElement(component, {
-            props: { field, input, element, vm }
-          })
-        ])
+    const wrapper = mount(component, {
+      context: {
+        props: { field, input, vm }
       }
-    }
-    const wrapper = mount(form)
+    })
 
-    vm.$emit = wrapper.vm.$emit
-    vm.$forceUpdate = wrapper.vm.$forceUpdate
+    const expected = '<div><input name="fieldName-0" type="text" value="Value 1"><input name="fieldName-1" type="text" value="Value 2"><button type="button">Add</button></div>'
 
-    expect(wrapper.findAll('form').length).toEqual(1)
-    expect(wrapper.find('form').findAll('input').length).toEqual(2)
-    expect(wrapper.find('form').findAll('button').length).toEqual(1)
-
-    wrapper.find('button').trigger('click')
-
-    expect(wrapper.findAll('form').length).toEqual(1)
-    expect(wrapper.find('form').findAll('input').length).toEqual(3)
-    expect(wrapper.find('form').findAll('button').length).toEqual(1)
-
-    wrapper.find('button').trigger('click')
-
-    expect(wrapper.findAll('form').length).toEqual(1)
-    expect(wrapper.find('form').findAll('input').length).toEqual(3)
-    expect(wrapper.find('form').findAll('button').length).toEqual(1)
+    expect(wrapper.html()).toEqual(expected)
 
     const inputs = wrapper.findAll('input')
     let i = 0
 
     while (i < inputs.length) {
-      const input = inputs.at(i)
-      const name = `${field.attrs.name}-${i}`
-
-      expect(input.is('input')).toBe(true)
-      expect(input.isEmpty()).toBe(true)
-      expect(input.vnode.data.ref).toEqual(name)
-      expect(input.vnode.data.attrs.name).toEqual(name)
-      expect(input.vnode.data.attrs.type).toEqual('password')
-      expect(input.vnode.data.attrs.value).toEqual(vm.inputValues[name])
-      expect(Object.keys(input.vnode.data.on)).toEqual(['input', 'change'])
-
-      i++
+      expect(Object.keys(inputs.at(i++).vnode.data.on))
+        .toEqual(['input', 'change'])
     }
+
+    vm.$emit = wrapper.vm.$emit
+    vm.$forceUpdate = wrapper.vm.$forceUpdate
+
+    expect(wrapper.findAll('input').length).toEqual(2)
+    expect(wrapper.findAll('button').length).toEqual(1)
+
+    wrapper.find('button').trigger('click')
+
+    expect(wrapper.findAll('input').length).toEqual(3)
+    expect(wrapper.findAll('button').length).toEqual(1)
+
+    wrapper.find('button').trigger('click')
+
+    expect(wrapper.findAll('input').length).toEqual(3)
+    expect(wrapper.findAll('button').length).toEqual(1)
   })
 })

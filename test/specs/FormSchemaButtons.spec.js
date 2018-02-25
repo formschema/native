@@ -1,14 +1,15 @@
 'use strict'
 
 import { mount } from '@vue/test-utils'
-import { init, set } from '../../src/lib/components'
-import component from '../../src/components/FormSchemaButtons.js'
+import { init, set } from '@/lib/components'
+
+import component from '@/components/FormSchemaButtons.js'
 
 /* global describe it expect */
 
 init()
 
-describe('component', () => {
+describe('FormSchemaButtons', () => {
   it('should be a functional component', () => {
     expect(component.functional).toBe(true)
   })
@@ -17,11 +18,14 @@ describe('component', () => {
     const wrapper = mount(component)
     const expected = '<div><button type="submit">Submit</button></div>'
 
+    expect(wrapper.isVueInstance()).toBeTruthy()
     expect(wrapper.html()).toEqual(expected)
   })
 
   it('should successfully render a custom component', () => {
-    set('button', 'button')
+    set('submitbutton', 'button', {
+      domProps: { innerHTML: 'Submit' }
+    })
 
     const wrapper = mount(component)
     const expected = '<div><button>Submit</button></div>'

@@ -1,6 +1,6 @@
-import { loadFields } from '../lib/parser'
-import { equals } from '../lib/object'
-import { init, components, set, elementOptions, inputName, initFields } from '../lib/components'
+import { loadFields } from '@/lib/parser'
+import { equals } from '@/lib/object'
+import { init, components, set, argName, inputName, initFields } from '@/lib/components'
 import FormSchemaField from './FormSchemaField'
 import FormSchemaButtons from './FormSchemaButtons'
 
@@ -54,12 +54,7 @@ export const FormSchema = {
     /**
      * This Boolean attribute indicates that the form is not to be validated when submitted.
      */
-    novalidate: { type: Boolean },
-
-    /**
-     * Define the inputs wrapping class. Leave `undefined` to disable input wrapping.
-     */
-    inputWrappingClass: { type: String }
+    novalidate: { type: Boolean }
   },
   data: () => ({
     schemaLoaded: {},
@@ -90,46 +85,37 @@ export const FormSchema = {
     }
 
     if (this.error) {
-      const errorOptions = elementOptions(this, components.error)
-
-      nodes.push(createElement(
-        components.error.component, errorOptions, this.error))
+      nodes.push(createElement(components.error.component, this.error))
     }
 
     const vm = this
-    const inputWrappingClass = this.inputWrappingClass
     const formNodes = this.fields.map((field) => {
       return createElement(FormSchemaField, {
-        props: { field, vm, inputWrappingClass }
+        props: { field, vm }
       })
     })
 
     if (formNodes.length) {
       formNodes.push(createElement(FormSchemaButtons, this.$slots.default))
 
-      const formOptions = elementOptions(this, components.form, {
-        action: this.action,
-        enctype: this.enctype,
-        method: this.method,
-        autocomplete: this.autocomplete,
-        novalidate: this.novalidate
-      })
-
       nodes.push(createElement(components.form.component, {
         ref: '__form',
+        [argName(components.form)]: {
+          action: this.action,
+          enctype: this.enctype,
+          method: this.method,
+          autocomplete: this.autocomplete,
+          novalidate: this.novalidate
+        },
         on: {
           reset: this.reset,
-          submit: (event) => {
-            event.stopPropagation()
-            this.submit(event)
-          },
+          submit: this.submit,
           invalid: this.invalid
-        },
-        ...formOptions
+        }
       }, formNodes))
     }
 
-    return createElement('div', nodes)
+    return createElement(components.formwrapper.component, nodes)
   },
   setComponent: setComponent,
   methods: {
@@ -155,18 +141,6 @@ export const FormSchema = {
          */
         this.$emit('change', this.data)
       }
-    },
-
-    /**
-     * Get a form input reference.
-     */
-    input (name) {
-      const controls = this.form().elements
-
-      if (!controls[name]) {
-        throw new Error(`Undefined input reference '${name}'`)
-      }
-      return controls[name]
     },
 
     /**

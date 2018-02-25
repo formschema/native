@@ -1,15 +1,17 @@
 'use strict'
 
-import { equals } from './object'
+import { equals, merge } from './object'
 
 const tags = {
   h1: ['title'],
   p: ['description'],
   div: [
-    'error', 'textgroup', 'buttonswrapper', 'defaultGroup'
+    'error', 'textgroup', 'buttonswrapper', 'formwrapper',
+    'inputswrapper', 'inputwrapper', 'defaultGroup'
   ],
   legend: ['legend'],
   fieldset: ['radiogroup', 'checkboxgroup'],
+  small: ['inputdesc'],
   form: ['form'],
   input: {
     typed: [
@@ -22,51 +24,78 @@ const tags = {
   textarea: ['textarea'],
   select: ['select'],
   option: ['option'],
-  label: ['label', 'inputswrapper'],
+  label: ['label'],
   button: ['submitbutton', 'arraybutton']
 }
 
 export const components = {}
 
-export function renderFieldset (createElement, { props, slots }) {
-  const inputswrapper = components.inputswrapper
-  const vm = {}
-
-  const inputswrapperOptions = elementOptions(vm, inputswrapper)
+export function renderFieldset (createElement, { data, props, slots }) {
   const children = [
-    createElement(
-      inputswrapper.component, inputswrapperOptions, slots().default)
+    createElement(components.inputswrapper.component, slots().default)
   ]
 
-  if (props.field.description) {
-    const legend = components.legend
-    const legendOptions = elementOptions(vm, legend)
-
+  if (data.$field.description) {
     children.unshift(createElement(
-      legend.component, legendOptions, props.field.description))
+      components.legend.component, {
+        //         [argName(components.legend)]: legend
+      }, data.$field.description))
   }
 
   return createElement('fieldset', {
     attrs: {
-      name: props.field.attrs.name
+      name: data.$field.attrs.name
     }
   }, children)
 }
 
-export function renderLabel (createElement, { props, slots }) {
-  const nodes = [
-    createElement('span', {
-      attrs: {
-        'data-required-field': props.field.attrs.required ? 'true' : 'false'
-      }
-    }, props.field.label)
-  ]
+export function renderLabel (createElement, { data, props, slots }) {
+  const nodes = slots().default || []
+  const field = props.field || data.$field
 
-  return createElement('label', nodes.concat(slots().default || []))
+  if (!field.label) {
+    return nodes.length === 1 ? nodes[0] : nodes
+  }
+
+  nodes.unshift(createElement('span', {
+    attrs: {
+      'data-required-field': field.attrs.required ? 'true' : 'false'
+    }
+  }, field.label))
+
+  return createElement('label', nodes)
 }
 
-export const renderButton = (type, label) => (createElement) => {
-  return createElement('button', { attrs: { type } }, label)
+export const renderButton = (type, label) => (createElement, { data }) => {
+  if (!data.attrs) {
+    data.attrs = {}
+  }
+
+  data.attrs.type = type
+
+  return createElement('button', data, label)
+}
+
+export function set (type, component, option = null, native = false) {
+  components[type] = {
+    type,
+    native,
+    tagName: component,
+    component: typeof component === 'string' ? {
+      functional: true,
+      render (createElement, { data, slots }) {
+        const nodes = slots().default || []
+
+        merge(data, option)
+
+        if (nodes.length === 0 && Object.keys(data).length === 0) {
+          return null
+        }
+
+        return createElement(component, data, nodes)
+      }
+    } : component
+  }
 }
 
 export function init () {
@@ -74,72 +103,23 @@ export function init () {
     delete components[component]
 
     if (tags[component] instanceof Array) {
-      tags[component].forEach((name) => {
-        components[name] = { component, native: true, option: {} }
-      })
+      tags[component].forEach((name) => set(name, component, {}, true))
     } else {
       tags[component].typed.forEach((type) => {
-        components[type] = { component, native: true, option: { type } }
+        set(type, component, { attrs: { type } }, true)
       })
     }
   }
 
-  components.radiogroup.render = renderFieldset
-  components.checkboxgroup.render = renderFieldset
-  components.label.render = renderLabel
-  components.inputswrapper.render = renderLabel
-  components.submitbutton.render = renderButton('submit', 'Submit')
-  components.arraybutton.render = renderButton('button', 'Add')
+  components.radiogroup.component.render = renderFieldset
+  components.checkboxgroup.component.render = renderFieldset
+  components.inputwrapper.component.render = renderLabel
+  components.submitbutton.component.render = renderButton('submit', 'Submit')
+  components.arraybutton.component.render = renderButton('button', 'Add')
 }
 
-export function set (type, component, option = {}) {
-  if (typeof component !== 'string') {
-    option = component
-    component = undefined
-  }
-
-  const native = false
-  const render = option.render
-  const defaultOption = components[type]
-    ? { ...components[type].option }
-    : {}
-
-  delete defaultOption.native
-  delete option.render
-
-  components[type] = { component, option, native, render, defaultOption }
-}
-
-export function elementOptions (vm, el, extendingOptions = {}, field = { attrs: {} }, item = {}) {
-  const attrName = el.native ? 'attrs' : 'props'
-  const elProps = typeof el.option === 'function'
-    ? { ...extendingOptions, ...el.option({ vm, field, item }) }
-    : { ...el.option, ...extendingOptions }
-
-  return {
-    [attrName]: {
-      ...el.defaultOption,
-      ...elProps
-    }
-  }
-}
-
-export function render (createElement, context, c, vm = {}, nodes) {
-  if (c.render) {
-    if (nodes) {
-      const slots = () => ({ default: nodes })
-
-      return c.render(createElement, { ...context, slots })
-    }
-
-    return c.render(createElement, context)
-  }
-
-  if (!nodes) {
-    nodes = context.slots().default
-  }
-
-  return createElement(c.component, context.props.input, nodes)
+export function argName (el) {
+  return el.native ? 'attrs' : 'props'
 }
 
 export const groupedArrayTypes = [
@@ -157,27 +137,28 @@ export function input ({ vm, field, ref }) {
     ? components[`${attrs.type}group`] || components.defaultGroup
     : components[attrs.type] || components.text
 
-  const fieldOptions = elementOptions(vm, element, attrs, field)
-
   return {
-    ref: ref || attrs.name,
+    ref,
     element: element,
-    domProps: {},
-    on: {
-      input: (event) => {
-        vm.data[attrs.name] = event && event.target
-          ? event.target.value
-          : event
-        console.log('input>', vm.data[attrs.name])
+    data: {
+      $field: field,
+      props: {},
+      domProps: {},
+      [argName(element)]: attrs,
+      on: {
+        input (event) {
+          vm.data[attrs.name] = event && event.target
+            ? event.target.value
+            : event
 
-        /**
-         * Fired synchronously when the value of an element is changed.
-         */
-        vm.$emit('input', vm.data)
-      },
-      change: vm.changed
-    },
-    ...fieldOptions
+          /**
+           * Fired synchronously when the value of an element is changed.
+           */
+          vm.$emit('input', vm.data)
+        },
+        change: vm.changed
+      }
+    }
   }
 }
 
@@ -211,7 +192,7 @@ export function initFields (vm) {
     }
   })
 
-  // vm.data = Object.seal(vm.data)
+  vm.data = Object.seal(vm.data)
 
   if (!equals(vm.data, vm.value)) {
     /**

@@ -1,21 +1,53 @@
 'use strict'
 
 import { mount } from '@vue/test-utils'
-import { loadFields } from '../../src/lib/parser'
-import { init, set, initFields, inputName } from '../../src/lib/components'
+import { loadFields } from '@/lib/parser'
+import { init, initFields } from '@/lib/components'
 
-import component from '../../src/components/FormSchemaField.js'
+import component from '@/components/FormSchemaField.js'
 
 /* global describe it expect */
 
 init()
 
-describe('component', () => {
+describe('FormSchemaField', () => {
   it('should be a functional component', () => {
     expect(component.functional).toBe(true)
   })
 
   it('should successfully render the component', () => {
+    const field = {
+      label: 'Name',
+      attrs: {
+        name: 'fieldName',
+        type: 'text',
+        value: 'Hello'
+      }
+    }
+    const vm = {
+      data: {
+        [field.attrs.name]: field.attrs.value
+      },
+      inputValues: {
+        [field.attrs.name]: field.attrs.value
+      }
+    }
+    const wrapper = mount(component, {
+      context: {
+        props: { field, vm }
+      }
+    })
+
+    expect(wrapper.isVueInstance()).toBeTruthy()
+
+    const input = wrapper.find('input')
+    const expected = '<label><span data-required-field="false">Name</span><input name="fieldName" type="text" value="Hello"></label>'
+
+    expect(wrapper.html()).toEqual(expected)
+    expect(Object.keys(input.vnode.data.on)).toEqual(['input', 'change'])
+  })
+
+  it('should successfully render the component without the label element', () => {
     const field = {
       attrs: {
         name: 'fieldName',
@@ -31,29 +63,18 @@ describe('component', () => {
         [field.attrs.name]: field.attrs.value
       }
     }
-    const form = {
-      render (createElement) {
-        return createElement('form', [
-          createElement(component, {
-            props: { field, vm }
-          })
-        ])
+    const wrapper = mount(component, {
+      context: {
+        props: { field, vm }
       }
-    }
-    const wrapper = mount(form)
+    })
 
-    expect(wrapper.findAll('form').length).toEqual(1)
-    expect(wrapper.find('form').findAll('input').length).toEqual(1)
-    expect(wrapper.find('form').findAll('label').length).toEqual(0)
+    expect(wrapper.isVueInstance()).toBeTruthy()
 
     const input = wrapper.find('input')
+    const expected = '<input name="fieldName" type="text" value="Hello">'
 
-    expect(input.is('input')).toBe(true)
-    expect(input.isEmpty()).toBe(true)
-    expect(input.vnode.data.ref).toEqual(field.attrs.name)
-    expect(input.vnode.data.attrs.name).toEqual(field.attrs.name)
-    expect(input.vnode.data.attrs.type).toEqual('text')
-    expect(input.vnode.data.attrs.value).toEqual(field.attrs.value)
+    expect(wrapper.html()).toEqual(expected)
     expect(Object.keys(input.vnode.data.on)).toEqual(['input', 'change'])
   })
 
@@ -72,29 +93,18 @@ describe('component', () => {
         [field.attrs.name]: 'Hello'
       }
     }
-    const form = {
-      render (createElement) {
-        return createElement('form', [
-          createElement(component, {
-            props: { field, vm }
-          })
-        ])
+    const wrapper = mount(component, {
+      context: {
+        props: { field, vm }
       }
-    }
-    const wrapper = mount(form)
+    })
 
-    expect(wrapper.findAll('form').length).toEqual(1)
-    expect(wrapper.find('form').findAll('input').length).toEqual(1)
-    expect(wrapper.find('form').findAll('label').length).toEqual(0)
+    expect(wrapper.isVueInstance()).toBeTruthy()
 
     const input = wrapper.find('input')
+    const expected = '<input name="fieldName" type="text" value="Hello">'
 
-    expect(input.is('input')).toBe(true)
-    expect(input.isEmpty()).toBe(true)
-    expect(input.vnode.data.ref).toEqual(field.attrs.name)
-    expect(input.vnode.data.attrs.name).toEqual(field.attrs.name)
-    expect(input.vnode.data.attrs.type).toEqual('text')
-    expect(input.vnode.data.attrs.value).toEqual(field.attrs.value)
+    expect(wrapper.html()).toEqual(expected)
     expect(Object.keys(input.vnode.data.on)).toEqual(['input', 'change'])
   })
 
@@ -124,16 +134,14 @@ describe('component', () => {
     }
     const wrapper = mount(form)
 
-    expect(wrapper.findAll('form').length).toEqual(1)
-    expect(wrapper.find('form').findAll('textarea').length).toEqual(1)
-    expect(wrapper.find('form').findAll('label').length).toEqual(0)
+    expect(wrapper.findAll('textarea').length).toEqual(1)
+    expect(wrapper.findAll('label').length).toEqual(0)
 
     const textarea = wrapper.find('textarea')
 
     // component
     expect(textarea.is('textarea')).toBe(true)
     expect(textarea.isEmpty()).toBe(true)
-    expect(textarea.vnode.data.ref).toEqual(field.attrs.name)
     expect(textarea.vnode.data.attrs.name).toEqual(field.attrs.name)
     expect(Object.keys(textarea.vnode.data.on)).toEqual(['input', 'change'])
 
@@ -144,18 +152,6 @@ describe('component', () => {
     textarea.element.innerHTML = 'Sébastien'
 
     expect(textarea.html()).toEqual('<textarea name="fieldName">Sébastien</textarea>')
-
-    // custom element
-    set('textarea', 'textarea', { type: 'text' })
-    const custom = mount(form)
-
-    expect(custom.findAll('form').length).toEqual(1)
-    expect(custom.find('form').findAll('textarea').length).toEqual(1)
-    expect(custom.find('form').findAll('label').length).toEqual(0)
-
-    const customInput = custom.find('form').find('textarea')
-
-    expect(customInput.html()).toEqual('<textarea></textarea>')
   })
 
   it('should successfully render the component with field.attrs.type === redio', () => {
@@ -173,42 +169,36 @@ describe('component', () => {
         [field.attrs.name]: 'Hello'
       }
     }
-    const form = {
-      render (createElement) {
-        return createElement('form', [
-          createElement(component, {
-            props: { field, vm }
-          })
-        ])
+    const wrapper = mount(component, {
+      context: {
+        props: { field, vm }
       }
-    }
-    const wrapper = mount(form)
+    })
 
-    expect(wrapper.findAll('form').length).toEqual(1)
-    expect(wrapper.find('form').findAll('input').length).toEqual(1)
-    expect(wrapper.find('form').findAll('label').length).toEqual(0)
+    expect(wrapper.findAll('input').length).toEqual(1)
+    expect(wrapper.findAll('label').length).toEqual(0)
 
     const input = wrapper.find('input')
 
     // component
     expect(input.is('input')).toBe(true)
     expect(input.isEmpty()).toBe(true)
-    expect(input.vnode.data.ref).toEqual(field.attrs.name)
     expect(input.vnode.data.attrs.name).toEqual(field.attrs.name)
     expect(input.vnode.data.attrs.type).toEqual(field.attrs.type)
     expect(Object.keys(input.vnode.data.on)).toEqual(['input', 'change'])
 
     // render
-    expect(input.html()).toEqual('<input type="radio" name="fieldName" value="Hello">')
+    expect(input.html()).toEqual('<input name="fieldName" type="radio" value="Hello">')
 
     // event
     input.element.value = 'Sébastien'
 
-    expect(input.html()).toEqual('<input type="radio" name="fieldName" value="Sébastien">')
+    expect(input.html()).toEqual('<input name="fieldName" type="radio" value="Sébastien">')
   })
 
   it('should successfully render the component with field.attrs.type === radio and items', () => {
     const field = {
+      isArrayField: true,
       attrs: {
         name: 'fieldName',
         type: 'radio'
@@ -229,61 +219,34 @@ describe('component', () => {
         wrapper.vm.$emit('change', e)
       }
     }
-    const form = {
-      render (createElement) {
-        return createElement('form', [
-          createElement(component, {
-            props: { field, vm }
-          })
-        ])
+    const wrapper = mount(component, {
+      context: {
+        props: { field, vm }
       }
-    }
-    const wrapper = mount(form)
+    })
 
     vm.$emit = wrapper.vm.$emit
 
-    expect(wrapper.findAll('form').length).toEqual(1)
-    expect(wrapper.find('form').findAll('div').length).toEqual(1)
-    expect(wrapper.find('form').findAll('input').length).toEqual(2)
-    expect(wrapper.find('form').findAll('label').length).toEqual(0)
+    const expected = '<div><fieldset name="fieldName"><div><label><span data-required-field="false">l1</span><input name="fieldName" type="radio" value="0"></label><label><span data-required-field="false">l2</span><input name="fieldName" type="radio" value="1" checked="checked"></label></div></fieldset><button type="button">Add</button></div>'
 
-    // component
+    expect(wrapper.html()).toEqual(expected)
+
+    // event
     const elements = wrapper.findAll('input')
 
     field.items.map((item) => item.value).forEach((value, i) => {
-      const input = elements.at(i)
-
-      expect(input.is('input')).toBe(true)
-      expect(input.isEmpty()).toBe(true)
-      expect(input.vnode.data.ref).toEqual(field.attrs.name)
-      expect(input.vnode.data.attrs.name).toEqual(field.attrs.name)
-      expect(input.vnode.data.attrs.type).toEqual(field.attrs.type)
-      expect(Object.keys(input.vnode.data.on)).toEqual(['input', 'change'])
-
-      // attrs
-      expect(input.element.hasAttribute('name')).toBe(true)
-      expect(input.element.getAttribute('name')).toEqual(field.attrs.name)
-
-      expect(input.element.hasAttribute('type')).toBe(true)
-      expect(input.element.getAttribute('type')).toEqual(field.attrs.type)
-
-      expect(input.element.hasAttribute('value')).toBe(true)
-      expect(input.element.getAttribute('value')).toEqual(value)
-
-      expect(input.element.hasAttribute('checked'))
-        .toBe(value === vm.data[field.attrs.name])
+      expect(Object.keys(elements.at(i).vnode.data.on)).toEqual(['input', 'change'])
     })
 
-    // event
     const input = wrapper.find('input')
-    const expected = {
+    const expectedData = {
       fieldName: input.element.value
     }
 
     input.trigger('click')
 
     expect(Object.keys(wrapper.emitted())).toEqual(['input', 'change'])
-    expect(vm.data).toEqual(expected)
+    expect(vm.data).toEqual(expectedData)
   })
 
   it('should successfully render the component with field.attrs.type === checkbox', () => {
@@ -298,48 +261,26 @@ describe('component', () => {
       data: {},
       inputValues: {}
     }
-    const form = {
-      render (createElement) {
-        return createElement('form', [
-          createElement(component, {
-            props: { field, vm }
-          })
-        ])
+
+    const wrapper = mount(component, {
+      context: {
+        props: { field, vm }
       }
-    }
-    const wrapper = mount(form)
+    })
 
     vm.$emit = wrapper.vm.$emit
 
-    expect(wrapper.findAll('form').length).toEqual(1)
-    expect(wrapper.find('form').findAll('input').length).toEqual(1)
-    expect(wrapper.find('form').findAll('label').length).toEqual(0)
+    const expected = '<input name="fieldName" type="checkbox" value="Hello">'
+
+    expect(wrapper.html()).toEqual(expected)
 
     const input = wrapper.find('input')
 
     // component
-    expect(input.is('input')).toBe(true)
-    expect(input.isEmpty()).toBe(true)
-    expect(input.vnode.data.ref).toEqual(field.attrs.name)
-    expect(input.vnode.data.attrs.name).toEqual(field.attrs.name)
-    expect(input.vnode.data.attrs.type).toEqual(field.attrs.type)
     expect(Object.keys(input.vnode.data.on)).toEqual(['input', 'change'])
 
-    // render
-    expect(input.element.hasAttribute('name')).toBe(true)
-    expect(input.element.getAttribute('name')).toEqual(field.attrs.name)
-
-    expect(input.element.hasAttribute('type')).toBe(true)
-    expect(input.element.getAttribute('type')).toEqual(field.attrs.type)
-
-    expect(input.element.hasAttribute('value')).toBe(true)
-    expect(input.element.getAttribute('value')).toEqual(field.attrs.value)
-
-    expect(input.element.hasAttribute('checked')).toBe(false)
-    expect(input.element.checked).toBe(false)
-
     // event
-    const expected = {
+    const expectedData = {
       fieldName: input.element.value
     }
 
@@ -347,7 +288,7 @@ describe('component', () => {
 
     expect(input.element.checked).toBe(true)
     expect(Object.keys(wrapper.emitted())).toEqual(['input'])
-    expect(vm.data).toEqual(expected)
+    expect(vm.data).toEqual(expectedData)
 
     input.element.dispatchEvent(new Event('click'))
     expect(input.element.checked).toBe(false)
@@ -386,63 +327,23 @@ describe('component', () => {
 
     const field = fields[0]
 
-    const form = {
-      render (createElement) {
-        return createElement('form', [
-          createElement(component, {
-            props: { field, vm }
-          })
-        ])
+    const wrapper = mount(component, {
+      context: {
+        props: { field, vm }
       }
-    }
-    const wrapper = mount(form)
+    })
 
     vm.$emit = wrapper.vm.$emit
 
-    expect(wrapper.findAll('form').length).toEqual(1)
-    expect(wrapper.findAll('fieldset').length).toEqual(1)
-    expect(wrapper.findAll('legend').length).toEqual(1)
-    expect(wrapper.findAll('div').length).toEqual(1)
-    expect(wrapper.findAll('label').length).toEqual(2)
-    expect(wrapper.findAll('span').length).toEqual(2)
-    expect(wrapper.findAll('input').length).toEqual(2)
+    const expected = '<label><span data-required-field="false">choices</span><fieldset name="fieldName"><legend>choices description</legend><div><label><span data-required-field="false">l1</span><input name="fieldName" type="checkbox" value="v0"><small>choices description</small></label><label><span data-required-field="false">l2</span><input name="fieldName" type="checkbox" value="v1" checked="checked"><small>choices description</small></label></div></fieldset><small>choices description</small></label>'
 
-    expect(wrapper.find('fieldset').element.hasAttribute('name')).toBe(true)
-    expect(wrapper.find('fieldset').element.getAttribute('name')).toEqual(schema.attrs.name)
+    expect(wrapper.html()).toEqual(expected)
 
     // component
     field.items.map((item) => item.value).forEach((value, i) => {
-      // const name = schema.anyOf[i].name || schema.anyOf[i].label
-      const name = inputName(field, i)
-      const label = wrapper.find('form').findAll('label').at(i)
+      const input = wrapper.findAll('label').at(i).find('input')
 
-      expect(label.findAll('span').length).toEqual(1)
-      expect(label.find('span').text()).toEqual(schema.anyOf[i].label)
-      expect(label.findAll('input').length).toEqual(1)
-      expect(label.element.hasAttribute('label')).toBe(false)
-
-      const ref = inputName(field, i)
-      const input = label.find('input')
-
-      expect(input.is('input')).toBe(true)
-      expect(input.isEmpty()).toBe(true)
-      expect(input.vnode.data.ref).toEqual(ref)
-      expect(input.vnode.data.attrs.name).toEqual(name)
-      expect(input.vnode.data.attrs.type).toEqual(schema.attrs.type)
       expect(Object.keys(input.vnode.data.on)).toEqual(['input', 'change'])
-
-      // attrs
-      expect(input.element.hasAttribute('name')).toBe(true)
-      expect(input.element.getAttribute('name')).toEqual(name)
-
-      expect(input.element.hasAttribute('type')).toBe(true)
-      expect(input.element.getAttribute('type')).toEqual(schema.attrs.type)
-
-      expect(input.element.hasAttribute('value')).toBe(true)
-      expect(input.element.getAttribute('value')).toEqual(value)
-
-      expect(input.element.hasAttribute('checked'))
-        .toBe(vm.data[schema.attrs.name].includes(value))
     })
 
     // event
@@ -493,20 +394,14 @@ describe('component', () => {
 
     const field = fields[0]
 
-    const form = {
-      render (createElement) {
-        return createElement('form', [
-          createElement(component, {
-            props: { field, vm }
-          })
-        ])
+    const wrapper = mount(component, {
+      context: {
+        props: { field, vm }
       }
-    }
-    const wrapper = mount(form)
+    })
 
     vm.$emit = wrapper.vm.$emit
 
-    expect(wrapper.findAll('form').length).toEqual(1)
     expect(wrapper.findAll('fieldset').length).toEqual(0)
     expect(wrapper.findAll('legend').length).toEqual(0)
     expect(wrapper.findAll('div').length).toEqual(0)
@@ -516,7 +411,7 @@ describe('component', () => {
     expect(wrapper.findAll('option').length).toEqual(3)
 
     // label
-    const label = wrapper.find('form').find('label')
+    const label = wrapper.find('label')
 
     expect(label.findAll('span').length).toEqual(1)
     expect(label.find('span').text()).toEqual(schema.title)
@@ -582,20 +477,14 @@ describe('component', () => {
 
     const field = fields[0]
 
-    const form = {
-      render (createElement) {
-        return createElement('form', [
-          createElement(component, {
-            props: { field, vm }
-          })
-        ])
+    const wrapper = mount(component, {
+      context: {
+        props: { field, vm }
       }
-    }
-    const wrapper = mount(form)
+    })
 
     vm.$emit = wrapper.vm.$emit
 
-    expect(wrapper.findAll('form').length).toEqual(1)
     expect(wrapper.findAll('fieldset').length).toEqual(0)
     expect(wrapper.findAll('legend').length).toEqual(0)
     expect(wrapper.findAll('div').length).toEqual(0)
@@ -645,16 +534,11 @@ describe('component', () => {
       },
       changed: () => {}
     }
-    const form = {
-      render (createElement) {
-        return createElement('form', [
-          createElement(component, {
-            props: { field, vm }
-          })
-        ])
+    const wrapper = mount(component, {
+      context: {
+        props: { field, vm }
       }
-    }
-    const wrapper = mount(form)
+    })
 
     vm.$emit = wrapper.vm.$emit
 
@@ -687,16 +571,11 @@ describe('component', () => {
       },
       changed: () => {}
     }
-    const form = {
-      render (createElement) {
-        return createElement('form', [
-          createElement(component, {
-            props: { field, vm }
-          })
-        ])
+    const wrapper = mount(component, {
+      context: {
+        props: { field, vm }
       }
-    }
-    const wrapper = mount(form)
+    })
 
     vm.$emit = wrapper.vm.$emit
 

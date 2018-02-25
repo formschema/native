@@ -1,9 +1,9 @@
-import { components, input as getInput } from '../lib/components'
+import { components, input as getInput } from '@/lib/components'
 
 export default {
   functional: true,
-  render (createElement, context) {
-    const { vm, option } = context.props
+  render (createElement, { props }) {
+    const { vm, option } = props
 
     const input = getInput({
       vm,
@@ -17,6 +17,6 @@ export default {
       }
     })
 
-    return createElement(components.option.component, input, option.label)
+    return createElement(components.option.component, input.data, option.label)
   }
 }

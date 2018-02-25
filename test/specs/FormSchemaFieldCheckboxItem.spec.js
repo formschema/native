@@ -1,18 +1,18 @@
 'use strict'
 
 import { mount } from '@vue/test-utils'
-import { loadFields } from '../../src/lib/parser'
-import { init, initFields } from '../../src/lib/components'
+import { loadFields } from '@/lib/parser'
+import { init, initFields } from '@/lib/components'
 
-import component from '../../src/components/FormSchemaFieldCheckboxItem.js'
+import component from '@/components/FormSchemaFieldCheckboxItem.js'
 
 /* global describe beforeEach it expect */
 
 init()
 
-let schema, vm, field, ref, item, inputWrappingClass
+let schema, vm, field, item
 
-describe('component', () => {
+describe('FormSchemaFieldCheckboxItem', () => {
   it('should be a functional component', () => {
     expect(component.functional).toBe(true)
   })
@@ -42,68 +42,57 @@ describe('component', () => {
     initFields(vm)
 
     field = vm.fields[0]
-    ref = field.attrs.name
     item = {
       name: 'checkbox-name',
       label: 'checkbox label',
       value: 'checkbox value'
     }
-    inputWrappingClass = 'wrapper-class'
   })
 
   it('should successfully render the component', () => {
-    const wrapper = mount({
-      render (createElement) {
-        return createElement('form', [
-          createElement(component, {
-            props: {
-              vm, item, ref, field
-            }
-          })
-        ])
+    const wrapper = mount(component, {
+      context: {
+        props: {
+          vm, item, field
+        }
       }
     })
 
-    const expected = '<input type="checkbox" name="checkbox-name" value="checkbox value">'
+    const expectedInput = '<input name="checkbox-name" type="checkbox" value="checkbox value">'
+    const expectedLabelInput = '<label><span data-required-field="false">checkbox label</span><input name="checkbox-name" type="checkbox" value="checkbox value"><small>choices description</small></label>'
 
-    expect(wrapper.find('input').html()).toEqual(expected)
+    expect(wrapper.isVueInstance()).toBeTruthy()
+    expect(wrapper.find('input').html()).toEqual(expectedInput)
+    expect(wrapper.find('label').html()).toEqual(expectedLabelInput)
   })
 
   it('should successfully render the component with missing item.name', () => {
     delete item.name
 
-    const wrapper = mount({
-      render (createElement) {
-        return createElement('form', [
-          createElement(component, {
-            props: {
-              vm, item, ref, field
-            }
-          })
-        ])
+    const wrapper = mount(component, {
+      context: {
+        props: {
+          vm, item, field
+        }
       }
     })
 
-    const expected = '<input type="checkbox" name="fieldName" value="checkbox value">'
+    const expected = '<input name="fieldName" type="checkbox" value="checkbox value">'
 
     expect(wrapper.find('input').html()).toEqual(expected)
   })
 
   it('should successfully render the component with explicit props.checked', () => {
     const checked = true
-    const wrapper = mount({
-      render (createElement) {
-        return createElement('form', [
-          createElement(component, {
-            props: {
-              vm, item, ref, field, checked
-            }
-          })
-        ])
+    const wrapper = mount(component, {
+      context: {
+        props: {
+          vm, item, field, checked
+        }
       }
     })
 
-    const expected = '<input type="checkbox" name="checkbox-name" value="checkbox value" checked="checked">'
+    const expected = '<input name="checkbox-name" type="checkbox" value="checkbox value" checked="checked">'
 
     expect(wrapper.find('input').html()).toEqual(expected)
   })
@@ -128,41 +117,16 @@ describe('component', () => {
     initFields(vm)
 
     field = vm.fields[0]
-    ref = field.attrs.name
 
-    const wrapper = mount({
-      render (createElement) {
-        return createElement('form', [
-          createElement(component, {
-            props: {
-              vm, item, ref, field
-            }
-          })
-        ])
+    const wrapper = mount(component, {
+      context: {
+        props: {
+          vm, item, field
+        }
       }
     })
 
-    const expected = '<input type="checkbox" name="ckbox" value="checkbox value" checked="checked">'
-
-    expect(wrapper.find('input').html()).toEqual(expected)
-  })
-
-  it('should successfully render the component with wrapping class', () => {
-    const wrapper = mount({
-      render (createElement) {
-        return createElement('form', [
-          createElement(component, {
-            props: {
-              vm, item, ref, field, inputWrappingClass
-            }
-          })
-        ])
-      }
-    })
-
-    vm.$emit = wrapper.vm.$emit
-
-    const expected = '<form><div class="wrapper-class"><label><span data-required-field="false">choices</span><input type="checkbox" name="checkbox-name" value="checkbox value"><small>choices description</small></label></div></form>'
+    const expected = '<label><span data-required-field="false">checkbox label</span><input name="checkbox-name" type="checkbox" value="checkbox value" checked="checked"></label>'
 
     expect(wrapper.html()).toEqual(expected)
   })

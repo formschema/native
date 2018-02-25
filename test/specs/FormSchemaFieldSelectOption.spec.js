@@ -1,9 +1,9 @@
 'use strict'
 
 import { mount } from '@vue/test-utils'
-import { init, initFields } from '../../src/lib/components'
+import { init, initFields } from '@/lib/components'
 
-import component from '../../src/components/FormSchemaFieldSelectOption.js'
+import component from '@/components/FormSchemaFieldSelectOption.js'
 
 /* global describe beforeEach it expect */
 
@@ -11,7 +11,7 @@ init()
 
 let vm, option
 
-describe('component', () => {
+describe('FormSchemaFieldSelectOption', () => {
   it('should be a functional component', () => {
     expect(component.functional).toBe(true)
   })
@@ -56,6 +56,7 @@ describe('component', () => {
 
     const expected = '<option value="option value">option label</option>'
 
+    expect(wrapper.isVueInstance()).toBeTruthy()
     expect(wrapper.find('option').html()).toEqual(expected)
   })
 

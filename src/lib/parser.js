@@ -144,11 +144,13 @@ export function parseItems (items) {
   })
 }
 
-export const setItemName = (name) => (item) => {
+export const setItemName = (name) => (item, i) => {
   if (!item.name) {
     item.name = name ? `${name}-` : ''
     item.name += item.label.replace(/\s+/g, '-')
   }
+
+  item.ref = `${item.name}-${i}`
 
   return item
 }

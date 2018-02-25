@@ -1,22 +1,18 @@
-import { components, render } from '../lib/components'
+import { components } from '@/lib/components'
 
 export default {
   functional: true,
-  render (createElement, context) {
-    const vm = context.parent
-    const slots = context.slots()
-    const buttonswrapper = components.buttonswrapper
+  render (createElement, { data, slots }) {
+    const slotsValue = slots()
+    const buttonsWrapper = components.buttonswrapper
 
-    if (slots.default) {
-      return render(createElement, context, buttonswrapper, vm, slots.default)
+    if (slotsValue.default) {
+      return createElement(
+        buttonsWrapper.component, data, slotsValue.default)
     }
 
-    const button = components.submitbutton
-    const label = button.option.label || button.defaultOption.label
-    const nodes = [
-      render(createElement, context, button, vm, label)
-    ]
-
-    return render(createElement, context, buttonswrapper, vm, nodes)
+    return createElement(buttonsWrapper.component, [
+      createElement(components.submitbutton.component, data)
+    ])
   }
 }

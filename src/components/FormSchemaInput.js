@@ -1,57 +1,49 @@
-import { components, elementOptions, inputName } from '../lib/components'
-import FormSchemaInputDescription from './FormSchemaInputDescription'
+import { components, inputName, argName } from '@/lib/components'
 import FormSchemaInputArrayElement from './FormSchemaInputArrayElement'
 
 export default {
   functional: true,
-  render (createElement, context) {
-    const { description, field, element, input } = context.props
-    const children = context.slots().default || []
+  render (createElement, { props, slots }) {
+    const { vm, description, field, input, disableWrappingLabel } = props
+    const children = slots().default || []
+    const descriptionValue = description || field.description
 
-    const descriptionElement = createElement(FormSchemaInputDescription, {
-      props: {
-        text: description || field.description
-      }
-    })
+    const descriptionElement = descriptionValue
+      ? createElement(components.inputdesc.component, descriptionValue)
+      : null
 
     if (field.isArrayField) {
-      const vm = context.props.vm
-
       if (field.attrs.type === 'checkbox') {
-        if (element.render) {
-          return element.render(createElement, context)
+        const name = field.attrs.name
+        const data = {
+          props: {
+            vm, name, field, input
+          }
         }
 
-        const ref = input.ref
-
-        return [
-          createElement(FormSchemaInputArrayElement, {
-            props: {
-              vm, ref, field, input, element
-            }
-          }, children),
+        return createElement(components.inputwrapper.component, data, [
+          createElement(FormSchemaInputArrayElement, data, children),
           descriptionElement
-        ]
+        ])
       }
 
       const nodes = Array.apply(null, Array(field.itemsNum)).map((v, i) => {
-        const ref = inputName(field, i)
+        const name = inputName(field, i)
 
         return createElement(FormSchemaInputArrayElement, {
           props: {
-            vm, ref, field, input, element
+            vm, name, field, input
           }
         }, children)
       })
 
-      const labelOptions = elementOptions(vm, components.label, {}, field)
       const button = components.arraybutton
-      const buttonOptions = {
-        ...elementOptions(vm, button, {
+      const buttonData = {
+        [argName(button)]: {
           disabled: field.maxItems <= field.itemsNum
-        }, field),
+        },
         on: {
-          click: () => {
+          click () {
             if (field.itemsNum < field.maxItems) {
               field.itemsNum++
               vm.$forceUpdate()
@@ -59,21 +51,26 @@ export default {
           }
         }
       }
-      const label = button.option.label || button.defaultOption.label
 
-      nodes.push(createElement(button.component, buttonOptions, label))
+      nodes.push(createElement(button.component, buttonData))
       nodes.push(descriptionElement)
 
+      return createElement(components.inputswrapper.component, {
+        props: { vm, field }
+      }, nodes)
+    }
+
+    const nodes = [
+      createElement(input.element.component, input.data, children),
+      descriptionElement
+    ]
+
+    if (disableWrappingLabel) {
       return nodes
     }
 
-    if (element.render) {
-      return element.render(createElement, context)
-    }
-
-    return [
-      createElement(element.component, input, children),
-      descriptionElement
-    ]
+    return createElement(components.inputwrapper.component, {
+      props: { vm, field }
+    }, nodes)
   }
 }

@@ -1,30 +1,36 @@
-import { inputName, render } from '../lib/components'
+import { merge } from '@/lib/object'
+import { inputName, argName } from '@/lib/components'
 
 export default {
   functional: true,
-  render (createElement, context) {
-    const { field, input, element, vm } = context.props
-    const name = context.props.ref
+  render (createElement, { props, slots }) {
+    const { vm, input, field, name = field.attrs.name } = props
 
     const attrs = field.attrs
-    const attrName = element.native ? 'attrs' : 'props'
+    const attrName = argName(input)
     const value = attrs.type === 'checkbox'
-      ? input[attrName].value
+      ? input.data[attrName].value
       : vm.inputValues[name]
 
-    input[attrName].name = name
-    input[attrName].value = value
+    const ref = input.ref || name
+    const data = {}
 
-    input.ref = name
-    input.on = {
+    merge(data, input.data)
+
+    data.$field = field
+
+    data[attrName] = { ...input.data[attrName] }
+    data[attrName].name = name
+    data[attrName].value = value
+
+    data.on = {
       input (event) {
-        const value = event && event.target
-          ? event.target.value
-          : event
+        const value = event && event.target ? event.target.value : event
 
-        vm.inputValues[name] = attrs.type === 'checkbox' && vm.inputValues[name] !== undefined
-          ? undefined
-          : value
+        vm.inputValues[ref] =
+          attrs.type === 'checkbox' && vm.inputValues[ref] !== undefined
+            ? undefined
+            : value
 
         const values = []
 
@@ -43,11 +49,14 @@ export default {
          */
         vm.$emit('input', vm.data)
       },
-      change (event) {
-        this.input(event)
+      change () {
+        /**
+         * Fired synchronously when the value of an element is changed.
+         */
+        vm.$emit('change', vm.data)
       }
     }
 
-    return render(createElement, context, element, vm)
+    return createElement(input.element.component, data, slots().default)
   }
 }

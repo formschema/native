@@ -1,13 +1,6 @@
 'use strict'
 
-import {
-  setCommonFields,
-  parseBoolean,
-  parseString,
-  parseItems,
-  parseArray,
-  loadFields
-} from '../../src/lib/parser'
+import { setCommonFields, parseBoolean, parseString, parseItems, parseArray, loadFields } from '@/lib/parser'
 
 /* global describe it expect */
 
@@ -477,7 +470,7 @@ describe('lib/parser', () => {
         description: '',
         minItems: 1,
         maxItems: 1000,
-        items: [{ value: 'v', label: 'l', name: 'l' }],
+        items: [{ value: 'v', label: 'l', name: 'l', ref: 'l-0' }],
         attrs: {
           type: 'radio',
           value: '',
@@ -500,7 +493,7 @@ describe('lib/parser', () => {
         description: '',
         minItems: 1,
         maxItems: 1000,
-        items: [{ value: 'v', label: 'l', name: 'l' }],
+        items: [{ value: 'v', label: 'l', name: 'l', ref: 'l-0' }],
         attrs: {
           type: 'checkbox',
           value: [undefined],

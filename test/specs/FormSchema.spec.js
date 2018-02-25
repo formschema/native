@@ -1,7 +1,8 @@
 'use strict'
 
 import { mount } from '@vue/test-utils'
-import component from '../../src/components/FormSchema.js'
+
+import component from '@/components/FormSchema.js'
 
 /* global describe it expect */
 
@@ -12,8 +13,7 @@ const props = {
   autocomplete: undefined,
   enctype: 'application/x-www-form-urlencoded',
   method: 'post',
-  novalidate: false,
-  inputWrappingClass: undefined
+  novalidate: false
 }
 
 const data = {
@@ -38,7 +38,7 @@ const schema = {
   required: ['name']
 }
 
-describe('component', () => {
+describe('FormSchema', () => {
   it('should not be a functional component', () => {
     expect(component.functional).toBe(undefined)
   })
@@ -66,7 +66,7 @@ describe('component', () => {
   })
 
   it('should successfully render the component with an empty schema', () => {
-    expect(wrapper.html()).toEqual('<div></div>')
+    expect(wrapper.html()).toEqual(undefined)
   })
 
   it('should successfully render the component', () => {
@@ -114,19 +114,11 @@ describe('component', () => {
 
     expect(wrapper.vm.data).toEqual({ name: '' })
 
-    input.trigger('change')
-    expect('change' in wrapper.emitted()).toBe(false)
-
     input.element.value = 'Sébastien'
     input.trigger('input')
-    input.trigger('change')
 
     expect('input' in wrapper.emitted()).toBe(true)
-    expect('change' in wrapper.emitted()).toBe(true)
-
     expect(wrapper.emitted().input[0][0]).toEqual(expected)
-    expect(wrapper.emitted().change[0][0]).toEqual(expected)
-
     expect(wrapper.vm.data).toEqual(expected)
   })
 
@@ -149,15 +141,6 @@ describe('component', () => {
 
     expect(wrapper.vm.reportValidity()).toBe(true)
     expect(wrapper.vm.checkValidity()).toBe(true)
-  })
-
-  it('vm.input(name)', () => {
-    const wrapper = mount(component, {
-      propsData: { schema }
-    })
-
-    expect(wrapper.vm.input('name').tagName).toEqual('INPUT')
-    expect(() => wrapper.vm.input('bad control')).toThrow(/Undefined input reference/)
   })
 
   it('vm.reset()', () => {
