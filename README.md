@@ -14,8 +14,8 @@ npm install --save @vue-json-schema/form-schema
 ## FormSchema API
 
 ### props 
-- `schema` ***[Object, Promise]*** (*required*)
-The JSON Schema object. Use the `v-if` directive to load asynchronous schema. 
+- `schema` ***Object*** (*required*)
+The JSON Schema object.
 
 - `v-model` ***Object*** (*optional*) `default: [object Object]` 
 Use this directive to create two-way data bindings with the component. It automatically picks the correct way to update the element based on the input type. 
