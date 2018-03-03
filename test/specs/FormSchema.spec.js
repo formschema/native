@@ -43,8 +43,28 @@ describe('FormSchema', () => {
     expect(component.functional).toBe(undefined)
   })
 
-  it('should have a form-schema name', () => {
+  it('should have the form-schema name', () => {
     expect(component.name).toEqual('form-schema')
+  })
+
+  it('should have a changed method', () => {
+    expect(typeof component.methods.changed).toBe('function')
+  })
+
+  it('should have a reset method', () => {
+    expect(typeof component.methods.reset).toBe('function')
+  })
+
+  it('should have a submit method', () => {
+    expect(typeof component.methods.submit).toBe('function')
+  })
+
+  it('should have a setErrorMessage method', () => {
+    expect(typeof component.methods.setErrorMessage).toBe('function')
+  })
+
+  it('should have a clearErrorMessage method', () => {
+    expect(typeof component.methods.clearErrorMessage).toBe('function')
   })
 
   const wrapper = mount(component, {
@@ -114,7 +134,7 @@ describe('FormSchema', () => {
 
     expect(wrapper.vm.data).toEqual({ name: '' })
 
-    input.element.value = 'Sébastien'
+    input.element.value = expected.name
     input.trigger('input')
 
     expect('input' in wrapper.emitted()).toBe(true)
@@ -149,11 +169,16 @@ describe('FormSchema', () => {
     })
 
     const input = wrapper.find('input')
+    const expected = {
+      name: 'Sébastien'
+    }
 
-    input.element.value = 'Sébastien'
+    input.element.value = expected.name
     input.trigger('input')
 
-    expect(wrapper.vm.data).toEqual({ name: 'Sébastien' })
+    wrapper.update()
+
+    expect(wrapper.vm.data).toEqual(expected)
 
     wrapper.vm.reset()
 
