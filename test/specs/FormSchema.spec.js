@@ -122,6 +122,43 @@ describe('FormSchema', () => {
     expect(wrapper.find('button').html()).toEqual('<button type="submit">Submit</button>')
   })
 
+  it('should successfully render component with reactive schema', () => {
+    const wrapper = mount(component, {
+      propsData: { schema: {} }
+    })
+
+    expect(wrapper.html()).toEqual(undefined)
+
+    wrapper.setProps({ schema })
+
+    expect(wrapper.findAll('div').length).toEqual(2)
+
+    expect(wrapper.findAll('h1').length).toEqual(1)
+    expect(wrapper.find('h1').html()).toEqual(`<h1>${schema.title}</h1>`)
+
+    expect(wrapper.findAll('p').length).toEqual(1)
+    expect(wrapper.find('p').html()).toEqual(`<p>${schema.description}</p>`)
+
+    expect(wrapper.findAll('form').length).toEqual(1)
+
+    expect(wrapper.find('form').element.hasAttribute('enctype')).toBe(true)
+    expect(wrapper.find('form').element.getAttribute('enctype')).toEqual(props.enctype)
+
+    expect(wrapper.find('form').element.hasAttribute('method')).toBe(true)
+    expect(wrapper.find('form').element.getAttribute('method')).toEqual(props.method)
+
+    expect(wrapper.findAll('label').length).toEqual(1)
+
+    expect(wrapper.findAll('span').length).toEqual(1)
+    expect(wrapper.find('span').html()).toEqual('<span data-required-field="true">Your name</span>')
+
+    expect(wrapper.findAll('input').length).toEqual(1)
+    expect(wrapper.find('input').html()).toEqual('<input type="text" value="" required="required" name="name">')
+
+    expect(wrapper.findAll('button').length).toEqual(1)
+    expect(wrapper.find('button').html()).toEqual('<button type="submit">Submit</button>')
+  })
+
   it('should successfully emit events', () => {
     const wrapper = mount(component, {
       propsData: { schema }

@@ -66,6 +66,13 @@ export const FormSchema = {
   created () {
     this.init(this.schema)
   },
+  watch: {
+    schema (value, oldValue) {
+      if (!equals(value, oldValue)) {
+        this.init(value)
+      }
+    }
+  },
   render (createElement) {
     const nodes = []
 
@@ -122,8 +129,6 @@ export const FormSchema = {
 
       loadFields(this.schemaLoaded, this.fields)
       initFields(this)
-
-      this.data = Object.seal(this.data)
     },
 
     /**

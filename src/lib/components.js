@@ -192,8 +192,6 @@ export function initFields (vm) {
     }
   })
 
-  vm.data = Object.seal(vm.data)
-
   if (!equals(vm.data, vm.value)) {
     /**
      * @private
