@@ -1,4 +1,4 @@
-import { components, inputName, input as getInput } from '@/lib/components'
+import { inputName, input as getInput } from '@/lib/components'
 import FormSchemaInput from './FormSchemaInput'
 import FormSchemaFieldCheckboxItem from './FormSchemaFieldCheckboxItem'
 import FormSchemaFieldSelectOption from './FormSchemaFieldSelectOption'

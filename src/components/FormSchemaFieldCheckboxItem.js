@@ -1,4 +1,4 @@
-import { components, input as getInput } from '@/lib/components'
+import { input as getInput } from '@/lib/components'
 import FormSchemaInput from './FormSchemaInput'
 
 export default {
@@ -7,7 +7,6 @@ export default {
     const { vm, item, field, checked, disableWrappingLabel } = props
 
     const attrs = field.attrs
-    const element = components[attrs.type] || components.checkbox
     const description = item.description
     const input = getInput({
       vm,
