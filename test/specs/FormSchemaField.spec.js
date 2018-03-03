@@ -30,6 +30,9 @@ describe('FormSchemaField', () => {
       },
       inputValues: {
         [field.attrs.name]: field.attrs.value
+      },
+      changed (e) {
+        wrapper.vm.$emit('change', e)
       }
     }
     const wrapper = mount(component, {
@@ -61,6 +64,9 @@ describe('FormSchemaField', () => {
       },
       inputValues: {
         [field.attrs.name]: field.attrs.value
+      },
+      changed (e) {
+        wrapper.vm.$emit('change', e)
       }
     }
     const wrapper = mount(component, {
@@ -91,6 +97,9 @@ describe('FormSchemaField', () => {
       },
       inputValues: {
         [field.attrs.name]: 'Hello'
+      },
+      changed (e) {
+        wrapper.vm.$emit('change', e)
       }
     }
     const wrapper = mount(component, {
@@ -121,6 +130,9 @@ describe('FormSchemaField', () => {
       },
       inputValues: {
         [field.attrs.name]: 'Hello'
+      },
+      changed (e) {
+        wrapper.vm.$emit('change', e)
       }
     }
     const form = {
@@ -167,6 +179,9 @@ describe('FormSchemaField', () => {
       },
       inputValues: {
         [field.attrs.name]: 'Hello'
+      },
+      changed (e) {
+        wrapper.vm.$emit('change', e)
       }
     }
     const wrapper = mount(component, {
@@ -215,7 +230,7 @@ describe('FormSchemaField', () => {
       inputValues: {
         [field.attrs.name]: '1'
       },
-      changed: (e) => {
+      changed (e) {
         wrapper.vm.$emit('change', e)
       }
     }
@@ -259,7 +274,10 @@ describe('FormSchemaField', () => {
     }
     const vm = {
       data: {},
-      inputValues: {}
+      inputValues: {},
+      changed (e) {
+        wrapper.vm.$emit('change', e)
+      }
     }
 
     const wrapper = mount(component, {
@@ -287,7 +305,7 @@ describe('FormSchemaField', () => {
     input.element.dispatchEvent(new Event('click'))
 
     expect(input.element.checked).toBe(true)
-    expect(Object.keys(wrapper.emitted())).toEqual(['input'])
+    expect(Object.keys(wrapper.emitted())).toEqual(['input', 'change'])
     expect(vm.data).toEqual(expectedData)
 
     input.element.dispatchEvent(new Event('click'))
@@ -316,7 +334,7 @@ describe('FormSchemaField', () => {
       value: {},
       default: {},
       inputValues: {},
-      changed: (e) => {
+      changed (e) {
         wrapper.vm.$emit('change', e)
       },
       $emit: () => {}
@@ -383,7 +401,7 @@ describe('FormSchemaField', () => {
       value: {},
       default: {},
       inputValues: {},
-      changed: (e) => {
+      changed (e) {
         wrapper.vm.$emit('change', e)
       },
       $emit: () => {}
@@ -466,7 +484,7 @@ describe('FormSchemaField', () => {
       value: {},
       default: {},
       inputValues: {},
-      changed: (e) => {
+      changed (e) {
         wrapper.vm.$emit('change', e)
       },
       $emit: () => {}
@@ -532,7 +550,9 @@ describe('FormSchemaField', () => {
       data: {
         fieldName: 'Hello'
       },
-      changed: () => {}
+      changed (e) {
+        wrapper.vm.$emit('change', e)
+      }
     }
     const wrapper = mount(component, {
       context: {
@@ -569,7 +589,9 @@ describe('FormSchemaField', () => {
       data: {
         fieldName: 'Hello'
       },
-      changed: () => {}
+      changed (e) {
+        wrapper.vm.$emit('change', e)
+      }
     }
     const wrapper = mount(component, {
       context: {
