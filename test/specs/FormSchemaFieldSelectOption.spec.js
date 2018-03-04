@@ -1,7 +1,7 @@
 'use strict'
 
 import { mount } from '@vue/test-utils'
-import { init, initFields } from '@/lib/components'
+import { init } from '@/lib/components'
 
 import component from '@/components/FormSchemaFieldSelectOption.js'
 
@@ -9,7 +9,7 @@ import component from '@/components/FormSchemaFieldSelectOption.js'
 
 init()
 
-let vm, option
+let option
 
 describe('FormSchemaFieldSelectOption', () => {
   it('should be a functional component', () => {
@@ -17,24 +17,6 @@ describe('FormSchemaFieldSelectOption', () => {
   })
 
   beforeEach(() => {
-    vm = {
-      fields: [
-        {
-          attrs: {
-            type: 'option'
-          }
-        }
-      ],
-      data: {},
-      value: {},
-      default: {},
-      inputValues: {},
-      changed: (e) => {},
-      $emit: () => {}
-    }
-
-    initFields(vm)
-
     option = {
       label: 'option label',
       value: 'option value'
@@ -42,41 +24,42 @@ describe('FormSchemaFieldSelectOption', () => {
   })
 
   it('should successfully render the component', () => {
-    const wrapper = mount({
-      render (createElement) {
-        return createElement('form', [
-          createElement(component, {
-            props: {
-              vm, option
-            }
-          })
-        ])
+    const wrapper = mount(component, {
+      context: {
+        props: { option }
       }
     })
 
     const expected = '<option value="option value">option label</option>'
 
     expect(wrapper.isVueInstance()).toBeTruthy()
-    expect(wrapper.find('option').html()).toEqual(expected)
+    expect(wrapper.html()).toEqual(expected)
   })
 
   it('should successfully render the component with explicit option.selected', () => {
     option.selected = true
 
-    const wrapper = mount({
-      render (createElement) {
-        return createElement('form', [
-          createElement(component, {
-            props: {
-              vm, option
-            }
-          })
-        ])
+    const wrapper = mount(component, {
+      context: {
+        props: { option }
       }
     })
 
     const expected = '<option value="option value" selected="selected">option label</option>'
 
-    expect(wrapper.find('option').html()).toEqual(expected)
+    expect(wrapper.html()).toEqual(expected)
+  })
+
+  it('should successfully render the component with explicit selected value', () => {
+    const value = option.value
+    const wrapper = mount(component, {
+      context: {
+        props: { option, value }
+      }
+    })
+
+    const expected = '<option value="option value" selected="selected">option label</option>'
+
+    expect(wrapper.html()).toEqual(expected)
   })
 })

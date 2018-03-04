@@ -27,14 +27,10 @@ describe('FormSchemaInput', () => {
       element: components.text,
       native: true
     }
-    const vm = {
-      inputValues: {
-        [input.data.attrs.name]: 'Hello'
-      }
-    }
+    const value = 'Hello'
     const wrapper = mount(component, {
       context: {
-        props: { field, input, vm }
+        props: { field, value, input }
       }
     })
     const expected = '<input name="fieldName" type="text" value="Hello">'
@@ -61,33 +57,53 @@ describe('FormSchemaInput', () => {
       element: components.text,
       native: true
     }
-    const vm = {
-      inputValues: {
-        'fieldName-0': 'Value 1',
-        'fieldName-1': 'Value 2'
-      },
-      data: {
-        fieldName: []
-      },
-      changed: () => {}
+    const value = {
+      'fieldName-0': 'Value 1',
+      'fieldName-1': 'Value 2'
     }
     const wrapper = mount(component, {
       context: {
-        props: { field, input, vm }
+        props: { field, value, input }
       }
     })
 
-    const expected = '<div><input name="fieldName-0" type="text" value="Value 1"><input name="fieldName-1" type="text" value="Value 2"><button type="button">Add</button></div>'
+    const expected = '<div><input name="fieldName-0" type="text" data-fs-index="0" value="Value 1"><input name="fieldName-1" type="text" data-fs-index="1" value="Value 2"><button type="button">Add</button></div>'
 
     expect(wrapper.html()).toEqual(expected)
+  })
 
-    const inputs = wrapper.findAll('input')
-    let i = 0
-
-    while (i < inputs.length) {
-      expect(Object.keys(inputs.at(i++).vnode.data.on))
-        .toEqual(['input', 'change'])
+  it('should successfully render a array field component with label', () => {
+    const field = {
+      label: 'array label',
+      attrs: {
+        name: 'fieldName'
+      },
+      itemsNum: 2,
+      isArrayField: true
     }
+    const input = {
+      data: {
+        attrs: {
+          name: field.attrs.name,
+          type: 'text'
+        }
+      },
+      element: components.text,
+      native: true
+    }
+    const value = {
+      'fieldName-0': 'Value 1',
+      'fieldName-1': 'Value 2'
+    }
+    const wrapper = mount(component, {
+      context: {
+        props: { field, value, input }
+      }
+    })
+
+    const expected = '<label><span data-required-field=\"false\">array label</span><div><input name="fieldName-0" type="text" data-fs-index="0" value="Value 1"><input name="fieldName-1" type="text" data-fs-index="1" value="Value 2"><button type="button">Add</button></div></label>'
+
+    expect(wrapper.html()).toEqual(expected)
   })
 
   it('should successfully render a array field for custom component', () => {
@@ -109,33 +125,19 @@ describe('FormSchemaInput', () => {
       element: components.text,
       native: true
     }
-    const vm = {
-      inputValues: {
-        'fieldName-0': 'Value 1',
-        'fieldName-1': 'Value 2'
-      },
-      data: {
-        fieldName: []
-      },
-      changed: () => {}
+    const value = {
+      'fieldName-0': 'Value 1',
+      'fieldName-1': 'Value 2'
     }
     const wrapper = mount(component, {
       context: {
-        props: { field, input, vm }
+        props: { field, value, input }
       }
     })
 
-    const expected = '<div><input type="password" name="fieldName-0" value="Value 1"><input type="password" name="fieldName-1" value="Value 2"><button type="button">Add</button></div>'
+    const expected = '<div><input type="password" data-fs-index="0" name="fieldName-0" value="Value 1"><input type="password" data-fs-index="1" name="fieldName-1" value="Value 2"><button type="button">Add</button></div>'
 
     expect(wrapper.html()).toEqual(expected)
-
-    const inputs = wrapper.findAll('input')
-    let i = 0
-
-    while (i < inputs.length) {
-      expect(Object.keys(inputs.at(i++).vnode.data.on))
-        .toEqual(['input', 'change'])
-    }
   })
 
   it('should successfully emit the click event', () => {
@@ -159,36 +161,19 @@ describe('FormSchemaInput', () => {
       element: components.text,
       native: true
     }
-    const vm = {
-      inputValues: {
-        'fieldName-0': 'Value 1',
-        'fieldName-1': 'Value 2'
-      },
-      data: {
-        fieldName: []
-      },
-      changed: () => {}
+    const value = {
+      'fieldName-0': 'Value 1',
+      'fieldName-1': 'Value 2'
     }
     const wrapper = mount(component, {
       context: {
-        props: { field, input, vm }
+        props: { field, value, input }
       }
     })
 
-    const expected = '<div><input name="fieldName-0" type="text" value="Value 1"><input name="fieldName-1" type="text" value="Value 2"><button type="button">Add</button></div>'
+    const expected = '<div><input name="fieldName-0" type="text" data-fs-index="0" value="Value 1"><input name="fieldName-1" type="text" data-fs-index="1" value="Value 2"><button type="button">Add</button></div>'
 
     expect(wrapper.html()).toEqual(expected)
-
-    const inputs = wrapper.findAll('input')
-    let i = 0
-
-    while (i < inputs.length) {
-      expect(Object.keys(inputs.at(i++).vnode.data.on))
-        .toEqual(['input', 'change'])
-    }
-
-    vm.$emit = wrapper.vm.$emit
-    vm.$forceUpdate = wrapper.vm.$forceUpdate
 
     expect(wrapper.findAll('input').length).toEqual(2)
     expect(wrapper.findAll('button').length).toEqual(1)

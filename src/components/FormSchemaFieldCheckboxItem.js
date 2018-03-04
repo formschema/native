@@ -3,39 +3,39 @@ import FormSchemaInput from './FormSchemaInput'
 
 export default {
   functional: true,
-  render (createElement, { props }) {
-    const { vm, item, field, checked, disableWrappingLabel } = props
+  render (createElement, { props, listeners }) {
+    const { item, field, value = field.attrs.value, checked, disableWrappingLabel } = props
 
     const attrs = field.attrs
     const description = item.description
     const input = getInput({
-      vm,
       ref: item.ref,
       field: {
         label: item.label,
         attrs: {
           name: item.name || attrs.name,
           type: attrs.type,
-          value: item.value,
+          value: field.schemaType === 'boolean' ? undefined : item.value,
           checked: typeof checked === 'undefined'
-            ? vm.data[attrs.name] instanceof Array
-              ? vm.data[attrs.name].includes(item.value)
-              : item.value === vm.data[attrs.name]
+            ? value instanceof Array
+              ? value.includes(item.value)
+              : item.value === value
             : checked
-        }
-      }
+        },
+        $field: { ...field, label: item.label }
+      },
+      listeners
     })
-
-    input.data.$field = { ...field, label: item.label }
 
     return createElement(FormSchemaInput, {
       props: {
-        vm,
-        field: input.data.$field,
+        value,
         input,
         description,
-        disableWrappingLabel
-      }
+        disableWrappingLabel,
+        field: { ...field, label: item.label }
+      },
+      on: input.data.listeners
     })
   }
 }

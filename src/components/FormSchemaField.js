@@ -1,38 +1,36 @@
-import { inputName, input as getInput } from '@/lib/components'
+import { input as getInput } from '@/lib/components'
 import FormSchemaInput from './FormSchemaInput'
 import FormSchemaFieldCheckboxItem from './FormSchemaFieldCheckboxItem'
 import FormSchemaFieldSelectOption from './FormSchemaFieldSelectOption'
 
 export default {
   functional: true,
-  render (createElement, { props }) {
-    const { vm, field } = props
-    const attrs = field.attrs
+  render (createElement, { props, listeners }) {
+    const { field, value = field.attrs.value } = props
 
-    const input = getInput({ vm, field })
+    const input = getInput({ field, listeners })
     const children = []
 
-    switch (attrs.type) {
+    switch (field.attrs.type) {
       case 'textarea':
         if (input.element.native) {
           delete input.data.attrs.type
           delete input.data.attrs.value
 
-          input.data.domProps.innerHTML = vm.data[attrs.name]
+          input.data.domProps.innerHTML = value
         }
         break
 
       case 'radio':
         if (field.hasOwnProperty('items')) {
-          field.items.forEach((item, i) => {
-            item.ref = inputName({ attrs: item }, i)
-
+          field.items.forEach((item) => {
             children.push(createElement(FormSchemaFieldCheckboxItem, {
               props: {
-                vm,
                 item,
+                value,
                 field: { ...field, label: item.label, isArrayField: false }
-              }
+              },
+              on: listeners
             }))
           })
         }
@@ -40,17 +38,24 @@ export default {
 
       case 'checkbox':
         if (field.hasOwnProperty('items')) {
-          field.items.forEach((item, i) => {
-            item.ref = inputName({ attrs: item }, i)
-
+          field.items.forEach((item) => {
             children.push(createElement(FormSchemaFieldCheckboxItem, {
               props: {
-                vm,
                 item,
+                value,
                 field: { ...field, label: item.label },
-                checked: vm.data[field.attrs.name].includes(item.value)
-              }
+                checked: value.includes(item.value)
+              },
+              on: listeners
             }))
+          })
+        } else if (field.schemaType === 'boolean') {
+          const item = { label: field.label }
+          const checked = value === true
+
+          return createElement(FormSchemaFieldCheckboxItem, {
+            props: { item, value, field, checked },
+            on: listeners
           })
         }
         break
@@ -58,25 +63,25 @@ export default {
       case 'select':
         const items = [ ...field.items ]
 
-        if (!attrs.required) {
+        if (field.attrs.required) {
           items.unshift({ label: null, value: '' })
         }
 
-        if (input.data.attrs) {
+        if (input.element.native) {
           delete input.data.attrs.type
           delete input.data.attrs.value
         }
 
         items.forEach((option) => {
           children.push(createElement(FormSchemaFieldSelectOption, {
-            props: { vm, field, option, disableWrappingLabel: true }
+            props: { field, value, option }
           }))
         })
         break
     }
 
     return createElement(FormSchemaInput, {
-      props: { vm, field, input }
+      props: { field, value, input }
     }, children)
   }
 }

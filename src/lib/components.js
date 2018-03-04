@@ -1,6 +1,6 @@
 'use strict'
 
-import { equals, merge } from './object'
+import { merge } from './object'
 
 const tags = {
   h1: ['title'],
@@ -126,38 +126,21 @@ export const groupedArrayTypes = [
   'radio', 'checkbox', 'input', 'textarea'
 ]
 
-export function input ({ vm, field, ref }) {
-  const attrs = field.attrs
-
-  if (!attrs.hasOwnProperty('value')) {
-    attrs.value = vm.data[attrs.name]
-  }
-
-  const element = field.hasOwnProperty('items') && groupedArrayTypes.includes(attrs.type)
-    ? components[`${attrs.type}group`] || components.defaultGroup
-    : components[attrs.type] || components.text
+export function input ({ field, ref, $field = field, listeners = {} }) {
+  const { type } = field.attrs
+  const element = field.hasOwnProperty('items') && groupedArrayTypes.includes(type)
+    ? components[`${type}group`] || components.defaultGroup
+    : components[type] || components.text
 
   return {
     ref,
     element: element,
     data: {
-      $field: field,
+      $field,
       props: {},
       domProps: {},
-      [argName(element)]: attrs,
-      on: {
-        input (event) {
-          vm.data[attrs.name] = event && event.target
-            ? event.target.value
-            : event
-
-          /**
-           * Fired synchronously when the value of an element is changed.
-           */
-          vm.$emit('input', vm.data)
-        },
-        change: vm.changed
-      }
+      [argName(element)]: { ...field.attrs },
+      on: listeners
     }
   }
 }
@@ -167,41 +150,3 @@ export const fieldTypesAsNotArray = [
 ]
 
 export const inputName = (field, index) => `${field.attrs.name}-${index}`
-
-export function initFields (vm) {
-  vm.fields.forEach((field) => {
-    const attrs = field.attrs
-
-    vm.data[attrs.name] = vm.value[attrs.name] || attrs.value
-
-    if (!fieldTypesAsNotArray.includes(attrs.type) && field.schemaType === 'array') {
-      field.isArrayField = true
-
-      if (!Array.isArray(vm.data[attrs.name])) {
-        vm.data[attrs.name] = []
-      }
-
-      vm.data[attrs.name] = vm.data[attrs.name].filter((value, i) => {
-        vm.inputValues[inputName(field, i)] = value
-        return value !== undefined
-      })
-
-      field.itemsNum = attrs.type === 'checkbox'
-        ? field.items.length
-        : field.minItems
-    }
-  })
-
-  if (!equals(vm.data, vm.value)) {
-    /**
-     * @private
-     */
-    vm.$emit('input', vm.data)
-  }
-
-  Object.keys(vm.data).forEach((key) => {
-    vm.default[key] = typeof vm.data[key] === 'object' && vm.data[key] !== null
-      ? Object.freeze(vm.data[key])
-      : vm.data[key]
-  })
-}

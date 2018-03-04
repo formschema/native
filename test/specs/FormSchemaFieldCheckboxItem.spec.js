@@ -2,7 +2,7 @@
 
 import { mount } from '@vue/test-utils'
 import { loadFields } from '@/lib/parser'
-import { init, initFields } from '@/lib/components'
+import { init } from '@/lib/components'
 
 import component from '@/components/FormSchemaFieldCheckboxItem.js'
 
@@ -10,7 +10,7 @@ import component from '@/components/FormSchemaFieldCheckboxItem.js'
 
 init()
 
-let schema, vm, field, item
+let schema, fields, field, item
 
 describe('FormSchemaFieldCheckboxItem', () => {
   it('should be a functional component', () => {
@@ -28,20 +28,11 @@ describe('FormSchemaFieldCheckboxItem', () => {
         value: '123'
       }
     }
-    vm = {
-      fields: [],
-      data: {},
-      value: {},
-      default: {},
-      inputValues: {},
-      changed: (e) => {},
-      $emit: () => {}
-    }
+    fields = []
 
-    loadFields(schema, vm.fields)
-    initFields(vm)
+    loadFields(schema, fields)
 
-    field = vm.fields[0]
+    field = fields[0]
     item = {
       name: 'checkbox-name',
       label: 'checkbox label',
@@ -53,7 +44,7 @@ describe('FormSchemaFieldCheckboxItem', () => {
     const wrapper = mount(component, {
       context: {
         props: {
-          vm, item, field
+          item, field
         }
       }
     })
@@ -69,10 +60,11 @@ describe('FormSchemaFieldCheckboxItem', () => {
   it('should successfully render the component with missing item.name', () => {
     delete item.name
 
+    const value = field.attrs.value
     const wrapper = mount(component, {
       context: {
         props: {
-          vm, item, field
+          item, field, value
         }
       }
     })
@@ -84,15 +76,32 @@ describe('FormSchemaFieldCheckboxItem', () => {
 
   it('should successfully render the component with explicit props.checked', () => {
     const checked = true
+    const value = field.attrs.value
     const wrapper = mount(component, {
       context: {
         props: {
-          vm, item, field, checked
+          item, field, value, checked
         }
       }
     })
 
     const expected = '<input name="checkbox-name" type="checkbox" value="checkbox value" checked="checked">'
+
+    expect(wrapper.find('input').html()).toEqual(expected)
+  })
+
+  it('should successfully render the component with explicit props.checked === false', () => {
+    const checked = false
+    const value = field.attrs.value
+    const wrapper = mount(component, {
+      context: {
+        props: {
+          item, field, value, checked
+        }
+      }
+    })
+
+    const expected = '<input name="checkbox-name" type="checkbox" value="checkbox value">'
 
     expect(wrapper.find('input').html()).toEqual(expected)
   })
@@ -109,19 +118,17 @@ describe('FormSchemaFieldCheckboxItem', () => {
       }
     }
 
-    vm.data = {}
-    vm.fields = []
-    vm.inputValues = {}
+    fields = []
 
-    loadFields(schema, vm.fields)
-    initFields(vm)
+    loadFields(schema, fields)
 
-    field = vm.fields[0]
+    field = fields[0]
 
+    const value = field.attrs.value
     const wrapper = mount(component, {
       context: {
         props: {
-          vm, item, field
+          item, field, value
         }
       }
     })

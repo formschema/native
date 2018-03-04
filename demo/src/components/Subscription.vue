@@ -1,6 +1,8 @@
 <template>
   <div class="form">
-    <FormSchema ref="formSchema" :schema="schema" v-model="model"/>
+    <FormSchema ref="formSchema" :schema="schema" v-model="model" @change="submit">
+      <button type="button" @click="submit">Subscribe</button>
+    </FormSchema>
   </div>
 </template>
 
@@ -9,12 +11,12 @@
 
   export default {
     data: () => ({
-      schema: Promise.resolve(require('../schema/newsletter')),
+      schema: require('../schema/newsletter'),
       model: {}
     }),
     methods: {
       submit (data) {
-        console.log(data)
+        console.log(JSON.stringify(this.model, null, 2))
       },
       reset () {
         this.$refs.formSchema.form().reset()
@@ -49,7 +51,8 @@
     display: block;
   }
 
-  .el-alert {
-    margin-bottom: 15px
+  label {
+    display: block;
+    margin-bottom: 5px
   }
 </style>

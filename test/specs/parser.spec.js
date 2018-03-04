@@ -1,6 +1,17 @@
 'use strict'
 
-import { setCommonFields, parseBoolean, parseString, parseItems, parseArray, loadFields } from '@/lib/parser'
+import {
+  setCommonFields,
+  setItemName,
+  arrayOrderedValues,
+  arrayUnorderedValues,
+  singleValue,
+  parseBoolean,
+  parseString,
+  parseItems,
+  parseArray,
+  loadFields
+} from '@/lib/parser'
 
 /* global describe it expect */
 
@@ -73,6 +84,100 @@ describe('lib/parser', () => {
     })
   })
 
+  describe('setItemName(field)', () => {
+    it('should successfully set the item names', () => {
+      const name = 'field-name'
+      const items = [
+        { name: 'item1', label: 'label 0', value: 0 },
+        { label: 'label 1', value: 1 }
+      ]
+      const expected = [
+        { name: 'item1', label: 'label 0', value: 0, ref: `${name}-0` },
+        { name: 'field-name-label-1', label: 'label 1', value: 1, ref: `${name}-1` }
+      ]
+      const result = items.map(setItemName(name))
+
+      expect(result).toEqual(expected)
+    })
+
+    it('should successfully set the item names with the missing field name', () => {
+      const name = undefined
+      const items = [
+        { name: 'item1', label: 'label 0', value: 0 },
+        { label: 'label 1', value: 1 }
+      ]
+      const expected = [
+        { name: 'item1', label: 'label 0', value: 0 },
+        { name: 'label-1', label: 'label 1', value: 1 }
+      ]
+      const result = items.map(setItemName(name))
+
+      expect(result).toEqual(expected)
+    })
+
+    it('should successfully set the item names with isRadio === true', () => {
+      const name = 'radio-field-name'
+      const items = [
+        { name: 'item1', label: 'label 0', value: 0 },
+        { label: 'label 1', value: 1 }
+      ]
+      const expected = [
+        { name, label: 'label 0', value: 0, ref: `${name}-0` },
+        { name, label: 'label 1', value: 1, ref: `${name}-1` }
+      ]
+      const result = items.map(setItemName(name, true))
+
+      expect(result).toEqual(expected)
+    })
+  })
+
+  describe('arrayOrderedValues(field)', () => {
+    it('should return the right array values', () => {
+      const field = {
+        items: [
+          { label: 'l0', value: 0 },
+          { label: 'l1', value: 1, checked: true },
+          { label: 'l2', value: 2, checked: false }
+        ]
+      }
+      const expected = [undefined, 1, undefined]
+
+      expect(arrayOrderedValues(field)).toEqual(expected)
+    })
+  })
+
+  describe('arrayUnorderedValues(field)', () => {
+    it('should return the right array values', () => {
+      const field = {
+        items: [
+          { label: 'l0', value: 0 },
+          { label: 'l1', value: 1, checked: true },
+          { label: 'l2', value: 2, checked: false },
+          { label: 'l3', value: 3, selected: true }
+        ]
+      }
+      const expected = [1, 3]
+
+      expect(arrayUnorderedValues(field)).toEqual(expected)
+    })
+  })
+
+  describe('singleValue(field)', () => {
+    it('should return the last selected value', () => {
+      const field = {
+        items: [
+          { label: 'l0', value: 0 },
+          { label: 'l1', value: 1, checked: true },
+          { label: 'l2', value: 2, checked: false },
+          { label: 'l3', value: 3, selected: false }
+        ]
+      }
+      const expected = 1
+
+      expect(singleValue(field)).toEqual(expected)
+    })
+  })
+
   describe('parseBoolean(schema, name = null)', () => {
     it('should successfully parse an empty schema', () => {
       const schema = { type: 'boolean' }
@@ -82,7 +187,6 @@ describe('lib/parser', () => {
         description: '',
         attrs: {
           type: 'checkbox',
-          value: '',
           checked: false,
           required: false,
           disabled: false
@@ -105,7 +209,6 @@ describe('lib/parser', () => {
         description: '',
         attrs: {
           type: 'radio',
-          value: '',
           checked: false,
           required: false,
           disabled: false
@@ -113,6 +216,54 @@ describe('lib/parser', () => {
       }
 
       expect(parseBoolean(schema)).toEqual(expected)
+    })
+
+    it('should successfully parse with defined checked falsely value', () => {
+      const schema = {
+        type: 'boolean',
+        attrs: {
+          type: 'radio',
+          checked: false
+        }
+      }
+      const expected = {
+        schemaType: 'boolean',
+        label: '',
+        description: '',
+        attrs: {
+          name: 'name',
+          type: 'radio',
+          checked: false,
+          required: false,
+          disabled: false
+        }
+      }
+
+      expect(parseBoolean(schema, 'name')).toEqual(expected)
+    })
+
+    it('should successfully parse with defined default value', () => {
+      const schema = {
+        type: 'boolean',
+        default: true,
+        attrs: {
+          type: 'radio'
+        }
+      }
+      const expected = {
+        schemaType: 'boolean',
+        label: '',
+        description: '',
+        attrs: {
+          name: 'name',
+          type: 'radio',
+          checked: true,
+          required: false,
+          disabled: false
+        }
+      }
+
+      expect(parseBoolean(schema, 'name')).toEqual(expected)
     })
 
     it('should successfully parse with defined input name', () => {
@@ -129,7 +280,6 @@ describe('lib/parser', () => {
         attrs: {
           name: 'name',
           type: 'radio',
-          value: '',
           checked: false,
           required: false,
           disabled: false
@@ -338,6 +488,7 @@ describe('lib/parser', () => {
         schemaType: 'array',
         label: '',
         description: '',
+        isArrayField: true,
         items: [],
         minItems: 1,
         maxItems: 1000,
@@ -383,6 +534,7 @@ describe('lib/parser', () => {
         schemaType: 'array',
         label: '',
         description: '',
+        isArrayField: true,
         items: [],
         minItems: 1,
         maxItems: 1000,
@@ -411,6 +563,7 @@ describe('lib/parser', () => {
         schemaType: 'array',
         label: '',
         description: '',
+        isArrayField: true,
         items: [],
         minItems: 2,
         maxItems: 5,
@@ -443,7 +596,7 @@ describe('lib/parser', () => {
         items: [{ value: 'v', label: 'l' }],
         attrs: {
           type: 'text',
-          value: '',
+          value: [],
           required: false,
           disabled: false
         }
@@ -453,8 +606,9 @@ describe('lib/parser', () => {
 
       delete schema.attrs
 
+      expected.isArrayField = true,
       expected.attrs.type = 'select'
-      expected.attrs.multiple = false
+      expected.attrs.multiple = true
 
       expect(parseArray(schema)).toEqual(expected)
     })
@@ -470,7 +624,7 @@ describe('lib/parser', () => {
         description: '',
         minItems: 1,
         maxItems: 1000,
-        items: [{ value: 'v', label: 'l', name: 'l', ref: 'l-0' }],
+        items: [{ value: 'v', label: 'l', name: 'l' }],
         attrs: {
           type: 'radio',
           value: '',
@@ -491,9 +645,10 @@ describe('lib/parser', () => {
         schemaType: 'array',
         label: '',
         description: '',
+        isArrayField: true,
         minItems: 1,
         maxItems: 1000,
-        items: [{ value: 'v', label: 'l', name: 'l', ref: 'l-0' }],
+        items: [{ value: 'v', label: 'l', name: 'l' }],
         attrs: {
           type: 'checkbox',
           value: [undefined],
@@ -527,7 +682,6 @@ describe('lib/parser', () => {
           description: '',
           attrs: {
             type: 'checkbox',
-            value: '',
             checked: false,
             required: false,
             disabled: false
@@ -548,6 +702,7 @@ describe('lib/parser', () => {
           schemaType: 'array',
           label: '',
           description: '',
+          isArrayField: true,
           items: [],
           minItems: 1,
           maxItems: 1000,
@@ -614,10 +769,37 @@ describe('lib/parser', () => {
 
         expect(fields).toEqual(expected)
       })
+
+      it('should successfully load the schema with stringify enum values', () => {
+        const fields = []
+        const schema = {
+          type: 'string',
+          enum: ['v']
+        }
+        const expected = [{
+          schemaType: 'string',
+          label: '',
+          description: '',
+          minItems: 1,
+          maxItems: 1000,
+          items: [{ value: 'v', label: 'v' }],
+          attrs: {
+            type: 'select',
+            value: '',
+            required: false,
+            disabled: false,
+            multiple: false
+          }
+        }]
+
+        loadFields(schema, fields)
+
+        expect(fields).toEqual(expected)
+      })
     })
 
     describe('schema.type === object', () => {
-      it('should successfully load the schema', () => {
+      it('should successfully load a scalar field', () => {
         const fields = []
         const schema = {
           type: 'object',
@@ -632,10 +814,42 @@ describe('lib/parser', () => {
           attrs: {
             type: 'checkbox',
             name: 'bool',
-            value: '',
             checked: false,
             required: false,
             disabled: false
+          }
+        }]
+
+        loadFields(schema, fields)
+
+        expect(fields).toEqual(expected)
+      })
+
+      it('should successfully load array string field', () => {
+        const fields = []
+        const schema = {
+          type: 'object',
+          properties: {
+            string: {
+              type: 'string',
+              enum: ['v']
+            }
+          }
+        }
+        const expected = [{
+          schemaType: 'string',
+          label: '',
+          description: '',
+          minItems: 1,
+          maxItems: 1000,
+          items: [{ value: 'v', label: 'v' }],
+          attrs: {
+            type: 'select',
+            name: 'string',
+            value: '',
+            required: false,
+            disabled: false,
+            multiple: false
           }
         }]
 
@@ -660,7 +874,6 @@ describe('lib/parser', () => {
           attrs: {
             type: 'checkbox',
             name: 'bool',
-            value: '',
             checked: false,
             required: true,
             disabled: false

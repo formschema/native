@@ -1,10 +1,8 @@
 import { loadFields } from '@/lib/parser'
-import { equals } from '@/lib/object'
-import { init, components, set, argName, inputName, initFields } from '@/lib/components'
+import { equals, merge } from '@/lib/object'
+import { init, components, set, argName, inputName } from '@/lib/components'
 import FormSchemaField from './FormSchemaField'
 import FormSchemaButtons from './FormSchemaButtons'
-
-const fieldTypesAsNotArray = ['radio', 'checkbox', 'textarea', 'select']
 
 init()
 
@@ -56,9 +54,8 @@ export const FormSchema = {
     novalidate: { type: Boolean }
   },
   data: () => ({
-    schemaLoaded: {},
+    schemaLoaded: { schema: {}, fields: [] },
     default: {},
-    fields: [],
     error: null,
     data: {},
     inputValues: {}
@@ -74,26 +71,53 @@ export const FormSchema = {
     }
   },
   render (createElement) {
+    const { schema, fields } = this.schemaLoaded
     const nodes = []
 
-    if (this.schemaLoaded.title) {
-      nodes.push(createElement(
-        components.title.component, this.schemaLoaded.title))
+    if (schema.title) {
+      nodes.push(createElement(components.title.component, schema.title))
     }
 
-    if (this.schemaLoaded.description) {
+    if (schema.description) {
       nodes.push(createElement(
-        components.description.component, this.schemaLoaded.description))
+        components.description.component, schema.description))
     }
 
     if (this.error) {
       nodes.push(createElement(components.error.component, this.error))
     }
 
-    const vm = this
-    const formNodes = this.fields.map((field) => {
+    const formNodes = fields.map((field) => {
+      const value = this.data[field.attrs.name]
+
       return createElement(FormSchemaField, {
-        props: { field, vm }
+        props: { field, value },
+        on: {
+          input: (event) => {
+            const target = event.target
+            const data = event.target.value
+            const eventInput = { field, data, target }
+
+            if (field.isArrayField) {
+              this.onInputArrayValue(eventInput)
+            } else {
+              this.onInput(eventInput)
+            }
+          },
+          change: (event) => {
+            const target = event.target
+            const data = event.target.value
+            const eventInput = { field, data, target }
+
+            if (field.isArrayField) {
+              this.onInputArrayValue(eventInput, false)
+            } else {
+              this.onInput(eventInput, false)
+            }
+
+            this.changed()
+          }
+        }
       })
     })
 
@@ -125,10 +149,114 @@ export const FormSchema = {
      * @private
      */
     init (schema) {
-      this.schemaLoaded = schema || {}
+      const fields = []
 
-      loadFields(this.schemaLoaded, this.fields)
-      initFields(this)
+      loadFields(schema, fields)
+      this.loadDefaultValues(fields)
+
+      this.schemaLoaded = { schema, fields }
+    },
+
+    /**
+     * @private
+     */
+    loadDefaultValues (fields) {
+      this.default = {}
+      this.inputValues = {}
+
+      fields.forEach((field) => {
+        const { type, name } = field.attrs
+
+        this.default[name] = field.schemaType === 'boolean'
+          ? typeof this.value[name] === 'boolean'
+            ? this.value[name]
+            : field.attrs.checked === true
+          : this.value[name] || field.attrs.value
+
+        if (field.isArrayField) {
+          if (!Array.isArray(this.default[name])) {
+            this.default[name] = []
+          } else {
+            this.default[name] = this.default[name].filter((value, i) => {
+              this.inputValues[inputName(field, i)] = value
+              return value !== undefined
+            })
+          }
+
+          field.itemsNum = type === 'checkbox'
+            ? field.items.length
+            : field.minItems
+        }
+      })
+
+      const data = {}
+
+      merge(data, this.default)
+
+      this.data = data
+
+      this.$emit('input', this.data)
+    },
+
+    /**
+     * @private
+     */
+    onInput (event, triggerInputEvent = true) {
+      if (event.field.schemaType === 'boolean') {
+        event.data = event.target.checked
+      }
+
+      this.data[event.field.attrs.name] = event.data
+
+      if (triggerInputEvent) {
+        /**
+         * Fired synchronously when the value of an element is changed.
+         */
+        this.$emit('input', this.data)
+      }
+    },
+
+    /**
+     * @private
+     */
+    onInputArrayValue (event, triggerInputEvent = true) {
+      if (event.field.attrs.type === 'checkbox') {
+        if (event.target.checked) {
+          if (!this.data[event.field.attrs.name].includes(event.data)) {
+            this.data[event.field.attrs.name].push(event.data)
+          }
+        } else {
+          const index = this.data[event.field.attrs.name].indexOf(event.data)
+
+          if (index > -1) {
+            this.data[event.field.attrs.name].splice(index, 1)
+          }
+        }
+      } else {
+        const index = event.target.getAttribute('data-fs-index')
+        const key = inputName(event.field, index)
+
+        this.inputValues[key] = event.data
+
+        const values = []
+
+        for (let i = 0; i < event.field.itemsNum; i++) {
+          const currentValue = this.inputValues[inputName(event.field, i)]
+
+          if (currentValue) {
+            values.push(currentValue)
+          }
+        }
+
+        this.data[event.field.attrs.name] = values
+      }
+
+      if (triggerInputEvent) {
+        /**
+         * Fired synchronously when the value of an element is changed.
+         */
+        this.$emit('input', this.data)
+      }
     },
 
     /**
@@ -192,13 +320,13 @@ export const FormSchema = {
         delete this.inputValues[key]
       }
 
-      this.fields.forEach((field) => {
-        const attrs = field.attrs
+      this.schemaLoaded.fields.forEach((field) => {
+        const { name } = field.attrs
 
-        this.$set(this.data, attrs.name, this.default[attrs.name])
+        this.$set(this.data, name, this.default[name])
 
-        if (!fieldTypesAsNotArray.includes(attrs.type) && field.schemaType === 'array') {
-          this.data[attrs.name].forEach((value, i) => {
+        if (field.isArrayField) {
+          this.data[name].forEach((value, i) => {
             this.inputValues[inputName(field, i)] = value
           })
         }

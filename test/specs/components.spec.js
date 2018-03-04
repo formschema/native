@@ -21,9 +21,6 @@ describe('lib/components', () => {
     })
   })
 
-  describe('initFields(vm)', () => {
-  })
-
   describe('input({ vm, field, ref })', () => {
   })
 

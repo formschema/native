@@ -20,7 +20,6 @@ export function loadFields (schema, fields, name = null) {
   if (!schema || schema.visible === false) {
     return
   }
-
   switch (schema.type) {
     case 'object':
       for (let key in schema.properties) {
@@ -51,6 +50,7 @@ export function loadFields (schema, fields, name = null) {
             type: schema.type,
             enum: schema[keyword]
           }
+
           fields.push(parseArray(schema, name))
 
           return
@@ -72,7 +72,11 @@ export function parseBoolean (schema, name = null) {
     field.attrs.type = 'checkbox'
   }
 
-  field.attrs.checked = schema.checked || false
+  if (!field.attrs.hasOwnProperty('checked')) {
+    field.attrs.checked = schema.default === true
+  }
+
+  delete field.attrs.value
 
   if (name) {
     field.attrs.name = name
@@ -144,19 +148,31 @@ export function parseItems (items) {
   })
 }
 
-export const setItemName = (name) => (item, i) => {
+export const setItemName = (name, isRadio = false) => (item, i) => {
+  if (isRadio) {
+    item.name = name
+  }
+
   if (!item.name) {
     item.name = name ? `${name}-` : ''
     item.name += item.label.replace(/\s+/g, '-')
   }
 
-  item.ref = `${item.name}-${i}`
+  if (name) {
+    item.ref = `${name}-${i}`
+  }
 
   return item
 }
 
-export function arrayValues (field) {
+export function arrayOrderedValues (field) {
   return field.items.map((item) => item.checked ? item.value : undefined)
+}
+
+export function arrayUnorderedValues (field) {
+  return field.items
+    .filter((item) => (item.checked || item.selected))
+    .map((item) => item.value)
 }
 
 export function singleValue (field) {
@@ -190,12 +206,19 @@ export function parseArray (schema, name = null) {
           }
 
           field.items = parseItems(schema[keyword])
+
+          if (field.attrs.value.length === 0) {
+            field.attrs.value = field.schemaType === 'array'
+              ? arrayUnorderedValues(field)
+              : singleValue(field)
+          }
           break loop
 
         case 'oneOf':
           field.attrs.type = 'radio'
           field.attrs.value = field.attrs.value || ''
-          field.items = parseItems(schema[keyword]).map(setItemName(name))
+
+          field.items = parseItems(schema[keyword]).map(setItemName(name, true))
 
           if (field.attrs.value.length === 0) {
             field.attrs.value = singleValue(field)
@@ -205,10 +228,12 @@ export function parseArray (schema, name = null) {
         case 'anyOf':
           field.attrs.type = 'checkbox'
           field.attrs.value = field.attrs.value || []
+
           field.items = parseItems(schema[keyword]).map(setItemName(name))
+          field.isArrayField = true
 
           if (field.attrs.value.length === 0) {
-            field.attrs.value = arrayValues(field)
+            field.attrs.value = arrayOrderedValues(field)
           }
           break loop
       }
@@ -216,15 +241,19 @@ export function parseArray (schema, name = null) {
   }
 
   if (!field.attrs.type) {
+    field.isArrayField = true
     field.attrs.type = 'text'
   } else if (field.attrs.type === 'select') {
-    field.attrs.multiple = field.minItems > 1
+    field.attrs.multiple = field.schemaType === 'array'
     field.attrs.value = field.attrs.value || field.attrs.multiple ? [] : ''
 
     if (field.attrs.value.length === 0) {
-      field.attrs.value = field.attrs.multiple
-        ? arrayValues(field)
-        : singleValue(field)
+      if (field.attrs.multiple) {
+        field.isArrayField = true
+        field.attrs.value = arrayUnorderedValues(field)
+      } else {
+        field.attrs.value = singleValue(field)
+      }
     }
   }
 
