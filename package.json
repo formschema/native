@@ -5,7 +5,6 @@
   "main": "dist/FormSchema.js",
   "scripts": {
     "demo": "cd demo && npm run serve",
-    "postinstall": "cd demo && npm install",
     "pretest": "npm run lint",
     "test": "vue-cli-service test --colors --testMatch '<rootDir>/test/specs/*.spec.js'",
     "lint": "vue-cli-service lint",
