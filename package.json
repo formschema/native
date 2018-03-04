@@ -10,8 +10,8 @@
     "lint": "vue-cli-service lint",
     "prepublish": "npm test",
     "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls",
-    "posttest": "make readme",
-    "build": "vue-cli-service build --target lib"
+    "readme": "vuedoc.md --join src/components/*.js --ignore-name --ignore-data --section 'FormSchema API' --output README.md",
+    "build": "vue-cli-service build --target lib && npm run readme"
   },
   "repository": {
     "type": "git",
