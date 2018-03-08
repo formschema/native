@@ -4,41 +4,27 @@ import FormSchemaInputArrayElement from './FormSchemaInputArrayElement'
 export default {
   functional: true,
   render (createElement, { props, slots, listeners }) {
-    const { description, field, value = field.attrs.value, input, disableWrappingLabel } = props
+    const { field, value, input, disableWrappingLabel } = props
     const children = slots().default || []
-    const descriptionValue = description || field.description
-
-    const descriptionElement = descriptionValue
-      ? createElement(components.inputdesc.component, descriptionValue)
-      : null
 
     if (field.isArrayField && field.attrs.type !== 'select') {
-      if (field.attrs.type === 'checkbox') {
-        const name = field.attrs.name
-        const data = {
-          props: {
-            name, field, value, input
-          },
-          on: listeners
-        }
+      const name = field.attrs.name
+      const data = {
+        props: { name, field, value, input },
+        on: listeners
+      }
 
+      if (field.attrs.type === 'checkbox') {
         return createElement(components.inputwrapper.component, data, [
-          createElement(FormSchemaInputArrayElement, data, children),
-          descriptionElement
+          createElement(FormSchemaInputArrayElement, data, children)
         ])
       }
 
       const inputs = Array.apply(null, Array(field.itemsNum)).map((v, i) => {
-        const name = inputName(field, i)
-
+        data.props.name = inputName(field, i)
         input.data.attrs['data-fs-index'] = i
 
-        return createElement(FormSchemaInputArrayElement, {
-          props: {
-            name, field, value, input
-          },
-          on: listeners
-        }, children)
+        return createElement(FormSchemaInputArrayElement, data, children)
       })
 
       const button = components.arraybutton
@@ -56,7 +42,6 @@ export default {
       }
 
       inputs.push(createElement(button.component, buttonData))
-      inputs.push(descriptionElement)
 
       return createElement(components.inputwrapper.component, {
         props: { field }
@@ -68,8 +53,7 @@ export default {
     }
 
     const nodes = [
-      createElement(input.element.component, input.data, children),
-      descriptionElement
+      createElement(input.element.component, input.data, children)
     ]
 
     if (disableWrappingLabel) {

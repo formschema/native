@@ -238,7 +238,7 @@ describe('FormSchemaField', () => {
       }
     })
 
-    const expected = '<label><span data-required-field="false">choices</span><fieldset name="fieldName"><legend>choices description</legend><div><label><span data-required-field="false">l1</span><input name="fieldName" type="checkbox" value="v0"><small>choices description</small></label><label><span data-required-field="false">l2</span><input name="fieldName" type="checkbox" value="v1" checked="checked"><small>choices description</small></label></div></fieldset><small>choices description</small></label>'
+    const expected = '<label><span data-required-field="false">choices</span><fieldset name="fieldName"><legend>choices description</legend><div><label><span data-required-field="false">l1</span><input name="fieldName" type="checkbox" value="v0"></label><label><span data-required-field="false">l2</span><input name="fieldName" type="checkbox" value="v1" checked="checked"></label></div></fieldset></label>'
 
     expect(wrapper.html()).toEqual(expected)
 
@@ -392,14 +392,14 @@ describe('FormSchemaField', () => {
     loadFields(schema, fields)
 
     const field = fields[0]
-    const value = ['v1']
+    const value = ['v0']
     const wrapper = mount(component, {
       context: {
         props: { field, value }
       }
     })
 
-    const expected = '<label><span data-required-field="true">choices</span><select multiple="multiple" required="required" name="fieldName"><option value=""></option><option value="v0">l1</option><option value="v1" selected="selected">l2</option></select><small>choices description</small></label>'
+    const expected = '<label><span data-required-field="true">choices</span><select multiple="multiple" required="required" name="fieldName"><option value=""></option><option value="v0" selected="selected">l1</option><option value="v1">l2</option></select><small>choices description</small></label>'
 
     expect(wrapper.html()).toEqual(expected)
   })

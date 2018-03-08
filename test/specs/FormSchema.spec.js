@@ -43,8 +43,8 @@ describe('FormSchema', () => {
       expect(component.functional).toBe(undefined)
     })
 
-    it('should have the form-schema name', () => {
-      expect(component.name).toEqual('form-schema')
+    it('should have the FormSchema name', () => {
+      expect(component.name).toEqual('FormSchema')
     })
 
     it('should have a changed method', () => {

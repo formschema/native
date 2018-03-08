@@ -6,7 +6,7 @@ import FormSchemaFieldSelectOption from './FormSchemaFieldSelectOption'
 export default {
   functional: true,
   render (createElement, { props, listeners }) {
-    const { field, value = field.attrs.value } = props
+    const { field, value } = props
 
     const input = getInput({ field, listeners })
     const children = []
@@ -25,10 +25,9 @@ export default {
         if (field.hasOwnProperty('items')) {
           field.items.forEach((item) => {
             children.push(createElement(FormSchemaFieldCheckboxItem, {
+              fieldParent: field,
               props: {
-                item,
-                value,
-                field: { ...field, label: item.label, isArrayField: false }
+                item, value, field: { ...field, isArrayField: false }
               },
               on: listeners
             }))
@@ -40,12 +39,8 @@ export default {
         if (field.hasOwnProperty('items')) {
           field.items.forEach((item) => {
             children.push(createElement(FormSchemaFieldCheckboxItem, {
-              props: {
-                item,
-                value,
-                field: { ...field, label: item.label },
-                checked: value.includes(item.value)
-              },
+              fieldParent: field,
+              props: { item, value, field },
               on: listeners
             }))
           })

@@ -30,69 +30,76 @@ const tags = {
 
 export const components = {}
 
-export function renderFieldset (createElement, { data, props, slots }) {
+export function renderFieldset (h, { data, props, slots }) {
+  const name = data.field.attrs.name
+  const description = data.field.description
+
   const children = [
-    createElement(components.inputswrapper.component, slots().default)
+    h(components.inputswrapper.component, slots().default)
   ]
 
-  if (data.$field.description) {
-    children.unshift(createElement(
-      components.legend.component, {
-        //         [argName(components.legend)]: legend
-      }, data.$field.description))
+  if (description) {
+    children.unshift(h(components.legend.component, description))
+
+    delete data.field.description
   }
 
-  return createElement('fieldset', {
-    attrs: {
-      name: data.$field.attrs.name
-    }
-  }, children)
+  return h('fieldset', { attrs: { name } }, children)
 }
 
-export function renderLabel (createElement, { data, props, slots }) {
+export function renderInput (h, { data, props, slots }) {
   const nodes = slots().default || []
-  const field = props.field || data.$field
+  const field = props.field
 
-  if (!field.label) {
-    return nodes.length === 1 ? nodes[0] : nodes
+  if (field.description) {
+    nodes.push(h(components.inputdesc.component, {
+      props: { field }
+    }, field.description))
   }
 
-  nodes.unshift(createElement('span', {
+  if (!field.label) {
+    if (nodes.length > 1) {
+      return h('div', nodes)
+    }
+
+    return nodes[0]
+  }
+
+  nodes.unshift(h('span', {
     attrs: {
       'data-required-field': field.attrs.required ? 'true' : 'false'
     }
   }, field.label))
 
-  return createElement('label', nodes)
+  return h('label', nodes)
 }
 
-export const renderButton = (type, label) => (createElement, { data }) => {
-  if (!data.attrs) {
-    data.attrs = {}
-  }
-
-  data.attrs.type = type
-
-  return createElement('button', data, label)
+export const renderButton = (type, label) => (h, { listeners }) => {
+  return h('button', { attrs: { type }, on: listeners }, label)
 }
 
 export function set (type, component, option = null, native = false) {
+  if (typeof component !== 'string') {
+    component.functional = true
+  }
+
   components[type] = {
     type,
     native,
-    tagName: component,
     component: typeof component === 'string' ? {
       functional: true,
-      render (createElement, { data, slots }) {
+      render (h, { data, slots }) {
         const nodes = slots().default || []
 
-        merge(data, option)
+        if (option) {
+          merge(data, option)
+        }
 
         if (nodes.length === 0 && Object.keys(data).length === 0) {
           return null
         }
 
-        return createElement(component, data, nodes)
+        return h(component, data, nodes)
       }
     } : component
   }
@@ -113,7 +120,7 @@ export function init () {
 
   components.radiogroup.component.render = renderFieldset
   components.checkboxgroup.component.render = renderFieldset
-  components.inputwrapper.component.render = renderLabel
+  components.inputwrapper.component.render = renderInput
   components.submitbutton.component.render = renderButton('submit', 'Submit')
   components.arraybutton.component.render = renderButton('button', 'Add')
 }
@@ -126,23 +133,23 @@ export const groupedArrayTypes = [
   'radio', 'checkbox', 'input', 'textarea'
 ]
 
-export function input ({ field, ref, $field = field, listeners = {} }) {
+export function input ({ field, fieldParent = null, listeners = {} }) {
   const { type } = field.attrs
   const element = field.hasOwnProperty('items') && groupedArrayTypes.includes(type)
     ? components[`${type}group`] || components.defaultGroup
     : components[type] || components.text
 
-  return {
-    ref,
-    element: element,
-    data: {
-      $field,
-      props: {},
-      domProps: {},
-      [argName(element)]: { ...field.attrs },
-      on: listeners
-    }
+  const data = {
+    field,
+    fieldParent,
+    attrs: {},
+    props: {},
+    domProps: {},
+    [argName(element)]: { ...field.attrs },
+    on: listeners
   }
+
+  return { element, data }
 }
 
 export const fieldTypesAsNotArray = [

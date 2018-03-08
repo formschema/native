@@ -6,10 +6,8 @@ import FormSchemaButtons from './FormSchemaButtons'
 
 init()
 
-export const setComponent = set
-
-export const FormSchema = {
-  name: 'form-schema',
+export default {
+  name: 'FormSchema',
   props: {
     /**
      * The JSON Schema object.
@@ -143,7 +141,7 @@ export const FormSchema = {
 
     return createElement(components.formwrapper.component, nodes)
   },
-  setComponent: setComponent,
+  setComponent: set,
   methods: {
     /**
      * @private
@@ -360,5 +358,3 @@ export const FormSchema = {
     }
   }
 }
-
-export default FormSchema

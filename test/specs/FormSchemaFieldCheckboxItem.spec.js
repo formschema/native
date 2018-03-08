@@ -50,7 +50,7 @@ describe('FormSchemaFieldCheckboxItem', () => {
     })
 
     const expectedInput = '<input name="checkbox-name" type="checkbox" value="checkbox value">'
-    const expectedLabelInput = '<label><span data-required-field="false">checkbox label</span><input name="checkbox-name" type="checkbox" value="checkbox value"><small>choices description</small></label>'
+    const expectedLabelInput = '<label><span data-required-field="false">checkbox label</span><input name="checkbox-name" type="checkbox" value="checkbox value"></label>'
 
     expect(wrapper.isVueInstance()).toBeTruthy()
     expect(wrapper.find('input').html()).toEqual(expectedInput)
