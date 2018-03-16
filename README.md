@@ -9,7 +9,8 @@ npm install --save vue-json-schema
 ```
 
 ## Demo
-- [Demo with ElementUI](https://github.com/demsking/vue-json-schema-demo-elementui)
+- [Demo Repository with ElementUI](https://github.com/demsking/vue-json-schema-demo-elementui)
+- [Codesanbox demo with ElementUI](https://codesandbox.io/s/mjpv57kjwx)
 
 ## FormSchema API
 
