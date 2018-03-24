@@ -213,8 +213,8 @@ describe('FormSchemaField', () => {
 
       input.trigger('click')
 
-//       expect(Object.keys(wrapper.emitted())).toEqual(['input', 'change'])
-//       expect(vm.data).toEqual(expectedData)
+      expect(spyInput.calledOnce).toBeTruthy()
+      expect(spyChange.called).toBeTruthy()
     })
   })
 
