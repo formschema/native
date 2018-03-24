@@ -5,6 +5,7 @@ import { loadFields } from '@/lib/parser'
 import { init, initFields } from '@/lib/components'
 
 import component from '@/components/FormSchemaField.js'
+import sinon from 'sinon'
 
 /* global describe it expect */
 
@@ -114,7 +115,7 @@ describe('FormSchemaField', () => {
     expect(textarea.html()).toEqual('<textarea name="fieldName">Sébastien</textarea>')
   })
 
-  it('should successfully render the component with field.attrs.type === redio', () => {
+  describe('component with field.attrs.type === redio', () => {
     const field = {
       attrs: {
         name: 'fieldName',
@@ -122,24 +123,47 @@ describe('FormSchemaField', () => {
         value: 'Hello'
       }
     }
-    const wrapper = mount(component, {
-      context: {
-        props: { field }
-      }
+
+    it('should successfully render the component', () => {
+      const wrapper = mount(component, {
+        context: {
+          props: { field }
+        }
+      })
+
+      expect(wrapper.findAll('input').length).toEqual(1)
+      expect(wrapper.findAll('label').length).toEqual(0)
+
+      const input = wrapper.find('input')
+      const expected = '<input name="fieldName" type="radio" value="Hello">'
+
+      expect(input.html()).toEqual(expected)
     })
 
-    expect(wrapper.findAll('input').length).toEqual(1)
-    expect(wrapper.findAll('label').length).toEqual(0)
+    it('should successfully emit event', () => {
+      const spyInput = sinon.spy()
+      const spyChange = sinon.spy()
+      const listeners = {
+        input: spyInput,
+        change: spyChange
+      }
+      const wrapper = mount(component, {
+        context: {
+          props: { field },
+          on: listeners
+        }
+      })
 
-    const input = wrapper.find('input')
-    const expected = '<input name="fieldName" type="radio" value="Hello">'
+      const input = wrapper.find('input')
 
-    expect(input.html()).toEqual(expected)
+      input.element.value = 'Sébastien'
+      input.trigger('input')
 
-    // event
-//     input.element.value = 'Sébastien'
-//
-//     expect(input.html()).toEqual('<input name="fieldName" type="radio" value="Sébastien">')
+      expect(spyInput.calledOnce).toBeTruthy()
+      expect(spyChange.called).toBe(false)
+
+      expect(input.html()).toEqual('<input name="fieldName" type="radio" value="Sébastien">')
+    })
   })
 
   it('should successfully render the component with field.attrs.type === radio and items', () => {
