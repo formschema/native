@@ -337,60 +337,62 @@ describe('FormSchemaField', () => {
     })
   })
 
-  it('should render the select element with type === string and the enum field', () => {
-    const fields = []
-    const schema = {
-      type: 'string',
-      title: 'choices',
-      description: 'choices description',
-      enum: [
-        { label: 'l1', value: 'v0' },
-        { label: 'l2', value: 'v1' }
-      ]
-    }
-
-    loadFields(schema, fields)
-
-    const field = fields[0]
-    const value = ''
-    const wrapper = mount(component, {
-      context: {
-        props: { field, value }
+  describe('component with field.attrs.type === string and the enum field', () => {
+    it('should render the select element', () => {
+      const fields = []
+      const schema = {
+        type: 'string',
+        title: 'choices',
+        description: 'choices description',
+        enum: [
+          { label: 'l1', value: 'v0' },
+          { label: 'l2', value: 'v1' }
+        ]
       }
+
+      loadFields(schema, fields)
+
+      const field = fields[0]
+      const value = ''
+      const wrapper = mount(component, {
+        context: {
+          props: { field, value }
+        }
+      })
+
+      const expected = '<label><span data-required-field="false">choices</span><select><option value="v0">l1</option><option value="v1">l2</option></select><small>choices description</small></label>'
+
+      expect(wrapper.html()).toEqual(expected)
     })
 
-    const expected = '<label><span data-required-field="false">choices</span><select><option value="v0">l1</option><option value="v1">l2</option></select><small>choices description</small></label>'
-
-    expect(wrapper.html()).toEqual(expected)
-  })
-
-  it('should render the select element with type === string and the enum field with stringify values', () => {
-    const fields = []
-    const schema = {
-      type: 'object',
-      properties: {
-        list: {
-          type: 'string',
-          title: 'choices',
-          description: 'choices description',
-          enum: ['v0', 'v1']
+    it('should render the select element with stringify values', () => {
+      const fields = []
+      const schema = {
+        type: 'object',
+        properties: {
+          list: {
+            type: 'string',
+            title: 'choices',
+            description: 'choices description',
+            enum: ['v0', 'v1']
+          }
         }
       }
-    }
 
-    loadFields(schema, fields)
+      loadFields(schema, fields)
 
-    const field = fields[0]
-    const value = ''
-    const wrapper = mount(component, {
-      context: {
-        props: { field, value }
-      }
+      const field = fields[0]
+      const value = ''
+      const wrapper = mount(component, {
+        context: {
+          props: { field, value }
+        }
+      })
+
+      const expected = '<label><span data-required-field="false">choices</span><select name="list"><option value="v0">v0</option><option value="v1">v1</option></select><small>choices description</small></label>'
+
+      expect(wrapper.html()).toEqual(expected)
     })
-
-    const expected = '<label><span data-required-field="false">choices</span><select name="list"><option value="v0">v0</option><option value="v1">v1</option></select><small>choices description</small></label>'
-
-    expect(wrapper.html()).toEqual(expected)
   })
 
   it('should render the select element with type === string and the enum field with default value', () => {
