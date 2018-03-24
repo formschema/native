@@ -273,7 +273,7 @@ describe('FormSchemaField', () => {
     })
   })
 
-  it('should successfully render the component with field.attrs.type === checkbox and items', () => {
+  describe('component with field.attrs.type === checkbox and items', () => {
     const fields = []
     const schema = {
       type: 'array',
@@ -291,32 +291,50 @@ describe('FormSchemaField', () => {
 
     loadFields(schema, fields)
 
-    const field = fields[0]
     const value = ['v1']
-    const wrapper = mount(component, {
-      context: {
-        props: { field, value }
-      }
+    const field = fields[0]
+
+    it('should successfully render the component', () => {
+      const wrapper = mount(component, {
+        context: {
+          props: { field, value }
+        }
+      })
+
+      const expected = '<label><span data-required-field="false">choices</span><fieldset name="fieldName"><legend>choices description</legend><div><label><span data-required-field="false">l1</span><input name="fieldName" type="checkbox" value="v0"></label><label><span data-required-field="false">l2</span><input name="fieldName" type="checkbox" value="v1" checked="checked"></label></div></fieldset></label>'
+
+      expect(wrapper.html()).toEqual(expected)
     })
 
-    const expected = '<label><span data-required-field="false">choices</span><fieldset name="fieldName"><legend>choices description</legend><div><label><span data-required-field="false">l1</span><input name="fieldName" type="checkbox" value="v0"></label><label><span data-required-field="false">l2</span><input name="fieldName" type="checkbox" value="v1" checked="checked"></label></div></fieldset></label>'
+    it('should successfully emit event', () => {
+      const spyInput = sinon.spy()
+      const spyChange = sinon.spy()
+      const listeners = {
+        input: spyInput,
+        change: spyChange
+      }
+      const wrapper = mount(component, {
+        context: {
+          props: { field, value },
+          on: listeners
+        }
+      })
 
-    expect(wrapper.html()).toEqual(expected)
+      const input = wrapper.find('input')
+      const input1 = wrapper.findAll('input').at(1)
 
-    // event
-//     const input = wrapper.find('input')
-//     const input1 = wrapper.findAll('input').at(1)
-//
-//     expect(vm.data).toEqual({ fieldName: [ 'v1' ] })
-//
-//     input.trigger('click')
-//
-//     expect(Object.keys(wrapper.emitted())).toEqual(['input', 'change'])
-//     expect(vm.data).toEqual({ fieldName: [ 'v0', 'v1' ] })
-//
-//     input1.trigger('click')
-//
-//     expect(vm.data).toEqual({ fieldName: [ 'v0' ] })
+      input.trigger('click')
+
+      expect(input.element.checked).toBe(true)
+      expect(spyInput.firstCall).toBeTruthy()
+      expect(spyChange.firstCall).toBeTruthy()
+
+      input1.trigger('click')
+
+      expect(input1.element.checked).toBe(false)
+      expect(spyInput.secondCall).toBeTruthy()
+      expect(spyChange.secondCall).toBeTruthy()
+    })
   })
 
   it('should render the select element with type === string and the enum field', () => {
