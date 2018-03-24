@@ -39,6 +39,41 @@ describe('FormSchemaInput', () => {
     expect(wrapper.html()).toEqual(expected)
   })
 
+  it('should successfully render the component with disableWrappingLabel', () => {
+    const field = {
+      label: 'array label',
+      attrs: {
+        name: 'fieldName'
+      }
+    }
+    const input = {
+      data: {
+        attrs: {
+          name: 'fieldName',
+          type: 'text',
+          value: 'Hello'
+        }
+      },
+      element: components.text,
+      native: true
+    }
+    const value = 'Hello'
+    const disableWrappingLabel = true
+    const wrapper = mount({
+      render (createElement) {
+        return createElement('form', [
+          createElement(component, {
+            props: { field, value, input, disableWrappingLabel }
+          })
+        ])
+      }
+    })
+    const expected = '<form><input name="fieldName" type="text" value="Hello"></form>'
+
+    expect(wrapper.isVueInstance()).toBeTruthy()
+    expect(wrapper.html()).toEqual(expected)
+  })
+
   it('should successfully render a array field component', () => {
     const field = {
       attrs: {
