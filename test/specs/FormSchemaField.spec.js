@@ -218,7 +218,7 @@ describe('FormSchemaField', () => {
     })
   })
 
-  it('should successfully render the component with field.attrs.type === checkbox', () => {
+  describe('component with field.attrs.type === checkbox', () => {
     const field = {
       attrs: {
         name: 'fieldName',
@@ -227,30 +227,50 @@ describe('FormSchemaField', () => {
       }
     }
     const value = field.attrs.value
-    const wrapper = mount(component, {
-      context: {
-        props: { field, value }
-      }
+
+    it('should successfully render the component', () => {
+      const wrapper = mount(component, {
+        context: {
+          props: { field, value }
+        }
+      })
+
+      const expected = '<input name="fieldName" type="checkbox" value="Hello">'
+
+      expect(wrapper.html()).toEqual(expected)
     })
 
-    const expected = '<input name="fieldName" type="checkbox" value="Hello">'
+    it('should successfully emit event', () => {
+      const spyInput = sinon.spy()
+      const spyChange = sinon.spy()
+      const listeners = {
+        input: spyInput,
+        change: spyChange
+      }
+      const wrapper = mount(component, {
+        context: {
+          props: { field, value },
+          on: listeners
+        }
+      })
 
-    expect(wrapper.html()).toEqual(expected)
+      const input = wrapper.find('input')
+      const expectedData = {
+        fieldName: input.element.value
+      }
 
-    // event
-//     const input = wrapper.find('input')
-//     const expectedData = {
-//       fieldName: input.element.value
-//     }
-//
-//     input.element.dispatchEvent(new Event('click'))
-//
-//     expect(input.element.checked).toBe(true)
-//     expect(Object.keys(wrapper.emitted())).toEqual(['input', 'change'])
-//     expect(vm.data).toEqual(expectedData)
-//
-//     input.element.dispatchEvent(new Event('click'))
-//     expect(input.element.checked).toBe(false)
+      input.trigger('click')
+
+      expect(input.element.checked).toBe(true)
+      expect(spyInput.firstCall).toBeTruthy()
+      expect(spyChange.firstCall).toBeTruthy()
+
+      input.trigger('click')
+
+      expect(input.element.checked).toBe(false)
+      expect(spyInput.secondCall).toBeTruthy()
+      expect(spyChange.secondCall).toBeTruthy()
+    })
   })
 
   it('should successfully render the component with field.attrs.type === checkbox and items', () => {
