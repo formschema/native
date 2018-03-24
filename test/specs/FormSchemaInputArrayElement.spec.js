@@ -81,4 +81,38 @@ describe('FormSchemaInputArrayElement', () => {
     expect(wrapper.isVueInstance()).toBeTruthy()
     expect(wrapper.html()).toEqual(expected)
   })
+
+  it('should successfully render the component with missing name attr', () => {
+    const field = {
+      attrs: {
+        name: 'fieldName'
+      }
+    }
+    const input = {
+      data: {
+        attrs: {
+          type: 'text',
+          value: 'Hello'
+        }
+      },
+      element: components.text,
+      native: true
+    }
+    const vm = {
+      inputValues: {
+      }
+    }
+    const value = {
+      [field.attrs.name]: 'Hello'
+    }
+    const wrapper = mount(component, {
+      context: {
+        props: { field, value, input }
+      }
+    })
+    const expected = '<input type="text" value="Hello" name="fieldName">'
+
+    expect(wrapper.isVueInstance()).toBeTruthy()
+    expect(wrapper.html()).toEqual(expected)
+  })
 })
