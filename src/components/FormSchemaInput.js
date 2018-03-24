@@ -1,6 +1,8 @@
 import { components, inputName, argName } from '@/lib/components'
 import FormSchemaInputArrayElement from './FormSchemaInputArrayElement'
 
+const unwrappingElements = ['checkbox', 'radio']
+
 export default {
   functional: true,
   render (createElement, { props, slots, listeners }) {
@@ -14,7 +16,7 @@ export default {
         on: listeners
       }
 
-      if (field.attrs.type === 'checkbox') {
+      if (unwrappingElements.includes(field.attrs.type)) {
         return createElement(components.inputwrapper.component, data, [
           createElement(FormSchemaInputArrayElement, data, children)
         ])

@@ -166,7 +166,7 @@ describe('FormSchemaField', () => {
     })
   })
 
-  it('should successfully render the component with field.attrs.type === radio and items', () => {
+  describe('component with field.attrs.type === radio and items', () => {
     const field = {
       isArrayField: true,
       attrs: {
@@ -179,26 +179,43 @@ describe('FormSchemaField', () => {
       ]
     }
     const value = ['1']
-    const wrapper = mount(component, {
-      context: {
-        props: { field, value }
-      }
+
+    it('should successfully render the component', () => {
+      const wrapper = mount(component, {
+        context: {
+          props: { field, value }
+        }
+      })
+
+      const expected = '<fieldset name="fieldName"><div><label><span data-required-field="false">l1</span><input name="fieldName" type="radio" value="0"></label><label><span data-required-field="false">l2</span><input name="fieldName" type="radio" value="1" checked="checked"></label></div></fieldset>'
+
+      expect(wrapper.html()).toEqual(expected)
     })
 
-    const expected = '<div><fieldset name="fieldName"><div><label><span data-required-field="false">l1</span><input name="fieldName" type="radio" value="0"></label><label><span data-required-field="false">l2</span><input name="fieldName" type="radio" value="1" checked="checked"></label></div></fieldset><button type="button">Add</button></div>'
+    it('should successfully emit event', () => {
+      const spyInput = sinon.spy()
+      const spyChange = sinon.spy()
+      const listeners = {
+        input: spyInput,
+        change: spyChange
+      }
+      const wrapper = mount(component, {
+        context: {
+          props: { field, value },
+          on: listeners
+        }
+      })
 
-    expect(wrapper.html()).toEqual(expected)
+      const input = wrapper.find('input')
+      const expectedData = {
+        fieldName: input.element.value
+      }
 
-    // event
-//     const input = wrapper.find('input')
-//     const expectedData = {
-//       fieldName: input.element.value
-//     }
-//
-//     input.trigger('click')
-//
-//     expect(Object.keys(wrapper.emitted())).toEqual(['input', 'change'])
-//     expect(vm.data).toEqual(expectedData)
+      input.trigger('click')
+
+//       expect(Object.keys(wrapper.emitted())).toEqual(['input', 'change'])
+//       expect(vm.data).toEqual(expectedData)
+    })
   })
 
   it('should successfully render the component with field.attrs.type === checkbox', () => {
