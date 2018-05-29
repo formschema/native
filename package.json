@@ -58,7 +58,9 @@
     "vue-template-compiler": "^2.5.13",
     "webpack": "^3.10.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "lodash": "^4.17.10"
+  },
   "jest": {
     "collectCoverage": true,
     "collectCoverageFrom": [
