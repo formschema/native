@@ -1,11 +1,15 @@
 'use strict'
 
+import _ from 'lodash'
+
 import {
   init,
   option,
   components,
   elementOptions,
-  defineComponent
+  defineComponent,
+  initObjectAttribute,
+  initFields
 } from '../../src/lib/components'
 
 /* global describe it expect beforeEach */
@@ -179,5 +183,56 @@ describe('lib/components', () => {
 
       expect(elementOptions(vm, el, {}, field)).toEqual(expected)
     })
+  })
+
+  describe('initObjectAttribute => init data object for nested attributes', () => {
+    let value = {
+      test: 'test data',
+      nested: {
+        var: 'test var'
+      }
+    }
+    let data = {}
+    let schema = {
+      'test': {},
+      'nested.var': {}
+    }
+
+    // init the data getter-setter
+    Object.keys(schema).forEach((key) => {
+      initObjectAttribute(data, key)
+      data[key] = _.get(value, key)
+    })
+
+    expect(data['test']).toEqual('test data')
+    expect(data['nested.var']).toEqual('test var')
+  })
+
+  describe('initFields', () => {
+    let value = {
+      test: 'test data',
+      nested: {
+        var: 'test var'
+      }
+    }
+    let data = {}
+    let fields = [
+      { attrs: {name: 'test'} },
+      { attrs: {name: 'nested.var'} }
+    ]
+
+    const vm = {
+      value,
+      data,
+      fields,
+      default: {},
+      $emit () {}
+    }
+
+    initFields(vm)
+
+    expect(vm.data['test']).toEqual('test data')
+    expect(vm.data['nested.var']).toEqual('test var')
+    expect(vm.default['nested.var']).toEqual('test var')
   })
 })

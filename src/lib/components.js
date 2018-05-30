@@ -1,5 +1,6 @@
 'use strict'
 
+import _ from 'lodash'
 import { equals } from './object'
 
 const tags = {
@@ -152,11 +153,41 @@ export const fieldTypesAsNotArray = [
 
 export const inputName = (field, index) => `${field.attrs.name}-${index}`
 
+export const initObjectAttribute = (object, attrName) => {
+  // inits the data store obj
+  if (!object.__data) {
+    Object.defineProperty(object, '__data', {
+      value: {},
+      enumerable: false
+    })
+    // object.__data = {}
+  }
+  // inits the data value
+  _.set(object.__data, attrName, _.get(object, attrName))
+
+  // allows object dot notation getter/setter
+  // eg. alert(o['sub.key'])
+  //     o['sub.key'] = value
+  Object.defineProperty(object, attrName, {
+    set: (value) => {
+      return _.set(object.__data, attrName, value)
+    },
+    get: () => {
+      return _.get(object.__data, attrName)
+    },
+    enumerable: true
+  })
+}
+
 export function initFields (vm) {
   vm.fields.forEach((field) => {
     const attrs = field.attrs
 
-    vm.data[attrs.name] = vm.value[attrs.name] || attrs.value
+    // defines the vm data setter and getter
+    initObjectAttribute(vm.data, attrs.name)
+    initObjectAttribute(vm.default, attrs.name)
+
+    vm.data[attrs.name] = _.get(vm.value, attrs.name) || attrs.value
 
     if (!fieldTypesAsNotArray.includes(attrs.type) && field.schemaType === 'array') {
       field.isArrayField = true
