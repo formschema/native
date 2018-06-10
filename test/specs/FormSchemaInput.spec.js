@@ -201,7 +201,7 @@ describe('component', () => {
     const wrapper = mount(form)
 
     vm.$emit = wrapper.vm.$emit
-    vm.$forceUpdate = wrapper.vm.$forceUpdate
+    vm.$forceUpdate = wrapper.vm.$forceUpdate.bind(wrapper.vm)
 
     expect(wrapper.findAll('form').length).toEqual(1)
     expect(wrapper.find('form').findAll('input').length).toEqual(2)
