@@ -7,10 +7,14 @@ coverage
 .directory
 .eslintrc
 .gitignore
-.travis.yml
+.babelrc
+Dockerfile
 Makefile
 *.tgz
-*.js
+/*.js
 *.bak
 *.vue
 dist/demo.html
+demo
+*.sh
+*.yml
