@@ -4,6 +4,7 @@ cache:
   key: ${CI_COMMIT_REF_SLUG}
   paths:
     - node_modules/
+    - dist/
 
 stages:
   - setup
@@ -48,9 +49,6 @@ package:
   stage: publish
   script:
     - npm pack
-  cache:
-    paths:
-      - dist/
   artifacts:
     paths:
       - ./*.tgz
