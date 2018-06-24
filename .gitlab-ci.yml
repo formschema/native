@@ -25,6 +25,7 @@ dependencies scan:
   stage: test
   script:
     - npm audit
+  allow_failure: true
 
 test:
   stage: test
