@@ -27,7 +27,7 @@ test:
     - npm test
   coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
 
-webpack:
+webpack build:
   stage: build
   script:
     - npm run build
