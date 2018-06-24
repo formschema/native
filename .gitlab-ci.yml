@@ -21,7 +21,7 @@ code quality:
   script:
     - npm run lint
 
-outdated:
+npm outdated:
   stage: test
   script:
     - npm outdated
