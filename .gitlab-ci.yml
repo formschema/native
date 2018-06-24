@@ -6,11 +6,14 @@ cache:
     - node_modules/
 
 stages:
+  - setup
   - test
   - publish
 
-before_script:
-  - npm ci
+setup:
+  stage: setup
+  script:
+    - npm ci
 
 lint:
   stage: test
