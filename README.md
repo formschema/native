@@ -2,7 +2,7 @@
 
 Vue component form based on JSON Schema and Native HTML
 
-[![Build Status](https://travis-ci.org/formschema/form-schema.svg?branch=master)](https://travis-ci.org/formschema/form-schema) [![Coverage Status](https://coveralls.io/repos/gitlab/formschema/form-schema/badge.svg?branch=master)](https://coveralls.io/gitlab/formschema/form-schema?branch=master)
+[![npm](https://img.shields.io/npm/v/@formschema/native.svg)](https://www.npmjs.com/package/@formschema/native) [![Build status](https://gitlab.com/formschema/native/badges/master/build.svg)](https://gitlab.com/formschema/native/pipelines) [![Test coverage](https://gitlab.com/formschema/native/badges/master/coverage.svg)](https://gitlab.com/formschema/native/-/jobs)
 
 ## Install
 ```sh
