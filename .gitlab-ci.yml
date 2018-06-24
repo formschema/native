@@ -21,6 +21,12 @@ code quality:
   script:
     - npm run lint
 
+outdated:
+  stage: test
+  script:
+    - npm outdated
+  allow_failure: true
+
 security scan:
   stage: test
   script:
