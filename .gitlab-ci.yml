@@ -42,7 +42,7 @@ unit test:
 webpack build:
   stage: build
   script:
-    - npm audit
+    - npm build
 
 publish:
   stage: publish
