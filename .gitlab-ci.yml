@@ -44,6 +44,14 @@ webpack build:
   script:
     - npm build
 
+package:
+  stage: publish
+  script:
+    - npm pack
+  artifacts:
+    paths:
+      - *.tgz
+
 publish:
   stage: publish
   only:
