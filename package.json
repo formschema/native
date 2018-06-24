@@ -6,7 +6,7 @@
   "scripts": {
     "demo": "cd demo && npm run serve",
     "pretest": "npm run lint",
-    "test": "vue-cli-service test --colors --testMatch '<rootDir>/test/specs/*.spec.js'",
+    "test": "vue-cli-service test:unit --colors --testMatch '<rootDir>/test/specs/*.spec.js'",
     "lint": "vue-cli-service lint",
     "prepublish": "npm test",
     "readme": "vuedoc.md --join src/components/*.js --ignore-name --ignore-data --section 'FormSchema API' --output README.md",
