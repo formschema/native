@@ -4,14 +4,21 @@ stages:
   - test
   - publish
 
+before_script:
+  - npm ci
+
+lint:
+  stage: test
+  script:
+    - npm run lint
+
 test:
   stage: test
   script:
-    - npm ci
     - npm test
   coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
 
-publish to npm:
+publish:
   stage: publish
   only:
     - tags
