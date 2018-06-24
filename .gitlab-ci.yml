@@ -8,6 +8,7 @@ cache:
 stages:
   - setup
   - test
+  - build
   - publish
 
 setup:
@@ -25,6 +26,11 @@ test:
   script:
     - npm test
   coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
+
+build:
+  stage: build
+  script:
+    - npm run build
 
 publish:
   stage: publish
