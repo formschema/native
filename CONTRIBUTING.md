@@ -154,18 +154,19 @@ All JavaScript must adhere to [JavaScript Standard Style](https://standardjs.com
 
 * Prefer the object spread operator (`{ ...anotherObj }`) to `Object.assign()`
 * Inline `export`s with expressions whenever possible
-  ```js
-  // Use this:
-  export default class ClassName {
 
-  }
+```js
+// Use this:
+export default class ClassName {
 
-  // Instead of:
-  class ClassName {
+}
 
-  }
-  export default ClassName
-  ```
+// Instead of:
+class ClassName {
+
+}
+export default ClassName
+```
 
 ### Specs Styleguide
 - Include thoughtfully-worded, well-structured [Jasmine](https://jasmine.github.io/) specs in the `./spec` folder.
