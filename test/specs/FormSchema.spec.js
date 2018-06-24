@@ -174,8 +174,6 @@ describe('FormSchema', () => {
       input.element.value = expected.name
       input.trigger('input')
 
-      wrapper.update()
-
       expect('input' in wrapper.emitted()).toBe(true)
       expect(wrapper.emitted('input')[0][0]).toEqual(expected)
 
@@ -216,8 +214,6 @@ describe('FormSchema', () => {
       input.element.value = expected.name
       input.trigger('input')
 
-      wrapper.update()
-
       expect(wrapper.vm.data).toEqual(expected)
 
       wrapper.vm.reset()
@@ -231,14 +227,12 @@ describe('FormSchema', () => {
       })
 
       wrapper.vm.setErrorMessage('error message')
-      wrapper.update()
 
       expect(wrapper.vm.error).toEqual('error message')
       expect(wrapper.findAll('div').length).toEqual(3)
       expect(wrapper.findAll('div').at(1).html()).toEqual('<div>error message</div>')
 
       wrapper.vm.clearErrorMessage()
-      wrapper.update()
 
       expect(wrapper.vm.error).toEqual(null)
       expect(wrapper.findAll('div').length).toEqual(2)
