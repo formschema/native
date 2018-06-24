@@ -10,7 +10,12 @@
       ]
     },
     "production": {
-      "presets": ["@babel/preset-es2015", "@babel/preset-stage-2"],
+      "presets": [
+        "@babel/preset-es2015",
+        ["@babel/preset-stage-2", {
+          "decoratorsLegacy": true
+        }]
+      ],
       "plugins": [
         ["@babel/plugin-transform-runtime", {
           "helpers": false,
