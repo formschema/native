@@ -11,7 +11,7 @@ stages:
   - build
   - publish
 
-setup:
+npm ci:
   stage: setup
   script:
     - npm ci
@@ -21,13 +21,13 @@ lint:
   script:
     - npm run lint
 
-test:
+jest:
   stage: test
   script:
     - npm test
   coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
 
-build:
+webpack:
   stage: build
   script:
     - npm run build
