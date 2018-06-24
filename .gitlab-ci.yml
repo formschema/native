@@ -4,7 +4,6 @@ cache:
   key: ${CI_COMMIT_REF_SLUG}
   paths:
     - node_modules/
-    - dist/
 
 stages:
   - setup
@@ -17,24 +16,24 @@ npm ci:
   script:
     - npm ci
 
-code quality:
+.code quality:
   stage: test
   script:
     - npm run lint
 
-npm outdated:
+.npm outdated:
   stage: test
   script:
     - npm outdated
   allow_failure: true
 
-security scan:
+.security scan:
   stage: test
   script:
     - npm audit --only=prod
   allow_failure: true
 
-unit test:
+.unit test:
   stage: test
   script:
     - npm test
@@ -49,6 +48,9 @@ package:
   stage: publish
   script:
     - npm pack
+  cache:
+    paths:
+      - dist/
   artifacts:
     paths:
       - ./*.tgz
