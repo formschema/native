@@ -16,12 +16,12 @@ npm ci:
   script:
     - npm ci
 
-lint:
+code quality:
   stage: test
   script:
     - npm run lint
 
-tests:
+test:
   stage: test
   script:
     - npm test
