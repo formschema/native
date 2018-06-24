@@ -1,28 +1,11 @@
-image: node:8.11.3
+image: node:latest
 
 stages:
   - test
   - publish
 
-test on nodejs lts 6:
+test:
   stage: test
-  image: node:6.14.3
-  script:
-    - npm install
-    - npm test
-  coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
-
-test on nodejs lts 8:
-  stage: test
-  image: node:8.11.3
-  script:
-    - npm install
-    - npm test
-  coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
-
-test on latest nodejs:
-  stage: test
-  image: node:latest
   script:
     - npm ci
     - npm test
