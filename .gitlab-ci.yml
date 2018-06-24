@@ -17,24 +17,24 @@ npm ci:
   script:
     - npm ci
 
-.code quality:
+code quality:
   stage: test
   script:
     - npm run lint
 
-.npm outdated:
+npm outdated:
   stage: test
   script:
     - npm outdated
   allow_failure: true
 
-.security scan:
+security scan:
   stage: test
   script:
     - npm audit --only=prod
   allow_failure: true
 
-.unit test:
+unit test:
   stage: test
   script:
     - npm test
