@@ -50,7 +50,7 @@ package:
     - npm pack
   artifacts:
     paths:
-      - *.tgz
+      - ./*.tgz
 
 publish:
   stage: publish
