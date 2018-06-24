@@ -21,7 +21,7 @@ code quality:
   script:
     - npm run lint
 
-dependencies scan:
+security scan:
   stage: test
   script:
     - npm audit
