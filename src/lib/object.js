@@ -25,6 +25,8 @@ export function merge (dest, src) {
       dest[key] = value
     } else if (value instanceof Array) {
       dest[key] = [ ...value ]
+    } else if (value instanceof Function) {
+      dest[key] = value
     } else {
       if (!dest[key]) {
         dest[key] = {}
@@ -32,4 +34,8 @@ export function merge (dest, src) {
       merge(dest[key], value)
     }
   })
+
+  return dest
 }
+
+export const assign = merge

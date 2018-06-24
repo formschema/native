@@ -38,6 +38,11 @@ export default {
           click () {
             if (field.itemsNum < field.maxItems) {
               field.itemsNum++
+
+              // TODO: add a proper way to emit the 'inputAdded' event
+              if ('inputAdded' in listeners) {
+                listeners.inputAdded()
+              }
             }
           }
         }

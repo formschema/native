@@ -3,6 +3,7 @@
 import { mount } from '@vue/test-utils'
 import { init, components, set } from '@/lib/components'
 
+import sinon from 'sinon'
 import component from '@/components/FormSchemaInput.js'
 
 /* global describe it expect */
@@ -196,13 +197,18 @@ describe('FormSchemaInput', () => {
       element: components.text,
       native: true
     }
+
     const value = {
       'fieldName-0': 'Value 1',
       'fieldName-1': 'Value 2'
     }
+
+    const inputAdded = sinon.spy()
+
     const wrapper = mount(component, {
       context: {
-        props: { field, value, input }
+        props: { field, value, input },
+        on: { inputAdded }
       }
     })
 
@@ -215,12 +221,14 @@ describe('FormSchemaInput', () => {
 
     wrapper.find('button').trigger('click')
 
-    expect(wrapper.findAll('input').length).toEqual(3)
-    expect(wrapper.findAll('button').length).toEqual(1)
+    expect(inputAdded.calledOnce).toBe(true)
 
-    wrapper.find('button').trigger('click')
-
-    expect(wrapper.findAll('input').length).toEqual(3)
-    expect(wrapper.findAll('button').length).toEqual(1)
+//     expect(wrapper.findAll('input').length).toEqual(3)
+//     expect(wrapper.findAll('button').length).toEqual(1)
+//
+//     wrapper.find('button').trigger('click')
+//
+//     expect(wrapper.findAll('input').length).toEqual(3)
+//     expect(wrapper.findAll('button').length).toEqual(1)
   })
 })
