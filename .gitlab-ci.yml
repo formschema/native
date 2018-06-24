@@ -8,7 +8,7 @@ test on nodejs lts 6:
   stage: test
   image: node:6.14.3
   script:
-    - npm ci
+    - npm install
     - npm test
   coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
 
@@ -16,7 +16,7 @@ test on nodejs lts 8:
   stage: test
   image: node:8.11.3
   script:
-    - npm ci
+    - npm install
     - npm test
   coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
 
