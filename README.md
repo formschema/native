@@ -1,15 +1,16 @@
-# vue-json-schema
-Vue component form based on JSON Schema
+# FormSchema Native
 
-[![Build Status](https://travis-ci.org/vue-json-schema/form-schema.svg?branch=master)](https://travis-ci.org/vue-json-schema/form-schema) [![Coverage Status](https://coveralls.io/repos/github/vue-json-schema/form-schema/badge.svg?branch=master)](https://coveralls.io/github/vue-json-schema/form-schema?branch=master)
+Vue component form based on JSON Schema and Native HTML
+
+[![Build Status](https://travis-ci.org/formschema/form-schema.svg?branch=master)](https://travis-ci.org/formschema/form-schema) [![Coverage Status](https://coveralls.io/repos/gitlab/formschema/form-schema/badge.svg?branch=master)](https://coveralls.io/gitlab/formschema/form-schema?branch=master)
 
 ## Install
 ```sh
-npm install --save @vue-json-schema/form-schema
+npm install --save @formschema/native
 ```
 
 ## Demo
-- [Demo with ElementUI](https://github.com/vue-json-schema/wrap-elementui)
+- [Demo with ElementUI](https://gitlab.com/formschema/elementui)
 
 ## FormSchema API
 
@@ -118,7 +119,7 @@ In your Vue file:
 </template>
 
 <script>
-  import FormSchema from 'vue-json-schema'
+  import FormSchema from '@formschema/native'
   import schema from './schema/newsletter-subscription.json'
 
   export default {
@@ -143,7 +144,7 @@ To asynchronously load a schema, just set a promise that returns it.
 ```html
 <script>
   import axios from 'axios'
-  import FormSchema from 'vue-json-schema'
+  import FormSchema from '@formschema/native'
 
   export default {
     data: () => ({
@@ -157,12 +158,12 @@ To asynchronously load a schema, just set a promise that returns it.
 ## Use custom form elements
 Use `FormSchema.setComponent(type, component[, props = {}])` to define custom element to use for rendering.
 
-See [vue-json-schema-demo-elementui](https://github.com/vue-json-schema/form-schema-demo-elementui) for a complete example.
+See [FormSchema ElementUI implementation](https://gitlab.com/formschema/elementui) for a complete example.
 
 ```js
 // an element-ui example
 
-import FormSchema from 'vue-json-schema'
+import FormSchema from '@formschema/native'
 import {
   Form,
   FormItem,
@@ -257,7 +258,7 @@ To define multiple checkbox, use the [JSON Schema keyword `anyOf`](http://json-s
 
 ```html
 <script>
-  import FormSchema from 'vue-json-schema'
+  import FormSchema from '@formschema/native'
 
   FormSchema.setComponent('select', 'el-select', ({ item }) => {
     return { label: item.value }
@@ -297,7 +298,7 @@ To group radio elements, use the [JSON Schema keyword `enum`](http://json-schema
 
 ```html
 <script>
-  import FormSchema from 'vue-json-schema'
+  import FormSchema from '@formschema/native'
 
   FormSchema.setComponent('select', 'el-radio', ({ item }) => {
     return { label: item.value }
@@ -331,11 +332,11 @@ To render a [array field](http://json-schema.org/latest/json-schema-validation.h
 
 **component.vue**
 
-`vue-json-schema` will render a text input by adding a button to add more inputs.
+`formschema` will render a text input by adding a button to add more inputs.
 
 ```html
 <script>
-  import FormSchema from 'vue-json-schema'
+  import FormSchema from '@formschema/native'
 
   // To override the default array button props
   FormSchema.setComponent('arraybutton', 'button', {
@@ -366,4 +367,4 @@ To render a [regex input](http://json-schema.org/latest/json-schema-validation.h
 ```
 
 ## License
-Under the MIT license. See [LICENSE](https://github.com/vue-json-schema/form-schema/blob/master/LICENSE) file for more details.
+Under the MIT license. See [LICENSE](https://gitlab.com/formschema/native/blob/master/LICENSE) file for more details.
