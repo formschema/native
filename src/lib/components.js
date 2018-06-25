@@ -74,8 +74,11 @@ export function renderInput (h, { data, props, slots }) {
   return h('label', nodes)
 }
 
-export const renderButton = (type, label) => (h, { listeners }) => {
-  return h('button', { attrs: { type }, on: listeners }, label)
+export const renderButton = (type, label) => (h, { data }) => {
+  return h('button', {
+    attrs: { type, ...data.attrs },
+    on: data.on
+  }, label)
 }
 
 export function set (type, component, option = null, native = false) {
