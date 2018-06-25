@@ -1,7 +1,7 @@
 'use strict'
 
 import { mount } from '@vue/test-utils'
-import { init, components } from '@/lib/components'
+import { init, input as getInput } from '@/lib/components'
 
 import component from '@/components/FormSchemaInputArrayElement.js'
 
@@ -17,19 +17,12 @@ describe('FormSchemaInputArrayElement', () => {
   it('should successfully render the component with scalar value', () => {
     const field = {
       attrs: {
-        name: 'fieldName'
+        type: 'text',
+        name: 'fieldName',
+        value: 'Hello'
       }
     }
-    const input = {
-      data: {
-        attrs: {
-          type: 'text',
-          value: 'Hello'
-        }
-      },
-      element: components.text,
-      native: true
-    }
+    const input = getInput({ field })
     const name = field.attrs.name
     const vm = {
       inputValues: {
@@ -41,7 +34,7 @@ describe('FormSchemaInputArrayElement', () => {
         props: { field, value, input, name }
       }
     })
-    const expected = '<input type="text" value="Hello" name="fieldName">'
+    const expected = '<input type="text" name="fieldName" value="Hello">'
 
     expect(wrapper.isVueInstance()).toBeTruthy()
     expect(wrapper.html()).toEqual(expected)
@@ -50,19 +43,12 @@ describe('FormSchemaInputArrayElement', () => {
   it('should successfully render the component with non scalar value', () => {
     const field = {
       attrs: {
-        name: 'fieldName'
+        type: 'text',
+        name: 'fieldName',
+        value: 'Hello'
       }
     }
-    const input = {
-      data: {
-        attrs: {
-          type: 'text',
-          value: 'Hello'
-        }
-      },
-      element: components.text,
-      native: true
-    }
+    const input = getInput({ field })
     const name = field.attrs.name
     const vm = {
       inputValues: {
@@ -76,7 +62,7 @@ describe('FormSchemaInputArrayElement', () => {
         props: { field, value, input, name }
       }
     })
-    const expected = '<input type="text" value="Hello" name="fieldName">'
+    const expected = '<input type="text" name="fieldName" value="Hello">'
 
     expect(wrapper.isVueInstance()).toBeTruthy()
     expect(wrapper.html()).toEqual(expected)
@@ -85,19 +71,12 @@ describe('FormSchemaInputArrayElement', () => {
   it('should successfully render the component with missing name attr', () => {
     const field = {
       attrs: {
-        name: 'fieldName'
+        type: 'text',
+        name: 'fieldName',
+        value: 'Hello'
       }
     }
-    const input = {
-      data: {
-        attrs: {
-          type: 'text',
-          value: 'Hello'
-        }
-      },
-      element: components.text,
-      native: true
-    }
+    const input = getInput({ field })
     const vm = {
       inputValues: {
       }
@@ -110,7 +89,7 @@ describe('FormSchemaInputArrayElement', () => {
         props: { field, value, input }
       }
     })
-    const expected = '<input type="text" value="Hello" name="fieldName">'
+    const expected = '<input type="text" name="fieldName" value="Hello">'
 
     expect(wrapper.isVueInstance()).toBeTruthy()
     expect(wrapper.html()).toEqual(expected)

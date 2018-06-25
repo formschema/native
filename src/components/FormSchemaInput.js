@@ -1,7 +1,10 @@
 import { components, inputName, argName } from '@/lib/components'
 import FormSchemaInputArrayElement from './FormSchemaInputArrayElement'
+import { assign } from '@/lib/object'
 
 const unwrappingElements = ['checkbox', 'radio']
+
+export const INPUT_ADDED_EVENT = 'input-added'
 
 export default {
   functional: true,
@@ -17,6 +20,8 @@ export default {
       }
 
       if (unwrappingElements.includes(field.attrs.type)) {
+        assign(data.props, input.data.field.attrs)
+
         return createElement(components.inputwrapper.component, data, [
           createElement(FormSchemaInputArrayElement, data, children)
         ])
@@ -39,9 +44,9 @@ export default {
             if (field.itemsNum < field.maxItems) {
               field.itemsNum++
 
-              // TODO: add a proper way to emit the 'inputAdded' event
-              if ('inputAdded' in listeners) {
-                listeners.inputAdded()
+              // TODO: add a proper way to emit the 'INPUT_ADDED_EVENT' event
+              if (INPUT_ADDED_EVENT in listeners) {
+                listeners[INPUT_ADDED_EVENT]()
               }
             }
           }
