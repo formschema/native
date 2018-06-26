@@ -57,9 +57,11 @@ coverage report:
   artifacts:
     paths:
       - public
-    expire_in: 30 days
   #only:
     #- master
+  environment:
+    name: coverage report
+    url: https://formschema.gitlab.io/native
 
 package:
   stage: publish
@@ -71,7 +73,7 @@ package:
     paths:
       - ./*.tgz
 
-publish:
+publish on npm:
   stage: publish
   only:
     - tags
