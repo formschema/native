@@ -48,8 +48,8 @@ webpack build:
   script:
     - npm run build
 
-pages:
-  stage: deploy
+coverage report:
+  stage: publish
   dependencies:
     - unit test
   script:
