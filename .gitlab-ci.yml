@@ -51,7 +51,7 @@ webpack build:
 coverage report:
   stage: publish
   dependencies:
-    - unit test
+    - test & coverage
   script:
     - mv coverage/lcov-report/ public/
   artifacts:
