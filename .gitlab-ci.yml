@@ -38,15 +38,18 @@ unit test:
   stage: test
   script:
     - npm test
-  coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
-  artifacts:
-    paths:
-      - coverage/
+  # coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
+  # artifacts:
+  #   paths:
+  #     - coverage/
 
 webpack build:
   stage: build
   script:
     - npm run build
+  artifacts:
+    paths:
+      - dist/
 
 .coverage report:
   stage: publish
