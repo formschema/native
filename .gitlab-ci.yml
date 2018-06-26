@@ -39,11 +39,27 @@ unit test:
   script:
     - npm test
   coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
+  artifacts:
+    paths:
+      - coverage/
 
 webpack build:
   stage: build
   script:
     - npm run build
+
+pages:
+  stage: deploy
+  dependencies:
+    - unit test
+  script:
+    - mv coverage/lcov-report/ public/
+  artifacts:
+    paths:
+      - public
+    expire_in: 30 days
+  only:
+    - master
 
 package:
   stage: publish
