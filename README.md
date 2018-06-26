@@ -2,9 +2,9 @@
 
 Vue component form based on JSON Schema
 
-[![npm](https://img.shields.io/npm/v/@formschema/native.svg)](https://www.npmjs.com/package/@formschema/native) [![Build status](https://gitlab.com/formschema/native/badges/master/build.svg)](https://gitlab.com/formschema/native/pipelines) [![Test coverage](https://gitlab.com/formschema/native/badges/master/coverage.svg)](https://gitlab.com/formschema/native/-/jobs)
+[![npm](https://img.shields.io/npm/v/@formschema/native.svg)](https://www.npmjs.com/package/@formschema/native) [![Build status](https://gitlab.com/formschema/native/badges/master/build.svg)](https://gitlab.com/formschema/native/pipelines)
 
-`vue-json-schema` has been moved to the [FormSchema organization](https://gitlab.com/formschema) with the new name `FormSchemaNative`
+**`vue-json-schema` has been moved to the [FormSchema organization](https://gitlab.com/formschema) with the new name `FormSchemaNative`**
 
 ## Install
 ```sh
@@ -14,6 +14,8 @@ npm install --save @formschema/native
 ## Demo
 
 - [Demo with ElementUI](https://gitlab.com/formschema/elementui)
+
+[![formschema-demo-elementui](https://gitlab.com/formschema/elementui/raw/master/screenshot.png "FormSchema Demo with ElementUI")](https://gitlab.com/formschema/elementui)
 
 ## FormSchema API
 
