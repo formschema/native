@@ -58,8 +58,8 @@ coverage report:
     paths:
       - public
     expire_in: 30 days
-  only:
-    - master
+  #only:
+    #- master
 
 package:
   stage: publish
