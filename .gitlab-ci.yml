@@ -34,7 +34,7 @@ security scan:
     - npm audit --only=prod
   allow_failure: true
 
-unit test:
+test & coverage:
   stage: test
   script:
     - npm test
@@ -57,8 +57,8 @@ coverage report:
   artifacts:
     paths:
       - public
-  #only:
-    #- master
+  only:
+    - master
   environment:
     name: coverage report
     url: https://formschema.gitlab.io/native
