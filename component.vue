@@ -182,7 +182,7 @@
 
           const formControlsNodes = []
 
-          if (field.label && !option.disableWrappingLabel) {
+          if (field.label && !element.option.disableWrappingLabel) {
             const labelOptions = this.elementOptions(components.label, field, field)
             const labelNodes = []
 
