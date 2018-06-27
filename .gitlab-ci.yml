@@ -45,6 +45,8 @@ unit test:
 
 webpack build:
   stage: build
+  dependencies:
+    - npm ci
   script:
     - npm run build
   artifacts:
