@@ -12,3 +12,5 @@ Makefile
 *.js
 *.bak
 *.vue
+.gitlab-ci.yml
+.babelrc

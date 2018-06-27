@@ -85,7 +85,7 @@ publish on npm:
     - triggers
   script:
     - echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' > .npmrc
-    - npm publish
+    - npm publish --access=public
   environment:
     name: npm
     url: https://www.npmjs.com/package/@formschema/native
