@@ -1,4 +1,4 @@
-import { loadFields } from '@/lib/parser'
+import { genId, loadFields } from '@/lib/parser'
 import { equals, merge } from '@/lib/object'
 import { init, components, set, argName, inputName } from '@/lib/components'
 import FormSchemaField from './FormSchemaField'
@@ -51,6 +51,7 @@ export default {
     novalidate: { type: Boolean }
   },
   data: () => ({
+    ref: genId('form-schema'),
     schemaLoaded: { schema: {}, fields: [] },
     default: {},
     error: null,
@@ -125,7 +126,7 @@ export default {
       }
 
       nodes.push(createElement(components.form.component, {
-        ref: '__form',
+        ref: this.ref,
         [argName(components.form)]: {
           action: this.action,
           enctype: this.enctype,
@@ -272,10 +273,10 @@ export default {
     },
 
     /**
-     * Get the form reference.
+     * Get the HTML form reference.
      */
     form () {
-      return this.$refs.__form
+      return this.$refs[this.ref]
     },
 
     /**

@@ -81,6 +81,11 @@ describe('FormSchema', () => {
       })
     })
 
+    it(`should have data ref`, () => {
+      expect('ref' in wrapper.vm).toBe(true)
+      expect(wrapper.vm.ref.startsWith('form-schema-')).toBeTruthy()
+    })
+
     Object.keys(data).forEach((prop) => {
       it(`should have data ${prop}`, () => {
         expect(prop in wrapper.vm).toBe(true)
