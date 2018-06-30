@@ -50,6 +50,10 @@ export function renderFieldset (h, { data, props, slots }) {
 export function renderInput (h, { data, props, slots }) {
   const nodes = slots().default || []
   const field = props.field
+  const attrs = {
+    'data-fs-field': props.field.attrs.id,
+    'data-fs-required': field.attrs.required
+  }
 
   if (field.description) {
     nodes.push(h(components.inputdesc.component, {
@@ -59,19 +63,40 @@ export function renderInput (h, { data, props, slots }) {
 
   if (!field.label) {
     if (nodes.length > 1) {
-      return h('div', nodes)
+      return h('div', { attrs }, nodes)
     }
 
     return nodes[0]
   }
 
-  nodes.unshift(h('span', {
-    attrs: {
-      'data-required-field': field.attrs.required ? 'true' : 'false'
-    }
-  }, field.label))
+  return h('div', { attrs }, [
+    h('label', {
+      attrs: {
+        for: props.field.attrs.id
+      }
+    }, field.label),
+    h('div', {
+      attrs: {
+        'data-fs-field-input': props.field.attrs.id
+      }
+    }, nodes)
+  ])
+}
 
-  return h('label', nodes)
+export function renderButtons (h, { slots }) {
+  return h('div', {
+    attrs: {
+      'data-fs-buttons': true
+    }
+  }, slots().default)
+}
+
+export function renderError (h, { slots }) {
+  return h('div', {
+    attrs: {
+      'data-fs-error': true
+    }
+  }, slots().default)
 }
 
 export const renderButton = (type, label) => (h, { data }) => {
@@ -124,6 +149,8 @@ export function init () {
   components.radiogroup.component.render = renderFieldset
   components.checkboxgroup.component.render = renderFieldset
   components.inputwrapper.component.render = renderInput
+  components.buttonswrapper.component.render = renderButtons
+  components.error.component.render = renderError
   components.submitbutton.component.render = renderButton('submit', 'Submit')
   components.arraybutton.component.render = renderButton('button', 'Add')
 }

@@ -113,7 +113,7 @@ describe('FormSchemaInput', () => {
       }
     })
 
-    const expected = '<label><span data-required-field=\"false\">array label</span><div><input name="fieldName-0" type="text" data-fs-index="0" value="Value 1"><input name="fieldName-1" type="text" data-fs-index="1" value="Value 2"><button type="button">Add</button></div></label>'
+    const expected = '<div><label>array label</label><div><div><input name="fieldName-0" type="text" data-fs-index="0" value="Value 1"><input name="fieldName-1" type="text" data-fs-index="1" value="Value 2"><button type="button">Add</button></div></div></div>'
 
     expect(wrapper.html()).toEqual(expected)
   })

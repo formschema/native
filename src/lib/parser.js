@@ -4,6 +4,22 @@
 
 const ARRAY_KEYWORDS = ['anyOf', 'oneOf', 'enum']
 
+export function s4 () {
+  return Math.floor((1 + Math.random()) * 0x10000)
+    .toString(16)
+    .substring(1)
+}
+
+export function genId (prefix = '') {
+  const suffix = s4() + s4()
+
+  if (prefix) {
+    return `${prefix}-${suffix}`
+  }
+
+  return suffix
+}
+
 export function setCommonFields (schema, field) {
   field.attrs.value = field.attrs.hasOwnProperty('value')
     ? field.attrs.value
@@ -12,6 +28,7 @@ export function setCommonFields (schema, field) {
   field.schemaType = schema.type
   field.label = schema.title || ''
   field.description = schema.description || ''
+  field.attrs.id = field.attrs.id || genId(field.attrs.name)
   field.attrs.required = schema.required || false
   field.attrs.disabled = schema.disabled || false
 }
@@ -66,6 +83,10 @@ export function parseBoolean (schema, name = null) {
     attrs: schema.attrs || {}
   }
 
+  if (name) {
+    field.attrs.name = name
+  }
+
   setCommonFields(schema, field)
 
   if (!field.attrs.type) {
@@ -77,10 +98,6 @@ export function parseBoolean (schema, name = null) {
   }
 
   delete field.attrs.value
-
-  if (name) {
-    field.attrs.name = name
-  }
 
   return field
 }
@@ -121,11 +138,11 @@ export function parseString (schema, name = null) {
     }
   }
 
-  setCommonFields(schema, field)
-
   if (name) {
     field.attrs.name = name
   }
+
+  setCommonFields(schema, field)
 
   if (schema.minLength) {
     field.attrs.minlength = schema.minLength
@@ -162,6 +179,10 @@ export const setItemName = (name, isRadio = false) => (item, i) => {
     item.ref = `${name}-${i}`
   }
 
+  if (!item.id) {
+    item.id = genId(item.name || name)
+  }
+
   return item
 }
 
@@ -186,11 +207,11 @@ export function parseArray (schema, name = null) {
     attrs: schema.attrs || {}
   }
 
-  setCommonFields(schema, field)
-
   if (name) {
     field.attrs.name = name
   }
+
+  setCommonFields(schema, field)
 
   field.items = []
   field.minItems = parseInt(schema.minItems) || 1

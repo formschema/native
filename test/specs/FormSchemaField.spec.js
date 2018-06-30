@@ -37,7 +37,7 @@ describe('FormSchemaField', () => {
     expect(wrapper.isVueInstance()).toBeTruthy()
 
     const input = wrapper.find('input')
-    const expected = '<label><span data-required-field="false">Name</span><input name="fieldName" type="text" value="Hello"></label>'
+    const expected = '<div><label>Name</label><div><input name="fieldName" type="text" value="Hello"></div></div>'
 
     expect(wrapper.html()).toEqual(expected)
   })
@@ -170,12 +170,13 @@ describe('FormSchemaField', () => {
     const field = {
       isArrayField: true,
       attrs: {
+        id: 'x',
         name: 'fieldName',
         type: 'radio'
       },
       items: [
-        { label: 'l1', value: '0' },
-        { label: 'l2', value: '1' }
+        { id: 'y', label: 'l1', value: '0' },
+        { id: 'z', label: 'l2', value: '1' }
       ]
     }
     const value = ['1']
@@ -187,7 +188,7 @@ describe('FormSchemaField', () => {
         }
       })
 
-      const expected = '<fieldset name="fieldName"><div><label><span data-required-field="false">l1</span><input name="fieldName" type="radio" value="0"></label><label><span data-required-field="false">l2</span><input name="fieldName" type="radio" value="1" checked="checked"></label></div></fieldset>'
+      const expected = '<fieldset name="fieldName"><div><div data-fs-field="y"><label for="y">l1</label><div data-fs-field-input="y"><input id="y" name="fieldName" type="radio" value="0"></div></div><div data-fs-field="z"><label for="z">l2</label><div data-fs-field-input="z"><input id="z" name="fieldName" type="radio" value="1" checked="checked"></div></div></div></fieldset>'
 
       expect(wrapper.html()).toEqual(expected)
     })
@@ -280,10 +281,11 @@ describe('FormSchemaField', () => {
       title: 'choices',
       description: 'choices description',
       anyOf: [
-        { name: 'fieldName', label: 'l1', value: 'v0' },
-        { name: 'fieldName', label: 'l2', value: 'v1', checked: true }
+        { id: 'y', name: 'fieldName', label: 'l1', value: 'v0' },
+        { id: 'z', name: 'fieldName', label: 'l2', value: 'v1', checked: true }
       ],
       attrs: {
+        id: 'x',
         name: 'fieldName',
         type: 'checkbox'
       }
@@ -301,7 +303,7 @@ describe('FormSchemaField', () => {
         }
       })
 
-      const expected = '<label><span data-required-field="false">choices</span><fieldset name="fieldName"><legend>choices description</legend><div><label><span data-required-field="false">l1</span><input name="fieldName" type="checkbox" value="v0"></label><label><span data-required-field="false">l2</span><input name="fieldName" type="checkbox" value="v1" checked="checked"></label></div></fieldset><small>choices description</small></label>'
+      const expected = '<div data-fs-field="x"><label for="x">choices</label><div data-fs-field-input="x"><fieldset name="fieldName"><legend>choices description</legend><div><div data-fs-field="y"><label for="y">l1</label><div data-fs-field-input="y"><input id="y" name="fieldName" type="checkbox" value="v0"></div></div><div data-fs-field="z"><label for="z">l2</label><div data-fs-field-input="z"><input id="z" name="fieldName" type="checkbox" value="v1" checked="checked"></div></div></div></fieldset><small>choices description</small></div></div>'
 
       expect(wrapper.html()).toEqual(expected)
     })
@@ -347,7 +349,10 @@ describe('FormSchemaField', () => {
         enum: [
           { label: 'l1', value: 'v0' },
           { label: 'l2', value: 'v1' }
-        ]
+        ],
+        attrs: {
+          id: 'x'
+        }
       }
 
       loadFields(schema, fields)
@@ -360,7 +365,7 @@ describe('FormSchemaField', () => {
         }
       })
 
-      const expected = '<label><span data-required-field="false">choices</span><select><option value="v0">l1</option><option value="v1">l2</option></select><small>choices description</small></label>'
+      const expected = '<div data-fs-field="x"><label for="x">choices</label><div data-fs-field-input="x"><select id="x"><option value="v0">l1</option><option value="v1">l2</option></select><small>choices description</small></div></div>'
 
       expect(wrapper.html()).toEqual(expected)
     })
@@ -374,7 +379,10 @@ describe('FormSchemaField', () => {
             type: 'string',
             title: 'choices',
             description: 'choices description',
-            enum: ['v0', 'v1']
+            enum: ['v0', 'v1'],
+            attrs: {
+              id: 'x'
+            }
           }
         }
       }
@@ -389,7 +397,7 @@ describe('FormSchemaField', () => {
         }
       })
 
-      const expected = '<label><span data-required-field="false">choices</span><select name="list"><option value="v0">v0</option><option value="v1">v1</option></select><small>choices description</small></label>'
+      const expected = '<div data-fs-field="x"><label for="x">choices</label><div data-fs-field-input="x"><select id="x" name="list"><option value="v0">v0</option><option value="v1">v1</option></select><small>choices description</small></div></div>'
 
       expect(wrapper.html()).toEqual(expected)
     })
@@ -402,9 +410,12 @@ describe('FormSchemaField', () => {
       title: 'choices',
       description: 'choices description',
       enum: [
-        { label: 'l1', value: 'v0' },
-        { label: 'l2', value: 'v1' }
-      ]
+        { id: 'y', label: 'l1', value: 'v0' },
+        { id: 'z', label: 'l2', value: 'v1' }
+      ],
+      attrs: {
+        id: 'x'
+      }
     }
 
     loadFields(schema, fields)
@@ -417,7 +428,7 @@ describe('FormSchemaField', () => {
       }
     })
 
-    const expected = '<label><span data-required-field="false">choices</span><select><option value="v0">l1</option><option value="v1" selected="selected">l2</option></select><small>choices description</small></label>'
+    const expected = '<div data-fs-field="x"><label for="x">choices</label><div data-fs-field-input="x"><select id="x"><option value="v0">l1</option><option value="v1" selected="selected">l2</option></select><small>choices description</small></div></div>'
 
     expect(wrapper.html()).toEqual(expected)
   })
@@ -429,10 +440,11 @@ describe('FormSchemaField', () => {
       title: 'choices',
       description: 'choices description',
       enum: [
-        { label: 'l1', value: 'v0' },
-        { label: 'l2', value: 'v1', selected: true }
+        { id: 'y', label: 'l1', value: 'v0' },
+        { id: 'z', label: 'l2', value: 'v1', selected: true }
       ],
       attrs: {
+        id: 'x',
         name: 'fieldName'
       }
     }
@@ -447,7 +459,7 @@ describe('FormSchemaField', () => {
       }
     })
 
-    const expected = '<label><span data-required-field="false">choices</span><select multiple="multiple" name="fieldName"><option value="v0">l1</option><option value="v1" selected="selected">l2</option></select><small>choices description</small></label>'
+    const expected = '<div data-fs-field="x"><label for="x">choices</label><div data-fs-field-input="x"><select multiple="multiple" id="x" name="fieldName"><option value="v0">l1</option><option value="v1" selected="selected">l2</option></select><small>choices description</small></div></div>'
 
     expect(wrapper.html()).toEqual(expected)
   })
@@ -462,9 +474,12 @@ describe('FormSchemaField', () => {
           title: 'choices',
           description: 'choices description',
           enum: [
-            { label: 'l1', value: 'v0' },
-            { label: 'l2', value: 'v1', selected: true }
-          ]
+            { id: 'y', label: 'l1', value: 'v0' },
+            { id: 'z', label: 'l2', value: 'v1', selected: true }
+          ],
+          attrs: {
+            id: 'x'
+          }
         }
       },
       required: ['fieldName']
@@ -480,7 +495,7 @@ describe('FormSchemaField', () => {
       }
     })
 
-    const expected = '<label><span data-required-field="true">choices</span><select multiple="multiple" required="required" name="fieldName"><option value=""></option><option value="v0" selected="selected">l1</option><option value="v1">l2</option></select><small>choices description</small></label>'
+    const expected = '<div data-fs-field="x" data-fs-required="true"><label for="x">choices</label><div data-fs-field-input="x"><select multiple="multiple" id="x" name="fieldName" required="required"><option value=""></option><option value="v0" selected="selected">l1</option><option value="v1">l2</option></select><small>choices description</small></div></div>'
 
     expect(wrapper.html()).toEqual(expected)
   })

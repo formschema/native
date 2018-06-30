@@ -2,12 +2,11 @@ import { loadFields } from '@/lib/parser'
 import { equals, merge } from '@/lib/object'
 import { init, components, set, argName, inputName } from '@/lib/components'
 import FormSchemaField from './FormSchemaField'
-import FormSchemaButtons from './FormSchemaButtons'
 
 init()
 
 export default {
-  name: 'FormSchema',
+  name: 'FormSchemaNative',
   props: {
     /**
      * The JSON Schema object.
@@ -120,7 +119,10 @@ export default {
     })
 
     if (formNodes.length) {
-      formNodes.push(createElement(FormSchemaButtons, this.$slots.default))
+      if (this.$slots.default) {
+        formNodes.push(createElement(
+          components.buttonswrapper.component, this.$slots.default))
+      }
 
       nodes.push(createElement(components.form.component, {
         ref: '__form',
