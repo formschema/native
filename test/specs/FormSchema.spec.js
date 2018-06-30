@@ -31,7 +31,10 @@ const schema = {
   properties: {
     name: {
       type: 'string',
-      title: 'Your name'
+      title: 'Your name',
+      attrs: {
+        id: 'x'
+      }
     }
   },
   required: ['name']
@@ -44,7 +47,7 @@ describe('FormSchema', () => {
     })
 
     it('should have the FormSchema name', () => {
-      expect(component.name).toEqual('FormSchema')
+      expect(component.name).toEqual('FormSchemaNative')
     })
 
     it('should have a changed method', () => {
@@ -89,74 +92,102 @@ describe('FormSchema', () => {
       expect(wrapper.html()).toEqual(undefined)
     })
 
-    it('should successfully render the component', () => {
+    describe('should successfully render the component', () => {
       const wrapper = mount(component, {
         propsData: { schema }
       })
 
-      expect(wrapper.findAll('div').length).toEqual(2)
+      it('should have form title', () => {
+        expect(wrapper.findAll('h1').length).toEqual(1)
+        expect(wrapper.find('h1').html()).toEqual(`<h1>${schema.title}</h1>`)
+      })
 
-      expect(wrapper.findAll('h1').length).toEqual(1)
-      expect(wrapper.find('h1').html()).toEqual(`<h1>${schema.title}</h1>`)
+      it('should have form description', () => {
+        expect(wrapper.findAll('p').length).toEqual(1)
+        expect(wrapper.find('p').html()).toEqual(`<p>${schema.description}</p>`)
+      })
 
-      expect(wrapper.findAll('p').length).toEqual(1)
-      expect(wrapper.find('p').html()).toEqual(`<p>${schema.description}</p>`)
+      it('should have form tag', () => {
+        expect(wrapper.findAll('form').length).toEqual(1)
+      })
 
-      expect(wrapper.findAll('form').length).toEqual(1)
+      it('should have form enctype attribute', () => {
+        expect(wrapper.find('form').element.hasAttribute('enctype')).toBe(true)
+        expect(wrapper.find('form').element.getAttribute('enctype')).toEqual(props.enctype)
+      })
 
-      expect(wrapper.find('form').element.hasAttribute('enctype')).toBe(true)
-      expect(wrapper.find('form').element.getAttribute('enctype')).toEqual(props.enctype)
+      it('should have form method attribute', () => {
+        expect(wrapper.find('form').element.hasAttribute('method')).toBe(true)
+        expect(wrapper.find('form').element.getAttribute('method')).toEqual(props.method)
+      })
 
-      expect(wrapper.find('form').element.hasAttribute('method')).toBe(true)
-      expect(wrapper.find('form').element.getAttribute('method')).toEqual(props.method)
+      it('should have input label', () => {
+        expect(wrapper.findAll('label').length).toEqual(1)
+        expect(wrapper.find('label').html()).toEqual('<label for="x">Your name</label>')
+      })
 
-      expect(wrapper.findAll('label').length).toEqual(1)
+      it('should have form input', () => {
+        expect(wrapper.findAll('input').length).toEqual(1)
+        expect(wrapper.find('input').html()).toEqual('<input id="x" type="text" name="name" value="" required="required">')
+      })
 
-      expect(wrapper.findAll('span').length).toEqual(1)
-      expect(wrapper.find('span').html()).toEqual('<span data-required-field="true">Your name</span>')
-
-      expect(wrapper.findAll('input').length).toEqual(1)
-      expect(wrapper.find('input').html()).toEqual('<input type="text" value="" required="required" name="name">')
-
-      expect(wrapper.findAll('button').length).toEqual(1)
-      expect(wrapper.find('button').html()).toEqual('<button type="submit">Submit</button>')
+      it('should not have buttons', () => {
+        expect(wrapper.findAll('button').length).toEqual(0)
+      })
     })
 
-    it('should successfully render component with reactive schema', () => {
+    describe('should successfully render the component with reactive schema', () => {
       const wrapper = mount(component, {
         propsData: { schema: {} }
       })
 
-      expect(wrapper.html()).toEqual(undefined)
+      it('should render nothing with empty schema', () => {
+        expect(wrapper.html()).toEqual(undefined)
+        wrapper.setProps({ schema })
+      })
 
-      wrapper.setProps({ schema })
+      it('should have form title', () => {
+        expect(wrapper.findAll('h1').length).toEqual(1)
+        expect(wrapper.find('h1').html()).toEqual(`<h1>${schema.title}</h1>`)
+      })
 
-      expect(wrapper.findAll('div').length).toEqual(2)
+      it('should have form title', () => {
+        expect(wrapper.findAll('h1').length).toEqual(1)
+        expect(wrapper.find('h1').html()).toEqual(`<h1>${schema.title}</h1>`)
+      })
 
-      expect(wrapper.findAll('h1').length).toEqual(1)
-      expect(wrapper.find('h1').html()).toEqual(`<h1>${schema.title}</h1>`)
+      it('should have form description', () => {
+        expect(wrapper.findAll('p').length).toEqual(1)
+        expect(wrapper.find('p').html()).toEqual(`<p>${schema.description}</p>`)
+      })
 
-      expect(wrapper.findAll('p').length).toEqual(1)
-      expect(wrapper.find('p').html()).toEqual(`<p>${schema.description}</p>`)
+      it('should have form tag', () => {
+        expect(wrapper.findAll('form').length).toEqual(1)
+      })
 
-      expect(wrapper.findAll('form').length).toEqual(1)
+      it('should have form enctype attribute', () => {
+        expect(wrapper.find('form').element.hasAttribute('enctype')).toBe(true)
+        expect(wrapper.find('form').element.getAttribute('enctype')).toEqual(props.enctype)
+      })
 
-      expect(wrapper.find('form').element.hasAttribute('enctype')).toBe(true)
-      expect(wrapper.find('form').element.getAttribute('enctype')).toEqual(props.enctype)
+      it('should have form method attribute', () => {
+        expect(wrapper.find('form').element.hasAttribute('method')).toBe(true)
+        expect(wrapper.find('form').element.getAttribute('method')).toEqual(props.method)
+      })
 
-      expect(wrapper.find('form').element.hasAttribute('method')).toBe(true)
-      expect(wrapper.find('form').element.getAttribute('method')).toEqual(props.method)
+      it('should have input label', () => {
+        expect(wrapper.findAll('label').length).toEqual(1)
+        expect(wrapper.find('label').html()).toEqual('<label for="x">Your name</label>')
+      })
 
-      expect(wrapper.findAll('label').length).toEqual(1)
+      it('should have form input', () => {
+        expect(wrapper.findAll('input').length).toEqual(1)
+        expect(wrapper.find('input').html()).toEqual('<input id="x" type="text" name="name" value="" required="required">')
+      })
 
-      expect(wrapper.findAll('span').length).toEqual(1)
-      expect(wrapper.find('span').html()).toEqual('<span data-required-field="true">Your name</span>')
-
-      expect(wrapper.findAll('input').length).toEqual(1)
-      expect(wrapper.find('input').html()).toEqual('<input type="text" value="" required="required" name="name">')
-
-      expect(wrapper.findAll('button').length).toEqual(1)
-      expect(wrapper.find('button').html()).toEqual('<button type="submit">Submit</button>')
+      it('should not have buttons', () => {
+        expect(wrapper.findAll('button').length).toEqual(0)
+      })
     })
 
     it('should successfully emit events', () => {
@@ -229,13 +260,13 @@ describe('FormSchema', () => {
       wrapper.vm.setErrorMessage('error message')
 
       expect(wrapper.vm.error).toEqual('error message')
-      expect(wrapper.findAll('div').length).toEqual(3)
-      expect(wrapper.findAll('div').at(1).html()).toEqual('<div>error message</div>')
+      expect(wrapper.findAll('[data-fs-error]').length).toEqual(1)
+      expect(wrapper.find('[data-fs-error]').html()).toEqual('<div data-fs-error="true">error message</div>')
 
       wrapper.vm.clearErrorMessage()
 
       expect(wrapper.vm.error).toEqual(null)
-      expect(wrapper.findAll('div').length).toEqual(2)
+      expect(wrapper.findAll('[data-fs-error]').length).toEqual(0)
     })
   /*
     it('should successfully emit input event', () => {
@@ -343,7 +374,10 @@ describe('FormSchema', () => {
               type: 'string',
               title: 'choices',
               description: 'choices description',
-              enum: ['v0', 'v1']
+              enum: ['v0', 'v1'],
+              attrs: {
+                id: 'x'
+              }
             }
           }
         }
@@ -351,7 +385,7 @@ describe('FormSchema', () => {
           propsData: { schema }
         })
 
-        const expected = '<div><form enctype="application/x-www-form-urlencoded" method="post"><label><span data-required-field="false">choices</span><select name="list"><option value="v0">v0</option><option value="v1">v1</option></select><small>choices description</small></label><div><button type="submit">Submit</button></div></form></div>'
+        const expected = '<div><form enctype="application/x-www-form-urlencoded" method="post"><div data-fs-field="x"><label for="x">choices</label><div data-fs-field-input="x"><select id="x" name="list"><option value="v0">v0</option><option value="v1">v1</option></select><small>choices description</small></div></div></form></div>'
 
         expect(wrapper.html()).toEqual(expected)
       })
@@ -363,6 +397,7 @@ describe('FormSchema', () => {
           type: 'boolean',
           default: true,
           attrs: {
+            id: 'x',
             name: 'checkbox-name'
           }
         }
@@ -370,7 +405,7 @@ describe('FormSchema', () => {
           propsData: { schema }
         })
 
-        const expected = '<input name="checkbox-name" type="checkbox" checked="checked">'
+        const expected = '<input id="x" name="checkbox-name" type="checkbox" checked="checked">'
 
         expect(wrapper.find('input').html()).toEqual(expected)
       })
@@ -380,6 +415,7 @@ describe('FormSchema', () => {
           type: 'boolean',
           default: false,
           attrs: {
+            id: 'x',
             name: 'checkbox-name'
           }
         }
@@ -387,7 +423,7 @@ describe('FormSchema', () => {
           propsData: { schema }
         })
 
-        const expected = '<input name="checkbox-name" type="checkbox">'
+        const expected = '<input id="x" name="checkbox-name" type="checkbox">'
 
         expect(wrapper.find('input').html()).toEqual(expected)
       })

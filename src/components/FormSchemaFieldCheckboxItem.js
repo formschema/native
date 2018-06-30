@@ -8,6 +8,7 @@ export default {
 
     const { label, description } = item
     const attrs = {
+      id: item.id,
       name: item.name || field.attrs.name,
       type: field.attrs.type,
       value: field.schemaType === 'boolean' ? undefined : item.value,
@@ -29,7 +30,7 @@ export default {
         value,
         input,
         disableWrappingLabel,
-        field: { ...field, label, description }
+        field: { ...field, label, description, attrs }
       },
       on: input.data.listeners
     })

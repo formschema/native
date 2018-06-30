@@ -1,6 +1,8 @@
 'use strict'
 
 import {
+  s4,
+  genId,
   setCommonFields,
   setItemName,
   arrayOrderedValues,
@@ -16,6 +18,26 @@ import {
 /* global describe it expect */
 
 describe('lib/parser', () => {
+  describe('s4()', () => {
+    it('should return a string value', () => {
+      expect(typeof s4()).toEqual('string')
+    })
+
+    it('should return a string value with length = 4', () => {
+      expect(s4().length).toEqual(4)
+    })
+  })
+
+  describe('genId(prefix = "")', () => {
+    it('should successfully generate ID', () => {
+      expect(genId().length).toEqual(8)
+    })
+
+    it('should successfully generate ID with a prefix', () => {
+      expect(genId('id-').startsWith('id-')).toBeTruthy()
+    })
+  })
+
   describe('setCommonFields(schema, field)', () => {
     it('should successfully set common fields with default values', () => {
       const field = { attrs: {} }
@@ -33,11 +55,15 @@ describe('lib/parser', () => {
 
       setCommonFields(schema, field)
 
+      expect(typeof field.attrs.id).toEqual('string')
+
+      delete field.attrs.id
+
       expect(field).toEqual(expected)
     })
 
     it('should successfully set common fields with filled schema', () => {
-      const field = { attrs: { value: 'value' } }
+      const field = { attrs: { id: 'x', value: 'value' } }
       const schema = {
         type: 'string',
         title: 'title value',
@@ -50,6 +76,7 @@ describe('lib/parser', () => {
         label: 'title value',
         description: 'description value',
         attrs: {
+          id: 'x',
           value: 'value',
           required: true,
           disabled: true
@@ -80,6 +107,8 @@ describe('lib/parser', () => {
 
       setCommonFields(schema, field)
 
+      delete field.attrs.id
+
       expect(field).toEqual(expected)
     })
   })
@@ -97,6 +126,9 @@ describe('lib/parser', () => {
       ]
       const result = items.map(setItemName(name))
 
+      result.forEach((item) => expect(typeof item.id).toEqual('string'))
+      result.forEach((item) => delete item.id)
+
       expect(result).toEqual(expected)
     })
 
@@ -112,6 +144,9 @@ describe('lib/parser', () => {
       ]
       const result = items.map(setItemName(name))
 
+      result.forEach((item) => expect(typeof item.id).toEqual('string'))
+      result.forEach((item) => delete item.id)
+
       expect(result).toEqual(expected)
     })
 
@@ -126,6 +161,9 @@ describe('lib/parser', () => {
         { name, label: 'label 1', value: 1, ref: `${name}-1` }
       ]
       const result = items.map(setItemName(name, true))
+
+      result.forEach((item) => expect(typeof item.id).toEqual('string'))
+      result.forEach((item) => delete item.id)
 
       expect(result).toEqual(expected)
     })
@@ -193,7 +231,12 @@ describe('lib/parser', () => {
         }
       }
 
-      expect(parseBoolean(schema)).toEqual(expected)
+      const result = parseBoolean(schema)
+
+      expect(typeof result.attrs.id).toEqual('string')
+      delete result.attrs.id
+
+      expect(result).toEqual(expected)
     })
 
     it('should successfully parse with custom input type', () => {
@@ -215,7 +258,12 @@ describe('lib/parser', () => {
         }
       }
 
-      expect(parseBoolean(schema)).toEqual(expected)
+      const result = parseBoolean(schema)
+
+      expect(typeof result.attrs.id).toEqual('string')
+      delete result.attrs.id
+
+      expect(result).toEqual(expected)
     })
 
     it('should successfully parse with defined checked falsely value', () => {
@@ -239,7 +287,12 @@ describe('lib/parser', () => {
         }
       }
 
-      expect(parseBoolean(schema, 'name')).toEqual(expected)
+      const result = parseBoolean(schema, 'name')
+
+      expect(typeof result.attrs.id).toEqual('string')
+      delete result.attrs.id
+
+      expect(result).toEqual(expected)
     })
 
     it('should successfully parse with defined default value', () => {
@@ -263,7 +316,12 @@ describe('lib/parser', () => {
         }
       }
 
-      expect(parseBoolean(schema, 'name')).toEqual(expected)
+      const result = parseBoolean(schema, 'name')
+
+      expect(typeof result.attrs.id).toEqual('string')
+      delete result.attrs.id
+
+      expect(result).toEqual(expected)
     })
 
     it('should successfully parse with defined input name', () => {
@@ -286,7 +344,12 @@ describe('lib/parser', () => {
         }
       }
 
-      expect(parseBoolean(schema, 'name')).toEqual(expected)
+      const result = parseBoolean(schema, 'name')
+
+      expect(typeof result.attrs.id).toEqual('string')
+      delete result.attrs.id
+
+      expect(result).toEqual(expected)
     })
   })
 
@@ -305,7 +368,12 @@ describe('lib/parser', () => {
         }
       }
 
-      expect(parseString(schema)).toEqual(expected)
+      const result = parseString(schema)
+
+      expect(typeof result.attrs.id).toEqual('string')
+      delete result.attrs.id
+
+      expect(result).toEqual(expected)
     })
 
     it('should successfully parse with custom input type', () => {
@@ -327,7 +395,12 @@ describe('lib/parser', () => {
         }
       }
 
-      expect(parseString(schema)).toEqual(expected)
+      const result = parseString(schema)
+
+      expect(typeof result.attrs.id).toEqual('string')
+      delete result.attrs.id
+
+      expect(result).toEqual(expected)
     })
 
     it('should successfully parse with defined input name', () => {
@@ -350,7 +423,12 @@ describe('lib/parser', () => {
         }
       }
 
-      expect(parseString(schema, 'name')).toEqual(expected)
+      const result = parseString(schema, 'name')
+
+      expect(typeof result.attrs.id).toEqual('string')
+      delete result.attrs.id
+
+      expect(result).toEqual(expected)
     })
 
     it('should successfully parse with filled schema', () => {
@@ -375,7 +453,12 @@ describe('lib/parser', () => {
         }
       }
 
-      expect(parseString(schema)).toEqual(expected)
+      const result = parseString(schema)
+
+      expect(typeof result.attrs.id).toEqual('string')
+      delete result.attrs.id
+
+      expect(result).toEqual(expected)
     })
 
     it('should successfully parse with defined format.email', () => {
@@ -395,12 +478,22 @@ describe('lib/parser', () => {
         }
       }
 
-      expect(parseString(schema)).toEqual(expected)
+      const result = parseString(schema)
+
+      expect(typeof result.attrs.id).toEqual('string')
+      delete result.attrs.id
+
+      expect(result).toEqual(expected)
 
       schema.attrs = { type: 'text' }
       expected.attrs.type = 'text'
 
-      expect(parseString(schema)).toEqual(expected)
+      const result2 = parseString(schema)
+
+      expect(typeof result2.attrs.id).toEqual('string')
+      delete result2.attrs.id
+
+      expect(result2).toEqual(expected)
     })
 
     it('should successfully parse with defined format.uri', () => {
@@ -420,12 +513,22 @@ describe('lib/parser', () => {
         }
       }
 
-      expect(parseString(schema)).toEqual(expected)
+      const result = parseString(schema)
+
+      expect(typeof result.attrs.id).toEqual('string')
+      delete result.attrs.id
+
+      expect(result).toEqual(expected)
 
       schema.attrs = { type: 'text' }
       expected.attrs.type = 'text'
 
-      expect(parseString(schema)).toEqual(expected)
+      const result2 = parseString(schema)
+
+      expect(typeof result2.attrs.id).toEqual('string')
+      delete result2.attrs.id
+
+      expect(result2).toEqual(expected)
     })
 
     it('should successfully parse with schema.type === number', () => {
@@ -442,7 +545,12 @@ describe('lib/parser', () => {
         }
       }
 
-      expect(parseString(schema)).toEqual(expected)
+      const result = parseString(schema)
+
+      expect(typeof result.attrs.id).toEqual('string')
+      delete result.attrs.id
+
+      expect(result).toEqual(expected)
     })
 
     it('should successfully parse with schema.type === integer', () => {
@@ -459,7 +567,12 @@ describe('lib/parser', () => {
         }
       }
 
-      expect(parseString(schema)).toEqual(expected)
+      const result = parseString(schema)
+
+      expect(typeof result.attrs.id).toEqual('string')
+      delete result.attrs.id
+
+      expect(result).toEqual(expected)
     })
   })
 
@@ -500,7 +613,12 @@ describe('lib/parser', () => {
         }
       }
 
-      expect(parseArray(schema)).toEqual(expected)
+      const result = parseArray(schema)
+
+      expect(typeof result.attrs.id).toEqual('string')
+      delete result.attrs.id
+
+      expect(result).toEqual(expected)
     })
 
     it('should successfully parse with custom input type', () => {
@@ -525,7 +643,12 @@ describe('lib/parser', () => {
         }
       }
 
-      expect(parseArray(schema)).toEqual(expected)
+      const result = parseArray(schema)
+
+      expect(typeof result.attrs.id).toEqual('string')
+      delete result.attrs.id
+
+      expect(result).toEqual(expected)
     })
 
     it('should successfully parse with defined input name', () => {
@@ -547,7 +670,12 @@ describe('lib/parser', () => {
         }
       }
 
-      expect(parseArray(schema, 'name')).toEqual(expected)
+      const result = parseArray(schema, 'name')
+
+      expect(typeof result.attrs.id).toEqual('string')
+      delete result.attrs.id
+
+      expect(result).toEqual(expected)
     })
 
     it('should successfully parse with filled schema', () => {
@@ -576,7 +704,12 @@ describe('lib/parser', () => {
         }
       }
 
-      expect(parseArray(schema)).toEqual(expected)
+      const result = parseArray(schema)
+
+      expect(typeof result.attrs.id).toEqual('string')
+      delete result.attrs.id
+
+      expect(result).toEqual(expected)
     })
 
     it('should successfully parse with defined schema.enum', () => {
@@ -602,7 +735,12 @@ describe('lib/parser', () => {
         }
       }
 
-      expect(parseArray(schema)).toEqual(expected)
+      const result = parseArray(schema)
+
+      expect(typeof result.attrs.id).toEqual('string')
+      delete result.attrs.id
+
+      expect(result).toEqual(expected)
 
       delete schema.attrs
 
@@ -610,7 +748,12 @@ describe('lib/parser', () => {
       expected.attrs.type = 'select'
       expected.attrs.multiple = true
 
-      expect(parseArray(schema)).toEqual(expected)
+      const result2 = parseArray(schema)
+
+      expect(typeof result2.attrs.id).toEqual('string')
+      delete result2.attrs.id
+
+      expect(result2).toEqual(expected)
     })
 
     it('should successfully parse with defined schema.oneOf', () => {
@@ -633,7 +776,13 @@ describe('lib/parser', () => {
         }
       }
 
-      expect(parseArray(schema)).toEqual(expected)
+      const result = parseArray(schema)
+
+      expect(typeof result.attrs.id).toEqual('string')
+      delete result.attrs.id
+      delete result.items[0].id
+
+      expect(result).toEqual(expected)
     })
 
     it('should successfully parse with defined schema.anyOf', () => {
@@ -657,7 +806,13 @@ describe('lib/parser', () => {
         }
       }
 
-      expect(parseArray(schema)).toEqual(expected)
+      const result = parseArray(schema)
+
+      expect(typeof result.attrs.id).toEqual('string')
+      delete result.attrs.id
+      delete result.items[0].id
+
+      expect(result).toEqual(expected)
     })
   })
 
@@ -690,6 +845,9 @@ describe('lib/parser', () => {
 
         loadFields(schema, fields)
 
+        expect(typeof fields[0].attrs.id).toEqual('string')
+        delete fields[0].attrs.id
+
         expect(fields).toEqual(expected)
       })
     })
@@ -716,6 +874,9 @@ describe('lib/parser', () => {
 
         loadFields(schema, fields)
 
+        expect(typeof fields[0].attrs.id).toEqual('string')
+        delete fields[0].attrs.id
+
         expect(fields).toEqual(expected)
       })
     })
@@ -737,6 +898,9 @@ describe('lib/parser', () => {
         }]
 
         loadFields(schema, fields)
+
+        expect(typeof fields[0].attrs.id).toEqual('string')
+        delete fields[0].attrs.id
 
         expect(fields).toEqual(expected)
       })
@@ -767,6 +931,9 @@ describe('lib/parser', () => {
 
         loadFields(schema, fields)
 
+        expect(typeof fields[0].attrs.id).toEqual('string')
+        delete fields[0].attrs.id
+
         expect(fields).toEqual(expected)
       })
 
@@ -793,6 +960,9 @@ describe('lib/parser', () => {
         }]
 
         loadFields(schema, fields)
+
+        expect(typeof fields[0].attrs.id).toEqual('string')
+        delete fields[0].attrs.id
 
         expect(fields).toEqual(expected)
       })
@@ -821,6 +991,9 @@ describe('lib/parser', () => {
         }]
 
         loadFields(schema, fields)
+
+        expect(typeof fields[0].attrs.id).toEqual('string')
+        delete fields[0].attrs.id
 
         expect(fields).toEqual(expected)
       })
@@ -855,6 +1028,9 @@ describe('lib/parser', () => {
 
         loadFields(schema, fields)
 
+        expect(typeof fields[0].attrs.id).toEqual('string')
+        delete fields[0].attrs.id
+
         expect(fields).toEqual(expected)
       })
 
@@ -881,6 +1057,9 @@ describe('lib/parser', () => {
         }]
 
         loadFields(schema, fields)
+
+        expect(typeof fields[0].attrs.id).toEqual('string')
+        delete fields[0].attrs.id
 
         expect(fields).toEqual(expected)
       })

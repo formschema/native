@@ -9,7 +9,10 @@
 </template>
 
 <script>
-  import FormSchemaNative from '../../..'
+  // import FormSchemaNative from '../../..'
+  import '../dist/FormSchemaNative.umd.js'
+
+  const FormSchemaNative = window.FormSchemaNative.default
 
   export default {
     data: () => ({
@@ -67,15 +70,22 @@
     display: block;
   }
 
-  label {
+  [data-fs-field] {
     display: flex;
-    margin-bottom: 5px
+    margin-bottom: 5px;
   }
 
-  label span {
+  label {
     display: block;
     width: 120px;
     text-align: right;
     margin-right: 10px
+  }
+
+  [data-fs-field-input] {
+  }
+
+  input {
+    display: block;
   }
 </style>

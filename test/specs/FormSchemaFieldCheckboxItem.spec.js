@@ -34,6 +34,7 @@ describe('FormSchemaFieldCheckboxItem', () => {
 
     field = fields[0]
     item = {
+      id: 'x',
       name: 'checkbox-name',
       label: 'checkbox label',
       value: 'checkbox value'
@@ -49,8 +50,8 @@ describe('FormSchemaFieldCheckboxItem', () => {
       }
     })
 
-    const expectedInput = '<input name="checkbox-name" type="checkbox" value="checkbox value">'
-    const expectedLabelInput = '<label><span data-required-field="false">checkbox label</span><input name="checkbox-name" type="checkbox" value="checkbox value"></label>'
+    const expectedInput = '<input id="x" name="checkbox-name" type="checkbox" value="checkbox value">'
+    const expectedLabelInput = '<label for="x">checkbox label</label>'
 
     expect(wrapper.isVueInstance()).toBeTruthy()
     expect(wrapper.find('input').html()).toEqual(expectedInput)
@@ -69,7 +70,7 @@ describe('FormSchemaFieldCheckboxItem', () => {
       }
     })
 
-    const expected = '<input name="fieldName" type="checkbox" value="checkbox value">'
+    const expected = '<input id="x" name="fieldName" type="checkbox" value="checkbox value">'
 
     expect(wrapper.find('input').html()).toEqual(expected)
   })
@@ -85,7 +86,7 @@ describe('FormSchemaFieldCheckboxItem', () => {
       }
     })
 
-    const expected = '<input name="checkbox-name" type="checkbox" value="checkbox value" checked="checked">'
+    const expected = '<input id="x" name="checkbox-name" type="checkbox" value="checkbox value" checked="checked">'
 
     expect(wrapper.find('input').html()).toEqual(expected)
   })
@@ -101,7 +102,7 @@ describe('FormSchemaFieldCheckboxItem', () => {
       }
     })
 
-    const expected = '<input name="checkbox-name" type="checkbox" value="checkbox value">'
+    const expected = '<input id="x" name="checkbox-name" type="checkbox" value="checkbox value">'
 
     expect(wrapper.find('input').html()).toEqual(expected)
   })
@@ -133,7 +134,7 @@ describe('FormSchemaFieldCheckboxItem', () => {
       }
     })
 
-    const expected = '<label><span data-required-field="false">checkbox label</span><input name="checkbox-name" type="checkbox" value="checkbox value" checked="checked"></label>'
+    const expected = '<div data-fs-field="x"><label for="x">checkbox label</label><div data-fs-field-input="x"><input id="x" name="checkbox-name" type="checkbox" value="checkbox value" checked="checked"></div></div>'
 
     expect(wrapper.html()).toEqual(expected)
   })

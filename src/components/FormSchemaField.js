@@ -45,7 +45,7 @@ export default {
             }))
           })
         } else if (field.schemaType === 'boolean') {
-          const item = { label: field.label }
+          const item = { label: field.label, id: field.attrs.id }
           const checked = value === true
 
           return createElement(FormSchemaFieldCheckboxItem, {
