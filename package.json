@@ -37,7 +37,7 @@
     "@vue/cli-service": "^3.0.0-rc.3",
     "@vue/eslint-config-standard": "^3.0.0-rc.3",
     "@vue/test-utils": "^1.0.0-beta.20",
-    "@vuedoc/md": "^1.3.1",
+    "@vuedoc/md": "^1.3.2",
     "babel-core": "^6.26.3",
     "babel-jest": "^23.2.0",
     "babel-plugin-transform-runtime": "^6.23.0",
