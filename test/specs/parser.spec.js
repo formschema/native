@@ -111,6 +111,78 @@ describe('lib/parser', () => {
 
       expect(field).toEqual(expected)
     })
+
+    it('should successfully set common fields with default true value', () => {
+      const field = { attrs: {} }
+      const schema = {
+        type: 'boolean',
+        default: true
+      }
+      const expected = {
+        schemaType: 'boolean',
+        label: '',
+        description: '',
+        attrs: {
+          value: true,
+          required: false,
+          disabled: false
+        }
+      }
+
+      setCommonFields(schema, field)
+
+      delete field.attrs.id
+
+      expect(field).toEqual(expected)
+    })
+
+    it('should successfully set common fields with default false value', () => {
+      const field = { attrs: {} }
+      const schema = {
+        type: 'boolean',
+        default: false
+      }
+      const expected = {
+        schemaType: 'boolean',
+        label: '',
+        description: '',
+        attrs: {
+          value: false,
+          required: false,
+          disabled: false
+        }
+      }
+
+      setCommonFields(schema, field)
+
+      delete field.attrs.id
+
+      expect(field).toEqual(expected)
+    })
+
+    it('should successfully set common fields with default 0 value', () => {
+      const field = { attrs: {} }
+      const schema = {
+        type: 'number',
+        default: 0
+      }
+      const expected = {
+        schemaType: 'number',
+        label: '',
+        description: '',
+        attrs: {
+          value: 0,
+          required: false,
+          disabled: false
+        }
+      }
+
+      setCommonFields(schema, field)
+
+      delete field.attrs.id
+
+      expect(field).toEqual(expected)
+    })
   })
 
   describe('setItemName(field)', () => {

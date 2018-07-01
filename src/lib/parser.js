@@ -23,7 +23,9 @@ export function genId (prefix = '') {
 export function setCommonFields (schema, field) {
   field.attrs.value = field.attrs.hasOwnProperty('value')
     ? field.attrs.value
-    : schema.default || ''
+    : typeof schema.default !== 'undefined'
+      ? schema.default
+      : schema.default || ''
 
   field.schemaType = schema.type
   field.label = schema.title || ''
