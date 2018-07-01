@@ -1,9 +1,7 @@
-import { components, input } from '@/lib/components'
-
 export default {
   functional: true,
   render (createElement, { props }) {
-    const { option, value } = props
+    const { option, value, components } = props
 
     const field = {
       label: option.label,
@@ -16,8 +14,10 @@ export default {
             : option.value === value
       }
     }
-    const data = input({ field }).data
+    const data = components.input({ field }).data
 
-    return createElement(components.option.component, data, option.label)
+    data.props.components = components
+
+    return createElement(components.$.option.component, data, option.label)
   }
 }

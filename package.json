@@ -2,13 +2,13 @@
   "name": "@formschema/native",
   "version": "2.0.0-alpha.1",
   "description": "Vue component form based on JSON Schema",
-  "main": "dist/FormSchemaNative.common.js",
+  "main": "dist/FormSchema.common.js",
   "scripts": {
     "demo": "cd demo && npm run serve",
     "test": "vue-cli-service test:unit --colors --testMatch '<rootDir>/test/specs/*.spec.js'",
     "lint": "vue-cli-service lint",
     "readme": "vuedoc.md --join src/components/*.js --ignore-name --ignore-data --section 'FormSchema API' --output README.md",
-    "build": "vue-cli-service build --target lib --name FormSchemaNative --entry src/components/FormSchema.js"
+    "build": "vue-cli-service build --target lib --name FormSchema --entry src/components/FormSchema.js"
   },
   "repository": {
     "type": "git",

@@ -25,134 +25,154 @@ const tags = {
   select: ['select'],
   option: ['option'],
   label: ['label'],
-  button: ['submitbutton', 'arraybutton']
+  button: ['arraybutton']
 }
 
-export const components = {}
+export class Components {
+  constructor () {
+    this.$ = {}
 
-export function renderFieldset (h, { data, props, slots }) {
-  const name = data.field.attrs.name
-  const description = data.field.description
-
-  const children = [
-    h(components.inputswrapper.component, slots().default)
-  ]
-
-  if (description) {
-    children.unshift(h(components.legend.component, description))
-
-    delete data.field.description
-  }
-
-  return h('fieldset', { attrs: { name } }, children)
-}
-
-export function renderInput (h, { data, props, slots }) {
-  const nodes = slots().default || []
-  const field = props.field
-  const attrs = {
-    'data-fs-field': props.field.attrs.id,
-    'data-fs-required': field.attrs.required
-  }
-
-  if (field.description) {
-    nodes.push(h(components.inputdesc.component, {
-      props: { field }
-    }, field.description))
-  }
-
-  if (!field.label) {
-    if (nodes.length > 1) {
-      return h('div', { attrs }, nodes)
-    }
-
-    return nodes[0]
-  }
-
-  return h('div', { attrs }, [
-    h('label', {
-      attrs: {
-        for: props.field.attrs.id
+    for (let component in tags) {
+      if (tags[component] instanceof Array) {
+        tags[component].forEach((name) => this.set(name, component, {}, true))
+      } else {
+        tags[component].typed.forEach((type) => {
+          this.set(type, component, { attrs: { type } }, true)
+        })
       }
-    }, field.label),
-    h('div', {
-      attrs: {
-        'data-fs-field-input': props.field.attrs.id
-      }
-    }, nodes)
-  ])
-}
-
-export function renderButtons (h, { slots }) {
-  return h('div', {
-    attrs: {
-      'data-fs-buttons': true
     }
-  }, slots().default)
-}
 
-export function renderError (h, { slots }) {
-  return h('div', {
-    attrs: {
-      'data-fs-error': true
-    }
-  }, slots().default)
-}
-
-export const renderButton = (type, label) => (h, { data }) => {
-  return h('button', {
-    attrs: { type, ...data.attrs },
-    on: data.on
-  }, label)
-}
-
-export function set (type, component, option = null, native = false) {
-  if (typeof component !== 'string') {
-    component.functional = true
+    this.$.radiogroup.component.render = (...args) => this.renderFieldset(...args)
+    this.$.checkboxgroup.component.render = (...args) => this.renderFieldset(...args)
+    this.$.inputwrapper.component.render = (...args) => this.renderInput(...args)
+    this.$.buttonswrapper.component.render = (...args) => this.renderButtons(...args)
+    this.$.error.component.render = (...args) => this.renderError(...args)
+    this.$.arraybutton.component.render = (...args) => this.renderArrayButton(...args)
   }
 
-  components[type] = {
-    type,
-    native,
-    component: typeof component === 'string' ? {
-      functional: true,
-      render (h, { data, slots }) {
-        const nodes = slots().default || []
+  set (type, component, option = null, native = false) {
+    if (typeof component !== 'string') {
+      component.functional = true
+    }
 
-        if (option) {
-          merge(data, option)
+    this.$[type] = {
+      type,
+      native,
+      component: typeof component === 'string' ? {
+        functional: true,
+        render (h, { data, slots }) {
+          const nodes = slots().default || []
+
+          if (option) {
+            merge(data, option)
+          }
+
+          if (nodes.length === 0 && Object.keys(data).length === 0) {
+            return null
+          }
+
+          return h(component, data, nodes)
         }
-
-        if (nodes.length === 0 && Object.keys(data).length === 0) {
-          return null
-        }
-
-        return h(component, data, nodes)
-      }
-    } : component
-  }
-}
-
-export function init () {
-  for (let component in tags) {
-    delete components[component]
-
-    if (tags[component] instanceof Array) {
-      tags[component].forEach((name) => set(name, component, {}, true))
-    } else {
-      tags[component].typed.forEach((type) => {
-        set(type, component, { attrs: { type } }, true)
-      })
+      } : component
     }
   }
 
-  components.radiogroup.component.render = renderFieldset
-  components.checkboxgroup.component.render = renderFieldset
-  components.inputwrapper.component.render = renderInput
-  components.buttonswrapper.component.render = renderButtons
-  components.error.component.render = renderError
-  components.submitbutton.component.render = renderButton('submit', 'Submit')
-  components.arraybutton.component.render = renderButton('button', 'Add')
+  input ({ field, fieldParent = null, listeners = {} }) {
+    const { type } = field.attrs
+    const element = field.hasOwnProperty('items') && groupedArrayTypes.includes(type)
+      ? this.$[`${type}group`] || this.$.defaultGroup
+      : this.$[type] || this.$.text
+
+    const data = {
+      field,
+      fieldParent,
+      attrs: {},
+      props: {
+        components: this.components
+      },
+      domProps: {},
+      [argName(element)]: { ...field.attrs },
+      on: listeners
+    }
+
+    return { element, data }
+  }
+
+  renderFieldset (h, { data, props, slots }) {
+    const name = data.field.attrs.name
+    const description = data.field.description
+
+    const children = [
+      h(this.$.inputswrapper.component, slots().default)
+    ]
+
+    if (description) {
+      children.unshift(h(this.$.legend.component, description))
+
+      delete data.field.description
+    }
+
+    return h('fieldset', { attrs: { name } }, children)
+  }
+
+  renderInput (h, { data, props, slots }) {
+    const nodes = slots().default || []
+    const field = props.field
+    const attrs = {
+      'data-fs-field': props.field.attrs.id,
+      'data-fs-required': field.attrs.required
+    }
+
+    if (field.description) {
+      nodes.push(h(this.$.inputdesc.component, {
+        props: { field }
+      }, field.description))
+    }
+
+    if (!field.label) {
+      if (nodes.length > 1) {
+        return h('div', { attrs }, nodes)
+      }
+
+      return nodes[0]
+    }
+
+    return h('div', { attrs }, [
+      h('label', {
+        attrs: {
+          for: props.field.attrs.id
+        }
+      }, field.label),
+      h('div', {
+        attrs: {
+          'data-fs-field-input': props.field.attrs.id
+        }
+      }, nodes)
+    ])
+  }
+
+  renderButtons (h, { slots }) {
+    return h('div', {
+      attrs: {
+        'data-fs-buttons': true
+      }
+    }, slots().default)
+  }
+
+  renderError (h, { slots }) {
+    return h('div', {
+      attrs: {
+        'data-fs-error': true
+      }
+    }, slots().default)
+  }
+
+  renderArrayButton (h, { data }) {
+    return h('button', {
+      attrs: { type: 'button', ...data.attrs },
+      on: data.on
+    }, 'Add')
+  }
 }
 
 export function argName (el) {
@@ -162,25 +182,6 @@ export function argName (el) {
 export const groupedArrayTypes = [
   'radio', 'checkbox', 'input', 'textarea'
 ]
-
-export function input ({ field, fieldParent = null, listeners = {} }) {
-  const { type } = field.attrs
-  const element = field.hasOwnProperty('items') && groupedArrayTypes.includes(type)
-    ? components[`${type}group`] || components.defaultGroup
-    : components[type] || components.text
-
-  const data = {
-    field,
-    fieldParent,
-    attrs: {},
-    props: {},
-    domProps: {},
-    [argName(element)]: { ...field.attrs },
-    on: listeners
-  }
-
-  return { element, data }
-}
 
 export const fieldTypesAsNotArray = [
   'radio', 'textarea', 'select'

@@ -3,7 +3,7 @@
 import sinon from 'sinon'
 
 import { mount } from '@vue/test-utils'
-import { init, set, input as getInput } from '@/lib/components'
+import { Components } from '@/lib/components'
 
 import {
   INPUT_ADDED_EVENT,
@@ -12,7 +12,7 @@ import {
 
 /* global describe it expect */
 
-init()
+const components = new Components()
 
 describe('FormSchemaInput', () => {
   it('should be a functional component', () => {
@@ -27,11 +27,11 @@ describe('FormSchemaInput', () => {
         value: 'Hello'
       }
     }
-    const input = getInput({ field })
+    const input = components.input({ field })
     const value = 'Hello'
     const wrapper = mount(component, {
       context: {
-        props: { field, value, input }
+        props: { field, value, input, components }
       }
     })
     const expected = '<input type="text" name="fieldName" value="Hello">'
@@ -49,14 +49,14 @@ describe('FormSchemaInput', () => {
         value: 'Hello'
       }
     }
-    const input = getInput({ field })
+    const input = components.input({ field })
     const value = 'Hello'
     const disableWrappingLabel = true
     const wrapper = mount({
       render (createElement) {
         return createElement('form', [
           createElement(component, {
-            props: { field, value, input, disableWrappingLabel }
+            props: { field, value, input, disableWrappingLabel, components }
           })
         ])
       }
@@ -76,14 +76,14 @@ describe('FormSchemaInput', () => {
       itemsNum: 2,
       isArrayField: true
     }
-    const input = getInput({ field })
+    const input = components.input({ field })
     const value = {
       'fieldName-0': 'Value 1',
       'fieldName-1': 'Value 2'
     }
     const wrapper = mount(component, {
       context: {
-        props: { field, value, input }
+        props: { field, value, input, components }
       }
     })
 
@@ -102,14 +102,14 @@ describe('FormSchemaInput', () => {
       itemsNum: 2,
       isArrayField: true
     }
-    const input = getInput({ field })
+    const input = components.input({ field })
     const value = {
       'fieldName-0': 'Value 1',
       'fieldName-1': 'Value 2'
     }
     const wrapper = mount(component, {
       context: {
-        props: { field, value, input }
+        props: { field, value, input, components }
       }
     })
 
@@ -119,7 +119,7 @@ describe('FormSchemaInput', () => {
   })
 
   it('should successfully render a array field for custom component', () => {
-    set('text', 'input', { attrs: { type: 'password' } })
+    components.set('text', 'input', { attrs: { type: 'password' } })
 
     const field = {
       attrs: {
@@ -129,14 +129,14 @@ describe('FormSchemaInput', () => {
       itemsNum: 2,
       isArrayField: true
     }
-    const input = getInput({ field })
+    const input = components.input({ field })
     const value = {
       'fieldName-0': 'Value 1',
       'fieldName-1': 'Value 2'
     }
     const wrapper = mount(component, {
       context: {
-        props: { field, value, input }
+        props: { field, value, input, components }
       }
     })
 
@@ -146,8 +146,6 @@ describe('FormSchemaInput', () => {
   })
 
   it('should successfully emit the click event', () => {
-    init()
-
     const field = {
       attrs: {
         type: 'password',
@@ -157,7 +155,7 @@ describe('FormSchemaInput', () => {
       maxItems: 3,
       isArrayField: true
     }
-    const input = getInput({ field })
+    const input = components.input({ field })
 
     const value = {
       'fieldName-0': 'Value 1',
@@ -170,7 +168,7 @@ describe('FormSchemaInput', () => {
 
     const wrapper = mount(component, {
       context: {
-        props: { field, value, input },
+        props: { field, value, input, components },
         on: listeners
       }
     })

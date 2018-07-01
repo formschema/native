@@ -1,10 +1,13 @@
 'use strict'
 
 import { mount } from '@vue/test-utils'
+import { Components } from '@/lib/components'
 
 import component from '@/components/FormSchema.js'
 
 /* global describe it expect */
+
+const components = new Components()
 
 const props = {
   schema: {},
@@ -47,7 +50,7 @@ describe('FormSchema', () => {
     })
 
     it('should have the FormSchema name', () => {
-      expect(component.name).toEqual('FormSchemaNative')
+      expect(component.name).toEqual('FormSchema')
     })
 
     it('should have a changed method', () => {
@@ -431,6 +434,65 @@ describe('FormSchema', () => {
         const expected = '<input id="x" name="checkbox-name" type="checkbox">'
 
         expect(wrapper.find('input').html()).toEqual(expected)
+      })
+    })
+
+    describe('multiple custom form elements', () => {
+      const schema = {
+        type: 'boolean',
+        default: true,
+        attrs: {
+          id: 'x',
+          name: 'checkbox-name'
+        }
+      }
+
+      it('should render with custom checkbox component', () => {
+        const components = new Components()
+
+        components.set('checkbox', {
+          functional: true,
+          render (h, { props, listeners }) {
+            return h('span', {
+              attrs: props,
+              on: listeners
+            })
+          }
+        })
+
+        const wrapper = mount(component, {
+          propsData: { schema, components }
+        })
+
+        const expected = '<div><form enctype="application/x-www-form-urlencoded" method="post"><span id="x" name="checkbox-name" type="checkbox" checked="checked"></span></form></div>'
+
+        expect(wrapper.html()).toEqual(expected)
+      })
+
+      it('should render with overwrite custom checkbox component', () => {
+        const components = new Components()
+
+        components.set('checkbox', 'div', {
+          attrs: { type: 'checkbox' }
+        })
+
+        const wrapper = mount(component, {
+          propsData: { schema, components }
+        })
+
+        const expected = '<div><form enctype="application/x-www-form-urlencoded" method="post"><div type="checkbox"></div></form></div>'
+
+        expect(wrapper.html()).toEqual(expected)
+      })
+
+      it('should render with default components', () => {
+        const wrapper = mount(component, {
+          propsData: { schema }
+        })
+
+        const expected = '<div><form enctype="application/x-www-form-urlencoded" method="post"><input id="x" name="checkbox-name" type="checkbox" checked="checked"></form></div>'
+
+        expect(wrapper.html()).toEqual(expected)
       })
     })
   })

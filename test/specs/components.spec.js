@@ -1,10 +1,62 @@
 'use strict'
 
-import { init, option, argName, inputName, components, elementOptions } from '@/lib/components'
+import {
+  Components,
+  argName,
+  groupedArrayTypes,
+  fieldTypesAsNotArray,
+  inputName
+} from '@/lib/components'
 
 /* global describe it expect beforeEach */
 
 describe('lib/components', () => {
+  describe('Components()', () => {
+    const defaultComponents = [
+      'title', 'description', 'error', 'textgroup', 'buttonswrapper',
+      'formwrapper', 'inputswrapper', 'inputwrapper', 'defaultGroup', 'legend',
+      'radiogroup', 'checkboxgroup', 'inputdesc', 'form', 'checkbox', 'color',
+      'date', 'datetime', 'datetime-local', 'email', 'file', 'hidden', 'image',
+      'month', 'number', 'password', 'radio', 'range', 'search', 'tel', 'text',
+      'time', 'url', 'week', 'textarea', 'select', 'option', 'label',
+      'arraybutton'
+    ]
+
+    describe('default components', () => {
+      const instance = new Components()
+
+      defaultComponents.forEach((type) => {
+        describe(`component ${type}`, () => {
+          it(`should have a right defined type`, () => {
+            expect(instance.$[type].type).toEqual(type)
+          })
+
+          it(`should have native === true`, () => {
+            expect(instance.$[type].native).toBeTruthy()
+          })
+
+          it(`should have a component entry defined as object`, () => {
+            expect(typeof instance.$[type].component).toEqual('object')
+          })
+
+          it(`should have a thruthy component.functional`, () => {
+            expect(instance.$[type].component.functional).toBeTruthy()
+          })
+
+          it(`should have a render function`, () => {
+            expect(typeof instance.$[type].component.render).toEqual('function')
+          })
+        })
+      })
+    })
+
+    describe('input({ vm, field, ref })', () => {
+    })
+
+    describe('set(type, component, option = null, native = false)', () => {
+    })
+  })
+
   describe('argName(el)', () => {
     it('should return "attrs" for native element', () => {
       expect(argName({ native: true })).toEqual('attrs')
@@ -15,92 +67,25 @@ describe('lib/components', () => {
     })
   })
 
+  describe('groupedArrayTypes', () => {
+    it('should successfully export groupedArrayTypes', () => {
+      expect(groupedArrayTypes).toEqual([
+        'radio', 'checkbox', 'input', 'textarea'
+      ])
+    })
+  })
+
+  describe('fieldTypesAsNotArray', () => {
+    it('should successfully export fieldTypesAsNotArray', () => {
+      expect(fieldTypesAsNotArray).toEqual([
+        'radio', 'textarea', 'select'
+      ])
+    })
+  })
+
   describe('inputName(field, index)', () => {
     it('should successfully return the input name', () => {
       expect(inputName({ attrs: { name: 'fieldName' } }, 1)).toEqual('fieldName-1')
     })
-  })
-
-  describe('input({ vm, field, ref })', () => {
-  })
-
-  describe('set(type, component, option = null, native = false)', () => {
-  })
-
-  describe('init()', () => {
-    beforeEach(init)
-
-    const divInputs = [
-      'error', 'textgroup', 'defaultGroup'
-    ]
-    const fieldsetInputs = [
-      'radiogroup', 'checkboxgroup'
-    ]
-    const tagInputs = ['form', 'textarea', 'select', 'option', 'label']
-    const typedInputs = [
-      'checkbox', 'color', 'date', 'datetime', 'datetime-local',
-      'email', 'file', 'hidden', 'image', 'month', 'number',
-      'password', 'radio', 'range', 'search', 'tel', 'text',
-      'time', 'url', 'week'
-    ]
-
-    //     it('should contain the generic title component', () => {
-    //       expect(components.title).toEqual({ component: 'h1', option })
-    //     })
-    //
-    //     it('should contain the generic description component', () => {
-    //       expect(components.description).toEqual({ component: 'p', option })
-    //     })
-    //
-    //     it('should contain the generic error component', () => {
-    //       expect(components.error).toEqual({ component: 'div', option })
-    //     })
-    //
-    //     divInputs.forEach((tag) => {
-    //       it(`should contain the generic div ${tag} component`, () => {
-    //         expect(components[tag]).toEqual({ component: 'div', option })
-    //       })
-    //     })
-    //
-    //     fieldsetInputs.forEach((tag) => {
-    //       it(`should contain the fieldset ${tag} component`, () => {
-    //         expect({ ...components[tag], render: undefined }).toEqual({ component: 'fieldset', option })
-    //       })
-    //     })
-    //
-    //     tagInputs.forEach((tag) => {
-    //       it(`should contain the generic tagged ${tag} component`, () => {
-    //         expect(components[tag]).toEqual({ component: tag, option })
-    //       })
-    //     })
-    //
-    //     typedInputs.forEach((type) => {
-    //       it(`should contain the generic typed ${type} component`, () => {
-    //         const expected = {
-    //           component: 'input',
-    //           option: { ...option, type }
-    //         }
-    //
-    //         expect(components[type]).toEqual(expected)
-    //       })
-    //     })
-    //
-    //     it('should contain the generic button component', () => {
-    //       const expected = {
-    //         component: 'button',
-    //         option: { ...option, type: 'submit', label: 'Submit' }
-    //       }
-    //
-    //       expect(components.button).toEqual(expected)
-    //     })
-    //
-    //     it('should contain the generic arraybutton component', () => {
-    //       const expected = {
-    //         component: 'button',
-    //         option: { ...option, type: 'button', label: 'Add' }
-    //       }
-    //
-    //       expect(components.arraybutton).toEqual(expected)
-    //     })
   })
 })

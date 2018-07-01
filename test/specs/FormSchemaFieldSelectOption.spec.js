@@ -1,15 +1,14 @@
 'use strict'
 
 import { mount } from '@vue/test-utils'
-import { init } from '@/lib/components'
+import { Components } from '@/lib/components'
 
 import component from '@/components/FormSchemaFieldSelectOption.js'
 
 /* global describe beforeEach it expect */
 
-init()
-
 let option
+const components = new Components()
 
 describe('FormSchemaFieldSelectOption', () => {
   it('should be a functional component', () => {
@@ -26,7 +25,7 @@ describe('FormSchemaFieldSelectOption', () => {
   it('should successfully render the component', () => {
     const wrapper = mount(component, {
       context: {
-        props: { option }
+        props: { option, components }
       }
     })
 
@@ -41,7 +40,7 @@ describe('FormSchemaFieldSelectOption', () => {
 
     const wrapper = mount(component, {
       context: {
-        props: { option }
+        props: { option, components }
       }
     })
 
@@ -54,7 +53,7 @@ describe('FormSchemaFieldSelectOption', () => {
     const value = option.value
     const wrapper = mount(component, {
       context: {
-        props: { option, value }
+        props: { option, value, components }
       }
     })
 

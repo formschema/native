@@ -1,17 +1,17 @@
 import { genId, loadFields } from '@/lib/parser'
 import { equals, merge } from '@/lib/object'
-import { init, components, set, argName, inputName } from '@/lib/components'
+import { Components as Instance, argName, inputName } from '@/lib/components'
 import FormSchemaField from './FormSchemaField'
 
-init()
+export const Components = Instance
 
 export default {
-  name: 'FormSchemaNative',
+  name: 'FormSchema',
   props: {
     /**
      * The JSON Schema object.
      */
-    schema: { type: Object, required: true },
+    schema: { type: Object, default: () => ({}) },
 
     /**
      * Use this directive to create two-way data bindings with the component. It automatically picks the correct way to update the element based on the input type.
@@ -48,7 +48,15 @@ export default {
     /**
      * This Boolean attribute indicates that the form is not to be validated when submitted.
      */
-    novalidate: { type: Boolean }
+    novalidate: { type: Boolean },
+
+    /**
+     * Use this prop to overwrite the default Native HTML Elements for custom components.
+     */
+    components: {
+      type: Components,
+      default: () => new Components()
+    }
   },
   data: () => ({
     ref: genId('form-schema'),
@@ -63,26 +71,27 @@ export default {
   },
   render (createElement) {
     const { schema, fields } = this.schemaLoaded
+    const components = this.components
     const nodes = []
 
     if (schema.title) {
-      nodes.push(createElement(components.title.component, schema.title))
+      nodes.push(createElement(components.$.title.component, schema.title))
     }
 
     if (schema.description) {
       nodes.push(createElement(
-        components.description.component, schema.description))
+        components.$.description.component, schema.description))
     }
 
     if (this.error) {
-      nodes.push(createElement(components.error.component, this.error))
+      nodes.push(createElement(components.$.error.component, this.error))
     }
 
     const formNodes = fields.map((field) => {
       const value = this.data[field.attrs.name]
 
       return createElement(FormSchemaField, {
-        props: { field, value },
+        props: { field, value, components },
         on: {
           input: (event) => {
             const target = event.target
@@ -115,12 +124,12 @@ export default {
     if (formNodes.length) {
       if (this.$slots.default) {
         formNodes.push(createElement(
-          components.buttonswrapper.component, this.$slots.default))
+          components.$.buttonswrapper.component, this.$slots.default))
       }
 
-      nodes.push(createElement(components.form.component, {
+      nodes.push(createElement(components.$.form.component, {
         ref: this.ref,
-        [argName(components.form)]: {
+        [argName(components.$.form)]: {
           action: this.action,
           enctype: this.enctype,
           method: this.method,
@@ -135,9 +144,8 @@ export default {
       }, formNodes))
     }
 
-    return createElement(components.formwrapper.component, nodes)
+    return createElement(components.$.formwrapper.component, nodes)
   },
-  setComponent: set,
   methods: {
     /**
      * Load the given JSON Schema. Use this to update the initial schema.

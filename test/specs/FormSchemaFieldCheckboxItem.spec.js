@@ -2,15 +2,14 @@
 
 import { mount } from '@vue/test-utils'
 import { loadFields } from '@/lib/parser'
-import { init } from '@/lib/components'
+import { Components } from '@/lib/components'
 
 import component from '@/components/FormSchemaFieldCheckboxItem.js'
 
 /* global describe beforeEach it expect */
 
-init()
-
 let schema, fields, field, item
+const components = new Components()
 
 describe('FormSchemaFieldCheckboxItem', () => {
   it('should be a functional component', () => {
@@ -45,7 +44,7 @@ describe('FormSchemaFieldCheckboxItem', () => {
     const wrapper = mount(component, {
       context: {
         props: {
-          item, field
+          item, field, components
         }
       }
     })
@@ -65,7 +64,7 @@ describe('FormSchemaFieldCheckboxItem', () => {
     const wrapper = mount(component, {
       context: {
         props: {
-          item, field, value
+          item, field, value, components
         }
       }
     })
@@ -81,7 +80,7 @@ describe('FormSchemaFieldCheckboxItem', () => {
     const wrapper = mount(component, {
       context: {
         props: {
-          item, field, value, checked
+          item, field, value, checked, components
         }
       }
     })
@@ -97,7 +96,7 @@ describe('FormSchemaFieldCheckboxItem', () => {
     const wrapper = mount(component, {
       context: {
         props: {
-          item, field, value, checked
+          item, field, value, checked, components
         }
       }
     })
@@ -129,7 +128,7 @@ describe('FormSchemaFieldCheckboxItem', () => {
     const wrapper = mount(component, {
       context: {
         props: {
-          item, field, value
+          item, field, value, components
         }
       }
     })

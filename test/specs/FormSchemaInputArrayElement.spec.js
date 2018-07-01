@@ -1,13 +1,13 @@
 'use strict'
 
 import { mount } from '@vue/test-utils'
-import { init, input as getInput } from '@/lib/components'
+import { Components } from '@/lib/components'
 
 import component from '@/components/FormSchemaInputArrayElement.js'
 
 /* global describe it expect */
 
-init()
+const components = new Components()
 
 describe('FormSchemaInputArrayElement', () => {
   it('should be a functional component', () => {
@@ -22,7 +22,7 @@ describe('FormSchemaInputArrayElement', () => {
         value: 'Hello'
       }
     }
-    const input = getInput({ field })
+    const input = components.input({ field })
     const name = field.attrs.name
     const vm = {
       inputValues: {
@@ -31,7 +31,7 @@ describe('FormSchemaInputArrayElement', () => {
     const value = 'Hello'
     const wrapper = mount(component, {
       context: {
-        props: { field, value, input, name }
+        props: { field, value, input, name, components }
       }
     })
     const expected = '<input type="text" name="fieldName" value="Hello">'
@@ -48,7 +48,7 @@ describe('FormSchemaInputArrayElement', () => {
         value: 'Hello'
       }
     }
-    const input = getInput({ field })
+    const input = components.input({ field })
     const name = field.attrs.name
     const vm = {
       inputValues: {
@@ -59,7 +59,7 @@ describe('FormSchemaInputArrayElement', () => {
     }
     const wrapper = mount(component, {
       context: {
-        props: { field, value, input, name }
+        props: { field, value, input, name, components }
       }
     })
     const expected = '<input type="text" name="fieldName" value="Hello">'
@@ -76,7 +76,7 @@ describe('FormSchemaInputArrayElement', () => {
         value: 'Hello'
       }
     }
-    const input = getInput({ field })
+    const input = components.input({ field })
     const vm = {
       inputValues: {
       }
@@ -86,7 +86,7 @@ describe('FormSchemaInputArrayElement', () => {
     }
     const wrapper = mount(component, {
       context: {
-        props: { field, value, input }
+        props: { field, value, input, components }
       }
     })
     const expected = '<input type="text" name="fieldName" value="Hello">'
