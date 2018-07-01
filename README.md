@@ -22,7 +22,7 @@ npm install --save @formschema/native
 
    The JSON Schema object. 
 
-- `v-model` ***Object*** (*optional*) `default: [Object]`
+- `v-model` ***Object*** (*optional*)
 
    Use this directive to create two-way data bindings with the component. It automatically picks the correct way to update the element based on the input type. 
 
@@ -65,6 +65,10 @@ npm install --save @formschema/native
    Fired when a form is submitted 
 
 ### methods 
+
+- `loadSchema(schema)` 
+
+   Load the given JSON Schema. Use this to update the initial schema. 
 
 - `form()` 
 
@@ -181,6 +185,7 @@ To asynchronously load a schema, just set a promise that returns it.
 ## Use custom form elements
 
 Use `FormSchema.setComponent(type, component[, props = {}])` to define custom element to use for rendering.
+
 See [FormSchema ElementUI implementation](https://gitlab.com/formschema/elementui) for a complete example.
 
 ```js
@@ -391,6 +396,29 @@ To render a [regex input](http://json-schema.org/latest/json-schema-validation.h
     }
   }
 }
+```
+
+### Working with Async Schema
+
+You may want to use `FormSchema` with a schema loaded from a remote URL.
+To do that, use the `loadSchema(schema)` method:
+
+```html
+<template>
+  <form-schema ref="formSchema"/>
+</template>
+
+<script>
+  import axios from 'axios'
+
+  export default {
+    created () {
+      axios.get('/schema/newsletter.json').then(({ data }) => {
+        this.$refs.formSchema.loadSchema(data)
+      })
+    }
+  }
+</script>
 ```
 
 ## License

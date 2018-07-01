@@ -59,14 +59,7 @@ export default {
     inputValues: {}
   }),
   created () {
-    this.init(this.schema)
-  },
-  watch: {
-    schema (value, oldValue) {
-      if (!equals(value, oldValue)) {
-        this.init(value)
-      }
-    }
+    this.loadSchema(this.schema)
   },
   render (createElement) {
     const { schema, fields } = this.schemaLoaded
@@ -147,9 +140,9 @@ export default {
   setComponent: set,
   methods: {
     /**
-     * @private
+     * Load the given JSON Schema. Use this to update the initial schema.
      */
-    init (schema) {
+    loadSchema (schema) {
       const fields = []
 
       loadFields(schema, fields)

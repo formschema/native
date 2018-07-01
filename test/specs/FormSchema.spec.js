@@ -141,14 +141,14 @@ describe('FormSchema', () => {
       })
     })
 
-    describe('should successfully render the component with reactive schema', () => {
+    describe('should successfully render the component with reactive schema - loadSchema()', () => {
       const wrapper = mount(component, {
         propsData: { schema: {} }
       })
 
       it('should render nothing with empty schema', () => {
         expect(wrapper.html()).toEqual(undefined)
-        wrapper.setProps({ schema })
+        wrapper.vm.loadSchema(schema)
       })
 
       it('should have form title', () => {
