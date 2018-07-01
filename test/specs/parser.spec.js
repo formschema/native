@@ -1135,6 +1135,79 @@ describe('lib/parser', () => {
 
         expect(fields).toEqual(expected)
       })
+
+      it('should successfully load the schema with ordered fields', () => {
+        const fields = []
+        const schema = {
+          type: 'object',
+          properties: {
+            three: { type: 'boolean' },
+            two: { type: 'boolean' },
+            one: { type: 'boolean' },
+            four: { type: 'boolean' }
+          },
+          order: ['one', 'two']
+        }
+        const expected = [
+          {
+            schemaType: 'boolean',
+            label: '',
+            description: '',
+            attrs: {
+              type: 'checkbox',
+              name: 'one',
+              checked: false,
+              required: false,
+              disabled: false
+            }
+          },
+          {
+            schemaType: 'boolean',
+            label: '',
+            description: '',
+            attrs: {
+              type: 'checkbox',
+              name: 'two',
+              checked: false,
+              required: false,
+              disabled: false
+            }
+          },
+          {
+            schemaType: 'boolean',
+            label: '',
+            description: '',
+            attrs: {
+              type: 'checkbox',
+              name: 'three',
+              checked: false,
+              required: false,
+              disabled: false
+            }
+          },
+          {
+            schemaType: 'boolean',
+            label: '',
+            description: '',
+            attrs: {
+              type: 'checkbox',
+              name: 'four',
+              checked: false,
+              required: false,
+              disabled: false
+            }
+          }
+        ]
+
+        loadFields(schema, fields)
+
+        fields.forEach((field) => {
+          expect(typeof field.attrs.id).toEqual('string')
+          delete field.attrs.id
+        })
+
+        expect(fields).toEqual(expected)
+      })
     })
   })
 })

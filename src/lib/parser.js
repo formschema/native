@@ -27,6 +27,7 @@ export function setCommonFields (schema, field) {
       ? schema.default
       : schema.default || ''
 
+  field.order = schema.order
   field.schemaType = schema.type
   field.label = schema.title || ''
   field.description = schema.description || ''
@@ -39,17 +40,31 @@ export function loadFields (schema, fields, name = null) {
   if (!schema || schema.visible === false) {
     return
   }
+
   switch (schema.type) {
     case 'object':
-      for (let key in schema.properties) {
-        if (schema.required) {
-          for (let field of schema.required) {
-            schema.properties[field].required = true
-          }
-        }
-
-        loadFields(schema.properties[key], fields, key)
+      if (schema.required instanceof Array) {
+        schema.required.forEach((field) => {
+          schema.properties[field].required = true
+        })
       }
+
+      const allProperties = Object.keys(schema.properties)
+      const properties = schema.order instanceof Array
+        ? schema.order
+        : allProperties
+
+      if (properties.length < allProperties.length) {
+        allProperties.forEach((prop) => {
+          if (!properties.includes(prop)) {
+            properties.push(prop)
+          }
+        })
+      }
+
+      properties.forEach((key) => {
+        loadFields(schema.properties[key], fields, key)
+      })
       break
 
     case 'boolean':
