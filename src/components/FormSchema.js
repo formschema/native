@@ -196,6 +196,9 @@ export default {
 
       this.data = data
 
+      /**
+       * Fired synchronously when the value of an element is changed.
+       */
       this.$emit('input', this.data)
     },
 
