@@ -209,6 +209,8 @@ export default {
     onInput (event, triggerInputEvent = true) {
       if (event.field.schemaType === 'boolean') {
         event.data = event.target.checked
+      } else if (['number', 'integer'].includes(event.field.schemaType)) {
+        event.data = Number(event.data)
       }
 
       this.data[event.field.attrs.name] = event.data
