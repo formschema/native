@@ -1,6 +1,6 @@
 'use strict'
 
-import { equals, isScalar, merge } from '@/lib/object'
+import { equals, isScalar, merge, clone } from '@/lib/object'
 
 /* global describe it expect */
 
@@ -24,26 +24,40 @@ describe('lib/object', () => {
       const o1 = { a: 1, b: 3 }
       const o2 = { a: 1, b: 3 }
 
-      expect(equals(o1, o2)).toEqual(true)
+      expect(equals(o1, o2)).toBeTruthy()
     })
 
     it('should return true for different inputs with equal non ordered keys', () => {
       const o1 = { a: 1, b: 3 }
       const o2 = { b: 3, a: 1 }
 
-      expect(equals(o1, o2)).toEqual(true)
+      expect(equals(o1, o2)).toBeTruthy()
     })
 
     it('should return true for empty inputs', () => {
       const o1 = {}
       const o2 = {}
 
-      expect(equals(o1, o2)).toEqual(true)
+      expect(equals(o1, o2)).toBeTruthy()
+    })
+
+    it('should return true with for identical scalar inputs', () => {
+      const o1 = 1
+      const o2 = 1
+
+      expect(equals(o1, o2)).toBeTruthy()
+    })
+
+    it('should return false for different scalar inputs', () => {
+      const o1 = 1
+      const o2 = 2
+
+      expect(equals(o1, o2)).toBe(false)
     })
   })
 
   describe('isScalar(value)', () => {
-    ['hello', 123, true, undefined, null, () => {}].forEach((value) => {
+    ['hello', 123, true, undefined, null].forEach((value) => {
       it(`should return true for '${value}' as scalar value`, () => {
         expect(isScalar(value)).toBe(true)
       })
@@ -58,13 +72,25 @@ describe('lib/object', () => {
 
   describe('merge(dest, src)', () => {
     it('should successfully merge src object to the dest object', () => {
-      const src = { a: 1, c: 2, e: { x: 1 }, d: [1], f: { g: 1 } }
+      const F = new Function()
+      const src = { a: 1, c: 2, e: { x: 1 }, d: [1], f: { g: 1 }, F }
       const dest = { a: 0, b: 1, e: { y: 2 }, d: [2, 3] }
-      const expected = { a: 1, b: 1, c: 2, e: { x: 1, y: 2 }, d: [1], f: { g: 1 } }
+      const expected = { a: 1, b: 1, c: 2, e: { x: 1, y: 2 }, d: [1], f: { g: 1 }, F }
 
       merge(dest, src)
 
       expect(dest).toEqual(expected)
+    })
+  })
+
+  describe('clone(src)', () => {
+    it('should successfully clone src object', () => {
+      const F = new Function()
+      const src = { a: 1, c: 2, e: { x: 1 }, d: [1], f: { g: 1 }, F }
+      const expected = { a: 1, c: 2, e: { x: 1 }, d: [1], f: { g: 1 }, F }
+      const result = clone(src)
+
+      expect(result).toEqual(expected)
     })
   })
 })
