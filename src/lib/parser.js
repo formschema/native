@@ -279,7 +279,9 @@ export function parseArray (schema, name = null) {
 
   if (!field.attrs.type) {
     field.isArrayField = true
-    field.attrs.type = schema.items.type || 'text'
+    field.attrs.type = schema.items && schema.items.type && ['number', 'integer'].includes(schema.items.type)
+      ? schema.items.type
+      : 'text'
   } else if (field.attrs.type === 'select') {
     field.attrs.multiple = field.schemaType === 'array'
     field.attrs.value = field.attrs.value || field.attrs.multiple ? [] : ''
