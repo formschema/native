@@ -243,7 +243,9 @@ export default {
         const index = event.target.getAttribute('data-fs-index')
         const key = inputName(event.field, index)
 
-        this.inputValues[key] = event.data
+        this.inputValues[key] = ['number', 'integer'].includes(event.field.attrs.type)
+          ? Number(event.data)
+          : event.data
 
         const values = []
 

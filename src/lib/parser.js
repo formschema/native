@@ -86,7 +86,6 @@ export function loadFields (schema, fields, name = null) {
           }
 
           fields.push(parseArray(schema, name))
-
           return
         }
       }
@@ -280,7 +279,7 @@ export function parseArray (schema, name = null) {
 
   if (!field.attrs.type) {
     field.isArrayField = true
-    field.attrs.type = 'text'
+    field.attrs.type = schema.items.type || 'text'
   } else if (field.attrs.type === 'select') {
     field.attrs.multiple = field.schemaType === 'array'
     field.attrs.value = field.attrs.value || field.attrs.multiple ? [] : ''
