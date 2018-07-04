@@ -4,6 +4,7 @@ import {
   s4,
   genId,
   setCommonFields,
+  parseDefaultScalarValue,
   setItemName,
   arrayOrderedValues,
   arrayUnorderedValues,
@@ -47,7 +48,6 @@ describe('lib/parser', () => {
         label: '',
         description: '',
         attrs: {
-          value: '',
           required: false,
           disabled: false
         }
@@ -434,7 +434,6 @@ describe('lib/parser', () => {
         description: '',
         attrs: {
           type: 'text',
-          value: '',
           required: false,
           disabled: false
         }
@@ -461,7 +460,6 @@ describe('lib/parser', () => {
         description: '',
         attrs: {
           type: 'file',
-          value: '',
           required: false,
           disabled: false
         }
@@ -489,7 +487,6 @@ describe('lib/parser', () => {
         attrs: {
           name: 'name',
           type: 'file',
-          value: '',
           required: false,
           disabled: false
         }
@@ -516,7 +513,6 @@ describe('lib/parser', () => {
         description: '',
         attrs: {
           type: 'text',
-          value: '',
           minlength: 2,
           maxlength: 5,
           pattern: '[a-z]+',
@@ -544,7 +540,6 @@ describe('lib/parser', () => {
         description: '',
         attrs: {
           type: 'email',
-          value: '',
           required: false,
           disabled: false
         }
@@ -579,7 +574,6 @@ describe('lib/parser', () => {
         description: '',
         attrs: {
           type: 'url',
-          value: '',
           required: false,
           disabled: false
         }
@@ -611,7 +605,6 @@ describe('lib/parser', () => {
         description: '',
         attrs: {
           type: 'number',
-          value: '',
           required: false,
           disabled: false
         }
@@ -633,7 +626,6 @@ describe('lib/parser', () => {
         description: '',
         attrs: {
           type: 'number',
-          value: '',
           required: false,
           disabled: false
         }
@@ -679,7 +671,6 @@ describe('lib/parser', () => {
         maxItems: 1000,
         attrs: {
           type: 'text',
-          value: '',
           required: false,
           disabled: false
         }
@@ -709,7 +700,6 @@ describe('lib/parser', () => {
         maxItems: 1000,
         attrs: {
           type: 'file',
-          value: '',
           required: false,
           disabled: false
         }
@@ -736,7 +726,6 @@ describe('lib/parser', () => {
         attrs: {
           name: 'name',
           type: 'text',
-          value: '',
           required: false,
           disabled: false
         }
@@ -938,7 +927,6 @@ describe('lib/parser', () => {
           maxItems: 1000,
           attrs: {
             type: 'text',
-            value: '',
             required: false,
             disabled: false
           }
@@ -963,7 +951,6 @@ describe('lib/parser', () => {
           description: '',
           attrs: {
             type: 'number',
-            value: '',
             required: false,
             disabled: false
           }
@@ -1207,6 +1194,144 @@ describe('lib/parser', () => {
         })
 
         expect(fields).toEqual(expected)
+      })
+    })
+  })
+
+    describe('parseDefaultScalarValue(schema, fields, value)', () => {
+    it('should parse default value with an empty schema', () => {
+      const schema = {}
+      const fields = []
+
+      loadFields(schema, fields)
+
+      const result = parseDefaultScalarValue(schema, fields)
+
+      expect(result).toEqual(undefined)
+    })
+
+    describe('should parse default value with scalar type', () => {
+      const proto = [
+        {
+          type: 'boolean',
+          values: [ false, true ]
+        },
+        {
+          type: 'integer',
+          values: [ undefined, 0, 1, -1 ]
+        },
+        {
+          type: 'number',
+          values: [ undefined, 0.0, 1.0, -1.0, 2.1, -2.1 ]
+        },
+        {
+          type: 'string',
+          values: [ undefined, '', ' ', 'hello world' ]
+        }
+      ]
+
+      proto.forEach(({ type, values }) => {
+        describe(`with ${type}`, () => {
+          values.forEach((value, i) => {
+            it(`should parse ${JSON.stringify(value)} with default value === ${JSON.stringify(value)}`, () => {
+              const schema = {
+                type: type,
+                default: value
+              }
+
+              if (value === undefined) {
+                delete schema.default
+              }
+
+              const fields = []
+
+              loadFields(schema, fields)
+
+              const result = parseDefaultScalarValue(schema, fields)
+
+              expect(result).toEqual(value)
+            })
+
+            it(`should parse ${JSON.stringify(value)} with initial value === ${JSON.stringify(value)}`, () => {
+              const schema = {
+                type: type
+              }
+
+              const fields = []
+
+              loadFields(schema, fields)
+
+              const result = parseDefaultScalarValue(schema, fields, value)
+
+              expect(result).toEqual(value)
+            })
+
+            if (i % 2) {
+              const initial = values[i - 1]
+
+              it(`should parse ${JSON.stringify(value)} with default === ${JSON.stringify(initial)} and initial === ${JSON.stringify(value)}`, () => {
+                const schema = {
+                  type: type,
+                  default: initial
+                }
+
+                const fields = []
+
+                loadFields(schema, fields)
+
+                const result = parseDefaultScalarValue(schema, fields, value)
+
+                expect(result).toEqual(value)
+              })
+
+              it(`should parse ${JSON.stringify(value)} with default === ${JSON.stringify(initial)} and attrs.value === ${JSON.stringify(value)}`, () => {
+                const schema = {
+                  type: type,
+                  default: initial,
+                  attrs: { value }
+                }
+
+                if (type === 'boolean') {
+                  schema.attrs.checked = value === true
+
+                  delete schema.attrs.value
+                }
+
+                const fields = []
+
+                loadFields(schema, fields)
+
+                const result = parseDefaultScalarValue(schema, fields)
+
+                expect(result).toEqual(value)
+              })
+
+              it(`should parse ${JSON.stringify(value)} with initial === ${JSON.stringify(initial)} and attrs.value === ${JSON.stringify(value)}`, () => {
+                const schema = {
+                  type: type,
+                  attrs: { value }
+                }
+
+                const propsData = { schema, value }
+
+                if (type === 'boolean') {
+                  propsData.value = value === true
+                  schema.attrs.checked = propsData.value
+
+                  delete schema.attrs.value
+                }
+
+                const fields = []
+
+                loadFields(schema, fields)
+
+                const result = parseDefaultScalarValue(schema, fields, value)
+
+                expect(result).toEqual(value)
+              })
+            }
+          })
+        })
       })
     })
   })
