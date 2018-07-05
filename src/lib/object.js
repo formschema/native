@@ -47,3 +47,16 @@ export const assign = merge
 export function clone (src) {
   return merge({}, src)
 }
+
+export function clear (object) {
+  for (let key in object) {
+    delete object[key]
+  }
+}
+
+export function empty (object) {
+  for (let key in object) {
+    return false
+  }
+  return true
+}

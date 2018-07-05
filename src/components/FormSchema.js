@@ -6,7 +6,7 @@ import {
   loadFields
 } from '@/lib/parser'
 
-import { equals, assign, clone } from '@/lib/object'
+import { equals, assign, clone, clear, empty } from '@/lib/object'
 import { Components as Instance, argName, inputName } from '@/lib/components'
 import FormSchemaField from './FormSchemaField'
 
@@ -76,34 +76,42 @@ export default {
   data: () => ({
     ref: genId('form-schema'),
     isScalarSchema: false,
-    schemaLoaded: { schema: {}, fields: [] },
+    loadedSchema: {},
+    fields: [],
     default: {},
     error: null,
     data: {},
-    inputValues: {}
+    inputValues: {},
+    ready: false
   }),
   created () {
-    this.loadSchema(this.schema)
+    if (!empty(this.schema)) {
+      this.load(this.schema, this.value)
+    }
   },
   render (createElement) {
-    const { schema, fields } = this.schemaLoaded
+    if (!this.ready) {
+      return null
+    }
+
+    const { title, description } = this.loadedSchema
     const components = this.components
     const nodes = []
 
-    if (schema.title) {
-      nodes.push(createElement(components.$.title.component, schema.title))
+    if (title) {
+      nodes.push(createElement(components.$.title.component, title))
     }
 
-    if (schema.description) {
+    if (description) {
       nodes.push(createElement(
-        components.$.description.component, schema.description))
+        components.$.description.component, description))
     }
 
     if (this.error) {
       nodes.push(createElement(components.$.error.component, this.error))
     }
 
-    const formNodes = fields.map((field) => {
+    const formInputNodes = this.fields.map((field) => {
       const value = this.isScalarSchema
         ? this.data
         : this.data[field.attrs.name]
@@ -158,9 +166,9 @@ export default {
       })
     })
 
-    if (formNodes.length) {
+    if (formInputNodes.length) {
       if (this.$slots.default) {
-        formNodes.push(createElement(
+        formInputNodes.push(createElement(
           components.$.buttonswrapper.component, this.$slots.default))
       }
 
@@ -178,46 +186,51 @@ export default {
           submit: this.submit,
           invalid: this.invalid
         }
-      }, formNodes))
+      }, formInputNodes))
     }
 
     return createElement(components.$.formwrapper.component, nodes)
   },
   methods: {
     /**
-     * Load the given JSON Schema. Use this to update the initial schema.
+     * Load the given `schema` with initial filled `value`.
+     * Use this to load async schema.
+     *
+     * @param {object} schema - The JSON Schema object to load
+     * @param {Number|String|Array|Object|Boolean} model - The initial data for the schema.
+     *
+     * @note `model` is not a two-way data bindings.
+     * To get the form data, use the `v-model` directive.
      */
-    loadSchema (schema) {
-      const fields = []
+    load (schema, model = undefined) {
+      this.ready = false
 
-      loadFields(schema, fields)
-      this.loadDefaultValue(schema, fields)
+      this.fields.splice(0)
 
-      this.schemaLoaded = { schema, fields }
-    },
+      clear(this.inputValues)
+      clear(this.loadedSchema)
+      assign(this.loadedSchema, schema)
 
-    /**
-     * @private
-     */
-    loadDefaultValue (schema, fields) {
-      this.inputValues = {}
-      this.isScalarSchema = false
+      loadFields(this.loadedSchema, this.fields)
 
       switch (schema.type) {
         case 'array':
         case 'object':
-          this.data = parseDefaultObjectValue(schema, fields, this.value)
+          this.data = parseDefaultObjectValue(schema, this.fields, model)
           this.default = Object.freeze(clone(this.data))
+          this.isScalarSchema = false
           break
 
         default:
+          this.data = parseDefaultScalarValue(schema, this.fields, model)
+          this.default = this.data
           this.isScalarSchema = true
-          this.default = parseDefaultScalarValue(schema, fields, this.value)
-          this.data = this.default
           break
       }
 
       this.emitInputEvent()
+
+      this.ready = true
     },
 
     /**
@@ -275,6 +288,9 @@ export default {
       this.data = clone(this.default)
     },
 
+    /**
+     * @private
+     */
     emitInputEvent () {
       /**
        * Fired synchronously when the value of an element is changed.
@@ -367,7 +383,7 @@ export default {
         delete this.inputValues[key]
       }
 
-      this.schemaLoaded.fields.forEach((field) => {
+      this.fields.forEach((field) => {
         const { name } = field.attrs
 
         this.$set(this.data, name, this.default[name])
