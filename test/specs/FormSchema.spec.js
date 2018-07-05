@@ -580,114 +580,90 @@ describe('FormSchema', () => {
   })
 
   describe('should successfully emit input and change events', () => {
-    describe('with type === string', () => {
-      it('with initial empty value', () => {
-        const schema = {
-          type: 'string'
-        }
+    const expectedEvents = ['input', 'change']
+    const properties = {
+      x: {
+        type: 'string'
+      }
+    }
 
-        const wrapper = mount(component, {
-          propsData: { schema }
+    const casesInitialModel = [
+      { type: 'string', value: 'hello world', initial: undefined },
+      { type: 'string', value: 'hello world', initial: 'seb' },
+      { type: 'integer', value: -12, initial: undefined },
+      { type: 'integer', value: 12, initial: -25 },
+      { type: 'number', value: -2.5, initial: undefined },
+      { type: 'number', value: 2.5, initial: -0.5 },
+      { type: 'object',
+        value: 'hello',
+        initial: undefined,
+        initialExpect: { x: '' },
+        expected: { x: 'hello' } },
+      { type: 'object',
+        value: 'hello',
+        initial: { x: 'seb' },
+        initialExpect: { x: 'seb' },
+        expected: { x: 'hello' } }
+    ]
+
+    casesInitialModel.forEach(({ type, value, initial, initialExpect = initial, expected = value }) => {
+      describe(`with type === ${type}`, () => {
+        describe('with initial model value', () => {
+          const schema = { type, properties }
+          const wrapper = mount(component, {
+            propsData: { schema, value: initial }
+          })
+
+          it('should emit the initial value', () => {
+            expect(Object.keys(wrapper.emitted())).toEqual(['input'])
+            expect(wrapper.emitted().input.pop()).toEqual([initialExpect])
+          })
+
+          it('should emit input and change events with new value', () => {
+            const input = wrapper.find('input')
+
+            input.element.value = value
+
+            input.trigger('input')
+            input.trigger('change')
+
+            expect(Object.keys(wrapper.emitted())).toEqual(expectedEvents)
+            expect(wrapper.emitted().input.pop()).toEqual([expected])
+            expect(wrapper.emitted().change.pop()).toEqual([expected])
+          })
         })
 
-        const expectedValue = 'Hello'
-        const expectedEvents = ['input', 'change']
+        if (typeof initial !== 'object') {
+          describe('with initial default schema value', () => {
+            const schema = {
+              type: type,
+              default: initial,
+              properties: properties
+            }
 
-        const input = wrapper.find('input')
+            const wrapper = mount(component, {
+              propsData: { schema }
+            })
 
-        input.element.value = 'Hello'
+            it('should emit the initial value', () => {
+              expect(Object.keys(wrapper.emitted())).toEqual(['input'])
+              expect(wrapper.emitted().input.pop()).toEqual([initialExpect])
+            })
 
-        input.trigger('input')
-        input.trigger('change')
+            it('should emit input and change events with new value', () => {
+              const input = wrapper.find('input')
 
-        expect(Object.keys(wrapper.emitted())).toEqual(expectedEvents)
-        expect(wrapper.emitted().input.pop()).toEqual([expectedValue])
-        expect(wrapper.emitted().change.pop()).toEqual([expectedValue])
-      })
+              input.element.value = value
 
-      it('with initial default schema value', () => {
-        const schema = {
-          type: 'string',
-          default: 'seb'
+              input.trigger('input')
+              input.trigger('change')
+
+              expect(Object.keys(wrapper.emitted())).toEqual(expectedEvents)
+              expect(wrapper.emitted().input.pop()).toEqual([expected])
+              expect(wrapper.emitted().change.pop()).toEqual([expected])
+            })
+          })
         }
-
-        const wrapper = mount(component, {
-          propsData: { schema }
-        })
-
-        const expectedValue = 'Hello'
-        const expectedEvents = ['input', 'change']
-
-        const input = wrapper.find('input')
-
-        expect(wrapper.emitted().input[0]).toEqual(['seb'])
-
-        input.element.value = 'Hello'
-
-        input.trigger('input')
-        input.trigger('change')
-
-        expect(Object.keys(wrapper.emitted())).toEqual(expectedEvents)
-        expect(wrapper.emitted().input.pop()).toEqual([expectedValue])
-        expect(wrapper.emitted().change.pop()).toEqual([expectedValue])
-      })
-    })
-
-    describe('with type === integer', () => {
-      it('with initial empty value', () => {
-        const schema = {
-          type: 'integer'
-        }
-
-        const wrapper = mount(component, {
-          propsData: { schema }
-        })
-
-        const expectedValue = 12
-        const expectedEvents = ['input', 'change']
-
-        const input = wrapper.find('input')
-
-        input.element.value = '12'
-
-        input.trigger('input')
-        input.trigger('change')
-
-        expect(Object.keys(wrapper.emitted())).toEqual(expectedEvents)
-        expect(wrapper.emitted().input.pop()).toEqual([expectedValue])
-        expect(wrapper.emitted().change.pop()).toEqual([expectedValue])
-      })
-
-      it('with initial default value', () => {
-      })
-    })
-
-    describe('with type === number', () => {
-      it('with initial empty value', () => {
-        const schema = {
-          type: 'number'
-        }
-
-        const wrapper = mount(component, {
-          propsData: { schema }
-        })
-
-        const expectedValue = 12.5
-        const expectedEvents = ['input', 'change']
-
-        const input = wrapper.find('input')
-
-        input.element.value = '12.5'
-
-        input.trigger('input')
-        input.trigger('change')
-
-        expect(Object.keys(wrapper.emitted())).toEqual(expectedEvents)
-        expect(wrapper.emitted().input.pop()).toEqual([expectedValue])
-        expect(wrapper.emitted().change.pop()).toEqual([expectedValue])
-      })
-
-      it('with initial default value', () => {
       })
     })
 
@@ -714,25 +690,6 @@ describe('FormSchema', () => {
         delete attrs.id
 
         expect(attrs).toEqual(expected)
-      })
-
-      it('with initial default value', () => {
-      })
-    })
-
-    describe('with type === array', () => {
-      it('with initial empty value', () => {
-      })
-
-      it('with initial default value', () => {
-      })
-    })
-
-    describe('with type === object', () => {
-      it('with initial empty value', () => {
-      })
-
-      it('with initial default value', () => {
       })
     })
   })
