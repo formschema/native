@@ -1,4 +1,11 @@
-import { genId, parseDefaultScalarValue, loadFields } from '@/lib/parser'
+import {
+  genId,
+  parseDefaultScalarValue,
+  parseEventValue,
+  parseDefaultObjectValue,
+  loadFields
+} from '@/lib/parser'
+
 import { equals, assign, clone } from '@/lib/object'
 import { Components as Instance, argName, inputName } from '@/lib/components'
 import FormSchemaField from './FormSchemaField'
@@ -112,7 +119,7 @@ export default {
             if (field.isArrayField) {
               this.parseArrayValue(eventInput)
             } else {
-              const parsedValue = this.parseValue(eventInput)
+              const parsedValue = parseEventValue(eventInput)
 
               if (this.isScalarSchema) {
                 this.data = parsedValue
@@ -131,7 +138,7 @@ export default {
             if (field.isArrayField) {
               this.parseArrayValue(eventInput)
             } else {
-              const parsedValue = this.parseValue(eventInput)
+              const parsedValue = parseEventValue(eventInput)
 
               if (this.isScalarSchema) {
                 this.data = parsedValue
@@ -184,7 +191,7 @@ export default {
       const fields = []
 
       loadFields(schema, fields)
-      this.loadDefaultValue(fields)
+      this.loadDefaultValue(schema, fields)
 
       this.schemaLoaded = { schema, fields }
     },
@@ -192,24 +199,20 @@ export default {
     /**
      * @private
      */
-    loadDefaultValue (fields) {
+    loadDefaultValue (schema, fields) {
       this.inputValues = {}
       this.isScalarSchema = false
 
-      switch (this.schema.type) {
+      switch (schema.type) {
         case 'array':
-          this.default = clone(this.value || [])
-          this.loadDefaultObjectValue(fields)
-          break
-
         case 'object':
-          this.default = clone(this.value || {})
-          this.loadDefaultObjectValue(fields)
+          this.data = parseDefaultObjectValue(schema, fields, this.value)
+          this.default = Object.freeze(clone(this.data))
           break
 
         default:
           this.isScalarSchema = true
-          this.default = parseDefaultScalarValue(this.schema, fields, this.value)
+          this.default = parseDefaultScalarValue(schema, fields, this.value)
           this.data = this.default
           break
       }
@@ -243,7 +246,7 @@ export default {
         switch (field.schemaType) {
           case 'boolean':
             target.checked = data
-            this.default[name] = this.parseValue(eventInput)
+            this.default[name] = parseEventValue(eventInput)
             break
 
           default:
@@ -263,7 +266,7 @@ export default {
                 ? field.items.length
                 : field.minItems
             } else {
-              this.default[name] = this.parseValue(eventInput)
+              this.default[name] = parseEventValue(eventInput)
             }
             break
         }
@@ -277,41 +280,6 @@ export default {
        * Fired synchronously when the value of an element is changed.
        */
       this.$emit('input', this.data)
-    },
-
-    /**
-     * @private
-     */
-    parseValue (event, data) {
-      switch (event.field.schemaType) {
-        case 'boolean':
-          return event.target.checked === true
-
-        case 'null':
-          // TODO check the null type
-          return null
-
-        case 'string':
-          return event.data || ''
-
-        case 'integer':
-          if (event.data !== undefined) {
-            return parseInt(event.data)
-          }
-          break
-
-        case 'number':
-          if (event.data !== undefined) {
-            return parseFloat(event.data)
-          }
-          break
-
-        case 'object':
-        default:
-          return event.data || {}
-      }
-
-      return event.data
     },
 
     /**

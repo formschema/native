@@ -1,4 +1,4 @@
-import { isScalar } from '@/lib/object'
+import { isScalar, assign } from '@/lib/object'
 
 /* eslint-disable no-labels */
 
@@ -50,6 +50,85 @@ export function parseDefaultScalarValue (schema, fields, value) {
   }
 
   return undefined
+}
+
+export function parseEventValue ({ target, field, data }) {
+  switch (field.schemaType) {
+    case 'boolean':
+      return target.checked === true
+
+    case 'string':
+      return data || ''
+
+    case 'integer':
+      if (data !== undefined) {
+        return parseInt(data)
+      }
+      break
+
+    case 'number':
+      if (data !== undefined) {
+        return parseFloat(data)
+      }
+      break
+
+    case 'array':
+      return data || []
+
+    case 'object':
+      return data || {}
+  }
+
+  return data
+}
+
+export function parseDefaultObjectValue (schema, fields, value) {
+  const data = schema.type === 'object' ? {} : []
+
+  if (value) {
+    assign(data, value)
+  }
+
+  fields.forEach((field) => {
+    const { type, name } = field.attrs
+    const itemValue = field.schemaType === 'boolean'
+      ? typeof data[name] === 'boolean'
+        ? data[name]
+        : field.attrs.checked === true
+      : typeof data[name] !== 'undefined'
+        ? data[name]
+        : field.attrs.value
+
+    const target = {}
+    const eventInput = { field, data: itemValue, target }
+
+    switch (field.schemaType) {
+      case 'boolean':
+        target.checked = itemValue
+        data[name] = parseEventValue(eventInput)
+        break
+
+      default:
+        if (field.isArrayField) {
+          if (data[name] instanceof Array) {
+            data[name] = data[name].filter((value) => {
+              return value !== undefined
+            })
+          } else {
+            data[name] = []
+          }
+
+          field.itemsNum = type === 'checkbox'
+            ? field.items.length
+            : field.minItems
+        } else {
+          data[name] = parseEventValue(eventInput)
+        }
+        break
+    }
+  })
+
+  return data
 }
 
 export function loadFields (schema, fields, name = null) {

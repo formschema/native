@@ -5,6 +5,8 @@ import {
   genId,
   setCommonFields,
   parseDefaultScalarValue,
+  parseEventValue,
+  parseDefaultObjectValue,
   setItemName,
   arrayOrderedValues,
   arrayUnorderedValues,
@@ -1198,7 +1200,7 @@ describe('lib/parser', () => {
     })
   })
 
-    describe('parseDefaultScalarValue(schema, fields, value)', () => {
+  describe('parseDefaultScalarValue(schema, fields, value)', () => {
     it('should parse default value with an empty schema', () => {
       const schema = {}
       const fields = []
@@ -1331,6 +1333,163 @@ describe('lib/parser', () => {
               })
             }
           })
+        })
+      })
+    })
+  })
+
+  describe('parseEventValue({ target, field, data })', () => {
+    const proto = [
+      {
+        type: 'boolean',
+        values: [ false, true ]
+      },
+      {
+        type: 'string',
+        values: [ undefined, '', ' ', 'hello world' ]
+      },
+      {
+        type: 'integer',
+        values: [ undefined, 0, 1, -1, '9', '-0', '-5' ]
+      },
+      {
+        type: 'number',
+        values: [ undefined, 0.0, 1.0, -1.0, 2.1, -2.1, '-3.2', '12.5' ]
+      },
+      {
+        type: 'array',
+        values: [ undefined, [], [1] ]
+      },
+      {
+        type: 'object',
+        values: [ undefined, {}, { x: 1 } ]
+      }
+    ]
+
+    proto.forEach(({ type, values }) => {
+      describe(`should successfully parse with ${type}`, () => {
+        values.forEach((data) => {
+          it(`should parse ${JSON.stringify(data)} with input value === ${JSON.stringify(data)}`, () => {
+            const field = { schemaType: type }
+            const checked = data === true
+            const target = { checked }
+
+            const expected = data === undefined && type === 'string'
+              ? ''
+              : ['integer', 'number'].includes(type) && data !== undefined
+                ? parseFloat(data)
+                : type === 'array' && data === undefined
+                  ? []
+                  : type === 'object' && data === undefined
+                    ? {}
+                    : data
+
+            const result = parseEventValue({ target, field, data })
+
+            expect(result).toEqual(expected)
+          })
+        })
+      })
+    })
+  })
+
+  describe('parseDefaultObjectValue(schema, fields, value)', () => {
+    [
+      {
+        type: 'boolean',
+        values: [ false, true ]
+      },
+      {
+        type: 'string',
+        values: [ undefined, '', ' ', 'hello world' ]
+      },
+      {
+        type: 'integer',
+        values: [ undefined, 0, 1, -1, '9', '-0', '-5' ]
+      },
+      {
+        type: 'number',
+        values: [ undefined, 0.0, 1.0, -1.0, 2.1, -2.1, '-3.2', '12.5' ]
+      }
+    ].forEach(({ type, values }) => {
+      describe(`should successfully parse with object schema and ${type} property`, () => {
+        values.forEach((value) => {
+          it(`should parse { x: ${JSON.stringify(value)} } with input value === ${JSON.stringify(value)}`, () => {
+            const schema = {
+              type: 'object',
+              properties: {
+                x: { type }
+              }
+            }
+
+            const fields = []
+            const expected = value === undefined && type === 'string'
+              ? ''
+              : ['integer', 'number'].includes(type) && value !== undefined
+                ? parseFloat(value)
+                : value
+
+            loadFields(schema, fields)
+
+            const result = parseDefaultObjectValue(schema, fields, { x: value })
+
+            expect(result).toEqual({ x: expected })
+          })
+        })
+      })
+    })
+
+    describe(`should successfully parse with array schema`, () => {
+      [
+        [],
+        ['x'],
+        ['x', 'z'],
+        ['x', 'y', 'z'],
+        ['z', 'x', 'y']
+      ].forEach((value) => {
+        it(`should parse ${JSON.stringify(value)} with input value === ${JSON.stringify(value)}`, () => {
+          const schema = {
+            type: 'array',
+            enum: [
+              { value: 'x', label: 'l' },
+              { value: 'y', label: 'm' },
+              { value: 'z', label: 'n' }
+            ]
+          }
+
+          const fields = []
+
+          loadFields(schema, fields)
+
+          const expected = [...value]
+          const result = parseDefaultObjectValue(schema, fields, value)
+
+          expect([...result]).toEqual(expected)
+        })
+
+        it(`should parse { x: ${JSON.stringify(value)} } with input value === ${JSON.stringify(value)}`, () => {
+          const schema = {
+            type: 'object',
+            properties: {
+              x: {
+                type: 'array',
+                enum: [
+                  { value: 'x', label: 'l' },
+                  { value: 'y', label: 'm' },
+                  { value: 'z', label: 'n' }
+                ]
+              }
+            }
+          }
+
+          const fields = []
+
+          loadFields(schema, fields)
+
+          const expected = { x: value }
+          const result = parseDefaultObjectValue(schema, fields, { x: value })
+
+          expect(result).toEqual(expected)
         })
       })
     })
