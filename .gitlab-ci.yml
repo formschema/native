@@ -51,6 +51,7 @@ webpack build:
   artifacts:
     paths:
       - dist
+    expire_in: 4 weeks
 
 coverage report:
   stage: publish
