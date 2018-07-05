@@ -1,4 +1,4 @@
-'use strict'
+import { isScalar, assign } from '@/lib/object'
 
 /* eslint-disable no-labels */
 
@@ -23,9 +23,7 @@ export function genId (prefix = '') {
 export function setCommonFields (schema, field) {
   field.attrs.value = field.attrs.hasOwnProperty('value')
     ? field.attrs.value
-    : typeof schema.default !== 'undefined'
-      ? schema.default
-      : schema.default || ''
+    : schema.default
 
   field.order = schema.order
   field.schemaType = schema.type
@@ -34,6 +32,103 @@ export function setCommonFields (schema, field) {
   field.attrs.id = field.attrs.id || genId(field.attrs.name)
   field.attrs.required = schema.required || false
   field.attrs.disabled = schema.disabled || false
+}
+
+export function parseDefaultScalarValue (schema, fields, value) {
+  if (typeof value !== 'undefined' && isScalar(value)) {
+    return value
+  }
+
+  if (fields.length) {
+    if (fields[0].schemaType === 'boolean') {
+      return fields[0].attrs.checked === true
+    }
+
+    if (fields[0].attrs.hasOwnProperty('value')) {
+      return fields[0].attrs.value
+    }
+  }
+
+  return undefined
+}
+
+export function parseEventValue ({ target, field, data }) {
+  switch (field.schemaType) {
+    case 'boolean':
+      return target.checked === true
+
+    case 'string':
+      return data || ''
+
+    case 'integer':
+      if (data !== undefined) {
+        return parseInt(data)
+      }
+      break
+
+    case 'number':
+      if (data !== undefined) {
+        return parseFloat(data)
+      }
+      break
+
+    case 'array':
+      return data || []
+
+    case 'object':
+      return data || {}
+  }
+
+  return data
+}
+
+export function parseDefaultObjectValue (schema, fields, value) {
+  const data = schema.type === 'object' ? {} : []
+
+  if (value) {
+    assign(data, value)
+  }
+
+  fields.forEach((field) => {
+    const { type, name } = field.attrs
+    const itemValue = field.schemaType === 'boolean'
+      ? typeof data[name] === 'boolean'
+        ? data[name]
+        : field.attrs.checked === true
+      : typeof data[name] !== 'undefined'
+        ? data[name]
+        : field.attrs.value
+
+    const target = {}
+    const eventInput = { field, data: itemValue, target }
+
+    switch (field.schemaType) {
+      case 'boolean':
+        target.checked = itemValue
+        data[name] = parseEventValue(eventInput)
+        break
+
+      default:
+        if (field.isArrayField) {
+          if (data[name] instanceof Array) {
+            data[name] = data[name].filter((value) => {
+              return value !== undefined
+            })
+          } else {
+            data[name] = []
+          }
+
+          field.itemsNum = type === 'checkbox'
+            ? field.items.length
+            : field.minItems
+        } else {
+          data[name] = parseEventValue(eventInput)
+        }
+        break
+    }
+  })
+
+  return data
 }
 
 export function loadFields (schema, fields, name = null) {
@@ -244,7 +339,7 @@ export function parseArray (schema, name = null) {
 
           field.items = parseItems(schema[keyword])
 
-          if (field.attrs.value.length === 0) {
+          if (field.attrs.value === void (0) || field.attrs.value.length === 0) {
             field.attrs.value = field.schemaType === 'array'
               ? arrayUnorderedValues(field)
               : singleValue(field)
@@ -257,7 +352,7 @@ export function parseArray (schema, name = null) {
 
           field.items = parseItems(schema[keyword]).map(setItemName(name, true))
 
-          if (field.attrs.value.length === 0) {
+          if (field.attrs.value === void (0) || field.attrs.value.length === 0) {
             field.attrs.value = singleValue(field)
           }
           break loop
@@ -269,7 +364,7 @@ export function parseArray (schema, name = null) {
           field.items = parseItems(schema[keyword]).map(setItemName(name))
           field.isArrayField = true
 
-          if (field.attrs.value.length === 0) {
+          if (field.attrs.value === void (0) || field.attrs.value.length === 0) {
             field.attrs.value = arrayOrderedValues(field)
           }
           break loop
@@ -286,7 +381,7 @@ export function parseArray (schema, name = null) {
     field.attrs.multiple = field.schemaType === 'array'
     field.attrs.value = field.attrs.value || field.attrs.multiple ? [] : ''
 
-    if (field.attrs.value.length === 0) {
+    if (field.attrs.value === void (0) || field.attrs.value.length === 0) {
       if (field.attrs.multiple) {
         field.isArrayField = true
         field.attrs.value = arrayUnorderedValues(field)

@@ -3,7 +3,10 @@
 import { mount } from '@vue/test-utils'
 import { Components } from '@/lib/components'
 
-import component from '@/components/FormSchema.js'
+import {
+  loadDefaultScalarValue,
+  default as component
+} from '@/components/FormSchema.js'
 
 /* global describe it expect */
 
@@ -11,20 +14,12 @@ const components = new Components()
 
 const props = {
   schema: {},
-  value: {},
+  value: undefined,
   action: undefined,
   autocomplete: undefined,
   enctype: 'application/x-www-form-urlencoded',
   method: 'post',
   novalidate: false
-}
-
-const data = {
-  schemaLoaded: { schema: {}, fields: [] },
-  default: {},
-  error: null,
-  data: {},
-  inputValues: {}
 }
 
 const schema = {
@@ -44,6 +39,132 @@ const schema = {
 }
 
 describe('FormSchema', () => {
+  describe('default value', () => {
+    it('should render default value with an empty schema', () => {
+      const schema = {}
+      const wrapper = mount(component, {
+        propsData: { schema }
+      })
+
+      expect(wrapper.emitted().input[0]).toEqual([undefined])
+    })
+
+    describe('should render default value with scalar type', () => {
+      const proto = [
+        {
+          type: 'boolean',
+          values: [ false, true ]
+        },
+        {
+          type: 'integer',
+          values: [ undefined, 0, 1, -1 ]
+        },
+        {
+          type: 'number',
+          values: [ undefined, 0.0, 1.0, -1.0, 2.1, -2.1 ]
+        },
+        {
+          type: 'string',
+          values: [ undefined, '', ' ', 'hello world' ]
+        }
+      ]
+
+      proto.forEach(({ type, values }) => {
+        describe(`with ${type}`, () => {
+          values.forEach((value, i) => {
+            it(`should parse ${JSON.stringify(value)} with default value === ${JSON.stringify(value)}`, () => {
+              const schema = {
+                type: type,
+                default: value
+              }
+
+              if (value === undefined) {
+                delete schema.default
+              }
+
+              const wrapper = mount(component, {
+                propsData: { schema }
+              })
+
+              expect(wrapper.emitted().input[0]).toEqual([value])
+            })
+
+            it(`should parse ${JSON.stringify(value)} with initial value === ${JSON.stringify(value)}`, () => {
+              const schema = {
+                type: type
+              }
+
+              const wrapper = mount(component, {
+                propsData: { schema, value }
+              })
+
+              expect(wrapper.emitted().input[0]).toEqual([value])
+            })
+
+            if (i % 2) {
+              const initial = values[i - 1]
+
+              it(`should parse ${JSON.stringify(value)} with default === ${JSON.stringify(initial)} and initial === ${JSON.stringify(value)}`, () => {
+                const schema = {
+                  type: type,
+                  default: initial
+                }
+
+                const wrapper = mount(component, {
+                  propsData: { schema, value }
+                })
+
+                expect(wrapper.emitted().input[0]).toEqual([value])
+              })
+
+              it(`should parse ${JSON.stringify(value)} with default === ${JSON.stringify(initial)} and attrs.value === ${JSON.stringify(value)}`, () => {
+                const schema = {
+                  type: type,
+                  default: initial,
+                  attrs: { value }
+                }
+
+                if (type === 'boolean') {
+                  schema.attrs.checked = value === true
+
+                  delete schema.attrs.value
+                }
+
+                const wrapper = mount(component, {
+                  propsData: { schema }
+                })
+
+                expect(wrapper.emitted().input[0]).toEqual([value])
+              })
+
+              it(`should parse ${JSON.stringify(value)} with initial === ${JSON.stringify(initial)} and attrs.value === ${JSON.stringify(value)}`, () => {
+                const schema = {
+                  type: type,
+                  attrs: { value }
+                }
+
+                const propsData = { schema, value }
+
+                if (type === 'boolean') {
+                  propsData.value = value === true
+                  schema.attrs.checked = propsData.value
+
+                  delete schema.attrs.value
+                }
+
+                const wrapper = mount(component, {
+                  propsData: { schema, value }
+                })
+
+                expect(wrapper.emitted().input[0]).toEqual([value])
+              })
+            }
+          })
+        })
+      })
+    })
+  })
+
   describe('component', () => {
     it('should not be a functional component', () => {
       expect(component.functional).toBe(undefined)
@@ -51,10 +172,6 @@ describe('FormSchema', () => {
 
     it('should have the FormSchema name', () => {
       expect(component.name).toEqual('FormSchema')
-    })
-
-    it('should have a changed method', () => {
-      expect(typeof component.methods.changed).toBe('function')
     })
 
     it('should have a reset method', () => {
@@ -87,13 +204,6 @@ describe('FormSchema', () => {
     it(`should have data ref`, () => {
       expect('ref' in wrapper.vm).toBe(true)
       expect(wrapper.vm.ref.startsWith('form-schema-')).toBeTruthy()
-    })
-
-    Object.keys(data).forEach((prop) => {
-      it(`should have data ${prop}`, () => {
-        expect(prop in wrapper.vm).toBe(true)
-        expect(wrapper.vm[prop]).toEqual(data[prop])
-      })
     })
 
     it('should successfully render the component with an empty schema', () => {
@@ -136,11 +246,24 @@ describe('FormSchema', () => {
 
       it('should have form input', () => {
         expect(wrapper.findAll('input').length).toEqual(1)
-        expect(wrapper.find('input').html()).toEqual('<input id="x" type="text" name="name" value="" required="required">')
+        expect(wrapper.find('input').html()).toEqual('<input id="x" type="text" name="name" required="required">')
       })
 
       it('should not have buttons', () => {
         expect(wrapper.findAll('button').length).toEqual(0)
+      })
+
+      it('should successfully render buttons via slots', () => {
+        const schema = { type: 'string' }
+        const wrapper = mount(component, {
+          propsData: { schema },
+          slots: {
+            default: '<button type="submit">Submit</button>'
+          }
+        })
+
+        expect(wrapper.findAll('button').length).toEqual(1)
+        expect(wrapper.find('button').html()).toEqual('<button type="submit">Submit</button>')
       })
     })
 
@@ -190,7 +313,7 @@ describe('FormSchema', () => {
 
       it('should have form input', () => {
         expect(wrapper.findAll('input').length).toEqual(1)
-        expect(wrapper.find('input').html()).toEqual('<input id="x" type="text" name="name" value="" required="required">')
+        expect(wrapper.find('input').html()).toEqual('<input id="x" type="text" name="name" required="required">')
       })
 
       it('should not have buttons', () => {
@@ -276,48 +399,7 @@ describe('FormSchema', () => {
       expect(wrapper.vm.error).toEqual(null)
       expect(wrapper.findAll('[data-fs-error]').length).toEqual(0)
     })
-  /*
-    it('should successfully emit input event', () => {
-      const field = {
-        attrs: {
-          name: 'fieldName'
-        },
-        itemsNum: 2
-      }
-      const input = {
-        data: {
-          attrs: {
-            type: 'text'
-          }
-        },
-        element: components.text,
-        native: true
-      }
-      const name = `${field.attrs.name}-0`
-      const value = {
-        'fieldName-0': 'Value 1',
-        'fieldName-1': 'Value 2'
-      }
-      const wrapper = mount(component, {
-        context: {
-          props: { field, value, input, name }
-        }
-      })
-
-      const expected = {
-        fieldName: [
-          'Hello',
-          'Value 2'
-        ]
-      }
-      const inputElement = wrapper.find('input')
-
-      inputElement.element.value = 'Hello'
-      inputElement.trigger('input')
-
-      expect(wrapper.emitted().input[0][0]).toEqual(expected)
-    })
-
+/*
     it('should successfully emit input event with an empty value', () => {
       const field = {
         attrs: {
@@ -497,5 +579,118 @@ describe('FormSchema', () => {
     })
   })
 
-  describe('events', () => {})
+  describe('should successfully emit input and change events', () => {
+    const expectedEvents = ['input', 'change']
+    const properties = {
+      x: {
+        type: 'string'
+      }
+    }
+
+    const casesInitialModel = [
+      { type: 'string', value: 'hello world', initial: undefined },
+      { type: 'string', value: 'hello world', initial: 'seb' },
+      { type: 'integer', value: -12, initial: undefined },
+      { type: 'integer', value: 12, initial: -25 },
+      { type: 'number', value: -2.5, initial: undefined },
+      { type: 'number', value: 2.5, initial: -0.5 },
+      { type: 'object',
+        value: 'hello',
+        initial: undefined,
+        initialExpect: { x: '' },
+        expected: { x: 'hello' } },
+      { type: 'object',
+        value: 'hello',
+        initial: { x: 'seb' },
+        initialExpect: { x: 'seb' },
+        expected: { x: 'hello' } }
+    ]
+
+    casesInitialModel.forEach(({ type, value, initial, initialExpect = initial, expected = value }) => {
+      describe(`with type === ${type}`, () => {
+        describe('with initial model value', () => {
+          const schema = { type, properties }
+          const wrapper = mount(component, {
+            propsData: { schema, value: initial }
+          })
+
+          it('should emit the initial value', () => {
+            expect(Object.keys(wrapper.emitted())).toEqual(['input'])
+            expect(wrapper.emitted().input.pop()).toEqual([initialExpect])
+          })
+
+          it('should emit input and change events with new value', () => {
+            const input = wrapper.find('input')
+
+            input.element.value = value
+
+            input.trigger('input')
+            input.trigger('change')
+
+            expect(Object.keys(wrapper.emitted())).toEqual(expectedEvents)
+            expect(wrapper.emitted().input.pop()).toEqual([expected])
+            expect(wrapper.emitted().change.pop()).toEqual([expected])
+          })
+        })
+
+        if (typeof initial !== 'object') {
+          describe('with initial default schema value', () => {
+            const schema = {
+              type: type,
+              default: initial,
+              properties: properties
+            }
+
+            const wrapper = mount(component, {
+              propsData: { schema }
+            })
+
+            it('should emit the initial value', () => {
+              expect(Object.keys(wrapper.emitted())).toEqual(['input'])
+              expect(wrapper.emitted().input.pop()).toEqual([initialExpect])
+            })
+
+            it('should emit input and change events with new value', () => {
+              const input = wrapper.find('input')
+
+              input.element.value = value
+
+              input.trigger('input')
+              input.trigger('change')
+
+              expect(Object.keys(wrapper.emitted())).toEqual(expectedEvents)
+              expect(wrapper.emitted().input.pop()).toEqual([expected])
+              expect(wrapper.emitted().change.pop()).toEqual([expected])
+            })
+          })
+        }
+      })
+    })
+
+    describe('with type === boolean', () => {
+      it('with initial empty value', () => {
+        const schema = {
+          type: 'boolean'
+        }
+
+        const wrapper = mount(component, {
+          propsData: { schema }
+        })
+
+        const expectedValue = false
+        const expectedEvents = ['click', 'change', 'input']
+
+        wrapper.find('input').setChecked(true)
+
+        const attrs = wrapper.find('input').attributes()
+        const expected = { type: 'checkbox', checked: 'checked' }
+
+        expect(typeof attrs.id).toEqual('string')
+
+        delete attrs.id
+
+        expect(attrs).toEqual(expected)
+      })
+    })
+  })
 })

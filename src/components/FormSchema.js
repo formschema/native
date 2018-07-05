@@ -1,5 +1,12 @@
-import { genId, loadFields } from '@/lib/parser'
-import { equals, merge } from '@/lib/object'
+import {
+  genId,
+  parseDefaultScalarValue,
+  parseEventValue,
+  parseDefaultObjectValue,
+  loadFields
+} from '@/lib/parser'
+
+import { equals, assign, clone } from '@/lib/object'
 import { Components as Instance, argName, inputName } from '@/lib/components'
 import FormSchemaField from './FormSchemaField'
 
@@ -10,15 +17,21 @@ export default {
   props: {
     /**
      * The JSON Schema object.
+     *
+     * @default {}
      */
     schema: { type: Object, default: () => ({}) },
 
     /**
      * Use this directive to create two-way data bindings with the component. It automatically picks the correct way to update the element based on the input type.
+     *
      * @model
-     * @default {}
+     * @default undefined
      */
-    value: { type: Object, default: () => ({}) },
+    value: {
+      type: [ Number, String, Array, Object, Boolean ],
+      default: undefined
+    },
 
     /**
      * The URI of a program that processes the form information.
@@ -32,6 +45,7 @@ export default {
 
     /**
      * When the value of the method attribute is post, enctype is the MIME type of content that is used to submit the form to the server. Possible values are:
+     *
      * - application/x-www-form-urlencoded: The default value if the attribute is not specified.
      * - multipart/form-data: The value used for an <input> element with the type attribute set to "file".
      * - text/plain (HTML5)
@@ -40,6 +54,7 @@ export default {
 
     /**
      * The HTTP method that the browser uses to submit the form. Possible values are:
+     *
      * - post: Corresponds to the HTTP POST method ; form data are included in the body of the form and sent to the server.
      * - get: Corresponds to the HTTP GET method; form data are appended to the action attribute URI with a '?' as separator, and the resulting URI is sent to the server. Use this method when the form has no side-effects and contains only ASCII characters.
      */
@@ -60,6 +75,7 @@ export default {
   },
   data: () => ({
     ref: genId('form-schema'),
+    isScalarSchema: false,
     schemaLoaded: { schema: {}, fields: [] },
     default: {},
     error: null,
@@ -88,7 +104,9 @@ export default {
     }
 
     const formNodes = fields.map((field) => {
-      const value = this.data[field.attrs.name]
+      const value = this.isScalarSchema
+        ? this.data
+        : this.data[field.attrs.name]
 
       return createElement(FormSchemaField, {
         props: { field, value, components },
@@ -99,10 +117,18 @@ export default {
             const eventInput = { field, data, target }
 
             if (field.isArrayField) {
-              this.onInputArrayValue(eventInput)
+              this.parseArrayValue(eventInput)
             } else {
-              this.onInput(eventInput)
+              const parsedValue = parseEventValue(eventInput)
+
+              if (this.isScalarSchema) {
+                this.data = parsedValue
+              } else {
+                this.data[field.attrs.name] = parsedValue
+              }
             }
+
+            this.emitInputEvent()
           },
           change: (event) => {
             const target = event.target
@@ -110,12 +136,23 @@ export default {
             const eventInput = { field, data, target }
 
             if (field.isArrayField) {
-              this.onInputArrayValue(eventInput, false)
+              this.parseArrayValue(eventInput)
             } else {
-              this.onInput(eventInput, false)
+              const parsedValue = parseEventValue(eventInput)
+
+              if (this.isScalarSchema) {
+                this.data = parsedValue
+              } else {
+                this.data[field.attrs.name] = parsedValue
+              }
             }
 
-            this.changed()
+            if (!equals(this.data, this.default)) {
+              /**
+               * Fired when a change to the element's value is committed by the user.
+               */
+              this.$emit('change', this.data)
+            }
           }
         }
       })
@@ -154,7 +191,7 @@ export default {
       const fields = []
 
       loadFields(schema, fields)
-      this.loadDefaultValues(fields)
+      this.loadDefaultValue(schema, fields)
 
       this.schemaLoaded = { schema, fields }
     },
@@ -162,41 +199,83 @@ export default {
     /**
      * @private
      */
-    loadDefaultValues (fields) {
-      this.default = {}
+    loadDefaultValue (schema, fields) {
       this.inputValues = {}
+      this.isScalarSchema = false
+
+      switch (schema.type) {
+        case 'array':
+        case 'object':
+          this.data = parseDefaultObjectValue(schema, fields, this.value)
+          this.default = Object.freeze(clone(this.data))
+          break
+
+        default:
+          this.isScalarSchema = true
+          this.default = parseDefaultScalarValue(schema, fields, this.value)
+          this.data = this.default
+          break
+      }
+
+      this.emitInputEvent()
+    },
+
+    /**
+     * @private
+     */
+    loadDefaultObjectValue (fields) {
+      this.default = this.schema.type === 'object' ? {} : []
+
+      if (this.value) {
+        assign(this.default, this.value)
+      }
 
       fields.forEach((field) => {
         const { type, name } = field.attrs
-
-        this.default[name] = field.schemaType === 'boolean'
-          ? typeof this.value[name] === 'boolean'
-            ? this.value[name]
+        const data = field.schemaType === 'boolean'
+          ? typeof this.default[name] === 'boolean'
+            ? this.default[name]
             : field.attrs.checked === true
-          : this.value[name] || field.attrs.value
+          : typeof this.default[name] !== 'undefined'
+            ? this.default[name]
+            : field.attrs.value
 
-        if (field.isArrayField) {
-          if (!Array.isArray(this.default[name])) {
-            this.default[name] = []
-          } else {
-            this.default[name] = this.default[name].filter((value, i) => {
-              this.inputValues[inputName(field, i)] = value
-              return value !== undefined
-            })
-          }
+        const target = {}
+        const eventInput = { field, data, target }
 
-          field.itemsNum = type === 'checkbox'
-            ? field.items.length
-            : field.minItems
+        switch (field.schemaType) {
+          case 'boolean':
+            target.checked = data
+            this.default[name] = parseEventValue(eventInput)
+            break
+
+          default:
+            if (field.isArrayField) {
+              this.parseArrayValue(eventInput)
+
+              if (this.default[name] instanceof Array) {
+                this.default[name] = this.default[name].filter((value, i) => {
+                  this.inputValues[inputName(field, i)] = value
+                  return value !== undefined
+                })
+              } else {
+                this.default[name] = []
+              }
+
+              field.itemsNum = type === 'checkbox'
+                ? field.items.length
+                : field.minItems
+            } else {
+              this.default[name] = parseEventValue(eventInput)
+            }
+            break
         }
       })
 
-      const data = {}
+      this.data = clone(this.default)
+    },
 
-      merge(data, this.default)
-
-      this.data = data
-
+    emitInputEvent () {
       /**
        * Fired synchronously when the value of an element is changed.
        */
@@ -206,27 +285,7 @@ export default {
     /**
      * @private
      */
-    onInput (event, triggerInputEvent = true) {
-      if (event.field.schemaType === 'boolean') {
-        event.data = event.target.checked
-      } else if (['number', 'integer'].includes(event.field.schemaType)) {
-        event.data = Number(event.data)
-      }
-
-      this.data[event.field.attrs.name] = event.data
-
-      if (triggerInputEvent) {
-        /**
-         * Fired synchronously when the value of an element is changed.
-         */
-        this.$emit('input', this.data)
-      }
-    },
-
-    /**
-     * @private
-     */
-    onInputArrayValue (event, triggerInputEvent = true) {
+    parseArrayValue (event) {
       if (event.field.attrs.type === 'checkbox') {
         if (event.target.checked) {
           if (!this.data[event.field.attrs.name].includes(event.data)) {
@@ -258,25 +317,6 @@ export default {
         }
 
         this.data[event.field.attrs.name] = values
-      }
-
-      if (triggerInputEvent) {
-        /**
-         * Fired synchronously when the value of an element is changed.
-         */
-        this.$emit('input', this.data)
-      }
-    },
-
-    /**
-     * @private
-     */
-    changed () {
-      if (!equals(this.data, this.default)) {
-        /**
-         * Fired when a change to the element's value is committed by the user.
-         */
-        this.$emit('change', this.data)
       }
     },
 

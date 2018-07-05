@@ -47,6 +47,11 @@ webpack build:
   stage: build
   script:
     - npm run build
+    - rm -f dist/*.html
+  artifacts:
+    paths:
+      - dist
+    expire_in: 4 weeks
 
 coverage report:
   stage: publish

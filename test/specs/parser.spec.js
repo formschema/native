@@ -4,6 +4,9 @@ import {
   s4,
   genId,
   setCommonFields,
+  parseDefaultScalarValue,
+  parseEventValue,
+  parseDefaultObjectValue,
   setItemName,
   arrayOrderedValues,
   arrayUnorderedValues,
@@ -47,7 +50,6 @@ describe('lib/parser', () => {
         label: '',
         description: '',
         attrs: {
-          value: '',
           required: false,
           disabled: false
         }
@@ -434,7 +436,6 @@ describe('lib/parser', () => {
         description: '',
         attrs: {
           type: 'text',
-          value: '',
           required: false,
           disabled: false
         }
@@ -461,7 +462,6 @@ describe('lib/parser', () => {
         description: '',
         attrs: {
           type: 'file',
-          value: '',
           required: false,
           disabled: false
         }
@@ -489,7 +489,6 @@ describe('lib/parser', () => {
         attrs: {
           name: 'name',
           type: 'file',
-          value: '',
           required: false,
           disabled: false
         }
@@ -516,7 +515,6 @@ describe('lib/parser', () => {
         description: '',
         attrs: {
           type: 'text',
-          value: '',
           minlength: 2,
           maxlength: 5,
           pattern: '[a-z]+',
@@ -544,7 +542,6 @@ describe('lib/parser', () => {
         description: '',
         attrs: {
           type: 'email',
-          value: '',
           required: false,
           disabled: false
         }
@@ -579,7 +576,6 @@ describe('lib/parser', () => {
         description: '',
         attrs: {
           type: 'url',
-          value: '',
           required: false,
           disabled: false
         }
@@ -611,7 +607,6 @@ describe('lib/parser', () => {
         description: '',
         attrs: {
           type: 'number',
-          value: '',
           required: false,
           disabled: false
         }
@@ -633,7 +628,6 @@ describe('lib/parser', () => {
         description: '',
         attrs: {
           type: 'number',
-          value: '',
           required: false,
           disabled: false
         }
@@ -679,7 +673,6 @@ describe('lib/parser', () => {
         maxItems: 1000,
         attrs: {
           type: 'text',
-          value: '',
           required: false,
           disabled: false
         }
@@ -709,7 +702,6 @@ describe('lib/parser', () => {
         maxItems: 1000,
         attrs: {
           type: 'file',
-          value: '',
           required: false,
           disabled: false
         }
@@ -736,7 +728,6 @@ describe('lib/parser', () => {
         attrs: {
           name: 'name',
           type: 'text',
-          value: '',
           required: false,
           disabled: false
         }
@@ -938,7 +929,6 @@ describe('lib/parser', () => {
           maxItems: 1000,
           attrs: {
             type: 'text',
-            value: '',
             required: false,
             disabled: false
           }
@@ -963,7 +953,6 @@ describe('lib/parser', () => {
           description: '',
           attrs: {
             type: 'number',
-            value: '',
             required: false,
             disabled: false
           }
@@ -1207,6 +1196,301 @@ describe('lib/parser', () => {
         })
 
         expect(fields).toEqual(expected)
+      })
+    })
+  })
+
+  describe('parseDefaultScalarValue(schema, fields, value)', () => {
+    it('should parse default value with an empty schema', () => {
+      const schema = {}
+      const fields = []
+
+      loadFields(schema, fields)
+
+      const result = parseDefaultScalarValue(schema, fields)
+
+      expect(result).toEqual(undefined)
+    })
+
+    describe('should parse default value with scalar type', () => {
+      const proto = [
+        {
+          type: 'boolean',
+          values: [ false, true ]
+        },
+        {
+          type: 'integer',
+          values: [ undefined, 0, 1, -1 ]
+        },
+        {
+          type: 'number',
+          values: [ undefined, 0.0, 1.0, -1.0, 2.1, -2.1 ]
+        },
+        {
+          type: 'string',
+          values: [ undefined, '', ' ', 'hello world' ]
+        }
+      ]
+
+      proto.forEach(({ type, values }) => {
+        describe(`with ${type}`, () => {
+          values.forEach((value, i) => {
+            it(`should parse ${JSON.stringify(value)} with default value === ${JSON.stringify(value)}`, () => {
+              const schema = {
+                type: type,
+                default: value
+              }
+
+              if (value === undefined) {
+                delete schema.default
+              }
+
+              const fields = []
+
+              loadFields(schema, fields)
+
+              const result = parseDefaultScalarValue(schema, fields)
+
+              expect(result).toEqual(value)
+            })
+
+            it(`should parse ${JSON.stringify(value)} with initial value === ${JSON.stringify(value)}`, () => {
+              const schema = {
+                type: type
+              }
+
+              const fields = []
+
+              loadFields(schema, fields)
+
+              const result = parseDefaultScalarValue(schema, fields, value)
+
+              expect(result).toEqual(value)
+            })
+
+            if (i % 2) {
+              const initial = values[i - 1]
+
+              it(`should parse ${JSON.stringify(value)} with default === ${JSON.stringify(initial)} and initial === ${JSON.stringify(value)}`, () => {
+                const schema = {
+                  type: type,
+                  default: initial
+                }
+
+                const fields = []
+
+                loadFields(schema, fields)
+
+                const result = parseDefaultScalarValue(schema, fields, value)
+
+                expect(result).toEqual(value)
+              })
+
+              it(`should parse ${JSON.stringify(value)} with default === ${JSON.stringify(initial)} and attrs.value === ${JSON.stringify(value)}`, () => {
+                const schema = {
+                  type: type,
+                  default: initial,
+                  attrs: { value }
+                }
+
+                if (type === 'boolean') {
+                  schema.attrs.checked = value === true
+
+                  delete schema.attrs.value
+                }
+
+                const fields = []
+
+                loadFields(schema, fields)
+
+                const result = parseDefaultScalarValue(schema, fields)
+
+                expect(result).toEqual(value)
+              })
+
+              it(`should parse ${JSON.stringify(value)} with initial === ${JSON.stringify(initial)} and attrs.value === ${JSON.stringify(value)}`, () => {
+                const schema = {
+                  type: type,
+                  attrs: { value }
+                }
+
+                const propsData = { schema, value }
+
+                if (type === 'boolean') {
+                  propsData.value = value === true
+                  schema.attrs.checked = propsData.value
+
+                  delete schema.attrs.value
+                }
+
+                const fields = []
+
+                loadFields(schema, fields)
+
+                const result = parseDefaultScalarValue(schema, fields, value)
+
+                expect(result).toEqual(value)
+              })
+            }
+          })
+        })
+      })
+    })
+  })
+
+  describe('parseEventValue({ target, field, data })', () => {
+    const proto = [
+      {
+        type: 'boolean',
+        values: [ false, true ]
+      },
+      {
+        type: 'string',
+        values: [ undefined, '', ' ', 'hello world' ]
+      },
+      {
+        type: 'integer',
+        values: [ undefined, 0, 1, -1, '9', '-0', '-5' ]
+      },
+      {
+        type: 'number',
+        values: [ undefined, 0.0, 1.0, -1.0, 2.1, -2.1, '-3.2', '12.5' ]
+      },
+      {
+        type: 'array',
+        values: [ undefined, [], [1] ]
+      },
+      {
+        type: 'object',
+        values: [ undefined, {}, { x: 1 } ]
+      }
+    ]
+
+    proto.forEach(({ type, values }) => {
+      describe(`should successfully parse with ${type}`, () => {
+        values.forEach((data) => {
+          it(`should parse ${JSON.stringify(data)} with input value === ${JSON.stringify(data)}`, () => {
+            const field = { schemaType: type }
+            const checked = data === true
+            const target = { checked }
+
+            const expected = data === undefined && type === 'string'
+              ? ''
+              : ['integer', 'number'].includes(type) && data !== undefined
+                ? parseFloat(data)
+                : type === 'array' && data === undefined
+                  ? []
+                  : type === 'object' && data === undefined
+                    ? {}
+                    : data
+
+            const result = parseEventValue({ target, field, data })
+
+            expect(result).toEqual(expected)
+          })
+        })
+      })
+    })
+  })
+
+  describe('parseDefaultObjectValue(schema, fields, value)', () => {
+    [
+      {
+        type: 'boolean',
+        values: [ false, true ]
+      },
+      {
+        type: 'string',
+        values: [ undefined, '', ' ', 'hello world' ]
+      },
+      {
+        type: 'integer',
+        values: [ undefined, 0, 1, -1, '9', '-0', '-5' ]
+      },
+      {
+        type: 'number',
+        values: [ undefined, 0.0, 1.0, -1.0, 2.1, -2.1, '-3.2', '12.5' ]
+      }
+    ].forEach(({ type, values }) => {
+      describe(`should successfully parse with object schema and ${type} property`, () => {
+        values.forEach((value) => {
+          it(`should parse { x: ${JSON.stringify(value)} } with input value === ${JSON.stringify(value)}`, () => {
+            const schema = {
+              type: 'object',
+              properties: {
+                x: { type }
+              }
+            }
+
+            const fields = []
+            const expected = value === undefined && type === 'string'
+              ? ''
+              : ['integer', 'number'].includes(type) && value !== undefined
+                ? parseFloat(value)
+                : value
+
+            loadFields(schema, fields)
+
+            const result = parseDefaultObjectValue(schema, fields, { x: value })
+
+            expect(result).toEqual({ x: expected })
+          })
+        })
+      })
+    })
+
+    describe(`should successfully parse with array schema`, () => {
+      [
+        [],
+        ['x'],
+        ['x', 'z'],
+        ['x', 'y', 'z'],
+        ['z', 'x', 'y']
+      ].forEach((value) => {
+        it(`should parse ${JSON.stringify(value)} with input value === ${JSON.stringify(value)}`, () => {
+          const schema = {
+            type: 'array',
+            enum: [
+              { value: 'x', label: 'l' },
+              { value: 'y', label: 'm' },
+              { value: 'z', label: 'n' }
+            ]
+          }
+
+          const fields = []
+
+          loadFields(schema, fields)
+
+          const expected = [...value]
+          const result = parseDefaultObjectValue(schema, fields, value)
+
+          expect([...result]).toEqual(expected)
+        })
+
+        it(`should parse { x: ${JSON.stringify(value)} } with input value === ${JSON.stringify(value)}`, () => {
+          const schema = {
+            type: 'object',
+            properties: {
+              x: {
+                type: 'array',
+                enum: [
+                  { value: 'x', label: 'l' },
+                  { value: 'y', label: 'm' },
+                  { value: 'z', label: 'n' }
+                ]
+              }
+            }
+          }
+
+          const fields = []
+
+          loadFields(schema, fields)
+
+          const expected = { x: value }
+          const result = parseDefaultObjectValue(schema, fields, { x: value })
+
+          expect(result).toEqual(expected)
+        })
       })
     })
   })
