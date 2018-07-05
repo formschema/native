@@ -45,17 +45,17 @@ export default {
 
     /**
      * When the value of the method attribute is post, enctype is the MIME type of content that is used to submit the form to the server. Possible values are:
-     *
-     * - application/x-www-form-urlencoded: The default value if the attribute is not specified.
-     * - multipart/form-data: The value used for an <input> element with the type attribute set to "file".
+     *<br/>
+     * - application/x-www-form-urlencoded: The default value if the attribute is not specified.<br/>
+     * - multipart/form-data: The value used for an `<input/>` element with the type attribute set to "file".<br/>
      * - text/plain (HTML5)
      */
     enctype: { type: String, default: 'application/x-www-form-urlencoded' },
 
     /**
      * The HTTP method that the browser uses to submit the form. Possible values are:
-     *
-     * - post: Corresponds to the HTTP POST method ; form data are included in the body of the form and sent to the server.
+     * <br/>
+     * - post: Corresponds to the HTTP POST method ; form data are included in the body of the form and sent to the server.<br/>
      * - get: Corresponds to the HTTP GET method; form data are appended to the action attribute URI with a '?' as separator, and the resulting URI is sent to the server. Use this method when the form has no side-effects and contains only ASCII characters.
      */
     method: { type: String, default: 'post' },
@@ -67,6 +67,8 @@ export default {
 
     /**
      * Use this prop to overwrite the default Native HTML Elements for custom components.
+     *
+     * @default new Components()
      */
     components: {
       type: Components,

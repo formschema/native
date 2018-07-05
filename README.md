@@ -36,11 +36,11 @@ npm install --save @formschema/native
 
 - `enctype` ***String*** (*optional*) `default: 'application/x-www-form-urlencoded'` 
 
-   When the value of the method attribute is post, enctype is the MIME type of content that is used to submit the form to the server. Possible values are: - application/x-www-form-urlencoded: The default value if the attribute is not specified. - multipart/form-data: The value used for an <input> element with the type attribute set to "file". - text/plain (HTML5) 
+   When the value of the method attribute is post, enctype is the MIME type of content that is used to submit the form to the server. Possible values are: <br/> - application/x-www-form-urlencoded: The default value if the attribute is not specified.<br/> - multipart/form-data: The value used for an `<input/>` element with the type attribute set to "file".<br/> - text/plain (HTML5) 
 
 - `method` ***String*** (*optional*) `default: 'post'` 
 
-   The HTTP method that the browser uses to submit the form. Possible values are: - post: Corresponds to the HTTP POST method ; form data are included in the body of the form and sent to the server. - get: Corresponds to the HTTP GET method; form data are appended to the action attribute URI with a '?' as separator, and the resulting URI is sent to the server. Use this method when the form has no side-effects and contains only ASCII characters. 
+   The HTTP method that the browser uses to submit the form. Possible values are: <br/> - post: Corresponds to the HTTP POST method ; form data are included in the body of the form and sent to the server.<br/> - get: Corresponds to the HTTP GET method; form data are appended to the action attribute URI with a '?' as separator, and the resulting URI is sent to the server. Use this method when the form has no side-effects and contains only ASCII characters. 
 
 - `novalidate` ***Boolean*** (*optional*) 
 
