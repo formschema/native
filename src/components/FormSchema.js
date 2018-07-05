@@ -275,6 +275,9 @@ export default {
       this.data = clone(this.default)
     },
 
+    /**
+     * @private
+     */
     emitInputEvent () {
       /**
        * Fired synchronously when the value of an element is changed.
