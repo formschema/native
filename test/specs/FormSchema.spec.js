@@ -46,7 +46,7 @@ describe('FormSchema', () => {
         propsData: { schema }
       })
 
-      expect(wrapper.emitted().input[0]).toEqual([undefined])
+      expect(wrapper.emitted().input).toEqual(undefined)
     })
 
     describe('should render default value with scalar type', () => {
@@ -267,14 +267,14 @@ describe('FormSchema', () => {
       })
     })
 
-    describe('should successfully render the component with reactive schema - loadSchema()', () => {
+    describe('should successfully render the component with reactive schema - load()', () => {
       const wrapper = mount(component, {
         propsData: { schema: {} }
       })
 
       it('should render nothing with empty schema', () => {
         expect(wrapper.html()).toEqual(undefined)
-        wrapper.vm.loadSchema(schema)
+        wrapper.vm.load(schema)
       })
 
       it('should have form title', () => {

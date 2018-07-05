@@ -1,33 +1,32 @@
 <template>
   <div class="container">
-    <FormSchemaNative class="form" ref="formSchema" :schema="schema"
-      v-model="model" @change="submit">
-      <button type="button" @click="submit">Subscribe</button>
-    </FormSchemaNative>
+    <FormSchema class="form" ref="formSchema" v-model="model" @submit.prevent>
+      <button type="submit">Subscribe</button>
+    </FormSchema>
     <pre class="model">{{ model }}</pre>
   </div>
 </template>
 
 <script>
-  // import FormSchemaNative from '../../..'
-  import '../dist/FormSchemaNative.umd.js'
+  // import FormSchema from '../../..'
+  import '../dist/FormSchema.umd.js'
 
-  const FormSchemaNative = window.FormSchemaNative.default
+  const FormSchema = window.FormSchema.default
 
   export default {
     data: () => ({
-      schema: require('../schema/newsletter'),
+      schema: Promise.resolve(require('../schema/newsletter')),
       model: {}
     }),
+    created () {
+      this.schema.then((schema) => this.$refs.formSchema.load(schema))
+    },
     methods: {
-      submit (data) {
-        console.log(JSON.stringify(this.model, null, 2))
-      },
       reset () {
         this.$refs.formSchema.form().reset()
       }
     },
-    components: { FormSchemaNative }
+    components: { FormSchema }
   }
 </script>
 
@@ -83,6 +82,10 @@
   }
 
   [data-fs-field-input] {
+  }
+
+  [data-fs-buttons] {
+    padding-left: 130px;
   }
 
   input {

@@ -22,7 +22,7 @@ npm install --save @formschema/native
 
    The JSON Schema object. 
 
-- `v-model` ***Number|String|Array|Object|Boolean*** (*optional*) `default: 'undefined'` 
+- `v-model` ***Number|String|Array|Object|Boolean*** (*optional*) `default: undefined`
 
    Use this directive to create two-way data bindings with the component. It automatically picks the correct way to update the element based on the input type. 
 
@@ -70,9 +70,14 @@ npm install --save @formschema/native
 
 ### methods 
 
-- `loadSchema(schema)` 
+- `load(schema, model)` 
 
-   Load the given JSON Schema. Use this to update the initial schema. 
+   Load the given `schema` with initial filled `value`. Use this to load async schema. 
+
+   **parameters:** 
+
+     - `schema` **object** - The JSON Schema object to load 
+     - `model` **Number|String|Array|Object|Boolean** - The initial data for the schema. 
 
 - `form()` 
 
@@ -171,7 +176,8 @@ Define your [JSON Schema](http://json-schema.org) file:
 ### Working with Async Schema
 
 You may want to use `FormSchema` with a schema loaded from a remote URL.
-To do that, use the `loadSchema(schema)` method:
+
+To do that, use the `load(schema[, value = undefined])` method:
 
 ```html
 <template>
@@ -186,7 +192,7 @@ To do that, use the `loadSchema(schema)` method:
   export default {
     created () {
       axios.get('/api/schema/subscription.json').then(({ data }) => {
-        this.$refs.formSchema.loadSchema(data)
+        this.$refs.formSchema.load(data)
       })
     },
     components: { FormSchema }
