@@ -261,7 +261,7 @@ export function parseArray (schema, name = null) {
 
           field.items = parseItems(schema[keyword])
 
-          if (field.attrs.value === void(0) || field.attrs.value.length === 0) {
+          if (field.attrs.value === void (0) || field.attrs.value.length === 0) {
             field.attrs.value = field.schemaType === 'array'
               ? arrayUnorderedValues(field)
               : singleValue(field)
@@ -274,7 +274,7 @@ export function parseArray (schema, name = null) {
 
           field.items = parseItems(schema[keyword]).map(setItemName(name, true))
 
-          if (field.attrs.value === void(0) || field.attrs.value.length === 0) {
+          if (field.attrs.value === void (0) || field.attrs.value.length === 0) {
             field.attrs.value = singleValue(field)
           }
           break loop
@@ -286,7 +286,7 @@ export function parseArray (schema, name = null) {
           field.items = parseItems(schema[keyword]).map(setItemName(name))
           field.isArrayField = true
 
-          if (field.attrs.value === void(0) || field.attrs.value.length === 0) {
+          if (field.attrs.value === void (0) || field.attrs.value.length === 0) {
             field.attrs.value = arrayOrderedValues(field)
           }
           break loop
@@ -301,7 +301,7 @@ export function parseArray (schema, name = null) {
     field.attrs.multiple = field.schemaType === 'array'
     field.attrs.value = field.attrs.value || field.attrs.multiple ? [] : ''
 
-    if (field.attrs.value === void(0) || field.attrs.value.length === 0) {
+    if (field.attrs.value === void (0) || field.attrs.value.length === 0) {
       if (field.attrs.multiple) {
         field.isArrayField = true
         field.attrs.value = arrayUnorderedValues(field)

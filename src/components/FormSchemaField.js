@@ -26,7 +26,9 @@ export default {
             children.push(createElement(FormSchemaFieldCheckboxItem, {
               fieldParent: field,
               props: {
-                item, value, components,
+                item,
+                value,
+                components,
                 field: { ...field, isArrayField: false }
               },
               on: listeners

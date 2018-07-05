@@ -1,5 +1,5 @@
 import { genId, parseDefaultScalarValue, loadFields } from '@/lib/parser'
-import { equals, merge, clone, isScalar } from '@/lib/object'
+import { equals, assign, clone } from '@/lib/object'
 import { Components as Instance, argName, inputName } from '@/lib/components'
 import FormSchemaField from './FormSchemaField'
 
@@ -200,15 +200,11 @@ export default {
         case 'array':
           this.default = clone(this.value || [])
           this.loadDefaultObjectValue(fields)
-//           loadDefaultObjectValue(
-//             this.schema, fields, this.value, this.default, this.data)
           break
 
         case 'object':
           this.default = clone(this.value || {})
           this.loadDefaultObjectValue(fields)
-//           loadDefaultObjectValue(
-//             this.schema, fields, this.value, this.default, this.data)
           break
 
         default:
@@ -218,19 +214,13 @@ export default {
           break
       }
 
-//       console.log('isScalarSchema>', this.isScalarSchema)
-//       console.log('value>', JSON.stringify(this.value))
-//       console.log('default>', JSON.stringify(this.default))
-//       console.log('data>', JSON.stringify(this.data))
-//       console.log('fields>', fields)
-
       this.emitInputEvent()
     },
 
     /**
      * @private
      */
-    loadDefaultObjectValue(fields) {
+    loadDefaultObjectValue (fields) {
       this.default = this.schema.type === 'object' ? {} : []
 
       if (this.value) {
@@ -282,7 +272,7 @@ export default {
       this.data = clone(this.default)
     },
 
-    emitInputEvent() {
+    emitInputEvent () {
       /**
        * Fired synchronously when the value of an element is changed.
        */
