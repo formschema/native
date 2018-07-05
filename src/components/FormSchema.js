@@ -6,7 +6,7 @@ import {
   loadFields
 } from '@/lib/parser'
 
-import { equals, assign, clone, clear, empty } from '@/lib/object'
+import { equals, assign, clone, clear, isEmpty } from '@/lib/object'
 import { Components as Instance, argName, inputName } from '@/lib/components'
 import FormSchemaField from './FormSchemaField'
 
@@ -85,7 +85,7 @@ export default {
     ready: false
   }),
   created () {
-    if (!empty(this.schema)) {
+    if (!isEmpty(this.schema)) {
       this.load(this.schema, this.value)
     }
   },

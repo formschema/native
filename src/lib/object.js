@@ -44,8 +44,8 @@ export function merge (dest, src) {
 
 export const assign = merge
 
-export function clone (src) {
-  return merge({}, src)
+export function clone (object) {
+  return merge({}, object)
 }
 
 export function clear (object) {
@@ -54,7 +54,7 @@ export function clear (object) {
   }
 }
 
-export function empty (object) {
+export function isEmpty (object) {
   for (let key in object) {
     return false
   }
