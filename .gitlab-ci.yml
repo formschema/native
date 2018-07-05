@@ -47,6 +47,9 @@ webpack build:
   stage: build
   script:
     - npm run build
+  artifacts:
+    paths:
+      - dist
 
 coverage report:
   stage: publish
