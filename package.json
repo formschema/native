@@ -44,7 +44,7 @@
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
     "regenerator-runtime": "^0.12.0",
-    "sinon": "^6.0.1",
+    "sinon": "^6.1.0",
     "vue": "^2.5.16"
   },
   "dependencies": {}
