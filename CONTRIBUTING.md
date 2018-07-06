@@ -52,10 +52,10 @@ Here's a list of the big ones:
 
 * [formschema/core](https://gitlab.com/formschema/core) - FormSchema Core
 * [formschema/native](https://gitlab.com/formschema/native) - A native HTML wrapping of FormSchema Core
-* [formschema/elementui](https://gitlab.com/formschema/elementui) - A ElementUI wrapping of FormSchema Core
-* [formschema/material](https://gitlab.com/formschema/material) - A VueMaterial wrapping of FormSchema Core
-* [formschema/bulma](https://gitlab.com/formschema/bulma) - A Bulma wrapping of FormSchema Core
-* [formschema/buefy](https://gitlab.com/formschema/buefy) - A Buefy wrapping of FormSchema Core
+* [formschema/elementui](https://gitlab.com/formschema/components/elementui) - A ElementUI wrapping of FormSchema Core
+* [formschema/material](https://gitlab.com/formschema/components/material) - A VueMaterial wrapping of FormSchema Core
+* [formschema/bulma](https://gitlab.com/formschema/components/bulma) - A Bulma wrapping of FormSchema Core
+* [formschema/buefy](https://gitlab.com/formschema/components/buefy) - A Buefy wrapping of FormSchema Core
 * [website](https://gitlab.com/formschema/website) - the repository for feedback on the [FormSchema website](https://formschema.js.org) and the FormSchema API.
 
 ## How Can I Contribute?
