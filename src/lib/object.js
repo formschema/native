@@ -44,6 +44,19 @@ export function merge (dest, src) {
 
 export const assign = merge
 
-export function clone (src) {
-  return merge({}, src)
+export function clone (object) {
+  return merge({}, object)
+}
+
+export function clear (object) {
+  for (let key in object) {
+    delete object[key]
+  }
+}
+
+export function isEmpty (object) {
+  for (let key in object) {
+    return false
+  }
+  return true
 }

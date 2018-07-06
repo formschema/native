@@ -46,7 +46,7 @@ describe('FormSchema', () => {
         propsData: { schema }
       })
 
-      expect(wrapper.emitted().input[0]).toEqual([undefined])
+      expect(wrapper.emitted().input).toEqual(undefined)
     })
 
     describe('should render default value with scalar type', () => {
@@ -196,13 +196,13 @@ describe('FormSchema', () => {
 
     Object.keys(props).forEach((prop) => {
       it(`should have prop ${prop} with default value`, () => {
-        expect(prop in wrapper.vm).toBe(true)
+        expect(prop in wrapper.vm).toBeTruthy()
         expect(wrapper.vm[prop]).toEqual(props[prop])
       })
     })
 
     it(`should have data ref`, () => {
-      expect('ref' in wrapper.vm).toBe(true)
+      expect('ref' in wrapper.vm).toBeTruthy()
       expect(wrapper.vm.ref.startsWith('form-schema-')).toBeTruthy()
     })
 
@@ -230,12 +230,12 @@ describe('FormSchema', () => {
       })
 
       it('should have form enctype attribute', () => {
-        expect(wrapper.find('form').element.hasAttribute('enctype')).toBe(true)
+        expect(wrapper.find('form').element.hasAttribute('enctype')).toBeTruthy()
         expect(wrapper.find('form').element.getAttribute('enctype')).toEqual(props.enctype)
       })
 
       it('should have form method attribute', () => {
-        expect(wrapper.find('form').element.hasAttribute('method')).toBe(true)
+        expect(wrapper.find('form').element.hasAttribute('method')).toBeTruthy()
         expect(wrapper.find('form').element.getAttribute('method')).toEqual(props.method)
       })
 
@@ -267,14 +267,14 @@ describe('FormSchema', () => {
       })
     })
 
-    describe('should successfully render the component with reactive schema - loadSchema()', () => {
+    describe('should successfully render the component with reactive schema - load(schema)', () => {
       const wrapper = mount(component, {
         propsData: { schema: {} }
       })
 
       it('should render nothing with empty schema', () => {
         expect(wrapper.html()).toEqual(undefined)
-        wrapper.vm.loadSchema(schema)
+        wrapper.vm.load(schema)
       })
 
       it('should have form title', () => {
@@ -297,12 +297,12 @@ describe('FormSchema', () => {
       })
 
       it('should have form enctype attribute', () => {
-        expect(wrapper.find('form').element.hasAttribute('enctype')).toBe(true)
+        expect(wrapper.find('form').element.hasAttribute('enctype')).toBeTruthy()
         expect(wrapper.find('form').element.getAttribute('enctype')).toEqual(props.enctype)
       })
 
       it('should have form method attribute', () => {
-        expect(wrapper.find('form').element.hasAttribute('method')).toBe(true)
+        expect(wrapper.find('form').element.hasAttribute('method')).toBeTruthy()
         expect(wrapper.find('form').element.getAttribute('method')).toEqual(props.method)
       })
 
@@ -321,6 +321,28 @@ describe('FormSchema', () => {
       })
     })
 
+    describe('should successfully render the component with reactive schema - load(schema, model)', () => {
+      const model = {
+        name: 'Lanister'
+      }
+      const wrapper = mount(component, {
+        propsData: { schema: {} }
+      })
+
+      it('should render nothing with empty schema', () => {
+        expect(wrapper.html()).toEqual(undefined)
+        expect(wrapper.emitted().input).toEqual(undefined)
+
+        wrapper.vm.load(schema, model)
+      })
+
+      it('should have form input', () => {
+        expect(wrapper.emitted().input.pop()).toEqual([{ name: 'Lanister' }])
+        expect(wrapper.findAll('input').length).toEqual(1)
+        expect(wrapper.find('input').html()).toEqual('<input id="x" type="text" name="name" value="Lanister" required="required">')
+      })
+    })
+
     it('should successfully emit events', () => {
       const wrapper = mount(component, {
         propsData: { schema }
@@ -336,7 +358,7 @@ describe('FormSchema', () => {
       input.element.value = expected.name
       input.trigger('input')
 
-      expect('input' in wrapper.emitted()).toBe(true)
+      expect('input' in wrapper.emitted()).toBeTruthy()
       expect(wrapper.emitted('input')[0][0]).toEqual(expected)
 
       expect(wrapper.vm.data).toEqual(expected)
@@ -359,8 +381,8 @@ describe('FormSchema', () => {
 
       input.element.value = 'Sébastien'
 
-      expect(wrapper.vm.reportValidity()).toBe(true)
-      expect(wrapper.vm.checkValidity()).toBe(true)
+      expect(wrapper.vm.reportValidity()).toBeTruthy()
+      expect(wrapper.vm.checkValidity()).toBeTruthy()
     })
 
     it('vm.reset()', () => {
@@ -383,7 +405,7 @@ describe('FormSchema', () => {
       expect(wrapper.vm.data).toEqual({ name: '' })
     })
 
-    it('vm.setErrorMessage(message) & vm.clearErrorMessage()', () => {
+    it('vm.setErrorMessage(message)', () => {
       const wrapper = mount(component, {
         propsData: { schema }
       })
@@ -393,6 +415,16 @@ describe('FormSchema', () => {
       expect(wrapper.vm.error).toEqual('error message')
       expect(wrapper.findAll('[data-fs-error]').length).toEqual(1)
       expect(wrapper.find('[data-fs-error]').html()).toEqual('<div data-fs-error="true">error message</div>')
+    })
+
+    it('vm.clearErrorMessage()', () => {
+      const wrapper = mount(component, {
+        propsData: { schema }
+      })
+
+      wrapper.vm.setErrorMessage('error message')
+
+      expect(wrapper.vm.error).toEqual('error message')
 
       wrapper.vm.clearErrorMessage()
 
@@ -475,9 +507,9 @@ describe('FormSchema', () => {
           propsData: { schema }
         })
 
-        const expected = '<div><form enctype="application/x-www-form-urlencoded" method="post"><div data-fs-field="x"><label for="x">choices</label><div data-fs-field-input="x"><select id="x" name="list"><option value="v0">v0</option><option value="v1">v1</option></select><small>choices description</small></div></div></form></div>'
+        const expected = '<form enctype="application/x-www-form-urlencoded" method="post"><div data-fs-field="x"><label for="x">choices</label><div data-fs-field-input="x"><select id="x" name="list"><option value="v0">v0</option><option value="v1">v1</option></select><small>choices description</small></div></div></form>'
 
-        expect(wrapper.html()).toEqual(expected)
+        expect(wrapper.find('form').html()).toEqual(expected)
       })
     })
 
@@ -546,9 +578,9 @@ describe('FormSchema', () => {
           propsData: { schema, components }
         })
 
-        const expected = '<div><form enctype="application/x-www-form-urlencoded" method="post"><span id="x" name="checkbox-name" type="checkbox" checked="checked"></span></form></div>'
+        const expected = '<form enctype="application/x-www-form-urlencoded" method="post"><span id="x" name="checkbox-name" type="checkbox" checked="checked"></span></form>'
 
-        expect(wrapper.html()).toEqual(expected)
+        expect(wrapper.find('form').html()).toEqual(expected)
       })
 
       it('should render with overwrite custom checkbox component', () => {
@@ -562,9 +594,9 @@ describe('FormSchema', () => {
           propsData: { schema, components }
         })
 
-        const expected = '<div><form enctype="application/x-www-form-urlencoded" method="post"><div type="checkbox"></div></form></div>'
+        const expected = '<form enctype="application/x-www-form-urlencoded" method="post"><div type="checkbox"></div></form>'
 
-        expect(wrapper.html()).toEqual(expected)
+        expect(wrapper.find('form').html()).toEqual(expected)
       })
 
       it('should render with default components', () => {
@@ -572,9 +604,34 @@ describe('FormSchema', () => {
           propsData: { schema }
         })
 
-        const expected = '<div><form enctype="application/x-www-form-urlencoded" method="post"><input id="x" name="checkbox-name" type="checkbox" checked="checked"></form></div>'
+        const expected = '<form enctype="application/x-www-form-urlencoded" method="post"><input id="x" name="checkbox-name" type="checkbox" checked="checked"></form>'
 
-        expect(wrapper.html()).toEqual(expected)
+        expect(wrapper.find('form').html()).toEqual(expected)
+      })
+    })
+
+    describe('array fields', () => {
+      it('should successfully render with attrs.type', () => {
+        const schema = {
+          type: 'object',
+          properties: {
+            images: {
+              type: 'array',
+              minItems: 2,
+              attrs: {
+                id: 'x',
+                type: 'file'
+              }
+            }
+          }
+        }
+        const wrapper = mount(component, {
+          propsData: { schema }
+        })
+
+        const expected = '<form enctype="application/x-www-form-urlencoded" method="post"><div><input id="x" type="file" name="images-0" data-fs-index="0"><input id="x" type="file" name="images-1" data-fs-index="1"><button type="button">Add</button></div></form>'
+
+        expect(wrapper.find('form').html()).toEqual(expected)
       })
     })
   })

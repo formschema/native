@@ -697,6 +697,7 @@ describe('lib/parser', () => {
         schemaType: 'array',
         label: '',
         description: '',
+        isArrayField: true,
         items: [],
         minItems: 1,
         maxItems: 1000,
@@ -787,6 +788,7 @@ describe('lib/parser', () => {
         schemaType: 'array',
         label: '',
         description: '',
+        isArrayField: true,
         minItems: 1,
         maxItems: 1000,
         items: [{ value: 'v', label: 'l' }],
@@ -828,6 +830,7 @@ describe('lib/parser', () => {
         schemaType: 'array',
         label: '',
         description: '',
+        isArrayField: true,
         minItems: 1,
         maxItems: 1000,
         items: [{ value: 'v', label: 'l', name: 'l' }],
@@ -880,16 +883,6 @@ describe('lib/parser', () => {
   })
 
   describe('loadFields(schema, fields, name = null)', () => {
-    it('should ignore schema.visible === false', () => {
-      const fields = []
-      const schema = { type: 'boolean', visible: false }
-      const expected = []
-
-      loadFields(schema, fields)
-
-      expect(fields).toEqual(expected)
-    })
-
     describe('schema.type === boolean', () => {
       it('should successfully load the schema', () => {
         const fields = []
