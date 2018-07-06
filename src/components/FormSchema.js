@@ -219,6 +219,9 @@ export default {
         case 'array':
         case 'object':
           this.data = parseDefaultObjectValue(schema, this.fields, model)
+
+          this.parseDefaultArrayValue()
+
           this.default = Object.freeze(clone(this.data))
           this.isScalarSchema = false
           break
@@ -238,56 +241,23 @@ export default {
     /**
      * @private
      */
-    loadDefaultObjectValue (fields) {
-      this.default = this.schema.type === 'object' ? {} : []
+    parseDefaultArrayValue () {
+      this.fields.forEach((field) => {
+        if (field.isArrayField) {
+          const { type, name } = field.attrs
 
-      if (this.value) {
-        assign(this.default, this.value)
-      }
+          if (this.data[name] instanceof Array) {
+            this.data[name] = this.data[name].filter((value, i) => {
+              this.inputValues[inputName(field, i)] = value
+              return value !== undefined
+            })
+          }
 
-      fields.forEach((field) => {
-        const { type, name } = field.attrs
-        const data = field.schemaType === 'boolean'
-          ? typeof this.default[name] === 'boolean'
-            ? this.default[name]
-            : field.attrs.checked === true
-          : typeof this.default[name] !== 'undefined'
-            ? this.default[name]
-            : field.attrs.value
-
-        const target = {}
-        const eventInput = { field, data, target }
-
-        switch (field.schemaType) {
-          case 'boolean':
-            target.checked = data
-            this.default[name] = parseEventValue(eventInput)
-            break
-
-          default:
-            if (field.isArrayField) {
-              this.parseArrayValue(eventInput)
-
-              if (this.default[name] instanceof Array) {
-                this.default[name] = this.default[name].filter((value, i) => {
-                  this.inputValues[inputName(field, i)] = value
-                  return value !== undefined
-                })
-              } else {
-                this.default[name] = []
-              }
-
-              field.itemsNum = type === 'checkbox'
-                ? field.items.length
-                : field.minItems
-            } else {
-              this.default[name] = parseEventValue(eventInput)
-            }
-            break
+          field.itemsNum = type === 'checkbox'
+            ? field.items.length
+            : field.minItems
         }
       })
-
-      this.data = clone(this.default)
     },
 
     /**
@@ -381,9 +351,7 @@ export default {
      * Reset the value of all elements of the parent form.
      */
     reset () {
-      for (let key in this.inputValues) {
-        delete this.inputValues[key]
-      }
+      clear(this.inputValues)
 
       this.fields.forEach((field) => {
         const { name } = field.attrs
