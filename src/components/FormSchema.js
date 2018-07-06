@@ -89,7 +89,7 @@ export default {
   }),
   created () {
     if (!isEmpty(this.schema)) {
-      this.load(this.schema, this.value)
+      this.load(this.schema, this.value, false)
     }
   },
   render (createElement) {
@@ -212,7 +212,7 @@ export default {
      *
      * @note The default value of `model` is the initial model defined with the `v-model` directive.
      */
-    load (schema, model = this.value) {
+    load (schema, model = this.value, reset = true) {
       this.ready = false
 
       this.fields.splice(0)
@@ -244,6 +244,10 @@ export default {
       this.emitInputEvent()
 
       this.ready = true
+
+      if (reset) {
+        this.$nextTick(() => this.reset())
+      }
     },
 
     /**
