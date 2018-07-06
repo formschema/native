@@ -189,7 +189,11 @@ export default {
       }
     }, formInputNodes))
 
-    return createElement(components.$.formwrapper.component, nodes)
+    return createElement(components.$.formwrapper.component, {
+      attrs: {
+        id: this.ref
+      }
+    }, nodes)
   },
   methods: {
     /**
