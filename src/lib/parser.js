@@ -20,10 +20,14 @@ export function genId (prefix = '') {
   return suffix
 }
 
-export function setCommonFields (schema, field) {
-  field.attrs.value = field.attrs.hasOwnProperty('value')
-    ? field.attrs.value
-    : schema.default
+export function setCommonFields (schema, field, model = null) {
+  if (model !== null) {
+    field.attrs.value = model
+  } else if (field.attrs.hasOwnProperty('value')) {
+    field.attrs.value = field.attrs.value
+  } else {
+    field.attrs.value = schema.default
+  }
 
   field.order = schema.order
   field.schemaType = schema.type
@@ -131,7 +135,7 @@ export function parseDefaultObjectValue (schema, fields, value) {
   return data
 }
 
-export function loadFields (schema, fields, name = null) {
+export function loadFields (schema, fields, name = null, model = null) {
   if (!schema || schema.visible === false) {
     return
   }
@@ -157,17 +161,21 @@ export function loadFields (schema, fields, name = null) {
         })
       }
 
+      if (model === null) {
+        model = {}
+      }
+
       properties.forEach((key) => {
-        loadFields(schema.properties[key], fields, key)
+        loadFields(schema.properties[key], fields, key, model[key] || null)
       })
       break
 
     case 'boolean':
-      fields.push(parseBoolean(schema, name))
+      fields.push(parseBoolean(schema, name, model))
       break
 
     case 'array':
-      fields.push(parseArray(schema, name))
+      fields.push(parseArray(schema, name, model))
       break
 
     case 'integer':
@@ -180,17 +188,17 @@ export function loadFields (schema, fields, name = null) {
             enum: schema[keyword]
           }
 
-          fields.push(parseArray(schema, name))
+          fields.push(parseArray(schema, name, model))
 
           return
         }
       }
-      fields.push(parseString(schema, name))
+      fields.push(parseString(schema, name, model))
       break
   }
 }
 
-export function parseBoolean (schema, name = null) {
+export function parseBoolean (schema, name = null, model = null) {
   const field = {
     attrs: schema.attrs || {}
   }
@@ -199,7 +207,7 @@ export function parseBoolean (schema, name = null) {
     field.attrs.name = name
   }
 
-  setCommonFields(schema, field)
+  setCommonFields(schema, field, model)
 
   if (!field.attrs.type) {
     field.attrs.type = 'checkbox'
@@ -214,7 +222,7 @@ export function parseBoolean (schema, name = null) {
   return field
 }
 
-export function parseString (schema, name = null) {
+export function parseString (schema, name = null, model = null) {
   const field = {
     attrs: schema.attrs || {}
   }
@@ -254,7 +262,7 @@ export function parseString (schema, name = null) {
     field.attrs.name = name
   }
 
-  setCommonFields(schema, field)
+  setCommonFields(schema, field, model)
 
   if (schema.minLength) {
     field.attrs.minlength = schema.minLength
@@ -314,7 +322,7 @@ export function singleValue (field) {
   return item ? item.value : ''
 }
 
-export function parseArray (schema, name = null) {
+export function parseArray (schema, name = null, model = null) {
   const field = {
     attrs: schema.attrs || {}
   }
@@ -323,7 +331,7 @@ export function parseArray (schema, name = null) {
     field.attrs.name = name
   }
 
-  setCommonFields(schema, field)
+  setCommonFields(schema, field, model)
 
   field.items = []
   field.minItems = parseInt(schema.minItems) || 1

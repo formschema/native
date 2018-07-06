@@ -92,7 +92,7 @@ export default {
     }
   },
   render (createElement) {
-    if (!this.ready) {
+    if (!this.ready || this.fields.length === 0) {
       return null
     }
 
@@ -168,28 +168,26 @@ export default {
       })
     })
 
-    if (formInputNodes.length) {
-      if (this.$slots.default) {
-        formInputNodes.push(createElement(
-          components.$.buttonswrapper.component, this.$slots.default))
-      }
-
-      nodes.push(createElement(components.$.form.component, {
-        ref: this.ref,
-        [argName(components.$.form)]: {
-          action: this.action,
-          enctype: this.enctype,
-          method: this.method,
-          autocomplete: this.autocomplete,
-          novalidate: this.novalidate
-        },
-        on: {
-          reset: this.reset,
-          submit: this.submit,
-          invalid: this.invalid
-        }
-      }, formInputNodes))
+    if (this.$slots.default) {
+      formInputNodes.push(createElement(
+        components.$.buttonswrapper.component, this.$slots.default))
     }
+
+    nodes.push(createElement(components.$.form.component, {
+      ref: this.ref,
+      [argName(components.$.form)]: {
+        action: this.action,
+        enctype: this.enctype,
+        method: this.method,
+        autocomplete: this.autocomplete,
+        novalidate: this.novalidate
+      },
+      on: {
+        reset: this.reset,
+        submit: this.submit,
+        invalid: this.invalid
+      }
+    }, formInputNodes))
 
     return createElement(components.$.formwrapper.component, nodes)
   },
@@ -203,8 +201,10 @@ export default {
      *
      * @note `model` is not a two-way data bindings.
      * To get the form data, use the `v-model` directive.
+     *
+     * @note The default value of `model` is the initial model defined with the `v-model` directive.
      */
-    load (schema, model = undefined) {
+    load (schema, model = this.value) {
       this.ready = false
 
       this.fields.splice(0)
@@ -213,7 +213,7 @@ export default {
       clear(this.loadedSchema)
       assign(this.loadedSchema, schema)
 
-      loadFields(this.loadedSchema, this.fields)
+      loadFields(this.loadedSchema, this.fields, null, model)
 
       switch (schema.type) {
         case 'array':

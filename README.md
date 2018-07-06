@@ -70,7 +70,7 @@ npm install --save @formschema/native
 
 ### methods 
 
-- `load(schema, model)` 
+- `load(schema[, model])`
 
    Load the given `schema` with initial filled `value`. Use this to load async schema. 
 
