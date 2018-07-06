@@ -136,10 +136,6 @@ export function parseDefaultObjectValue (schema, fields, value) {
 }
 
 export function loadFields (schema, fields, name = null, model = null) {
-  if (!schema || schema.visible === false) {
-    return
-  }
-
   switch (schema.type) {
     case 'object':
       if (schema.required instanceof Array) {
