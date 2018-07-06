@@ -6,7 +6,7 @@ import {
   loadFields
 } from '@/lib/parser'
 
-import { equals, assign, clone, clear, empty } from '@/lib/object'
+import { equals, assign, clone, clear, isEmpty } from '@/lib/object'
 import { Components as Instance, argName, inputName } from '@/lib/components'
 import FormSchemaField from './FormSchemaField'
 
@@ -45,17 +45,17 @@ export default {
 
     /**
      * When the value of the method attribute is post, enctype is the MIME type of content that is used to submit the form to the server. Possible values are:
-     *
-     * - application/x-www-form-urlencoded: The default value if the attribute is not specified.
-     * - multipart/form-data: The value used for an <input> element with the type attribute set to "file".
+     *<br/>
+     * - application/x-www-form-urlencoded: The default value if the attribute is not specified.<br/>
+     * - multipart/form-data: The value used for an `<input/>` element with the type attribute set to "file".<br/>
      * - text/plain (HTML5)
      */
     enctype: { type: String, default: 'application/x-www-form-urlencoded' },
 
     /**
      * The HTTP method that the browser uses to submit the form. Possible values are:
-     *
-     * - post: Corresponds to the HTTP POST method ; form data are included in the body of the form and sent to the server.
+     * <br/>
+     * - post: Corresponds to the HTTP POST method ; form data are included in the body of the form and sent to the server.<br/>
      * - get: Corresponds to the HTTP GET method; form data are appended to the action attribute URI with a '?' as separator, and the resulting URI is sent to the server. Use this method when the form has no side-effects and contains only ASCII characters.
      */
     method: { type: String, default: 'post' },
@@ -67,6 +67,8 @@ export default {
 
     /**
      * Use this prop to overwrite the default Native HTML Elements for custom components.
+     *
+     * @default new Components()
      */
     components: {
       type: Components,
@@ -85,12 +87,12 @@ export default {
     ready: false
   }),
   created () {
-    if (!empty(this.schema)) {
+    if (!isEmpty(this.schema)) {
       this.load(this.schema, this.value)
     }
   },
   render (createElement) {
-    if (!this.ready) {
+    if (!this.ready || this.fields.length === 0) {
       return null
     }
 
@@ -166,28 +168,26 @@ export default {
       })
     })
 
-    if (formInputNodes.length) {
-      if (this.$slots.default) {
-        formInputNodes.push(createElement(
-          components.$.buttonswrapper.component, this.$slots.default))
-      }
-
-      nodes.push(createElement(components.$.form.component, {
-        ref: this.ref,
-        [argName(components.$.form)]: {
-          action: this.action,
-          enctype: this.enctype,
-          method: this.method,
-          autocomplete: this.autocomplete,
-          novalidate: this.novalidate
-        },
-        on: {
-          reset: this.reset,
-          submit: this.submit,
-          invalid: this.invalid
-        }
-      }, formInputNodes))
+    if (this.$slots.default) {
+      formInputNodes.push(createElement(
+        components.$.buttonswrapper.component, this.$slots.default))
     }
+
+    nodes.push(createElement(components.$.form.component, {
+      ref: this.ref,
+      [argName(components.$.form)]: {
+        action: this.action,
+        enctype: this.enctype,
+        method: this.method,
+        autocomplete: this.autocomplete,
+        novalidate: this.novalidate
+      },
+      on: {
+        reset: this.reset,
+        submit: this.submit,
+        invalid: this.invalid
+      }
+    }, formInputNodes))
 
     return createElement(components.$.formwrapper.component, nodes)
   },
@@ -201,8 +201,10 @@ export default {
      *
      * @note `model` is not a two-way data bindings.
      * To get the form data, use the `v-model` directive.
+     *
+     * @note The default value of `model` is the initial model defined with the `v-model` directive.
      */
-    load (schema, model = undefined) {
+    load (schema, model = this.value) {
       this.ready = false
 
       this.fields.splice(0)
@@ -211,7 +213,7 @@ export default {
       clear(this.loadedSchema)
       assign(this.loadedSchema, schema)
 
-      loadFields(this.loadedSchema, this.fields)
+      loadFields(this.loadedSchema, this.fields, null, model)
 
       switch (schema.type) {
         case 'array':

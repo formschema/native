@@ -36,11 +36,11 @@ npm install --save @formschema/native
 
 - `enctype` ***String*** (*optional*) `default: 'application/x-www-form-urlencoded'` 
 
-   When the value of the method attribute is post, enctype is the MIME type of content that is used to submit the form to the server. Possible values are: - application/x-www-form-urlencoded: The default value if the attribute is not specified. - multipart/form-data: The value used for an <input> element with the type attribute set to "file". - text/plain (HTML5) 
+   When the value of the method attribute is post, enctype is the MIME type of content that is used to submit the form to the server. Possible values are: <br/> - application/x-www-form-urlencoded: The default value if the attribute is not specified.<br/> - multipart/form-data: The value used for an `<input/>` element with the type attribute set to "file".<br/> - text/plain (HTML5) 
 
 - `method` ***String*** (*optional*) `default: 'post'` 
 
-   The HTTP method that the browser uses to submit the form. Possible values are: - post: Corresponds to the HTTP POST method ; form data are included in the body of the form and sent to the server. - get: Corresponds to the HTTP GET method; form data are appended to the action attribute URI with a '?' as separator, and the resulting URI is sent to the server. Use this method when the form has no side-effects and contains only ASCII characters. 
+   The HTTP method that the browser uses to submit the form. Possible values are: <br/> - post: Corresponds to the HTTP POST method ; form data are included in the body of the form and sent to the server.<br/> - get: Corresponds to the HTTP GET method; form data are appended to the action attribute URI with a '?' as separator, and the resulting URI is sent to the server. Use this method when the form has no side-effects and contains only ASCII characters. 
 
 - `novalidate` ***Boolean*** (*optional*) 
 
@@ -70,7 +70,7 @@ npm install --save @formschema/native
 
 ### methods 
 
-- `load(schema, model)` 
+- `load(schema[, model])`
 
    Load the given `schema` with initial filled `value`. Use this to load async schema. 
 
@@ -198,108 +198,6 @@ To do that, use the `load(schema[, value = undefined])` method:
     components: { FormSchema }
   }
 </script>
-```
-
-## Use custom form elements
-
-To define custom element for rendering, the `components` prop:
-
-See [FormSchema ElementUI integration](https://gitlab.com/formschema/components/elementui) for a complete example.
-
-```js
-// an element-ui example
-
-import {
-  Components, // import the Components class
-  default as FormSchema
-} from '@formschema/native'
-
-import { Form, FormItem, Input, Radio, Checkbox, Select, Button } from 'element-ui'
-
-export default {
-  data () {
-    // create your own `components` instance
-    const components = new Components()
-
-    // then customize it as you like
-    // prototype: Components::set(type, component)
-    components.set('label', FormItem)
-    components.set('email', Input)
-    components.set('text', Input)
-    components.set('textarea', Input)
-    components.set('checkbox', Checkbox)
-    components.set('radio', Radio)
-    components.set('select', Select)
-    
-    // you can use the name of component if it's defined globally
-    components.set('option', 'el-option')
-
-    // you can also use an explicite component declaration
-    components.set('buttonswrapper', {
-      render: (h, { slots }) => h('el-form-item', slots().default)
-    })
-
-    // render input's wrapper
-    components.set('inputswrapper', {
-      render: (createElement, context) => {
-        const field = context.props.field || context.data.field
-        const type = field.schemaType === 'array' && field.attrs.type === 'radio'
-          ? 'string'
-          : field.schemaType
-        const required = field.attrs.required || false
-        const message = field.attrs.title
-        const trigger = ['radio', 'checkbox', 'select'].includes(field.attrs.type)
-          ? 'change' : 'blur'
-        const label = !field.isArrayField ? field.label : ''
-        const prop = context.props.name
-        const rules = { type, required, message, trigger }
-
-        return createElement('el-form-item', {
-          // http://element.eleme.io/#/en-US/component/form#form-item-attributes
-          // http://element.eleme.io/#/en-US/component/form#validation
-          props: { label, prop, required, rules }
-        }, [
-          (h, { slots }) => {
-            return h('el-form-item', slots().default)
-          },
-          field.description
-            ? createElement('small', field.description)
-            : undefined
-        ])
-      }
-    })
-
-    components.set('arraybutton', {
-      render: (h, { props, listeners }) => h('el-button', {
-        props: {
-          type: 'text',
-          disabled: props.disabled
-        },
-        on: listeners
-      }, options.arrayButtonLabel)
-    })
-
-    components.set('error', {
-      render: (h, { slots }) => h('el-alert', {
-        props: { type: 'error' }
-      }, slots().default)
-    })
-
-    return {
-      schema: {...},
-      components: components
-    }
-  ),
-  // ...
-  components: { FormSchema }
-}
-```
-
-```html
-<template>
-  <!-- finally plug your custom components here -->
-  <FormSchema :schema="schema" :components="components"/>
-</template>
 ```
 
 ## Multiple Checkbox elements
@@ -437,6 +335,108 @@ To render a [regex input](http://json-schema.org/latest/json-schema-validation.h
     }
   }
 }
+```
+
+## Custom Form Elements
+
+To define custom element for rendering, the `components` prop:
+
+See [FormSchema ElementUI integration](https://gitlab.com/formschema/components/elementui) for a complete example.
+
+```js
+// an element-ui example
+
+import {
+  Components, // import the Components class
+  default as FormSchema
+} from '@formschema/native'
+
+import { Form, FormItem, Input, Radio, Checkbox, Select, Button } from 'element-ui'
+
+export default {
+  data () {
+    // create your own `components` instance
+    const components = new Components()
+
+    // then customize it as you like
+    // prototype: Components::set(type, component)
+    components.set('label', FormItem)
+    components.set('email', Input)
+    components.set('text', Input)
+    components.set('textarea', Input)
+    components.set('checkbox', Checkbox)
+    components.set('radio', Radio)
+    components.set('select', Select)
+
+    // you can use the name of component if it's defined globally
+    components.set('option', 'el-option')
+
+    // you can also use an explicite component declaration
+    components.set('buttonswrapper', {
+      render: (h, { slots }) => h('el-form-item', slots().default)
+    })
+
+    // render input's wrapper
+    components.set('inputswrapper', {
+      render: (createElement, context) => {
+        const field = context.props.field || context.data.field
+        const type = field.schemaType === 'array' && field.attrs.type === 'radio'
+          ? 'string'
+          : field.schemaType
+        const required = field.attrs.required || false
+        const message = field.attrs.title
+        const trigger = ['radio', 'checkbox', 'select'].includes(field.attrs.type)
+          ? 'change' : 'blur'
+        const label = !field.isArrayField ? field.label : ''
+        const prop = context.props.name
+        const rules = { type, required, message, trigger }
+
+        return createElement('el-form-item', {
+          // http://element.eleme.io/#/en-US/component/form#form-item-attributes
+          // http://element.eleme.io/#/en-US/component/form#validation
+          props: { label, prop, required, rules }
+        }, [
+          (h, { slots }) => {
+            return h('el-form-item', slots().default)
+          },
+          field.description
+            ? createElement('small', field.description)
+            : undefined
+        ])
+      }
+    })
+
+    components.set('arraybutton', {
+      render: (h, { props, listeners }) => h('el-button', {
+        props: {
+          type: 'text',
+          disabled: props.disabled
+        },
+        on: listeners
+      }, options.arrayButtonLabel)
+    })
+
+    components.set('error', {
+      render: (h, { slots }) => h('el-alert', {
+        props: { type: 'error' }
+      }, slots().default)
+    })
+
+    return {
+      schema: {...},
+      components: components
+    }
+  ),
+  // ...
+  components: { FormSchema }
+}
+```
+
+```html
+<template>
+  <!-- finally plug your custom components here -->
+  <FormSchema :schema="schema" :components="components"/>
+</template>
 ```
 
 ## License

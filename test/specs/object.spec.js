@@ -1,6 +1,6 @@
 'use strict'
 
-import { equals, isScalar, merge, clone } from '@/lib/object'
+import { equals, isScalar, merge, clone, clear, isEmpty } from '@/lib/object'
 
 /* global describe it expect */
 
@@ -83,14 +83,38 @@ describe('lib/object', () => {
     })
   })
 
-  describe('clone(src)', () => {
-    it('should successfully clone src object', () => {
+  describe('clone(object)', () => {
+    it('should successfully clone object', () => {
       const F = new Function()
       const src = { a: 1, c: 2, e: { x: 1 }, d: [1], f: { g: 1 }, F }
       const expected = { a: 1, c: 2, e: { x: 1 }, d: [1], f: { g: 1 }, F }
       const result = clone(src)
 
       expect(result).toEqual(expected)
+    })
+  })
+
+  describe('clear(object)', () => {
+    it('should successfully clear object', () => {
+      const F = new Function()
+      const object = { a: 1, c: 2, e: { x: 1 }, d: [1], f: { g: 1 }, F }
+      const expected = {}
+
+      clear(object)
+      expect(object).toEqual(expected)
+    })
+  })
+
+  describe('clear(object)', () => {
+    it('should return true with an empty object', () => {
+      expect(isEmpty({})).toBeTruthy()
+    })
+
+    it('should return false with a non empty object', () => {
+      const F = new Function()
+      const object = { a: 1, c: 2, e: { x: 1 }, d: [1], f: { g: 1 }, F }
+
+      expect(isEmpty(object)).toBe(false)
     })
   })
 })

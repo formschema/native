@@ -267,7 +267,7 @@ describe('FormSchema', () => {
       })
     })
 
-    describe('should successfully render the component with reactive schema - load()', () => {
+    describe('should successfully render the component with reactive schema - load(schema)', () => {
       const wrapper = mount(component, {
         propsData: { schema: {} }
       })
@@ -318,6 +318,28 @@ describe('FormSchema', () => {
 
       it('should not have buttons', () => {
         expect(wrapper.findAll('button').length).toEqual(0)
+      })
+    })
+
+    describe('should successfully render the component with reactive schema - load(schema, model)', () => {
+      const model = {
+        name: 'Lanister'
+      }
+      const wrapper = mount(component, {
+        propsData: { schema: {} }
+      })
+
+      it('should render nothing with empty schema', () => {
+        expect(wrapper.html()).toEqual(undefined)
+        expect(wrapper.emitted().input).toEqual(undefined)
+
+        wrapper.vm.load(schema, model)
+      })
+
+      it('should have form input', () => {
+        expect(wrapper.emitted().input.pop()).toEqual([{ name: 'Lanister' }])
+        expect(wrapper.findAll('input').length).toEqual(1)
+        expect(wrapper.find('input').html()).toEqual('<input id="x" type="text" name="name" value="Lanister" required="required">')
       })
     })
 
