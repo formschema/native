@@ -392,6 +392,8 @@ export function parseArray (schema, name = null, model = null) {
         field.attrs.value = singleValue(field)
       }
     }
+  } else {
+    field.isArrayField = true
   }
 
   return field
