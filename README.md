@@ -70,7 +70,7 @@ npm install --save @formschema/native
 
 ### methods 
 
-- `load(schema[, model])`
+- `load(schema[, model = undefined])`
 
    Load the given `schema` with initial filled `value`. Use this to load async schema. 
 
@@ -168,7 +168,6 @@ Define your [JSON Schema](http://json-schema.org) file:
       "enum": ["Daily New", "Promotion"]
     }
   },
-  "additionalProperties": false,
   "required": ["name", "email", "lists"]
 }
 ```
@@ -222,22 +221,6 @@ To define multiple checkbox, use the [JSON Schema keyword `anyOf`](http://json-s
 }
 ```
 
-**component.vue**
-
-```html
-<script>
-  import FormSchema from '@formschema/native'
-
-  components.set('select', 'el-select', ({ item }) => {
-    return { label: item.value }
-  })
-
-  components.set('checkboxgroup', 'el-checkbox-group')
-
-  export default { ... }
-</script>
-```
-
 ## Grouped Radio elements
 
 To group radio elements, use the [JSON Schema keyword `enum`](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.23) and `attrs.type === 'radio'`:
@@ -263,22 +246,6 @@ To group radio elements, use the [JSON Schema keyword `enum`](http://json-schema
 }
 ```
 
-**component.vue**
-
-```html
-<script>
-  import FormSchema from '@formschema/native'
-
-  components.set('select', 'el-radio', ({ item }) => {
-    return { label: item.value }
-  })
-
-  components.set('radiogroup', 'el-radio-group')
-
-  export default { ... }
-</script>
-```
-
 ## Array Inputs Elements
 
 To render a [array field](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4), define your schema like:
@@ -300,23 +267,7 @@ To render a [array field](http://json-schema.org/latest/json-schema-validation.h
 }
 ```
 
-**component.vue**
-
-`formschema` will render a text input by adding a button to add more inputs.
-
-```html
-<script>
-  import FormSchema from '@formschema/native'
-
-  // To override the default array button props
-  components.set('arraybutton', 'button', {
-    native: true, // required to force button rendering as HTML native element
-    label: 'Add more item'
-  })
-
-  export default { ... }
-</script>
-```
+`FormSchema` will render a text input by adding a button to add more inputs.
 
 ## Regex Inputs
 
