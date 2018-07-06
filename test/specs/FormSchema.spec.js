@@ -497,9 +497,9 @@ describe('FormSchema', () => {
           propsData: { schema }
         })
 
-        const expected = '<div><form enctype="application/x-www-form-urlencoded" method="post"><div data-fs-field="x"><label for="x">choices</label><div data-fs-field-input="x"><select id="x" name="list"><option value="v0">v0</option><option value="v1">v1</option></select><small>choices description</small></div></div></form></div>'
+        const expected = '<form enctype="application/x-www-form-urlencoded" method="post"><div data-fs-field="x"><label for="x">choices</label><div data-fs-field-input="x"><select id="x" name="list"><option value="v0">v0</option><option value="v1">v1</option></select><small>choices description</small></div></div></form>'
 
-        expect(wrapper.html()).toEqual(expected)
+        expect(wrapper.find('form').html()).toEqual(expected)
       })
     })
 
@@ -568,9 +568,9 @@ describe('FormSchema', () => {
           propsData: { schema, components }
         })
 
-        const expected = '<div><form enctype="application/x-www-form-urlencoded" method="post"><span id="x" name="checkbox-name" type="checkbox" checked="checked"></span></form></div>'
+        const expected = '<form enctype="application/x-www-form-urlencoded" method="post"><span id="x" name="checkbox-name" type="checkbox" checked="checked"></span></form>'
 
-        expect(wrapper.html()).toEqual(expected)
+        expect(wrapper.find('form').html()).toEqual(expected)
       })
 
       it('should render with overwrite custom checkbox component', () => {
@@ -584,9 +584,9 @@ describe('FormSchema', () => {
           propsData: { schema, components }
         })
 
-        const expected = '<div><form enctype="application/x-www-form-urlencoded" method="post"><div type="checkbox"></div></form></div>'
+        const expected = '<form enctype="application/x-www-form-urlencoded" method="post"><div type="checkbox"></div></form>'
 
-        expect(wrapper.html()).toEqual(expected)
+        expect(wrapper.find('form').html()).toEqual(expected)
       })
 
       it('should render with default components', () => {
@@ -594,9 +594,9 @@ describe('FormSchema', () => {
           propsData: { schema }
         })
 
-        const expected = '<div><form enctype="application/x-www-form-urlencoded" method="post"><input id="x" name="checkbox-name" type="checkbox" checked="checked"></form></div>'
+        const expected = '<form enctype="application/x-www-form-urlencoded" method="post"><input id="x" name="checkbox-name" type="checkbox" checked="checked"></form>'
 
-        expect(wrapper.html()).toEqual(expected)
+        expect(wrapper.find('form').html()).toEqual(expected)
       })
     })
   })
