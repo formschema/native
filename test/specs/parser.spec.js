@@ -880,16 +880,6 @@ describe('lib/parser', () => {
   })
 
   describe('loadFields(schema, fields, name = null)', () => {
-    it('should ignore schema.visible === false', () => {
-      const fields = []
-      const schema = { type: 'boolean', visible: false }
-      const expected = []
-
-      loadFields(schema, fields)
-
-      expect(fields).toEqual(expected)
-    })
-
     describe('schema.type === boolean', () => {
       it('should successfully load the schema', () => {
         const fields = []
