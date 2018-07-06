@@ -609,6 +609,31 @@ describe('FormSchema', () => {
         expect(wrapper.find('form').html()).toEqual(expected)
       })
     })
+
+    describe('array fields', () => {
+      it('should successfully render with attrs.type', () => {
+        const schema = {
+          type: 'object',
+          properties: {
+            images: {
+              type: 'array',
+              minItems: 2,
+              attrs: {
+                id: 'x',
+                type: 'file'
+              }
+            }
+          }
+        }
+        const wrapper = mount(component, {
+          propsData: { schema }
+        })
+
+        const expected = '<form enctype="application/x-www-form-urlencoded" method="post"><div><input id="x" type="file" name="images-0" data-fs-index="0"><input id="x" type="file" name="images-1" data-fs-index="1"><button type="button">Add</button></div></form>'
+
+        expect(wrapper.find('form').html()).toEqual(expected)
+      })
+    })
   })
 
   describe('should successfully emit input and change events', () => {

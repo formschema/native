@@ -44,7 +44,6 @@ export default {
             if (field.itemsNum < field.maxItems) {
               field.itemsNum++
 
-              // TODO: add a proper way to emit the 'INPUT_ADDED_EVENT' event
               if (INPUT_ADDED_EVENT in listeners) {
                 listeners[INPUT_ADDED_EVENT]()
               }
