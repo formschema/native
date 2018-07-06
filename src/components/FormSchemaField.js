@@ -71,14 +71,16 @@ export default {
 
         items.forEach((option) => {
           children.push(createElement(FormSchemaFieldSelectOption, {
-            props: { field, value, option, components }
+            props: { field, value, option, components },
+            on: listeners
           }))
         })
         break
     }
 
     return createElement(FormSchemaInput, {
-      props: { field, value, input, components }
+      props: { field, value, input, components },
+      on: listeners
     }, children)
   }
 }

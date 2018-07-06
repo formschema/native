@@ -8,6 +8,7 @@ import {
 
 import { equals, assign, clone, clear, isEmpty } from '@/lib/object'
 import { Components as Instance, argName, inputName } from '@/lib/components'
+import { INPUT_ADDED_EVENT } from './FormSchemaInput'
 import FormSchemaField from './FormSchemaField'
 
 export const Components = Instance
@@ -121,6 +122,9 @@ export default {
       return createElement(FormSchemaField, {
         props: { field, value, components },
         on: {
+          [INPUT_ADDED_EVENT]: () => {
+            this.$forceUpdate()
+          },
           input: (event) => {
             const target = event.target
             const data = event.target.value
