@@ -372,6 +372,12 @@ export default {
           })
         }
       })
+
+      const form = this.form()
+
+      if ('reset' in form) {
+        form.reset()
+      }
     },
 
     /**

@@ -196,13 +196,13 @@ describe('FormSchema', () => {
 
     Object.keys(props).forEach((prop) => {
       it(`should have prop ${prop} with default value`, () => {
-        expect(prop in wrapper.vm).toBe(true)
+        expect(prop in wrapper.vm).toBeTruthy()
         expect(wrapper.vm[prop]).toEqual(props[prop])
       })
     })
 
     it(`should have data ref`, () => {
-      expect('ref' in wrapper.vm).toBe(true)
+      expect('ref' in wrapper.vm).toBeTruthy()
       expect(wrapper.vm.ref.startsWith('form-schema-')).toBeTruthy()
     })
 
@@ -230,12 +230,12 @@ describe('FormSchema', () => {
       })
 
       it('should have form enctype attribute', () => {
-        expect(wrapper.find('form').element.hasAttribute('enctype')).toBe(true)
+        expect(wrapper.find('form').element.hasAttribute('enctype')).toBeTruthy()
         expect(wrapper.find('form').element.getAttribute('enctype')).toEqual(props.enctype)
       })
 
       it('should have form method attribute', () => {
-        expect(wrapper.find('form').element.hasAttribute('method')).toBe(true)
+        expect(wrapper.find('form').element.hasAttribute('method')).toBeTruthy()
         expect(wrapper.find('form').element.getAttribute('method')).toEqual(props.method)
       })
 
@@ -297,12 +297,12 @@ describe('FormSchema', () => {
       })
 
       it('should have form enctype attribute', () => {
-        expect(wrapper.find('form').element.hasAttribute('enctype')).toBe(true)
+        expect(wrapper.find('form').element.hasAttribute('enctype')).toBeTruthy()
         expect(wrapper.find('form').element.getAttribute('enctype')).toEqual(props.enctype)
       })
 
       it('should have form method attribute', () => {
-        expect(wrapper.find('form').element.hasAttribute('method')).toBe(true)
+        expect(wrapper.find('form').element.hasAttribute('method')).toBeTruthy()
         expect(wrapper.find('form').element.getAttribute('method')).toEqual(props.method)
       })
 
@@ -358,7 +358,7 @@ describe('FormSchema', () => {
       input.element.value = expected.name
       input.trigger('input')
 
-      expect('input' in wrapper.emitted()).toBe(true)
+      expect('input' in wrapper.emitted()).toBeTruthy()
       expect(wrapper.emitted('input')[0][0]).toEqual(expected)
 
       expect(wrapper.vm.data).toEqual(expected)
@@ -381,8 +381,8 @@ describe('FormSchema', () => {
 
       input.element.value = 'Sébastien'
 
-      expect(wrapper.vm.reportValidity()).toBe(true)
-      expect(wrapper.vm.checkValidity()).toBe(true)
+      expect(wrapper.vm.reportValidity()).toBeTruthy()
+      expect(wrapper.vm.checkValidity()).toBeTruthy()
     })
 
     it('vm.reset()', () => {
@@ -405,7 +405,7 @@ describe('FormSchema', () => {
       expect(wrapper.vm.data).toEqual({ name: '' })
     })
 
-    it('vm.setErrorMessage(message) & vm.clearErrorMessage()', () => {
+    it('vm.setErrorMessage(message)', () => {
       const wrapper = mount(component, {
         propsData: { schema }
       })
@@ -415,6 +415,16 @@ describe('FormSchema', () => {
       expect(wrapper.vm.error).toEqual('error message')
       expect(wrapper.findAll('[data-fs-error]').length).toEqual(1)
       expect(wrapper.find('[data-fs-error]').html()).toEqual('<div data-fs-error="true">error message</div>')
+    })
+
+    it('vm.clearErrorMessage()', () => {
+      const wrapper = mount(component, {
+        propsData: { schema }
+      })
+
+      wrapper.vm.setErrorMessage('error message')
+
+      expect(wrapper.vm.error).toEqual('error message')
 
       wrapper.vm.clearErrorMessage()
 
