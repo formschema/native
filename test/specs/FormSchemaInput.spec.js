@@ -31,7 +31,10 @@ describe('FormSchemaInput', () => {
     const value = 'Hello'
     const wrapper = mount(component, {
       context: {
-        props: { field, value, input, components }
+        input,
+        field,
+        components,
+        props: { value }
       }
     })
     const expected = '<input type="text" name="fieldName" value="Hello">'
@@ -56,7 +59,10 @@ describe('FormSchemaInput', () => {
       render (createElement) {
         return createElement('form', [
           createElement(component, {
-            props: { field, value, input, disableWrappingLabel, components }
+            input,
+            field,
+            components,
+            props: { value, disableWrappingLabel }
           })
         ])
       }
@@ -83,7 +89,10 @@ describe('FormSchemaInput', () => {
     }
     const wrapper = mount(component, {
       context: {
-        props: { field, value, input, components }
+        input,
+        field,
+        components,
+        props: { value }
       }
     })
 
@@ -109,11 +118,14 @@ describe('FormSchemaInput', () => {
     }
     const wrapper = mount(component, {
       context: {
-        props: { field, value, input, components }
+        input,
+        field,
+        components,
+        props: { value }
       }
     })
 
-    const expected = '<div><label>array label</label><div><div><input name="fieldName-0" type="text" data-fs-index="0" value="Value 1"><input name="fieldName-1" type="text" data-fs-index="1" value="Value 2"><button type="button">Add</button></div></div></div>'
+    const expected = '<div><div><label>array label</label><div><input name="fieldName-0" type="text" data-fs-index="0" value="Value 1"><input name="fieldName-1" type="text" data-fs-index="1" value="Value 2"></div></div><button type="button">Add</button></div>'
 
     expect(wrapper.html()).toEqual(expected)
   })
@@ -136,7 +148,10 @@ describe('FormSchemaInput', () => {
     }
     const wrapper = mount(component, {
       context: {
-        props: { field, value, input, components }
+        input,
+        field,
+        components,
+        props: { value }
       }
     })
 
@@ -168,7 +183,10 @@ describe('FormSchemaInput', () => {
 
     const wrapper = mount(component, {
       context: {
-        props: { field, value, input, components },
+        input,
+        field,
+        components,
+        props: { value },
         on: listeners
       }
     })

@@ -31,7 +31,10 @@ describe('FormSchemaInputArrayElement', () => {
     const value = 'Hello'
     const wrapper = mount(component, {
       context: {
-        props: { field, value, input, name, components }
+        input,
+        field,
+        components,
+        props: { value, name }
       }
     })
     const expected = '<input type="text" name="fieldName" value="Hello">'
@@ -59,7 +62,10 @@ describe('FormSchemaInputArrayElement', () => {
     }
     const wrapper = mount(component, {
       context: {
-        props: { field, value, input, name, components }
+        input,
+        field,
+        components,
+        props: { value, name }
       }
     })
     const expected = '<input type="text" name="fieldName" value="Hello">'
@@ -86,7 +92,10 @@ describe('FormSchemaInputArrayElement', () => {
     }
     const wrapper = mount(component, {
       context: {
-        props: { field, value, input, components }
+        input,
+        field,
+        components,
+        props: { value }
       }
     })
     const expected = '<input type="text" name="fieldName" value="Hello">'

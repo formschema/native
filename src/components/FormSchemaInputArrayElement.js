@@ -2,17 +2,18 @@ import { assign } from '@/lib/object'
 
 export default {
   functional: true,
-  render (createElement, { props, slots, listeners }) {
-    const { input, field, value, name = field.attrs.name, components } = props
-    const data = assign({}, input.data)
+  render (createElement, { data, props, slots, listeners }) {
+    const { input, field, components } = data
+    const { value, name = field.attrs.name } = props
+    const inputData = assign({}, input.data)
 
-    data.attrs.name = data.props.name = name
-    data.attrs.value = data.props.value = typeof value === 'object'
+    inputData.attrs.name = inputData.props.name = name
+    inputData.attrs.value = inputData.props.value = typeof value === 'object'
       ? value[name]
       : value
 
-    data.props.components = components
+    inputData.components = components
 
-    return createElement(input.element.component, data, slots().default)
+    return createElement(input.element.component, inputData, slots().default)
   }
 }

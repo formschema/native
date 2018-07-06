@@ -6,8 +6,8 @@ const tags = {
   h1: ['title'],
   p: ['description'],
   div: [
-    'error', 'textgroup', 'buttonswrapper', 'formwrapper',
-    'inputswrapper', 'inputwrapper', 'defaultGroup'
+    'error', 'textgroup', 'buttonswrapper', 'formwrapper', 'inputswrapper',
+    'inputwrapper', 'defaultGroup', 'arrayWrapper', 'arrayInputs'
   ],
   legend: ['legend'],
   fieldset: ['radiogroup', 'checkboxgroup'],
@@ -45,9 +45,11 @@ export class Components {
     this.$.radiogroup.component.render = (...args) => this.renderFieldset(...args)
     this.$.checkboxgroup.component.render = (...args) => this.renderFieldset(...args)
     this.$.inputwrapper.component.render = (...args) => this.renderInput(...args)
+    this.$.arrayWrapper.component.render = (...args) => this.renderInput(...args)
+    this.$.arrayInputs.component.render = (...args) => this.arrayInputs(...args)
+    this.$.arraybutton.component.render = (...args) => this.renderArrayButton(...args)
     this.$.buttonswrapper.component.render = (...args) => this.renderButtons(...args)
     this.$.error.component.render = (...args) => this.renderError(...args)
-    this.$.arraybutton.component.render = (...args) => this.renderArrayButton(...args)
   }
 
   set (type, component, option = null, native = false) {
@@ -86,10 +88,9 @@ export class Components {
     const data = {
       field,
       fieldParent,
+      components: this.components,
       attrs: {},
-      props: {
-        components: this.components
-      },
+      props: {},
       domProps: {},
       [argName(element)]: { ...field.attrs },
       on: listeners
@@ -98,7 +99,7 @@ export class Components {
     return { element, data }
   }
 
-  renderFieldset (h, { data, props, slots }) {
+  renderFieldset (h, { data, slots }) {
     const name = data.field.attrs.name
     const description = data.field.description
 
@@ -115,23 +116,23 @@ export class Components {
     return h('fieldset', { attrs: { name } }, children)
   }
 
-  renderInput (h, { data, props, slots }) {
+  renderInput (h, { data, slots }) {
     const nodes = slots().default || []
-    const field = props.field
+    const field = data.field
     const attrs = {
-      'data-fs-field': props.field.attrs.id,
+      'data-fs-field': field.attrs.id,
       'data-fs-required': field.attrs.required
     }
 
     if (field.description) {
       nodes.push(h(this.$.inputdesc.component, {
-        props: { field }
+        field
       }, field.description))
     }
 
     if (!field.label) {
       if (nodes.length > 1) {
-        return h('div', { attrs }, nodes)
+        return nodes
       }
 
       return nodes[0]
@@ -140,15 +141,23 @@ export class Components {
     return h('div', { attrs }, [
       h('label', {
         attrs: {
-          for: props.field.attrs.id
+          for: field.attrs.id
         }
       }, field.label),
       h('div', {
         attrs: {
-          'data-fs-field-input': props.field.attrs.id
+          'data-fs-field-input': field.attrs.id
         }
       }, nodes)
     ])
+  }
+
+  arrayInputs (h, { slots }) {
+    return h('div', {
+      attrs: {
+        'data-fs-array-inputs': true
+      }
+    }, slots().default)
   }
 
   renderButtons (h, { slots }) {

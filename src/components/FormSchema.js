@@ -120,7 +120,9 @@ export default {
         : this.data[field.attrs.name]
 
       return createElement(FormSchemaField, {
-        props: { field, value, components },
+        field,
+        components,
+        props: { value },
         on: {
           [INPUT_ADDED_EVENT]: () => {
             this.$forceUpdate()
