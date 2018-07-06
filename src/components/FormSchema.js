@@ -311,7 +311,7 @@ export default {
         for (let i = 0; i < event.field.itemsNum; i++) {
           const currentValue = this.inputValues[inputName(event.field, i)]
 
-          if (currentValue != undefined || currentValue.length) {
+          if (currentValue || currentValue === 0) {
             values.push(currentValue)
           }
         }

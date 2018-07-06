@@ -716,6 +716,36 @@ describe('lib/parser', () => {
       expect(result).toEqual(expected)
     })
 
+    it('should successfully parse with number type', () => {
+      const schema = {
+        type: 'array',
+        items: {
+          type: 'number'
+        }
+      }
+      const expected = {
+        schemaType: 'array',
+        label: '',
+        description: '',
+        isArrayField: true,
+        items: [],
+        minItems: 1,
+        maxItems: 1000,
+        attrs: {
+          type: 'number',
+          required: false,
+          disabled: false
+        }
+      }
+
+      const result = parseArray(schema)
+
+      expect(typeof result.attrs.id).toEqual('string')
+      delete result.attrs.id
+
+      expect(result).toEqual(expected)
+    })
+
     it('should successfully parse with defined input name', () => {
       const schema = { type: 'array' }
       const expected = {
