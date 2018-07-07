@@ -3,7 +3,7 @@
   "version": "2.0.0-alpha.1",
   "description": "Vue component form based on JSON Schema",
   "main": "dist/FormSchema.esm.js",
-  "browser": "dist/FormSchema.umd.js",
+  "browser": "dist/FormSchema.umd.min.js",
   "scripts": {
     "demo": "cd demo && npm run serve",
     "test": "vue-cli-service test:unit --colors --testMatch '<rootDir>/test/specs/*.spec.js'",
@@ -44,6 +44,7 @@
     "regenerator-runtime": "^0.12.0",
     "rollup": "^0.62.0",
     "rollup-plugin-babel": "^4.0.0-beta.7",
+    "rollup-plugin-uglify": "^4.0.0",
     "sinon": "^6.1.2",
     "vue": "^2.5.16"
   },
