@@ -16,6 +16,7 @@ import FormSchemaField from './FormSchemaField'
 export const Components = Instance
 export const generateId = genId
 export const ObjectUtils = Object.freeze(LibObject)
+export const ARRAY_INPUT_ADDED_EVENT = INPUT_ADDED_EVENT
 
 const { equals, assign, clone, clear, isEmpty } = LibObject
 
