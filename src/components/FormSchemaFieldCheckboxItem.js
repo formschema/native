@@ -4,7 +4,7 @@ export default {
   functional: true,
   render (createElement, { data, props, listeners }) {
     const { field, components } = data
-    const { item, value, checked, disableWrappingLabel } = props
+    const { item, value, checked } = props
 
     const { label, description } = item
     const attrs = {
@@ -27,13 +27,10 @@ export default {
 
     return createElement(FormSchemaInput, {
       input,
-      props: {
-        value,
-        disableWrappingLabel
-      },
+      components,
       on: input.data.listeners,
-      field: { ...field, label, description, attrs },
-      components
+      props: { value },
+      field: { ...field, label, description, attrs }
     })
   }
 }

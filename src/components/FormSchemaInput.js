@@ -10,7 +10,7 @@ export default {
   functional: true,
   render (createElement, { data, props, slots, listeners }) {
     const { input, field, components } = data
-    const { value, disableWrappingLabel } = props
+    const { value } = props
     const children = slots().default || []
 
     if (field.isArrayField && field.attrs.type !== 'select') {
@@ -43,7 +43,7 @@ export default {
         return createElement(FormSchemaInputArrayElement, data, children)
       })
 
-      return createElement(components.$.arrayWrapper.component, { field }, [
+      return createElement(components.$.inputwrapper.component, { field }, [
         createElement(components.$.arrayInputs.component, { field }, inputs),
         createElement(components.$.arraybutton.component, {
           [argName(components.$.arraybutton)]: {
@@ -67,10 +67,6 @@ export default {
     const nodes = [
       createElement(input.element.component, input.data, children)
     ]
-
-    if (disableWrappingLabel) {
-      return nodes
-    }
 
     return createElement(components.$.inputwrapper.component, { field }, nodes)
   }

@@ -7,7 +7,7 @@ const tags = {
   p: ['description'],
   div: [
     'error', 'textgroup', 'buttonswrapper', 'formwrapper', 'inputswrapper',
-    'inputwrapper', 'defaultGroup', 'arrayWrapper', 'arrayInputs'
+    'inputwrapper', 'defaultGroup', 'arrayInputs'
   ],
   legend: ['legend'],
   fieldset: ['radiogroup', 'checkboxgroup'],
@@ -45,7 +45,6 @@ export class Components {
     this.$.radiogroup.component.render = (...args) => this.renderFieldset(...args)
     this.$.checkboxgroup.component.render = (...args) => this.renderFieldset(...args)
     this.$.inputwrapper.component.render = (...args) => this.renderInput(...args)
-    this.$.arrayWrapper.component.render = (...args) => this.renderInput(...args)
     this.$.arrayInputs.component.render = (...args) => this.arrayInputs(...args)
     this.$.arraybutton.component.render = (...args) => this.renderArrayButton(...args)
     this.$.buttonswrapper.component.render = (...args) => this.renderButtons(...args)
