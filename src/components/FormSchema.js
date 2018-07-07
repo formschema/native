@@ -6,12 +6,17 @@ import {
   loadFields
 } from '@/lib/parser'
 
-import { equals, assign, clone, clear, isEmpty } from '@/lib/object'
+import * as LibObject from '@/lib/object'
+
 import { Components as Instance, argName, inputName } from '@/lib/components'
 import { INPUT_ADDED_EVENT } from './FormSchemaInput'
+
 import FormSchemaField from './FormSchemaField'
 
 export const Components = Instance
+export const ObjectUtils = Object.freeze(LibObject)
+
+const { equals, assign, clone, clear, isEmpty } = LibObject
 
 export default {
   name: 'FormSchema',
