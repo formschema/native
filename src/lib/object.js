@@ -1,5 +1,3 @@
-'use strict'
-
 export function equals (o1, o2) {
   if (isScalar(o1)) {
     return o1 === o2

@@ -1,4 +1,4 @@
-import { assign } from '@/lib/object'
+import { assign } from '../lib/object'
 
 export default {
   functional: true,

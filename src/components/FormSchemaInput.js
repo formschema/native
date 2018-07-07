@@ -1,6 +1,6 @@
-import { genId } from '@/lib/parser'
-import { assign } from '@/lib/object'
-import { inputName, argName } from '@/lib/components'
+import { genId } from '../lib/parser'
+import { assign } from '../lib/object'
+import { inputName, argName } from '../lib/components'
 import FormSchemaInputArrayElement from './FormSchemaInputArrayElement'
 
 const unwrappingElements = ['checkbox', 'radio']

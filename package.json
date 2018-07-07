@@ -2,13 +2,14 @@
   "name": "@formschema/native",
   "version": "2.0.0-alpha.1",
   "description": "Vue component form based on JSON Schema",
-  "main": "dist/FormSchema.common.js",
+  "main": "dist/FormSchema.esm.js",
+  "browser": "dist/FormSchema.umd.js",
   "scripts": {
     "demo": "cd demo && npm run serve",
     "test": "vue-cli-service test:unit --colors --testMatch '<rootDir>/test/specs/*.spec.js'",
     "lint": "vue-cli-service lint --no-fix",
     "readme": "vuedoc.md --join src/components/*.js --ignore-name --ignore-data --section 'FormSchema API' --output README.md",
-    "build": "vue-cli-service build --target lib --name FormSchema --entry src/components/FormSchema.js"
+    "build": "rollup -c"
   },
   "repository": {
     "type": "git",
@@ -28,9 +29,6 @@
   "homepage": "https://gitlab.com/formschema/native",
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.52",
-    "@babel/plugin-transform-runtime": "^7.0.0-beta.52",
-    "@babel/preset-es2015": "^7.0.0-beta.52",
-    "@babel/preset-stage-2": "^7.0.0-beta.52",
     "@vue/cli-plugin-babel": "^3.0.0-rc.3",
     "@vue/cli-plugin-eslint": "^3.0.0-rc.3",
     "@vue/cli-plugin-unit-jest": "^3.0.0-rc.3",
@@ -44,6 +42,8 @@
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
     "regenerator-runtime": "^0.12.0",
+    "rollup": "^0.62.0",
+    "rollup-plugin-babel": "^4.0.0-beta.7",
     "sinon": "^6.1.2",
     "vue": "^2.5.16"
   },
