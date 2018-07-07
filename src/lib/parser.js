@@ -1,4 +1,4 @@
-import { isScalar, assign } from '@/lib/object'
+import { isScalar, assign } from './object'
 
 /* eslint-disable no-labels */
 

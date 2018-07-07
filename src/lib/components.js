@@ -1,5 +1,3 @@
-'use strict'
-
 import { merge } from './object'
 
 const tags = {

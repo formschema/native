@@ -4,11 +4,11 @@ import {
   parseEventValue,
   parseDefaultObjectValue,
   loadFields
-} from '@/lib/parser'
+} from '../lib/parser'
 
-import * as LibObject from '@/lib/object'
+import * as LibObject from '../lib/object'
 
-import { Components as Instance, argName, inputName } from '@/lib/components'
+import { Components as Instance, argName, inputName } from '../lib/components'
 import { INPUT_ADDED_EVENT } from './FormSchemaInput'
 
 import FormSchemaField from './FormSchemaField'

@@ -43,11 +43,10 @@ test & coverage:
     paths:
       - coverage/
 
-webpack build:
+rollup build:
   stage: build
   script:
     - npm run build
-    - rm -f dist/*.html
   artifacts:
     paths:
       - dist
