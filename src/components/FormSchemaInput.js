@@ -1,3 +1,4 @@
+import { genId } from '@/lib/parser'
 import { assign } from '@/lib/object'
 import { inputName, argName } from '@/lib/components'
 import FormSchemaInputArrayElement from './FormSchemaInputArrayElement'
@@ -31,13 +32,15 @@ export default {
         ])
       }
 
-      const id = input.data.attrs.id
+      const id = input.data.attrs.id || genId(name)
       const inputs = Array.apply(null, Array(field.itemsNum)).map((v, i) => {
         data.props.name = inputName(field, i)
         input.data.attrs['data-fs-index'] = i
 
         if (i) {
           input.data.attrs.id = id + '-' + i
+        } else {
+          input.data.attrs.id = id
         }
 
         return createElement(FormSchemaInputArrayElement, data, children)
