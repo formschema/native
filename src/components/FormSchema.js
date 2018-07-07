@@ -17,6 +17,7 @@ export const Components = Instance
 export const generateId = genId
 export const ObjectUtils = Object.freeze(LibObject)
 export const ARRAY_INPUT_ADDED_EVENT = INPUT_ADDED_EVENT
+export let DEFAULT_COMPONENTS = new Components()
 
 const { equals, assign, clone, clear, isEmpty } = LibObject
 
@@ -80,7 +81,7 @@ export default {
      */
     components: {
       type: Components,
-      default: () => new Components()
+      default: () => DEFAULT_COMPONENTS
     }
   },
   data: () => ({
