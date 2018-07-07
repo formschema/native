@@ -47,7 +47,6 @@ rollup build:
   stage: build
   script:
     - npm run build
-    - rm -f dist/*.html
   artifacts:
     paths:
       - dist
