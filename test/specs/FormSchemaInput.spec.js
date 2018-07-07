@@ -22,6 +22,7 @@ describe('FormSchemaInput', () => {
   it('should successfully render the component', () => {
     const field = {
       attrs: {
+        id: 'x',
         type: 'text',
         name: 'fieldName',
         value: 'Hello'
@@ -29,39 +30,21 @@ describe('FormSchemaInput', () => {
     }
     const input = components.input({ field })
     const value = 'Hello'
-    const wrapper = mount(component, {
-      context: {
-        props: { field, value, input, components }
-      }
-    })
-    const expected = '<input type="text" name="fieldName" value="Hello">'
 
-    expect(wrapper.isVueInstance()).toBeTruthy()
-    expect(wrapper.html()).toEqual(expected)
-  })
-
-  it('should successfully render the component with disableWrappingLabel', () => {
-    const field = {
-      label: 'array label',
-      attrs: {
-        name: 'fieldName',
-        type: 'text',
-        value: 'Hello'
-      }
-    }
-    const input = components.input({ field })
-    const value = 'Hello'
-    const disableWrappingLabel = true
     const wrapper = mount({
-      render (createElement) {
-        return createElement('form', [
-          createElement(component, {
-            props: { field, value, input, disableWrappingLabel, components }
+      render (h) {
+        return h('div', [
+          h(component, {
+            input,
+            field,
+            components,
+            props: { value }
           })
         ])
       }
     })
-    const expected = '<form><input name="fieldName" type="text" value="Hello"></form>'
+
+    const expected = '<div><input id="x" type="text" name="fieldName" value="Hello"></div>'
 
     expect(wrapper.isVueInstance()).toBeTruthy()
     expect(wrapper.html()).toEqual(expected)
@@ -70,6 +53,7 @@ describe('FormSchemaInput', () => {
   it('should successfully render a array field component', () => {
     const field = {
       attrs: {
+        id: 'x',
         name: 'fieldName',
         type: 'text'
       },
@@ -81,13 +65,21 @@ describe('FormSchemaInput', () => {
       'fieldName-0': 'Value 1',
       'fieldName-1': 'Value 2'
     }
-    const wrapper = mount(component, {
-      context: {
-        props: { field, value, input, components }
+
+    const wrapper = mount({
+      render (h) {
+        return h('div', [
+          h(component, {
+            input,
+            field,
+            components,
+            props: { value }
+          })
+        ])
       }
     })
 
-    const expected = '<div><input name="fieldName-0" type="text" data-fs-index="0" value="Value 1"><input name="fieldName-1" type="text" data-fs-index="1" value="Value 2"><button type="button">Add</button></div>'
+    const expected = '<div><div data-fs-array-inputs="true"><input id="x" name="fieldName-0" type="text" data-fs-index="0" value="Value 1"><input id="x-1" name="fieldName-1" type="text" data-fs-index="1" value="Value 2"></div><button type="button">Add</button></div>'
 
     expect(wrapper.html()).toEqual(expected)
   })
@@ -96,6 +88,7 @@ describe('FormSchemaInput', () => {
     const field = {
       label: 'array label',
       attrs: {
+        id: 'x',
         name: 'fieldName',
         type: 'text'
       },
@@ -107,13 +100,21 @@ describe('FormSchemaInput', () => {
       'fieldName-0': 'Value 1',
       'fieldName-1': 'Value 2'
     }
-    const wrapper = mount(component, {
-      context: {
-        props: { field, value, input, components }
+
+    const wrapper = mount({
+      render (h) {
+        return h('div', [
+          h(component, {
+            input,
+            field,
+            components,
+            props: { value }
+          })
+        ])
       }
     })
 
-    const expected = '<div><label>array label</label><div><div><input name="fieldName-0" type="text" data-fs-index="0" value="Value 1"><input name="fieldName-1" type="text" data-fs-index="1" value="Value 2"><button type="button">Add</button></div></div></div>'
+    const expected = '<div><div data-fs-field="x"><label for="x">array label</label><div data-fs-field-input="x"><div data-fs-array-inputs="true"><input id="x" name="fieldName-0" type="text" data-fs-index="0" value="Value 1"><input id="x-1" name="fieldName-1" type="text" data-fs-index="1" value="Value 2"></div><button type="button">Add</button></div></div></div>'
 
     expect(wrapper.html()).toEqual(expected)
   })
@@ -123,6 +124,7 @@ describe('FormSchemaInput', () => {
 
     const field = {
       attrs: {
+        id: 'x',
         type: 'password',
         name: 'fieldName'
       },
@@ -134,13 +136,21 @@ describe('FormSchemaInput', () => {
       'fieldName-0': 'Value 1',
       'fieldName-1': 'Value 2'
     }
-    const wrapper = mount(component, {
-      context: {
-        props: { field, value, input, components }
+
+    const wrapper = mount({
+      render (h) {
+        return h('div', [
+          h(component, {
+            input,
+            field,
+            components,
+            props: { value }
+          })
+        ])
       }
     })
 
-    const expected = '<div><input type="password" name="fieldName-0" data-fs-index="0" value="Value 1"><input type="password" name="fieldName-1" data-fs-index="1" value="Value 2"><button type="button">Add</button></div>'
+    const expected = '<div><div data-fs-array-inputs="true"><input id="x" type="password" name="fieldName-0" data-fs-index="0" value="Value 1"><input id="x-1" type="password" name="fieldName-1" data-fs-index="1" value="Value 2"></div><button type="button">Add</button></div>'
 
     expect(wrapper.html()).toEqual(expected)
   })
@@ -148,6 +158,7 @@ describe('FormSchemaInput', () => {
   it('should successfully emit the click event', () => {
     const field = {
       attrs: {
+        id: 'x',
         type: 'password',
         name: 'fieldName'
       },
@@ -166,14 +177,21 @@ describe('FormSchemaInput', () => {
       [INPUT_ADDED_EVENT]: sinon.spy()
     }
 
-    const wrapper = mount(component, {
-      context: {
-        props: { field, value, input, components },
-        on: listeners
+    const wrapper = mount({
+      render (h) {
+        return h('div', [
+          h(component, {
+            input,
+            field,
+            components,
+            props: { value },
+            on: listeners
+          })
+        ])
       }
     })
 
-    const expected = '<div><input type="password" name="fieldName-0" data-fs-index="0" value="Value 1"><input type="password" name="fieldName-1" data-fs-index="1" value="Value 2"><button type="button">Add</button></div>'
+    const expected = '<div><div data-fs-array-inputs="true"><input id="x" type="password" name="fieldName-0" data-fs-index="0" value="Value 1"><input id="x-1" type="password" name="fieldName-1" data-fs-index="1" value="Value 2"></div><button type="button">Add</button></div>'
 
     expect(wrapper.html()).toEqual(expected)
 
@@ -183,13 +201,5 @@ describe('FormSchemaInput', () => {
     wrapper.find('button').trigger('click')
 
     expect(listeners[INPUT_ADDED_EVENT].calledOnce).toBe(true)
-
-//     expect(wrapper.findAll('input').length).toEqual(3)
-//     expect(wrapper.findAll('button').length).toEqual(1)
-//
-//     wrapper.find('button').trigger('click')
-//
-//     expect(wrapper.findAll('input').length).toEqual(3)
-//     expect(wrapper.findAll('button').length).toEqual(1)
   })
 })

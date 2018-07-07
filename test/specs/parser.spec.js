@@ -830,7 +830,6 @@ describe('lib/parser', () => {
         schemaType: 'array',
         label: '',
         description: '',
-        isArrayField: true,
         minItems: 1,
         maxItems: 1000,
         items: [{ value: 'v', label: 'l', name: 'l' }],

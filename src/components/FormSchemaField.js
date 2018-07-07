@@ -4,8 +4,9 @@ import FormSchemaFieldSelectOption from './FormSchemaFieldSelectOption'
 
 export default {
   functional: true,
-  render (createElement, { props, listeners }) {
-    const { field, value, components } = props
+  render (createElement, { data, props, listeners }) {
+    const { field, components } = data
+    const { value } = props
 
     const input = components.input({ field, listeners })
     const children = []
@@ -21,16 +22,14 @@ export default {
         break
 
       case 'radio':
+      case 'switch':
         if (field.hasOwnProperty('items')) {
           field.items.forEach((item) => {
             children.push(createElement(FormSchemaFieldCheckboxItem, {
+              field: { ...field, isArrayField: false },
+              components,
               fieldParent: field,
-              props: {
-                item,
-                value,
-                components,
-                field: { ...field, isArrayField: false }
-              },
+              props: { item, value },
               on: listeners
             }))
           })
@@ -41,8 +40,10 @@ export default {
         if (field.hasOwnProperty('items')) {
           field.items.forEach((item) => {
             children.push(createElement(FormSchemaFieldCheckboxItem, {
+              field,
+              components,
               fieldParent: field,
-              props: { item, value, field, components },
+              props: { item, value },
               on: listeners
             }))
           })
@@ -51,7 +52,9 @@ export default {
           const checked = value === true
 
           return createElement(FormSchemaFieldCheckboxItem, {
-            props: { item, value, field, checked, components },
+            field,
+            components,
+            props: { item, value, checked },
             on: listeners
           })
         }
@@ -71,7 +74,9 @@ export default {
 
         items.forEach((option) => {
           children.push(createElement(FormSchemaFieldSelectOption, {
-            props: { field, value, option, components },
+            field,
+            components,
+            props: { option, value },
             on: listeners
           }))
         })
@@ -79,7 +84,10 @@ export default {
     }
 
     return createElement(FormSchemaInput, {
-      props: { field, value, input, components },
+      input,
+      field,
+      components,
+      props: { value },
       on: listeners
     }, children)
   }

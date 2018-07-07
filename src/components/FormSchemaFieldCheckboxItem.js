@@ -2,8 +2,9 @@ import FormSchemaInput from './FormSchemaInput'
 
 export default {
   functional: true,
-  render (createElement, { props, listeners }) {
-    const { item, field, value, checked, disableWrappingLabel, components } = props
+  render (createElement, { data, props, listeners }) {
+    const { field, components } = data
+    const { item, value, checked } = props
 
     const { label, description } = item
     const attrs = {
@@ -25,14 +26,11 @@ export default {
     })
 
     return createElement(FormSchemaInput, {
-      props: {
-        value,
-        input,
-        disableWrappingLabel,
-        components,
-        field: { ...field, label, description, attrs }
-      },
-      on: input.data.listeners
+      input,
+      components,
+      on: input.data.listeners,
+      props: { value },
+      field: { ...field, label, description, attrs }
     })
   }
 }
