@@ -186,8 +186,7 @@ export default {
     })
 
     if (this.$slots.default) {
-      formInputNodes.push(createElement(
-        components.$.buttonswrapper.component, this.$slots.default))
+      this.$slots.default.forEach((node) => formInputNodes.push(node))
     }
 
     nodes.push(createElement(components.$.form.component, {

@@ -4,7 +4,7 @@ const tags = {
   h1: ['title'],
   p: ['description'],
   div: [
-    'error', 'textgroup', 'buttonswrapper', 'formwrapper', 'inputswrapper',
+    'error', 'textgroup', 'formwrapper', 'inputswrapper',
     'defaultGroup', 'arrayInputs'
   ],
   legend: ['legend'],
@@ -44,7 +44,6 @@ export class Components {
     this.$.checkboxgroup.component.render = (...args) => this.renderFieldset(...args)
     this.$.arrayInputs.component.render = (...args) => this.arrayInputs(...args)
     this.$.arraybutton.component.render = (...args) => this.renderArrayButton(...args)
-    this.$.buttonswrapper.component.render = (...args) => this.renderButtons(...args)
     this.$.error.component.render = (...args) => this.renderError(...args)
   }
 
