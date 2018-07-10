@@ -5,7 +5,7 @@ const tags = {
   p: ['description'],
   div: [
     'error', 'textgroup', 'buttonswrapper', 'formwrapper', 'inputswrapper',
-    'inputwrapper', 'defaultGroup', 'arrayInputs'
+    'defaultGroup', 'arrayInputs'
   ],
   legend: ['legend'],
   fieldset: ['radiogroup', 'checkboxgroup'],
@@ -42,7 +42,6 @@ export class Components {
 
     this.$.radiogroup.component.render = (...args) => this.renderFieldset(...args)
     this.$.checkboxgroup.component.render = (...args) => this.renderFieldset(...args)
-    this.$.inputwrapper.component.render = (...args) => this.renderInput(...args)
     this.$.arrayInputs.component.render = (...args) => this.arrayInputs(...args)
     this.$.arraybutton.component.render = (...args) => this.renderArrayButton(...args)
     this.$.buttonswrapper.component.render = (...args) => this.renderButtons(...args)
@@ -50,10 +49,6 @@ export class Components {
   }
 
   set (type, component, option = null, native = false) {
-    if (typeof component !== 'string') {
-      component.functional = true
-    }
-
     this.$[type] = {
       type,
       native,

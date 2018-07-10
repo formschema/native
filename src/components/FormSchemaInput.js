@@ -20,16 +20,15 @@ export default {
         input,
         field,
         components,
+        attrs: {},
         props: { name, value },
         on: listeners
       }
 
       if (unwrappingElements.includes(field.attrs.type)) {
-        assign(data.props, input.data.field.attrs)
+        assign(data.attrs, input.data.field.attrs)
 
-        return createElement(components.$.inputwrapper.component, data, [
-          createElement(FormSchemaInputArrayElement, data, children)
-        ])
+        return createElement(FormSchemaInputArrayElement, data, children)
       }
 
       const id = input.data.attrs.id || genId(name)
@@ -46,7 +45,7 @@ export default {
         return createElement(FormSchemaInputArrayElement, data, children)
       })
 
-      return createElement(components.$.inputwrapper.component, { field }, [
+      return [
         createElement(components.$.arrayInputs.component, { field }, inputs),
         createElement(components.$.arraybutton.component, {
           [argName(components.$.arraybutton)]: {
@@ -64,13 +63,9 @@ export default {
             }
           }
         })
-      ])
+      ]
     }
 
-    const nodes = [
-      createElement(input.element.component, input.data, children)
-    ]
-
-    return createElement(components.$.inputwrapper.component, { field }, nodes)
+    return createElement(input.element.component, input.data, children)
   }
 }
