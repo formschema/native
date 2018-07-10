@@ -14,7 +14,7 @@ describe('lib/components', () => {
   describe('Components()', () => {
     const defaultComponents = [
       'title', 'description', 'error', 'textgroup',
-      'formwrapper', 'inputswrapper', 'defaultGroup', 'legend',
+      'formwrapper', 'defaultGroup', 'legend',
       'radiogroup', 'checkboxgroup', 'inputdesc', 'form', 'checkbox', 'color',
       'date', 'datetime', 'datetime-local', 'email', 'file', 'hidden', 'image',
       'month', 'number', 'password', 'radio', 'range', 'search', 'tel', 'text',

@@ -4,7 +4,7 @@ const tags = {
   h1: ['title'],
   p: ['description'],
   div: [
-    'error', 'textgroup', 'formwrapper', 'inputswrapper',
+    'error', 'textgroup', 'formwrapper',
     'defaultGroup', 'arrayInputs'
   ],
   legend: ['legend'],
@@ -94,9 +94,7 @@ export class Components {
     const name = data.field.attrs.name
     const description = data.field.description
 
-    const children = [
-      h(this.$.inputswrapper.component, slots().default)
-    ]
+    const children = [ ...slots().default ]
 
     if (description) {
       children.unshift(h(this.$.legend.component, description))
