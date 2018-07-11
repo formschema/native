@@ -3,6 +3,7 @@ import { isScalar, assign } from '@/lib/object'
 /* eslint-disable no-labels */
 
 const ARRAY_KEYWORDS = ['anyOf', 'oneOf', 'enum']
+export const NUMBER_TYPES = ['number', 'integer']
 
 export function s4 () {
   return Math.floor((1 + Math.random()) * 0x10000)
@@ -378,7 +379,7 @@ export function parseArray (schema, name = null, model = null) {
 
   if (!field.attrs.type) {
     field.isArrayField = true
-    field.attrs.type = schema.items && schema.items.type && ['number', 'integer'].includes(schema.items.type)
+    field.attrs.type = schema.items && NUMBER_TYPES.includes(schema.items.type)
       ? schema.items.type
       : 'text'
   } else if (field.attrs.type === 'select') {

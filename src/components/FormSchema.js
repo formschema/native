@@ -3,7 +3,8 @@ import {
   parseDefaultScalarValue,
   parseEventValue,
   parseDefaultObjectValue,
-  loadFields
+  loadFields,
+  NUMBER_TYPES
 } from '@/lib/parser'
 
 import { equals, assign, clone, clear, isEmpty } from '@/lib/object'
@@ -302,7 +303,7 @@ export default {
         const index = event.target.getAttribute('data-fs-index')
         const key = inputName(event.field, index)
 
-        this.inputValues[key] = ['number', 'integer'].includes(event.field.attrs.type)
+        this.inputValues[key] = NUMBER_TYPES.includes(event.field.attrs.type)
           ? Number(event.data)
           : event.data
 
