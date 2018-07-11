@@ -30,7 +30,9 @@ describe('FormSchemaField', () => {
     }
     const wrapper = mount(component, {
       context: {
-        props: { field, value, components }
+        field,
+        components,
+        props: { value }
       }
     })
 
@@ -55,7 +57,9 @@ describe('FormSchemaField', () => {
     }
     const wrapper = mount(component, {
       context: {
-        props: { field, value, components }
+        field,
+        components,
+        props: { value }
       }
     })
 
@@ -77,7 +81,9 @@ describe('FormSchemaField', () => {
     const value = 'Hello'
     const wrapper = mount(component, {
       context: {
-        props: { field, value, components }
+        field,
+        components,
+        props: { value }
       }
     })
 
@@ -99,7 +105,9 @@ describe('FormSchemaField', () => {
     const value = 'Hello'
     const wrapper = mount(component, {
       context: {
-        props: { field, value, components }
+        field,
+        components,
+        props: { value }
       }
     })
 
@@ -127,7 +135,9 @@ describe('FormSchemaField', () => {
     it('should successfully render the component', () => {
       const wrapper = mount(component, {
         context: {
-          props: { field, components }
+          field,
+          components,
+          props: {}
         }
       })
 
@@ -149,7 +159,9 @@ describe('FormSchemaField', () => {
       }
       const wrapper = mount(component, {
         context: {
-          props: { field, components },
+          field,
+          components,
+          props: {},
           on: listeners
         }
       })
@@ -184,7 +196,9 @@ describe('FormSchemaField', () => {
     it('should successfully render the component', () => {
       const wrapper = mount(component, {
         context: {
-          props: { field, value, components }
+          field,
+          components,
+          props: { value }
         }
       })
 
@@ -202,7 +216,9 @@ describe('FormSchemaField', () => {
       }
       const wrapper = mount(component, {
         context: {
-          props: { field, value, components },
+          field,
+          components,
+          props: { value },
           on: listeners
         }
       })
@@ -232,7 +248,9 @@ describe('FormSchemaField', () => {
     it('should successfully render the component', () => {
       const wrapper = mount(component, {
         context: {
-          props: { field, value, components }
+          field,
+          components,
+          props: { value }
         }
       })
 
@@ -250,7 +268,9 @@ describe('FormSchemaField', () => {
       }
       const wrapper = mount(component, {
         context: {
-          props: { field, value, components },
+          field,
+          components,
+          props: { value },
           on: listeners
         }
       })
@@ -299,7 +319,9 @@ describe('FormSchemaField', () => {
     it('should successfully render the component', () => {
       const wrapper = mount(component, {
         context: {
-          props: { field, value, components }
+          field,
+          components,
+          props: { value }
         }
       })
 
@@ -317,7 +339,9 @@ describe('FormSchemaField', () => {
       }
       const wrapper = mount(component, {
         context: {
-          props: { field, value, components },
+          field,
+          components,
+          props: { value },
           on: listeners
         }
       })
@@ -361,7 +385,9 @@ describe('FormSchemaField', () => {
       const value = ''
       const wrapper = mount(component, {
         context: {
-          props: { field, value, components }
+          field,
+          components,
+          props: { value }
         }
       })
 
@@ -393,7 +419,9 @@ describe('FormSchemaField', () => {
       const value = ''
       const wrapper = mount(component, {
         context: {
-          props: { field, value, components }
+          field,
+          components,
+          props: { value }
         }
       })
 
@@ -424,7 +452,9 @@ describe('FormSchemaField', () => {
     const value = 'v1'
     const wrapper = mount(component, {
       context: {
-        props: { field, value, components }
+        field,
+        components,
+        props: { value }
       }
     })
 
@@ -455,7 +485,9 @@ describe('FormSchemaField', () => {
     const value = ['v1']
     const wrapper = mount(component, {
       context: {
-        props: { field, value, components }
+        field,
+        components,
+        props: { value }
       }
     })
 
@@ -491,7 +523,9 @@ describe('FormSchemaField', () => {
     const value = ['v0']
     const wrapper = mount(component, {
       context: {
-        props: { field, value, components }
+        field,
+        components,
+        props: { value }
       }
     })
 

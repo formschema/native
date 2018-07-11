@@ -431,59 +431,6 @@ describe('FormSchema', () => {
       expect(wrapper.vm.error).toEqual(null)
       expect(wrapper.findAll('[data-fs-error]').length).toEqual(0)
     })
-/*
-    it('should successfully emit input event with an empty value', () => {
-      const field = {
-        attrs: {
-          name: 'fieldName'
-        },
-        itemsNum: 2
-      }
-      const input = {
-        data: {
-          attrs: {
-            type: 'text'
-          }
-        },
-        element: components.text,
-        native: true
-      }
-      const name = `${field.attrs.name}-0`
-      const vm = {
-        inputValues: {
-          'fieldName-0': 'Value 1',
-          'fieldName-1': 'Value 2'
-        },
-        data: {
-          fieldName: [
-            'Value 1',
-            'Value 2'
-          ]
-        },
-        changed: () => {}
-      }
-      const wrapper = mount(component, {
-        context: {
-          props: { field, input, vm, name }
-        }
-      })
-
-      vm.$emit = wrapper.vm.$emit
-
-      const expected = {
-        fieldName: [
-          'Value 2'
-        ]
-      }
-      const inputElement = wrapper.find('input')
-
-      inputElement.element.value = ''
-      inputElement.trigger('input')
-
-      expect(wrapper.emitted().input[0][0]).toEqual(expected)
-      expect(vm.data).toEqual(expected)
-    })
-  */
   })
 
   describe('redering', () => {
@@ -629,7 +576,7 @@ describe('FormSchema', () => {
           propsData: { schema }
         })
 
-        const expected = '<form enctype="application/x-www-form-urlencoded" method="post"><div><input id="x" type="file" name="images-0" data-fs-index="0"><input id="x" type="file" name="images-1" data-fs-index="1"><button type="button">Add</button></div></form>'
+        const expected = '<form enctype="application/x-www-form-urlencoded" method="post"><div data-fs-array-inputs="true"><input id="x" type="file" name="images-0" data-fs-index="0"><input id="x-1" type="file" name="images-1" data-fs-index="1"></div><button type="button">Add</button></form>'
 
         expect(wrapper.find('form').html()).toEqual(expected)
       })

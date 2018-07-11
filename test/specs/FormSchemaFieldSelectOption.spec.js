@@ -25,7 +25,8 @@ describe('FormSchemaFieldSelectOption', () => {
   it('should successfully render the component', () => {
     const wrapper = mount(component, {
       context: {
-        props: { option, components }
+        props: { option },
+        components
       }
     })
 
@@ -40,7 +41,8 @@ describe('FormSchemaFieldSelectOption', () => {
 
     const wrapper = mount(component, {
       context: {
-        props: { option, components }
+        props: { option },
+        components
       }
     })
 
@@ -53,7 +55,8 @@ describe('FormSchemaFieldSelectOption', () => {
     const value = option.value
     const wrapper = mount(component, {
       context: {
-        props: { option, value, components }
+        props: { option, value },
+        components
       }
     })
 

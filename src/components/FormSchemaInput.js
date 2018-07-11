@@ -1,21 +1,26 @@
-import { inputName, argName } from '@/lib/components'
+import { genId } from '../lib/parser'
+import { assign } from '../lib/object'
+import { inputName, argName } from '../lib/components'
 import FormSchemaInputArrayElement from './FormSchemaInputArrayElement'
-import { assign } from '@/lib/object'
 
 const unwrappingElements = ['checkbox', 'radio']
 
-export const INPUT_ADDED_EVENT = 'input-added'
+export const INPUT_ADDED_EVENT = 'array-button-clicked'
 
 export default {
   functional: true,
-  render (createElement, { props, slots, listeners }) {
-    const { field, value, input, disableWrappingLabel, components } = props
+  render (createElement, { data, props, slots, listeners }) {
+    const { input, field, components } = data
+    const { value } = props
     const children = slots().default || []
 
     if (field.isArrayField && field.attrs.type !== 'select') {
       const name = field.attrs.name
       const data = {
-        props: { name, field, value, input, components },
+        input,
+        field,
+        components,
+        props: { name, value },
         on: listeners
       }
 
@@ -27,39 +32,38 @@ export default {
         ])
       }
 
+      const id = input.data.attrs.id || genId(name)
       const inputs = Array.apply(null, Array(field.itemsNum)).map((v, i) => {
         data.props.name = inputName(field, i)
         input.data.attrs['data-fs-index'] = i
 
+        if (i) {
+          input.data.attrs.id = id + '-' + i
+        } else {
+          input.data.attrs.id = id
+        }
+
         return createElement(FormSchemaInputArrayElement, data, children)
       })
 
-      const button = components.$.arraybutton
-      const buttonData = {
-        [argName(button)]: {
-          disabled: field.maxItems <= field.itemsNum
-        },
-        on: {
-          click () {
-            if (field.itemsNum < field.maxItems) {
-              field.itemsNum++
+      return createElement(components.$.inputwrapper.component, { field }, [
+        createElement(components.$.arrayInputs.component, { field }, inputs),
+        createElement(components.$.arraybutton.component, {
+          [argName(components.$.arraybutton)]: {
+            disabled: field.maxItems <= field.itemsNum
+          },
+          on: {
+            click (e) {
+              if (field.itemsNum < field.maxItems) {
+                field.itemsNum++
 
-              if (INPUT_ADDED_EVENT in listeners) {
-                listeners[INPUT_ADDED_EVENT]()
+                if (INPUT_ADDED_EVENT in listeners) {
+                  listeners[INPUT_ADDED_EVENT](e)
+                }
               }
             }
           }
-        }
-      }
-
-      inputs.push(createElement(button.component, buttonData))
-
-      return createElement(components.$.inputwrapper.component, {
-        props: { field, components }
-      }, [
-        createElement(components.$.inputswrapper.component, {
-          props: { field, components }
-        }, inputs)
+        })
       ])
     }
 
@@ -67,12 +71,6 @@ export default {
       createElement(input.element.component, input.data, children)
     ]
 
-    if (disableWrappingLabel) {
-      return nodes
-    }
-
-    return createElement(components.$.inputwrapper.component, {
-      props: { field, components }
-    }, nodes)
+    return createElement(components.$.inputwrapper.component, { field }, nodes)
   }
 }

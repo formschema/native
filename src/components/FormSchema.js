@@ -5,14 +5,24 @@ import {
   parseDefaultObjectValue,
   loadFields,
   NUMBER_TYPES
-} from '@/lib/parser'
+} from '../lib/parser'
 
-import { equals, assign, clone, clear, isEmpty } from '@/lib/object'
-import { Components as Instance, argName, inputName } from '@/lib/components'
+import * as LibObject from '../lib/object'
+
+import { Components as Instance, argName, inputName } from '../lib/components'
 import { INPUT_ADDED_EVENT } from './FormSchemaInput'
+
 import FormSchemaField from './FormSchemaField'
 
 export const Components = Instance
+export const generateId = genId
+export const ObjectUtils = Object.freeze(LibObject)
+export const ARRAY_INPUT_ADDED_EVENT = INPUT_ADDED_EVENT
+export const GLOBAL = {
+  components: new Components()
+}
+
+const { equals, assign, clone, clear, isEmpty } = LibObject
 
 export default {
   name: 'FormSchema',
@@ -74,7 +84,7 @@ export default {
      */
     components: {
       type: Components,
-      default: () => new Components()
+      default: () => GLOBAL.components
     }
   },
   data: () => ({
@@ -121,7 +131,9 @@ export default {
         : this.data[field.attrs.name]
 
       return createElement(FormSchemaField, {
-        props: { field, value, components },
+        field,
+        components,
+        props: { value },
         on: {
           [INPUT_ADDED_EVENT]: () => {
             this.$forceUpdate()

@@ -8,10 +8,7 @@
 </template>
 
 <script>
-  // import FormSchema from '../../..'
-  import '../dist/FormSchema.umd.js'
-
-  const FormSchema = window.FormSchema.default
+  import FormSchema from '../../..'
 
   export default {
     data: () => ({

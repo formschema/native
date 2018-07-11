@@ -43,9 +43,9 @@ describe('FormSchemaFieldCheckboxItem', () => {
   it('should successfully render the component', () => {
     const wrapper = mount(component, {
       context: {
-        props: {
-          item, field, components
-        }
+        field,
+        components,
+        props: { item }
       }
     })
 
@@ -63,9 +63,9 @@ describe('FormSchemaFieldCheckboxItem', () => {
     const value = field.attrs.value
     const wrapper = mount(component, {
       context: {
-        props: {
-          item, field, value, components
-        }
+        field,
+        components,
+        props: { item, value }
       }
     })
 
@@ -77,11 +77,10 @@ describe('FormSchemaFieldCheckboxItem', () => {
   it('should successfully render the component with explicit props.checked', () => {
     const checked = true
     const value = field.attrs.value
+    const props = { item, value, checked }
     const wrapper = mount(component, {
       context: {
-        props: {
-          item, field, value, checked, components
-        }
+        field, components, props
       }
     })
 
@@ -93,11 +92,10 @@ describe('FormSchemaFieldCheckboxItem', () => {
   it('should successfully render the component with explicit props.checked === false', () => {
     const checked = false
     const value = field.attrs.value
+    const props = { item, value }
     const wrapper = mount(component, {
       context: {
-        props: {
-          item, field, value, checked, components
-        }
+        field, components, props
       }
     })
 
@@ -125,11 +123,10 @@ describe('FormSchemaFieldCheckboxItem', () => {
     field = fields[0]
 
     const value = field.attrs.value
+    const props = { item, value }
     const wrapper = mount(component, {
       context: {
-        props: {
-          item, field, value, components
-        }
+        field, components, props
       }
     })
 

@@ -1,7 +1,8 @@
 export default {
   functional: true,
-  render (createElement, { props }) {
-    const { option, value, components } = props
+  render (createElement, { data, props }) {
+    const { components } = data
+    const { option, value } = props
 
     const field = {
       label: option.label,
@@ -14,10 +15,10 @@ export default {
             : option.value === value
       }
     }
-    const data = components.input({ field }).data
+    const inputData = components.input({ field }).data
 
-    data.props.components = components
+    inputData.components = components
 
-    return createElement(components.$.option.component, data, option.label)
+    return createElement(components.$.option.component, inputData, option.label)
   }
 }

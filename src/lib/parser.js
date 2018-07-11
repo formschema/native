@@ -1,4 +1,4 @@
-import { isScalar, assign } from '@/lib/object'
+import { isScalar, assign } from './object'
 
 /* eslint-disable no-labels */
 
@@ -318,6 +318,8 @@ export function singleValue (field) {
   return item ? item.value : ''
 }
 
+const NOT_ARRAY = ['radio', 'checkbox', 'switch']
+
 export function parseArray (schema, name = null, model = null) {
   const field = {
     attrs: schema.attrs || {}
@@ -394,7 +396,7 @@ export function parseArray (schema, name = null, model = null) {
         field.attrs.value = singleValue(field)
       }
     }
-  } else {
+  } else if (!NOT_ARRAY.includes(field.attrs.type)) {
     field.isArrayField = true
   }
 
