@@ -1,6 +1,4 @@
-import { merge } from './object'
-
-const tags = {
+const TAGS = {
   h1: ['title'],
   p: ['description'],
   div: [ 'formwrapper', 'defaultGroup' ],
@@ -21,13 +19,9 @@ const Input = {
   render (h, { data, slots }) {
     const field = data.field
     const element = BLOCK_INPUTS.includes(field.attrs.type)
-      ?  h(field.attrs.type, data, slots().default)
-      :  h('input', data)
+      ? h(field.attrs.type, data, slots().default)
+      : h('input', data)
     const nodes = [ element ]
-    const attrs = {
-      'data-fs-field': field.attrs.id,
-      'data-fs-required': field.attrs.required
-    }
 
     if (field.description) {
       nodes.push(h('small', field.description))
@@ -40,18 +34,7 @@ const Input = {
       return nodes
     }
 
-    return h('div', { attrs }, [
-      h('label', {
-        attrs: {
-          for: field.attrs.id
-        }
-      }, field.label),
-      h('div', {
-        attrs: {
-          'data-fs-field-input': field.attrs.id
-        }
-      }, nodes)
-    ])
+    return h(Label, data, nodes)
   }
 }
 
@@ -84,6 +67,30 @@ const ArrayInputs = {
   }
 }
 
+const Label = {
+  functional: true,
+  render (h, { data, slots }) {
+    const field = data.field
+    const attrs = {
+      'data-fs-field': field.attrs.id,
+      'data-fs-required': field.attrs.required
+    }
+
+    return h('div', { attrs }, [
+      h('label', {
+        attrs: {
+          for: field.attrs.id
+        }
+      }, field.label),
+      h('div', {
+        attrs: {
+          'data-fs-field-input': field.attrs.id
+        }
+      }, slots().default)
+    ])
+  }
+}
+
 const Fieldset = {
   functional: true,
   render (h, { data, slots }) {
@@ -92,27 +99,14 @@ const Fieldset = {
     const nodes = []
 
     if (field.isArrayField) {
-      const children = slots().default
-
       if (newItemButton) {
         nodes.push(h(ArrayInputs, slots().default))
-        nodes.push(h('button', {
-          attrs: {
-            ...newItemButton.props,
-            type: 'button'
-          },
-          on: newItemButton.on
-        }, 'Add'))
+        nodes.push(h(ArrayButton, newItemButton))
       } else {
         nodes.push(h(CheckboxGroup, data, slots().default))
       }
     } else {
       nodes.push(h('fieldset', slots().default))
-    }
-
-    const attrs = {
-      'data-fs-field': field.attrs.id,
-      'data-fs-required': field.attrs.required
     }
 
     if (field.description) {
@@ -126,18 +120,7 @@ const Fieldset = {
       return nodes
     }
 
-    return h('div', { attrs }, [
-      h('label', {
-        attrs: {
-          for: field.attrs.id
-        }
-      }, field.label),
-      h('div', {
-        attrs: {
-          'data-fs-field-input': field.attrs.id
-        }
-      }, nodes)
-    ])
+    return h(Label, data, nodes)
   }
 }
 
@@ -145,7 +128,7 @@ const ArrayButton = {
   functional: true,
   render (h, { data }) {
     return h('button', {
-      attrs: { type: 'button', ...data.attrs },
+      attrs: { type: 'button', ...data.props },
       on: data.on
     }, 'Add')
   }
@@ -166,8 +149,8 @@ export class Components {
   constructor () {
     this.$ = {}
 
-    for (let component in tags) {
-      tags[component].forEach((name) => this.set(name, component, true))
+    for (let component in TAGS) {
+      TAGS[component].forEach((name) => this.set(name, component, true))
     }
 
     this.set('fieldset', Fieldset, true)
