@@ -533,8 +533,13 @@ describe('FormSchema', () => {
       it('should render with overwrite custom checkbox component', () => {
         const components = new Components()
 
-        components.set('checkbox', 'div', {
-          attrs: { type: 'checkbox' }
+        components.set('checkbox', {
+          functional: true,
+          render (h) {
+            return h('div', {
+              attrs: { type: 'checkbox' }
+            })
+          }
         })
 
         const wrapper = mount(component, {

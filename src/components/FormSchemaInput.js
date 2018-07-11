@@ -1,6 +1,6 @@
 import { genId } from '../lib/parser'
 import { assign } from '../lib/object'
-import { inputName, argName } from '../lib/components'
+import { inputName } from '../lib/components'
 import FormSchemaInputArrayElement from './FormSchemaInputArrayElement'
 
 const unwrappingElements = ['checkbox', 'radio']
@@ -45,25 +45,27 @@ export default {
         return createElement(FormSchemaInputArrayElement, data, children)
       })
 
-      return [
-        createElement(components.$.arrayInputs.component, { field }, inputs),
-        createElement(components.$.arraybutton.component, {
-          [argName(components.$.arraybutton)]: {
-            disabled: field.maxItems <= field.itemsNum
-          },
-          on: {
-            click (e) {
-              if (field.itemsNum < field.maxItems) {
-                field.itemsNum++
+      const newItemButton = {
+        props: {
+          disabled: field.maxItems <= field.itemsNum
+        },
+        on: {
+          click (e) {
+            if (field.itemsNum < field.maxItems) {
+              field.itemsNum++
 
-                if (INPUT_ADDED_EVENT in listeners) {
-                  listeners[INPUT_ADDED_EVENT](e)
-                }
+              if (INPUT_ADDED_EVENT in listeners) {
+                listeners[INPUT_ADDED_EVENT](e)
               }
             }
           }
-        })
-      ]
+        }
+      }
+
+      return createElement(components.$.fieldset.component, {
+        field,
+        newItemButton
+      }, inputs)
     }
 
     return createElement(input.element.component, input.data, children)

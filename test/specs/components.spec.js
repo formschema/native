@@ -13,13 +13,12 @@ import {
 describe('lib/components', () => {
   describe('Components()', () => {
     const defaultComponents = [
-      'title', 'description', 'error', 'textgroup',
-      'formwrapper', 'defaultGroup', 'legend',
-      'radiogroup', 'checkboxgroup', 'inputdesc', 'form', 'checkbox', 'color',
+      'title', 'description', 'error',
+      'formwrapper', 'defaultGroup',
+      'radiogroup', 'checkboxgroup', 'form', 'checkbox', 'color',
       'date', 'datetime', 'datetime-local', 'email', 'file', 'hidden', 'image',
       'month', 'number', 'password', 'radio', 'range', 'search', 'tel', 'text',
-      'time', 'url', 'week', 'textarea', 'select', 'option', 'label',
-      'arraybutton'
+      'time', 'url', 'week', 'textarea', 'select', 'option'
     ]
 
     describe('default components', () => {
@@ -35,17 +34,19 @@ describe('lib/components', () => {
             expect(instance.$[type].native).toBeTruthy()
           })
 
-          it(`should have a component entry defined as object`, () => {
-            expect(typeof instance.$[type].component).toEqual('object')
+          it(`should have a component entry defined`, () => {
+            expect(instance.$[type].hasOwnProperty('component')).toBeTruthy()
           })
 
-          it(`should have a thruthy component.functional`, () => {
-            expect(instance.$[type].component.functional).toBeTruthy()
-          })
+          if (typeof instance.$[type].component === 'object') {
+            it(`should have a thruthy component.functional`, () => {
+              expect(instance.$[type].component.functional).toBeTruthy()
+            })
 
-          it(`should have a render function`, () => {
-            expect(typeof instance.$[type].component.render).toEqual('function')
-          })
+            it(`should have a render function`, () => {
+              expect(typeof instance.$[type].component.render).toEqual('function')
+            })
+          }
         })
       })
     })

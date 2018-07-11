@@ -202,7 +202,7 @@ describe('FormSchemaField', () => {
         }
       })
 
-      const expected = '<fieldset name="fieldName"><div><div data-fs-field="y"><label for="y">l1</label><div data-fs-field-input="y"><input id="y" name="fieldName" type="radio" value="0"></div></div><div data-fs-field="z"><label for="z">l2</label><div data-fs-field-input="z"><input id="z" name="fieldName" type="radio" value="1" checked="checked"></div></div></div></fieldset>'
+      const expected = '<fieldset name="fieldName"><div data-fs-field="y"><label for="y">l1</label><div data-fs-field-input="y"><input id="y" name="fieldName" type="radio" value="0"></div></div><div data-fs-field="z"><label for="z">l2</label><div data-fs-field-input="z"><input id="z" name="fieldName" type="radio" value="1" checked="checked"></div></div></fieldset>'
 
       expect(wrapper.html()).toEqual(expected)
     })
@@ -325,7 +325,7 @@ describe('FormSchemaField', () => {
         }
       })
 
-      const expected = '<div data-fs-field="x"><label for="x">choices</label><div data-fs-field-input="x"><fieldset name="fieldName"><legend>choices description</legend><div><div data-fs-field="y"><label for="y">l1</label><div data-fs-field-input="y"><input id="y" name="fieldName" type="checkbox" value="v0"></div></div><div data-fs-field="z"><label for="z">l2</label><div data-fs-field-input="z"><input id="z" name="fieldName" type="checkbox" value="v1" checked="checked"></div></div></div></fieldset><small>choices description</small></div></div>'
+      const expected = '<div data-fs-field="x"><label for="x">choices</label><div data-fs-field-input="x"><fieldset name="fieldName"><legend>choices description</legend><div data-fs-field="y"><label for="y">l1</label><div data-fs-field-input="y"><input id="y" name="fieldName" type="checkbox" value="v0"></div></div><div data-fs-field="z"><label for="z">l2</label><div data-fs-field-input="z"><input id="z" name="fieldName" type="checkbox" value="v1" checked="checked"></div></div></fieldset></div></div>'
 
       expect(wrapper.html()).toEqual(expected)
     })

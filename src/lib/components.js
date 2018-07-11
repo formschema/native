@@ -3,27 +3,163 @@ import { merge } from './object'
 const tags = {
   h1: ['title'],
   p: ['description'],
-  div: [
-    'error', 'textgroup', 'formwrapper',
-    'defaultGroup', 'arrayInputs'
-  ],
-  legend: ['legend'],
-  fieldset: ['radiogroup', 'checkboxgroup'],
-  small: ['inputdesc'],
+  div: [ 'formwrapper', 'defaultGroup' ],
   form: ['form'],
-  input: {
-    typed: [
-      'checkbox', 'color', 'date', 'datetime', 'datetime-local',
-      'email', 'file', 'hidden', 'image', 'month', 'number',
-      'password', 'radio', 'range', 'search', 'tel', 'text',
-      'time', 'url', 'week'
-    ]
-  },
-  textarea: ['textarea'],
-  select: ['select'],
-  option: ['option'],
-  label: ['label'],
-  button: ['arraybutton']
+  input: [
+    'checkbox', 'color', 'date', 'datetime', 'datetime-local',
+    'email', 'file', 'hidden', 'image', 'month', 'number',
+    'password', 'radio', 'range', 'search', 'tel', 'text',
+    'time', 'url', 'week'
+  ],
+  option: ['option']
+}
+
+const BLOCK_INPUTS = ['textarea', 'select']
+
+const Input = {
+  functional: true,
+  render (h, { data, slots }) {
+    const field = data.field
+    const element = BLOCK_INPUTS.includes(field.attrs.type)
+      ?  h(field.attrs.type, data, slots().default)
+      :  h('input', data)
+    const nodes = [ element ]
+    const attrs = {
+      'data-fs-field': field.attrs.id,
+      'data-fs-required': field.attrs.required
+    }
+
+    if (field.description) {
+      nodes.push(h('small', field.description))
+    }
+
+    if (!field.label || (field.isArrayField && !BLOCK_INPUTS.includes(field.attrs.type))) {
+      if (nodes.length === 1) {
+        return nodes[0]
+      }
+      return nodes
+    }
+
+    return h('div', { attrs }, [
+      h('label', {
+        attrs: {
+          for: field.attrs.id
+        }
+      }, field.label),
+      h('div', {
+        attrs: {
+          'data-fs-field-input': field.attrs.id
+        }
+      }, nodes)
+    ])
+  }
+}
+
+const CheckboxGroup = {
+  functional: true,
+  render (h, { data, slots }) {
+    const name = data.field.attrs.name
+    const description = data.field.description
+
+    const children = [ ...slots().default ]
+
+    if (description) {
+      children.unshift(h('legend', description))
+
+      delete data.field.description
+    }
+
+    return h('fieldset', { attrs: { name } }, children)
+  }
+}
+
+const ArrayInputs = {
+  functional: true,
+  render (h, { slots }) {
+    return h('div', {
+      attrs: {
+        'data-fs-array-inputs': true
+      }
+    }, slots().default)
+  }
+}
+
+const Fieldset = {
+  functional: true,
+  render (h, { data, slots }) {
+    const field = data.field
+    const newItemButton = data.newItemButton
+    const nodes = []
+
+    if (field.isArrayField) {
+      const children = slots().default
+
+      if (newItemButton) {
+        nodes.push(h(ArrayInputs, slots().default))
+        nodes.push(h('button', {
+          attrs: {
+            ...newItemButton.props,
+            type: 'button'
+          },
+          on: newItemButton.on
+        }, 'Add'))
+      } else {
+        nodes.push(h(CheckboxGroup, data, slots().default))
+      }
+    } else {
+      nodes.push(h('fieldset', slots().default))
+    }
+
+    const attrs = {
+      'data-fs-field': field.attrs.id,
+      'data-fs-required': field.attrs.required
+    }
+
+    if (field.description) {
+      nodes.push(h('small', field.description))
+    }
+
+    if (!field.label) {
+      if (nodes.length === 1) {
+        return nodes[0]
+      }
+      return nodes
+    }
+
+    return h('div', { attrs }, [
+      h('label', {
+        attrs: {
+          for: field.attrs.id
+        }
+      }, field.label),
+      h('div', {
+        attrs: {
+          'data-fs-field-input': field.attrs.id
+        }
+      }, nodes)
+    ])
+  }
+}
+
+const ArrayButton = {
+  functional: true,
+  render (h, { data }) {
+    return h('button', {
+      attrs: { type: 'button', ...data.attrs },
+      on: data.on
+    }, 'Add')
+  }
+}
+
+const ErrorElement = {
+  functional: true,
+  render (h, { slots }) {
+    return h('div', {
+      attrs: {
+        'data-fs-error': true
+      }
+    }, slots().default)
+  }
 }
 
 export class Components {
@@ -31,42 +167,24 @@ export class Components {
     this.$ = {}
 
     for (let component in tags) {
-      if (tags[component] instanceof Array) {
-        tags[component].forEach((name) => this.set(name, component, {}, true))
-      } else {
-        tags[component].typed.forEach((type) => {
-          this.set(type, component, { attrs: { type } }, true)
-        })
-      }
+      tags[component].forEach((name) => this.set(name, component, true))
     }
 
-    this.$.radiogroup.component.render = (...args) => this.renderFieldset(...args)
-    this.$.checkboxgroup.component.render = (...args) => this.renderFieldset(...args)
-    this.$.arrayInputs.component.render = (...args) => this.arrayInputs(...args)
-    this.$.arraybutton.component.render = (...args) => this.renderArrayButton(...args)
-    this.$.error.component.render = (...args) => this.renderError(...args)
+    this.set('fieldset', Fieldset, true)
+    this.set('textarea', Input, true)
+    this.set('select', Input, true)
+    this.set('radiogroup', Fieldset, true)
+    this.set('checkboxgroup', Fieldset, true)
+    this.set('error', ErrorElement, true)
   }
 
-  set (type, component, option = null, native = false) {
+  set (type, component, native = false) {
     this.$[type] = {
       type,
       native,
-      component: typeof component === 'string' ? {
-        functional: true,
-        render (h, { data, slots }) {
-          const nodes = slots().default || []
-
-          if (option) {
-            merge(data, option)
-          }
-
-          if (nodes.length === 0 && Object.keys(data).length === 0) {
-            return null
-          }
-
-          return h(component, data, nodes)
-        }
-      } : component
+      component: component === 'input'
+        ? Input
+        : component
     }
   }
 
@@ -88,88 +206,6 @@ export class Components {
     }
 
     return { element, data }
-  }
-
-  renderFieldset (h, { data, slots }) {
-    const name = data.field.attrs.name
-    const description = data.field.description
-
-    const children = [ ...slots().default ]
-
-    if (description) {
-      children.unshift(h(this.$.legend.component, description))
-
-      delete data.field.description
-    }
-
-    return h('fieldset', { attrs: { name } }, children)
-  }
-
-  renderInput (h, { data, slots }) {
-    const nodes = slots().default || []
-    const field = data.field
-    const attrs = {
-      'data-fs-field': field.attrs.id,
-      'data-fs-required': field.attrs.required
-    }
-
-    if (field.description) {
-      nodes.push(h(this.$.inputdesc.component, {
-        field
-      }, field.description))
-    }
-
-    if (!field.label) {
-      if (nodes.length > 1) {
-        return nodes
-      }
-
-      return nodes[0]
-    }
-
-    return h('div', { attrs }, [
-      h('label', {
-        attrs: {
-          for: field.attrs.id
-        }
-      }, field.label),
-      h('div', {
-        attrs: {
-          'data-fs-field-input': field.attrs.id
-        }
-      }, nodes)
-    ])
-  }
-
-  arrayInputs (h, { slots }) {
-    return h('div', {
-      attrs: {
-        'data-fs-array-inputs': true
-      }
-    }, slots().default)
-  }
-
-  renderButtons (h, { slots }) {
-    return h('div', {
-      attrs: {
-        'data-fs-buttons': true
-      }
-    }, slots().default)
-  }
-
-  renderError (h, { slots }) {
-    return h('div', {
-      attrs: {
-        'data-fs-error': true
-      }
-    }, slots().default)
-  }
-
-  renderArrayButton (h, { data }) {
-    return h('button', {
-      attrs: { type: 'button', ...data.attrs },
-      on: data.on
-    }, 'Add')
   }
 }
 

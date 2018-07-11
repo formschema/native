@@ -29,7 +29,7 @@ export default {
       input,
       components,
       on: input.data.listeners,
-      props: { value },
+      props: { value: attrs.value },
       field: { ...field, label, description, attrs }
     })
   }

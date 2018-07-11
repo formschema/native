@@ -5,15 +5,12 @@ import pkg from './package.json'
 import resolve from 'rollup-plugin-node-resolve'
 import commonjs from 'rollup-plugin-commonjs'
 
-import sourcemaps from 'rollup-plugin-sourcemaps'
-
 const DEST = 'dist'
 const MODULE_NAME = 'FormSchema'
 
 const BANNER = `/* ${pkg.name} v${pkg.version} (c) ${pkg.author} - ${pkg.license} */`
 
 const PLUGINS = [
-  sourcemaps(),
   resolve({
     jsnext: true,
     main: true,
