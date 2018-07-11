@@ -602,7 +602,7 @@ describe('FormSchema', () => {
           propsData: { schema }
         })
 
-        const expected = '<form enctype="application/x-www-form-urlencoded" method="post"><div><input id="x" name="images-0" type="number" data-fs-index="0"><button type="button">Add</button></div></form>'
+        const expected = '<form enctype="application/x-www-form-urlencoded" method="post"><div data-fs-array-inputs="true"><input id="x" name="images-0" type="number" data-fs-index="0"></div><button type="button">Add</button></form>'
 
         expect(wrapper.find('form').html()).toEqual(expected)
       })
