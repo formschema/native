@@ -1,7 +1,9 @@
 <template>
   <div class="container">
     <FormSchema class="form" ref="formSchema" v-model="model" @submit.prevent>
-      <button type="submit">Subscribe</button>
+      <div class="buttons">
+        <button type="submit">Subscribe</button>
+      </div>
     </FormSchema>
     <pre class="model">{{ model }}</pre>
   </div>
@@ -81,7 +83,7 @@
   [data-fs-field-input] {
   }
 
-  [data-fs-buttons] {
+  .buttons {
     padding-left: 130px;
   }
 
