@@ -28,7 +28,7 @@
   },
   "homepage": "https://gitlab.com/formschema/native",
   "devDependencies": {
-    "@babel/core": "^7.0.0-beta.52",
+    "@babel/core": "^7.0.0-beta.53",
     "@vue/cli-plugin-babel": "^3.0.0-rc.3",
     "@vue/cli-plugin-eslint": "^3.0.0-rc.3",
     "@vue/cli-plugin-unit-jest": "^3.0.0-rc.3",
