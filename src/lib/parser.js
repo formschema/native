@@ -17,7 +17,7 @@ export const TYPES = Object.freeze({
   URL: 'url'
 })
 
-export const NUMBER_TYPES = [TYPES.NUMBER, 'integer']
+export const NUMBER_TYPES = Object.freeze([TYPES.NUMBER, 'integer'])
 
 export function s4 () {
   return Math.floor((1 + Math.random()) * 0x10000)
