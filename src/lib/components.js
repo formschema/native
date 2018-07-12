@@ -1,24 +1,12 @@
-const TAGS = {
-  h1: ['title'],
-  p: ['description'],
-  div: [ 'formwrapper', 'defaultGroup' ],
-  form: ['form'],
-  input: [
-    'checkbox', 'color', 'date', 'datetime', 'datetime-local',
-    'email', 'file', 'hidden', 'image', 'month', 'number',
-    'password', 'radio', 'range', 'search', 'tel', 'text',
-    'time', 'url', 'week'
-  ],
-  option: ['option']
-}
+import { TYPES } from './parser'
 
-const BLOCK_INPUTS = ['textarea', 'select']
+const BLOCK_TYPES = [TYPES.TEXTAREA, TYPES.SELECT]
 
 const Input = {
   functional: true,
   render (h, { data, slots }) {
     const field = data.field
-    const element = BLOCK_INPUTS.includes(field.attrs.type)
+    const element = BLOCK_TYPES.includes(field.attrs.type)
       ? h(field.attrs.type, data, slots().default)
       : h('input', data)
     const nodes = [ element ]
@@ -27,7 +15,7 @@ const Input = {
       nodes.push(h('small', field.description))
     }
 
-    if (!field.label || (field.isArrayField && !BLOCK_INPUTS.includes(field.attrs.type))) {
+    if (!field.label || (field.isArrayField && !BLOCK_TYPES.includes(field.attrs.type))) {
       if (nodes.length === 1) {
         return nodes[0]
       }
@@ -145,37 +133,35 @@ const ErrorElement = {
   }
 }
 
+const TAGS = {
+  title: 'h1',
+  description: 'p',
+  formwrapper: 'div',
+  form: 'form',
+  text: Input,
+  option: 'option',
+  fieldset: Fieldset,
+  error: ErrorElement
+}
+
 export class Components {
   constructor () {
     this.$ = {}
 
-    for (let component in TAGS) {
-      TAGS[component].forEach((name) => this.set(name, component, true))
+    for (let type in TAGS) {
+      this.set(type, TAGS[type], true)
     }
-
-    this.set('fieldset', Fieldset, true)
-    this.set('textarea', Input, true)
-    this.set('select', Input, true)
-    this.set('radiogroup', Fieldset, true)
-    this.set('checkboxgroup', Fieldset, true)
-    this.set('error', ErrorElement, true)
   }
 
   set (type, component, native = false) {
-    this.$[type] = {
-      type,
-      native,
-      component: component === 'input'
-        ? Input
-        : component
-    }
+    this.$[type] = { type, native, component }
   }
 
   input ({ field, fieldParent = null, listeners = {} }) {
     const { type } = field.attrs
     const element = field.hasOwnProperty('items') && groupedArrayTypes.includes(type)
-      ? this.$[`${type}group`] || this.$.defaultGroup
-      : this.$[type] || this.$.text
+      ? this.$.fieldset
+      : this.$[type] || this.$[TYPES.TEXT]
 
     const data = {
       field,
@@ -197,11 +183,11 @@ export function argName (el) {
 }
 
 export const groupedArrayTypes = [
-  'radio', 'checkbox', 'input', 'textarea'
+  TYPES.RADIO, TYPES.CHECKBOX, 'input', TYPES.TEXTAREA
 ]
 
 export const fieldTypesAsNotArray = [
-  'radio', 'textarea', 'select'
+  TYPES.RADIO, TYPES.TEXTAREA, TYPES.SELECT
 ]
 
 export const inputName = (field, index) => `${field.attrs.name}-${index}`

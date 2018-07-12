@@ -13,12 +13,8 @@ import {
 describe('lib/components', () => {
   describe('Components()', () => {
     const defaultComponents = [
-      'title', 'description', 'error',
-      'formwrapper', 'defaultGroup',
-      'radiogroup', 'checkboxgroup', 'form', 'checkbox', 'color',
-      'date', 'datetime', 'datetime-local', 'email', 'file', 'hidden', 'image',
-      'month', 'number', 'password', 'radio', 'range', 'search', 'tel', 'text',
-      'time', 'url', 'week', 'textarea', 'select', 'option'
+      'title', 'description', 'error', 'formwrapper',
+      'form', 'text', 'option'
     ]
 
     describe('default components', () => {

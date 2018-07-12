@@ -3,7 +3,21 @@ import { isScalar, assign } from './object'
 /* eslint-disable no-labels */
 
 const ARRAY_KEYWORDS = ['anyOf', 'oneOf', 'enum']
-export const NUMBER_TYPES = ['number', 'integer']
+
+export const TYPES = Object.freeze({
+  CHECKBOX: 'checkbox',
+  EMAIL: 'email',
+  HIDDEN: 'hidden',
+  NUMBER: 'number',
+  RADIO: 'radio',
+  SELECT: 'select',
+  SWITCH: 'switch',
+  TEXT: 'text',
+  TEXTAREA: 'textarea',
+  URL: 'url'
+})
+
+export const NUMBER_TYPES = [TYPES.NUMBER, 'integer']
 
 export function s4 () {
   return Math.floor((1 + Math.random()) * 0x10000)
@@ -123,7 +137,7 @@ export function parseDefaultObjectValue (schema, fields, value) {
             data[name] = []
           }
 
-          field.itemsNum = type === 'checkbox'
+          field.itemsNum = type === TYPES.CHECKBOX
             ? field.items.length
             : field.minItems
         } else {
@@ -206,7 +220,7 @@ export function parseBoolean (schema, name = null, model = null) {
   setCommonFields(schema, field, model)
 
   if (!field.attrs.type) {
-    field.attrs.type = 'checkbox'
+    field.attrs.type = TYPES.CHECKBOX
   }
 
   if (!field.attrs.hasOwnProperty('checked')) {
@@ -231,13 +245,13 @@ export function parseString (schema, name = null, model = null) {
     switch (schema.format) {
       case 'email':
         if (!field.attrs.type) {
-          field.attrs.type = 'email'
+          field.attrs.type = TYPES.EMAIL
         }
         break
 
       case 'uri':
         if (!field.attrs.type) {
-          field.attrs.type = 'url'
+          field.attrs.type = TYPES.URL
         }
         break
     }
@@ -247,10 +261,10 @@ export function parseString (schema, name = null, model = null) {
     switch (schema.type) {
       case 'number':
       case 'integer':
-        field.attrs.type = 'number'
+        field.attrs.type = TYPES.NUMBER
         break
       default:
-        field.attrs.type = 'text'
+        field.attrs.type = TYPES.TEXT
     }
   }
 
@@ -318,7 +332,7 @@ export function singleValue (field) {
   return item ? item.value : ''
 }
 
-const NOT_ARRAY = ['radio', 'checkbox', 'switch']
+const NOT_ARRAY = [TYPES.RADIO, TYPES.CHECKBOX, TYPES.SWITCH]
 
 export function parseArray (schema, name = null, model = null) {
   const field = {
@@ -341,7 +355,7 @@ export function parseArray (schema, name = null, model = null) {
       switch (keyword) {
         case 'enum':
           if (!field.attrs.type) {
-            field.attrs.type = 'select'
+            field.attrs.type = TYPES.SELECT
           }
 
           field.items = parseItems(schema[keyword])
@@ -354,7 +368,7 @@ export function parseArray (schema, name = null, model = null) {
           break loop
 
         case 'oneOf':
-          field.attrs.type = 'radio'
+          field.attrs.type = TYPES.RADIO
           field.attrs.value = field.attrs.value || ''
 
           field.items = parseItems(schema[keyword]).map(setItemName(name, true))
@@ -365,7 +379,7 @@ export function parseArray (schema, name = null, model = null) {
           break loop
 
         case 'anyOf':
-          field.attrs.type = 'checkbox'
+          field.attrs.type = TYPES.CHECKBOX
           field.attrs.value = field.attrs.value || []
 
           field.items = parseItems(schema[keyword]).map(setItemName(name))
@@ -383,8 +397,8 @@ export function parseArray (schema, name = null, model = null) {
     field.isArrayField = true
     field.attrs.type = schema.items && NUMBER_TYPES.includes(schema.items.type)
       ? schema.items.type
-      : 'text'
-  } else if (field.attrs.type === 'select') {
+      : TYPES.TEXT
+  } else if (field.attrs.type === TYPES.SELECT) {
     field.attrs.multiple = field.schemaType === 'array'
     field.attrs.value = field.attrs.value || field.attrs.multiple ? [] : ''
 
