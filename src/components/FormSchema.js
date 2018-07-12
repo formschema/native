@@ -3,7 +3,8 @@ import {
   parseDefaultScalarValue,
   parseEventValue,
   parseDefaultObjectValue,
-  loadFields
+  loadFields,
+  NUMBER_TYPES
 } from '../lib/parser'
 
 import * as LibObject from '../lib/object'
@@ -314,14 +315,16 @@ export default {
         const index = event.target.getAttribute('data-fs-index')
         const key = inputName(event.field, index)
 
-        this.inputValues[key] = event.data
+        this.inputValues[key] = NUMBER_TYPES.includes(event.field.attrs.type)
+          ? Number(event.data)
+          : event.data
 
         const values = []
 
         for (let i = 0; i < event.field.itemsNum; i++) {
           const currentValue = this.inputValues[inputName(event.field, i)]
 
-          if (currentValue) {
+          if (currentValue || currentValue === 0) {
             values.push(currentValue)
           }
         }

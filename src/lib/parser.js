@@ -3,6 +3,7 @@ import { isScalar, assign } from './object'
 /* eslint-disable no-labels */
 
 const ARRAY_KEYWORDS = ['anyOf', 'oneOf', 'enum']
+export const NUMBER_TYPES = ['number', 'integer']
 
 export function s4 () {
   return Math.floor((1 + Math.random()) * 0x10000)
@@ -185,7 +186,6 @@ export function loadFields (schema, fields, name = null, model = null) {
           }
 
           fields.push(parseArray(schema, name, model))
-
           return
         }
       }
@@ -381,7 +381,9 @@ export function parseArray (schema, name = null, model = null) {
 
   if (!field.attrs.type) {
     field.isArrayField = true
-    field.attrs.type = 'text'
+    field.attrs.type = schema.items && NUMBER_TYPES.includes(schema.items.type)
+      ? schema.items.type
+      : 'text'
   } else if (field.attrs.type === 'select') {
     field.attrs.multiple = field.schemaType === 'array'
     field.attrs.value = field.attrs.value || field.attrs.multiple ? [] : ''
