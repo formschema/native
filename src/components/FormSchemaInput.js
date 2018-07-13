@@ -1,9 +1,9 @@
-import { genId, TYPES } from '../lib/parser'
+import { genId, INPUT_TYPES } from '../lib/parser'
 import { assign } from '../lib/object'
 import { inputName } from '../lib/components'
 import FormSchemaInputArrayElement from './FormSchemaInputArrayElement'
 
-const unwrappingElements = [TYPES.CHECKBOX, TYPES.RADIO]
+const unwrappingElements = [INPUT_TYPES.CHECKBOX, INPUT_TYPES.RADIO]
 
 export const INPUT_ADDED_EVENT = 'array-button-clicked'
 
@@ -14,7 +14,7 @@ export default {
     const { value } = props
     const children = slots().default || []
 
-    if (field.isArrayField && field.attrs.type !== TYPES.SELECT) {
+    if (field.isArrayField && field.attrs.type !== INPUT_TYPES.SELECT) {
       const name = field.attrs.name
       const data = {
         input,

@@ -4,7 +4,16 @@ import { isScalar, assign } from './object'
 
 const ARRAY_KEYWORDS = ['anyOf', 'oneOf', 'enum']
 
-export const TYPES = Object.freeze({
+export const SCHEMA_TYPES = Object.freeze({
+  ARRAY: 'array',
+  BOOLEAN: 'boolean',
+  INTEGER: 'integer',
+  NUMBER: 'number',
+  OBJECT: 'object',
+  STRING: 'string'
+})
+
+export const INPUT_TYPES = Object.freeze({
   CHECKBOX: 'checkbox',
   EMAIL: 'email',
   HIDDEN: 'hidden',
@@ -17,7 +26,10 @@ export const TYPES = Object.freeze({
   URL: 'url'
 })
 
-export const NUMBER_TYPES = Object.freeze([TYPES.NUMBER, 'integer'])
+export const NUMBER_TYPES = Object.freeze([
+  SCHEMA_TYPES.INTEGER,
+  SCHEMA_TYPES.NUMBER
+])
 
 export function s4 () {
   return Math.floor((1 + Math.random()) * 0x10000)
@@ -59,7 +71,7 @@ export function parseDefaultScalarValue (schema, fields, value) {
   }
 
   if (fields.length) {
-    if (fields[0].schemaType === 'boolean') {
+    if (fields[0].schemaType === SCHEMA_TYPES.BOOLEAN) {
       return fields[0].attrs.checked === true
     }
 
@@ -73,28 +85,23 @@ export function parseDefaultScalarValue (schema, fields, value) {
 
 export function parseEventValue ({ target, field, data }) {
   switch (field.schemaType) {
-    case 'boolean':
+    case SCHEMA_TYPES.BOOLEAN:
       return target.checked === true
 
-    case 'string':
+    case SCHEMA_TYPES.STRING:
       return data || ''
 
-    case 'integer':
+    case SCHEMA_TYPES.NUMBER:
+    case SCHEMA_TYPES.INTEGER:
       if (data !== undefined) {
-        return parseInt(data)
+        return Number(data)
       }
       break
 
-    case 'number':
-      if (data !== undefined) {
-        return parseFloat(data)
-      }
-      break
-
-    case 'array':
+    case SCHEMA_TYPES.ARRAY:
       return data || []
 
-    case 'object':
+    case SCHEMA_TYPES.OBJECT:
       return data || {}
   }
 
@@ -102,7 +109,7 @@ export function parseEventValue ({ target, field, data }) {
 }
 
 export function parseDefaultObjectValue (schema, fields, value) {
-  const data = schema.type === 'object' ? {} : []
+  const data = schema.type === SCHEMA_TYPES.OBJECT ? {} : []
 
   if (value) {
     assign(data, value)
@@ -110,7 +117,7 @@ export function parseDefaultObjectValue (schema, fields, value) {
 
   fields.forEach((field) => {
     const { type, name } = field.attrs
-    const itemValue = field.schemaType === 'boolean'
+    const itemValue = field.schemaType === SCHEMA_TYPES.BOOLEAN
       ? typeof data[name] === 'boolean'
         ? data[name]
         : field.attrs.checked === true
@@ -122,7 +129,7 @@ export function parseDefaultObjectValue (schema, fields, value) {
     const eventInput = { field, data: itemValue, target }
 
     switch (field.schemaType) {
-      case 'boolean':
+      case SCHEMA_TYPES.BOOLEAN:
         target.checked = itemValue
         data[name] = parseEventValue(eventInput)
         break
@@ -137,7 +144,7 @@ export function parseDefaultObjectValue (schema, fields, value) {
             data[name] = []
           }
 
-          field.itemsNum = type === TYPES.CHECKBOX
+          field.itemsNum = type === INPUT_TYPES.CHECKBOX
             ? field.items.length
             : field.minItems
         } else {
@@ -152,7 +159,7 @@ export function parseDefaultObjectValue (schema, fields, value) {
 
 export function loadFields (schema, fields, name = null, model = null) {
   switch (schema.type) {
-    case 'object':
+    case SCHEMA_TYPES.OBJECT:
       if (schema.required instanceof Array) {
         schema.required.forEach((field) => {
           schema.properties[field].required = true
@@ -181,17 +188,17 @@ export function loadFields (schema, fields, name = null, model = null) {
       })
       break
 
-    case 'boolean':
+    case SCHEMA_TYPES.BOOLEAN:
       fields.push(parseBoolean(schema, name, model))
       break
 
-    case 'array':
+    case SCHEMA_TYPES.ARRAY:
       fields.push(parseArray(schema, name, model))
       break
 
-    case 'integer':
-    case 'number':
-    case 'string':
+    case SCHEMA_TYPES.INTEGER:
+    case SCHEMA_TYPES.NUMBER:
+    case SCHEMA_TYPES.STRING:
       for (let keyword of ARRAY_KEYWORDS) {
         if (schema.hasOwnProperty(keyword)) {
           schema.items = {
@@ -220,7 +227,7 @@ export function parseBoolean (schema, name = null, model = null) {
   setCommonFields(schema, field, model)
 
   if (!field.attrs.type) {
-    field.attrs.type = TYPES.CHECKBOX
+    field.attrs.type = INPUT_TYPES.CHECKBOX
   }
 
   if (!field.attrs.hasOwnProperty('checked')) {
@@ -245,27 +252,22 @@ export function parseString (schema, name = null, model = null) {
     switch (schema.format) {
       case 'email':
         if (!field.attrs.type) {
-          field.attrs.type = TYPES.EMAIL
+          field.attrs.type = INPUT_TYPES.EMAIL
         }
         break
 
       case 'uri':
         if (!field.attrs.type) {
-          field.attrs.type = TYPES.URL
+          field.attrs.type = INPUT_TYPES.URL
         }
         break
     }
   }
 
   if (!field.attrs.type) {
-    switch (schema.type) {
-      case 'number':
-      case 'integer':
-        field.attrs.type = TYPES.NUMBER
-        break
-      default:
-        field.attrs.type = TYPES.TEXT
-    }
+    field.attrs.type = NUMBER_TYPES.includes(schema.type)
+      ? INPUT_TYPES.NUMBER
+      : INPUT_TYPES.TEXT
   }
 
   if (name) {
@@ -332,7 +334,7 @@ export function singleValue (field) {
   return item ? item.value : ''
 }
 
-const NOT_ARRAY = [TYPES.RADIO, TYPES.CHECKBOX, TYPES.SWITCH]
+const NOT_ARRAY = [INPUT_TYPES.RADIO, INPUT_TYPES.CHECKBOX, INPUT_TYPES.SWITCH]
 
 export function parseArray (schema, name = null, model = null) {
   const field = {
@@ -355,7 +357,7 @@ export function parseArray (schema, name = null, model = null) {
       switch (keyword) {
         case 'enum':
           if (!field.attrs.type) {
-            field.attrs.type = TYPES.SELECT
+            field.attrs.type = INPUT_TYPES.SELECT
           }
 
           field.items = parseItems(schema[keyword])
@@ -368,7 +370,7 @@ export function parseArray (schema, name = null, model = null) {
           break loop
 
         case 'oneOf':
-          field.attrs.type = TYPES.RADIO
+          field.attrs.type = INPUT_TYPES.RADIO
           field.attrs.value = field.attrs.value || ''
 
           field.items = parseItems(schema[keyword]).map(setItemName(name, true))
@@ -379,7 +381,7 @@ export function parseArray (schema, name = null, model = null) {
           break loop
 
         case 'anyOf':
-          field.attrs.type = TYPES.CHECKBOX
+          field.attrs.type = INPUT_TYPES.CHECKBOX
           field.attrs.value = field.attrs.value || []
 
           field.items = parseItems(schema[keyword]).map(setItemName(name))
@@ -397,9 +399,9 @@ export function parseArray (schema, name = null, model = null) {
     field.isArrayField = true
     field.attrs.type = schema.items && NUMBER_TYPES.includes(schema.items.type)
       ? schema.items.type
-      : TYPES.TEXT
-  } else if (field.attrs.type === TYPES.SELECT) {
-    field.attrs.multiple = field.schemaType === 'array'
+      : INPUT_TYPES.TEXT
+  } else if (field.attrs.type === INPUT_TYPES.SELECT) {
+    field.attrs.multiple = field.schemaType === SCHEMA_TYPES.ARRAY
     field.attrs.value = field.attrs.value || field.attrs.multiple ? [] : ''
 
     if (field.attrs.value === void (0) || field.attrs.value.length === 0) {

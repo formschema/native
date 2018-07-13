@@ -1,6 +1,6 @@
-import { TYPES } from './parser'
+import { INPUT_TYPES } from './parser'
 
-const BLOCK_TYPES = [TYPES.TEXTAREA, TYPES.SELECT]
+const BLOCK_TYPES = [INPUT_TYPES.TEXTAREA, INPUT_TYPES.SELECT]
 
 const Input = {
   functional: true,
@@ -161,7 +161,7 @@ export class Components {
     const { type } = field.attrs
     const element = field.hasOwnProperty('items') && groupedArrayTypes.includes(type)
       ? this.$.fieldset
-      : this.$[type] || this.$[TYPES.TEXT]
+      : this.$[type] || this.$[INPUT_TYPES.TEXT]
 
     const data = {
       field,
@@ -183,11 +183,11 @@ export function argName (el) {
 }
 
 export const groupedArrayTypes = [
-  TYPES.RADIO, TYPES.CHECKBOX, 'input', TYPES.TEXTAREA
+  INPUT_TYPES.RADIO, INPUT_TYPES.CHECKBOX, 'input', INPUT_TYPES.TEXTAREA
 ]
 
 export const fieldTypesAsNotArray = [
-  TYPES.RADIO, TYPES.TEXTAREA, TYPES.SELECT
+  INPUT_TYPES.RADIO, INPUT_TYPES.TEXTAREA, INPUT_TYPES.SELECT
 ]
 
 export const inputName = (field, index) => `${field.attrs.name}-${index}`

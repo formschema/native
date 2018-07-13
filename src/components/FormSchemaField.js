@@ -1,4 +1,4 @@
-import { TYPES } from '../lib/parser'
+import { SCHEMA_TYPES, INPUT_TYPES } from '../lib/parser'
 
 import FormSchemaInput from './FormSchemaInput'
 import FormSchemaFieldCheckboxItem from './FormSchemaFieldCheckboxItem'
@@ -14,7 +14,7 @@ export default {
     const children = []
 
     switch (field.attrs.type) {
-      case TYPES.TEXTAREA:
+      case INPUT_TYPES.TEXTAREA:
         if (input.element.native) {
           delete input.data.attrs.type
           delete input.data.attrs.value
@@ -23,8 +23,8 @@ export default {
         }
         break
 
-      case TYPES.RADIO:
-      case TYPES.SWITCH:
+      case INPUT_TYPES.RADIO:
+      case INPUT_TYPES.SWITCH:
         if (field.hasOwnProperty('items')) {
           field.items.forEach((item) => {
             children.push(createElement(FormSchemaFieldCheckboxItem, {
@@ -38,7 +38,7 @@ export default {
         }
         break
 
-      case TYPES.CHECKBOX:
+      case INPUT_TYPES.CHECKBOX:
         if (field.hasOwnProperty('items')) {
           field.items.forEach((item) => {
             children.push(createElement(FormSchemaFieldCheckboxItem, {
@@ -49,7 +49,7 @@ export default {
               on: listeners
             }))
           })
-        } else if (field.schemaType === 'boolean') {
+        } else if (field.schemaType === SCHEMA_TYPES.BOOLEAN) {
           const item = { label: field.label, id: field.attrs.id }
           const checked = value === true
 
@@ -62,7 +62,7 @@ export default {
         }
         break
 
-      case TYPES.SELECT:
+      case INPUT_TYPES.SELECT:
         const items = [ ...field.items ]
 
         if (field.attrs.required) {
