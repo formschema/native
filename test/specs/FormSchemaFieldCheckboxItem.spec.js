@@ -122,7 +122,7 @@ describe('FormSchemaFieldCheckboxItem', () => {
 
     field = fields[0]
 
-    const value = field.attrs.value
+    const value = item.value
     const props = { item, value }
     const wrapper = mount(component, {
       context: {

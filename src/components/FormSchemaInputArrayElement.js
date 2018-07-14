@@ -2,7 +2,7 @@ import { assign } from '../lib/object'
 
 export default {
   functional: true,
-  render (createElement, { data, props, slots, listeners }) {
+  render (createElement, { data, props, slots }) {
     const { input, field, components } = data
     const { value, name = field.attrs.name } = props
     const inputData = assign({}, input.data)

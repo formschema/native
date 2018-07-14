@@ -9,7 +9,7 @@ import {
 
 import * as LibObject from '../lib/object'
 
-import { Components as Instance, argName, inputName } from '../lib/components'
+import { Components as Instance, inputName } from '../lib/components'
 import { INPUT_ADDED_EVENT } from './FormSchemaInput'
 
 import FormSchemaField from './FormSchemaField'
@@ -186,13 +186,12 @@ export default {
     })
 
     if (this.$slots.default) {
-      formInputNodes.push(createElement(
-        components.$.buttonswrapper.component, this.$slots.default))
+      this.$slots.default.forEach((node) => formInputNodes.push(node))
     }
 
     nodes.push(createElement(components.$.form.component, {
       ref: this.ref,
-      [argName(components.$.form)]: {
+      attrs: {
         action: this.action,
         enctype: this.enctype,
         method: this.method,

@@ -15,10 +15,11 @@ export default {
             : option.value === value
       }
     }
-    const inputData = components.input({ field }).data
 
-    inputData.components = components
-
-    return createElement(components.$.option.component, inputData, option.label)
+    return createElement(
+      components.$.option.component,
+      components.input({ field }).data,
+      option.label
+    )
   }
 }

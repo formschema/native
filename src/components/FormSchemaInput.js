@@ -1,9 +1,9 @@
-import { genId } from '../lib/parser'
+import { genId, INPUT_TYPES } from '../lib/parser'
 import { assign } from '../lib/object'
-import { inputName, argName } from '../lib/components'
+import { inputName } from '../lib/components'
 import FormSchemaInputArrayElement from './FormSchemaInputArrayElement'
 
-const unwrappingElements = ['checkbox', 'radio']
+const unwrappingElements = [INPUT_TYPES.CHECKBOX, INPUT_TYPES.RADIO]
 
 export const INPUT_ADDED_EVENT = 'array-button-clicked'
 
@@ -14,22 +14,21 @@ export default {
     const { value } = props
     const children = slots().default || []
 
-    if (field.isArrayField && field.attrs.type !== 'select') {
+    if (field.isArrayField && field.attrs.type !== INPUT_TYPES.SELECT) {
       const name = field.attrs.name
       const data = {
         input,
         field,
         components,
+        attrs: {},
         props: { name, value },
         on: listeners
       }
 
       if (unwrappingElements.includes(field.attrs.type)) {
-        assign(data.props, input.data.field.attrs)
+        assign(data.attrs, input.data.field.attrs)
 
-        return createElement(components.$.inputwrapper.component, data, [
-          createElement(FormSchemaInputArrayElement, data, children)
-        ])
+        return createElement(FormSchemaInputArrayElement, data, children)
       }
 
       const id = input.data.attrs.id || genId(name)
@@ -46,31 +45,29 @@ export default {
         return createElement(FormSchemaInputArrayElement, data, children)
       })
 
-      return createElement(components.$.inputwrapper.component, { field }, [
-        createElement(components.$.arrayInputs.component, { field }, inputs),
-        createElement(components.$.arraybutton.component, {
-          [argName(components.$.arraybutton)]: {
-            disabled: field.maxItems <= field.itemsNum
-          },
-          on: {
-            click (e) {
-              if (field.itemsNum < field.maxItems) {
-                field.itemsNum++
+      const newItemButton = {
+        props: {
+          disabled: field.maxItems <= field.itemsNum
+        },
+        on: {
+          click (e) {
+            if (field.itemsNum < field.maxItems) {
+              field.itemsNum++
 
-                if (INPUT_ADDED_EVENT in listeners) {
-                  listeners[INPUT_ADDED_EVENT](e)
-                }
+              if (INPUT_ADDED_EVENT in listeners) {
+                listeners[INPUT_ADDED_EVENT](e)
               }
             }
           }
-        })
-      ])
+        }
+      }
+
+      return createElement(components.$.fieldset.component, {
+        field,
+        newItemButton
+      }, inputs)
     }
 
-    const nodes = [
-      createElement(input.element.component, input.data, children)
-    ]
-
-    return createElement(components.$.inputwrapper.component, { field }, nodes)
+    return createElement(input.element.component, input.data, children)
   }
 }

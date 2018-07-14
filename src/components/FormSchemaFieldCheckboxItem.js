@@ -1,3 +1,4 @@
+import { SCHEMA_TYPES } from '../lib/parser'
 import FormSchemaInput from './FormSchemaInput'
 
 export default {
@@ -11,7 +12,7 @@ export default {
       id: item.id,
       name: item.name || field.attrs.name,
       type: field.attrs.type,
-      value: field.schemaType === 'boolean' ? undefined : item.value,
+      value: field.schemaType === SCHEMA_TYPES.BOOLEAN ? undefined : item.value,
       checked: typeof checked === 'undefined'
         ? value instanceof Array
           ? value.includes(item.value)
@@ -29,7 +30,7 @@ export default {
       input,
       components,
       on: input.data.listeners,
-      props: { value },
+      props: { value: attrs.value },
       field: { ...field, label, description, attrs }
     })
   }

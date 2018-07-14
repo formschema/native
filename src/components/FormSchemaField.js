@@ -1,3 +1,5 @@
+import { SCHEMA_TYPES, INPUT_TYPES } from '../lib/parser'
+
 import FormSchemaInput from './FormSchemaInput'
 import FormSchemaFieldCheckboxItem from './FormSchemaFieldCheckboxItem'
 import FormSchemaFieldSelectOption from './FormSchemaFieldSelectOption'
@@ -12,17 +14,15 @@ export default {
     const children = []
 
     switch (field.attrs.type) {
-      case 'textarea':
-        if (input.element.native) {
-          delete input.data.attrs.type
-          delete input.data.attrs.value
+      case INPUT_TYPES.TEXTAREA:
+        delete input.data.attrs.type
+        delete input.data.attrs.value
 
-          input.data.domProps.innerHTML = value
-        }
+        input.data.domProps.innerHTML = value
         break
 
-      case 'radio':
-      case 'switch':
+      case INPUT_TYPES.RADIO:
+      case INPUT_TYPES.SWITCH:
         if (field.hasOwnProperty('items')) {
           field.items.forEach((item) => {
             children.push(createElement(FormSchemaFieldCheckboxItem, {
@@ -36,7 +36,7 @@ export default {
         }
         break
 
-      case 'checkbox':
+      case INPUT_TYPES.CHECKBOX:
         if (field.hasOwnProperty('items')) {
           field.items.forEach((item) => {
             children.push(createElement(FormSchemaFieldCheckboxItem, {
@@ -47,7 +47,7 @@ export default {
               on: listeners
             }))
           })
-        } else if (field.schemaType === 'boolean') {
+        } else if (field.schemaType === SCHEMA_TYPES.BOOLEAN) {
           const item = { label: field.label, id: field.attrs.id }
           const checked = value === true
 
@@ -60,17 +60,15 @@ export default {
         }
         break
 
-      case 'select':
+      case INPUT_TYPES.SELECT:
         const items = [ ...field.items ]
 
         if (field.attrs.required) {
           items.unshift({ label: null, value: '' })
         }
 
-        if (input.element.native) {
-          delete input.data.attrs.type
-          delete input.data.attrs.value
-        }
+        delete input.data.attrs.type
+        delete input.data.attrs.value
 
         items.forEach((option) => {
           children.push(createElement(FormSchemaFieldSelectOption, {
