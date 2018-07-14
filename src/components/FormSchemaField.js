@@ -15,12 +15,10 @@ export default {
 
     switch (field.attrs.type) {
       case INPUT_TYPES.TEXTAREA:
-        if (input.element.native) {
-          delete input.data.attrs.type
-          delete input.data.attrs.value
+        delete input.data.attrs.type
+        delete input.data.attrs.value
 
-          input.data.domProps.innerHTML = value
-        }
+        input.data.domProps.innerHTML = value
         break
 
       case INPUT_TYPES.RADIO:
@@ -69,10 +67,8 @@ export default {
           items.unshift({ label: null, value: '' })
         }
 
-        if (input.element.native) {
-          delete input.data.attrs.type
-          delete input.data.attrs.value
-        }
+        delete input.data.attrs.type
+        delete input.data.attrs.value
 
         items.forEach((option) => {
           children.push(createElement(FormSchemaFieldSelectOption, {

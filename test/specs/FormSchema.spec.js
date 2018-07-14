@@ -513,9 +513,9 @@ describe('FormSchema', () => {
 
         components.set('checkbox', {
           functional: true,
-          render (h, { props, listeners }) {
+          render (h, { data, props, listeners }) {
             return h('span', {
-              attrs: props,
+              attrs: data.attrs,
               on: listeners
             })
           }

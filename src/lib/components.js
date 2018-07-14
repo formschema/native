@@ -149,12 +149,12 @@ export class Components {
     this.$ = {}
 
     for (let type in TAGS) {
-      this.set(type, TAGS[type], true)
+      this.set(type, TAGS[type])
     }
   }
 
-  set (type, component, native = false) {
-    this.$[type] = { type, native, component }
+  set (type, component) {
+    this.$[type] = { type, component }
   }
 
   input ({ field, fieldParent = null, listeners = {} }) {
@@ -167,19 +167,18 @@ export class Components {
       field,
       fieldParent,
       components: this.components,
-      attrs: {},
-      props: {},
+      attrs: { ...field.attrs },
+      props: {
+        type: field.attrs.type,
+        label: field.label,
+        value: field.attrs.value
+      },
       domProps: {},
-      [argName(element)]: { ...field.attrs },
       on: listeners
     }
 
     return { element, data }
   }
-}
-
-export function argName (el) {
-  return el.native ? 'attrs' : 'props'
 }
 
 export const groupedArrayTypes = [

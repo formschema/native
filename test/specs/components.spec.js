@@ -2,7 +2,6 @@
 
 import {
   Components,
-  argName,
   groupedArrayTypes,
   fieldTypesAsNotArray,
   inputName
@@ -26,10 +25,6 @@ describe('lib/components', () => {
             expect(instance.$[type].type).toEqual(type)
           })
 
-          it(`should have native === true`, () => {
-            expect(instance.$[type].native).toBeTruthy()
-          })
-
           it(`should have a component entry defined`, () => {
             expect(instance.$[type].hasOwnProperty('component')).toBeTruthy()
           })
@@ -50,17 +45,7 @@ describe('lib/components', () => {
     describe('input({ vm, field, ref })', () => {
     })
 
-    describe('set(type, component, option = null, native = false)', () => {
-    })
-  })
-
-  describe('argName(el)', () => {
-    it('should return "attrs" for native element', () => {
-      expect(argName({ native: true })).toEqual('attrs')
-    })
-
-    it('should return "props" for custom element', () => {
-      expect(argName({ native: false })).toEqual('props')
+    describe('set(type, component)', () => {
     })
   })
 
