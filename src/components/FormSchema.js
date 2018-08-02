@@ -198,6 +198,9 @@ export default {
         autocomplete: this.autocomplete,
         novalidate: this.novalidate
       },
+      props: {
+        value: this.data
+      },
       on: {
         reset: this.reset,
         submit: this.submit,

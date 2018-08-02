@@ -44,6 +44,31 @@ const CheckboxGroup = {
   }
 }
 
+const Select = {
+  functional: true,
+  render (h, { data, slots }) {
+    const nodes = []
+    const field = data.field
+    const children = [ ...slots().default ]
+
+    if (field.attrs.required) {
+      children.unshift(h('option', {
+        attrs: {
+          value: ''
+        }
+      }, field.attrs.placeholder))
+    }
+
+    nodes.push(h('select', data, children))
+
+    if (field.description) {
+      nodes.push(h('small', field.description))
+    }
+
+    return h(Label, data, nodes)
+  }
+}
+
 const ArrayInputs = {
   functional: true,
   render (h, { slots }) {
@@ -139,6 +164,7 @@ const TAGS = {
   formwrapper: 'div',
   form: 'form',
   text: Input,
+  select: Select,
   option: 'option',
   fieldset: Fieldset,
   error: ErrorElement
