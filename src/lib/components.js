@@ -51,7 +51,7 @@ const Select = {
     const field = data.field
     const children = [ ...slots().default ]
 
-    if (field.attrs.required) {
+    if (field.attrs.required || field.attrs.placeholder) {
       children.unshift(h('option', {
         attrs: {
           value: ''
