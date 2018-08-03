@@ -6,7 +6,7 @@
   "browser": "dist/FormSchema.umd.min.js",
   "scripts": {
     "demo": "cd demo && npm run serve",
-    "test": "vue-cli-service test:unit --colors --testMatch '<rootDir>/test/specs/*.spec.js'",
+    "test": "vue-cli-service test:unit --colors --testMatch '<rootDir>/test/specs/*.spec.js' --testURL='http://localhost'",
     "lint": "vue-cli-service lint --no-fix",
     "readme": "vuedoc.md --join src/components/*.js --ignore-name --ignore-data --section 'FormSchema API' --output README.md",
     "build": "rollup -c"
