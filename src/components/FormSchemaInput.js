@@ -64,7 +64,8 @@ export default {
 
       return createElement(components.$.fieldset.component, {
         field,
-        newItemButton
+        newItemButton,
+        on: listeners
       }, inputs)
     }
 
