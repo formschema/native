@@ -35,7 +35,9 @@ export default {
     schema: { type: Object, default: () => ({}) },
 
     /**
-     * Use this directive to create two-way data bindings with the component. It automatically picks the correct way to update the element based on the input type.
+     * Use this directive to create two-way data bindings with the
+     * component. It automatically picks the correct way to update the
+     * element based on the input type.
      *
      * @model
      * @default undefined
@@ -51,36 +53,52 @@ export default {
     action: { type: String },
 
     /**
-     * This property indicates whether the value of the control can be automatically completed by the browser. Possible values are: `off` and `on`.
+     * This property indicates whether the value of the control can be
+     * automatically completed by the browser.
+     *
+     * Possible values are: `off` and `on`.
      */
     autocomplete: { type: String },
 
     /**
-     * When the value of the method attribute is post, enctype is the MIME type of content that is used to submit the form to the server. Possible values are:
-     *<br/>
-     * - application/x-www-form-urlencoded: The default value if the attribute is not specified.<br/>
-     * - multipart/form-data: The value used for an `<input/>` element with the type attribute set to "file".<br/>
-     * - text/plain (HTML5)
+     * When the value of the method attribute is post, enctype is the
+     * MIME type of content that is used to submit the form to the
+     * server.
+     *
+     * Possible values are:
+     * - `application/x-www-form-urlencoded`: The default value if the
+     *   attribute is not specified.
+     * - `multipart/form-data`: The value used for an `<input/>` element
+     *   with the type attribute set to "file".
+     * - `text/plain` (HTML5).
      */
     enctype: { type: String, default: 'application/x-www-form-urlencoded' },
 
     /**
-     * The HTTP method that the browser uses to submit the form. Possible values are:
-     * <br/>
-     * - post: Corresponds to the HTTP POST method ; form data are included in the body of the form and sent to the server.<br/>
-     * - get: Corresponds to the HTTP GET method; form data are appended to the action attribute URI with a '?' as separator, and the resulting URI is sent to the server. Use this method when the form has no side-effects and contains only ASCII characters.
+     * The HTTP method that the browser uses to submit the form.
+     *
+     * Possible values are:
+     * - `post`: Corresponds to the HTTP POST method ; form data are
+     *   included in the body of the form and sent to the server.
+     * - `get`: Corresponds to the HTTP GET method; form data are
+     *   appended to the action attribute URI with a '?' as separator,
+     *   and the resulting URI is sent to the server. Use this method
+     *   when the form has no side-effects and contains only ASCII
+     *   characters.
      */
     method: { type: String, default: 'post' },
 
     /**
-     * This Boolean attribute indicates that the form is not to be validated when submitted.
+     * This Boolean attribute indicates that the form is not to be
+     * validated when submitted.
      */
     novalidate: { type: Boolean },
 
     /**
-     * Use this prop to overwrite the default Native HTML Elements for custom components.
+     * Use this prop to overwrite the default Native HTML Elements for
+     * custom components.
      *
-     * @default new Components()
+     * @default GLOBAL.components
      */
     components: {
       type: Components,
@@ -176,7 +194,8 @@ export default {
 
             if (!equals(this.data, this.default)) {
               /**
-               * Fired when a change to the element's value is committed by the user.
+               * Fired when a change to the element's value is committed
+               * by the user.
                */
               this.$emit('change', this.data)
             }
@@ -343,7 +362,10 @@ export default {
     },
 
     /**
-     * Returns true if the element's child controls satisfy their validation constraints. When false is returned, cancelable invalid events are fired for each invalid child and validation problems are reported to the user.
+     * Returns true if the element's child controls satisfy their
+     * validation constraints. When false is returned, cancelable invalid
+     * events are fired for each invalid child and validation problems
+     * are reported to the user.
      */
     reportValidity () {
       const controls = this.form().elements
@@ -359,7 +381,11 @@ export default {
     },
 
     /**
-     * Checks whether the form has any constraints and whether it satisfies them. If the form fails its constraints, the browser fires a cancelable `invalid` event at the element, and then returns false.
+     * Checks whether the form has any constraints and whether it
+     * satisfies them. If the form fails its constraints, the browser
+     * fires a cancelable `invalid` event at the element, and then
+     * returns false.
+     *
      * @aliasof reportValidity
      */
     checkValidity () {
@@ -371,7 +397,10 @@ export default {
      */
     invalid (e) {
       /**
-       * Fired when a submittable element has been checked and doesn't satisfy its constraints. The validity of submittable elements is checked before submitting their owner form, or after the `checkValidity()` of the element or its owner form is called.
+       * Fired when a submittable element has been checked and doesn't
+       * satisfy its constraints. The validity of submittable elements is
+       * checked before submitting their owner form, or after the
+       * `checkValidity()` of the element or its owner form is called.
        */
       this.$emit('invalid', e)
     },
