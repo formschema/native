@@ -1,51 +1,42 @@
 image: node:latest
 
-cache:
-  key: ${CI_COMMIT_REF_SLUG}
-  paths:
-    - node_modules/
-    - dist/
-
 stages:
-  - setup
   - test
+  - dependencies
   - build
   - publish
-
-npm ci:
-  stage: setup
-  script:
-    - npm ci
 
 code quality:
   stage: test
   script:
+    - npm ci
     - npm run lint
-
-npm outdated:
-  stage: test
-  script:
-    - npm outdated
-  allow_failure: true
-
-security scan:
-  stage: test
-  script:
-    - npm audit --only=prod
-  allow_failure: true
 
 test & coverage:
   stage: test
   script:
-    - npm test
+    - npm it
   coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
   artifacts:
     paths:
       - coverage/
 
+npm outdated:
+  stage: dependencies
+  script:
+    - npm outdated
+  allow_failure: true
+
+security scan:
+  stage: dependencies
+  script:
+    - npm audit --only=prod
+  allow_failure: true
+
 rollup build:
   stage: build
   script:
+    - npm ci
     - npm run build
   artifacts:
     paths:
@@ -61,6 +52,7 @@ coverage report:
   artifacts:
     paths:
       - public
+    expire_in: 3 months
   only:
     - master
   environment:
