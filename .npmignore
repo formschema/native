@@ -19,3 +19,4 @@ dist/demo.html
 demo
 *.sh
 *.yml
+.gitlab
