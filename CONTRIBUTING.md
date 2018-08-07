@@ -39,7 +39,7 @@ If chat is more your speed, you can join the FormSchema Gitter team:
     * Even though Gitter is a chat service, sometimes it takes several hours for community members to respond &mdash; please be patient!
     * Use the [`general`](https://gitter.im/formschemaorg/general) room for general questions or discussion about FormSchema
     * Use the [`native`](https://gitter.im/formschemaorg/native) room for questions about `@formschema/native`
-    * Use the [`elementui`](https://gitter.im/formschemaorg/elementui) room for questions about `@formschema/elementui`
+    * Use the [`elementui`](https://gitter.im/formschemaorg/elementui) room for questions about `@formschema/components/elementui`
     * There are many other rooms available, check the room list
 
 ## What should I know before I get started?
@@ -50,13 +50,13 @@ When you initially consider contributing to FormSchema, you might be unsure abou
 
 Here's a list of the big ones:
 
-* [formschema/core](https://gitlab.com/formschema/core) - FormSchema Core
+* [formschema/components/core](https://gitlab.com/formschema/components/core) - FormSchema Core
 * [formschema/native](https://gitlab.com/formschema/native) - A native HTML wrapping of FormSchema Core
-* [formschema/elementui](https://gitlab.com/formschema/components/elementui) - A ElementUI wrapping of FormSchema Core
-* [formschema/material](https://gitlab.com/formschema/components/material) - A VueMaterial wrapping of FormSchema Core
-* [formschema/bulma](https://gitlab.com/formschema/components/bulma) - A Bulma wrapping of FormSchema Core
-* [formschema/buefy](https://gitlab.com/formschema/components/buefy) - A Buefy wrapping of FormSchema Core
-* [website](https://gitlab.com/formschema/website) - the repository for feedback on the [FormSchema website](https://formschema.js.org) and the FormSchema API.
+* [formschema/components/elementui](https://gitlab.com/formschema/components/components/elementui) - A ElementUI wrapping of FormSchema Core
+* [formschema/components/material](https://gitlab.com/formschema/components/components/material) - A VueMaterial wrapping of FormSchema Core
+* [formschema/components/bulma](https://gitlab.com/formschema/components/components/bulma) - A Bulma wrapping of FormSchema Core
+* [formschema/components/buefy](https://gitlab.com/formschema/components/components/buefy) - A Buefy wrapping of FormSchema Core
+* [website](https://gitlab.com/formschema/components/website) - the repository for feedback on the [FormSchema website](https://formschema.js.org) and the FormSchema API.
 
 ## How Can I Contribute?
 
@@ -102,7 +102,7 @@ Before creating enhancement suggestions, please check [this list](#before-submit
 
 #### Before Submitting An Enhancement Suggestion
 
-* **Check if you're using [the latest version of FormSchema](https://flight-manual.formschema.io/hacking-formschema/sections/debugging/#update-to-the-latest-version)** and if you can get the desired behavior.
+* **Check if you're using [the latest version of FormSchema](https://flight-manual.formschema.io/hacking-formschema/components/sections/debugging/#update-to-the-latest-version)** and if you can get the desired behavior.
 * **Determine [which repository the enhancement should be suggested in](#formschema-and-packages).**
 * **Perform a [cursory search](https://gitlab.com/search?scope=issues&search=formschema)** to see if the enhancement has already been suggested. If it has, add a comment to the existing issue instead of opening a new one.
 
@@ -134,7 +134,7 @@ FormSchema can be developed locally. For that, just fork the project and add you
 * Fill in [the required template](PULL_REQUEST_TEMPLATE.md)
 * Do not include issue numbers in the PR title
 * Follow the [JavaScript](#javascript-styleguide) styleguide.
-* Include thoughtfully-worded, well-structured [Jasmine](https://jasmine.github.io/) specs in the `./spec` folder. Run them using `npm test`. See the [Specs Styleguide](#specs-styleguide) below.
+* Include thoughtfully-worded, well-structured [Jasmine](https://jasmine.github.io/) specs in the `./test/specs` folder. Run them using `npm test`. See the [Specs Styleguide](#specs-styleguide) below.
 * Document new code based on the [Documentation Styleguide](#documentation-styleguide)
 * End all files with a newline
 
@@ -169,11 +169,13 @@ export default ClassName
 ```
 
 ### Specs Styleguide
-- Include thoughtfully-worded, well-structured [Jasmine](https://jasmine.github.io/) specs in the `./spec` folder.
+
+- Include thoughtfully-worded, well-structured [Jasmine](https://jasmine.github.io/) specs in the `./test/specs` folder.
 - Treat `describe` as a noun or situation.
 - Treat `it` as a statement about state or how an operation changes state.
 
 #### Example
+
 ```js
 describe('a dog', () => {
   it('barks', () => {
@@ -189,6 +191,7 @@ describe('a dog', () => {
 ```
 
 ### Documentation Styleguide
+
 * Use [JavaScript Standard Style](https://standardjs.com).
 * Use [Markdown for samples](https://about.gitlab.com/handbook/product/technical-writing/markdown-guide).
 
