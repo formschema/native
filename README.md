@@ -3,7 +3,13 @@
 Vue component form based on JSON Schema and Native HTML
 
 [![npm](https://img.shields.io/npm/v/@formschema/native.svg)](https://www.npmjs.com/package/@formschema/native) [![Build status](https://gitlab.com/formschema/native/badges/master/build.svg)](https://gitlab.com/formschema/native/pipelines) [![Test coverage](https://gitlab.com/formschema/native/badges/master/coverage.svg)](https://gitlab.com/formschema/native/-/jobs)
->>>>>>> dev
+
+> This is the branch for @formschema/native 2.0 Alpha, not ready for production.
+  For the 1x version, please switch to the [v1](https://gitlab.com/formschema/native/tree/v1) branch.
+
+## Status: Alpha
+
+Core features are not ready and the API could changed. Don't use this in production.
 
 ## Install
 
@@ -15,7 +21,7 @@ npm install --save @formschema/native
 
 - [Demo with ElementUI](https://gitlab.com/formschema/components/elementui)
 
-[![formschema-demo-elementui](https://gitlab.com/formschema/components/elementui/raw/master/screenshot.png "FormSchema Demo with ElementUI")](https://gitlab.com/formschema/components/elementui)
+![formschema-demo-elementui](https://gitlab.com/formschema/components/elementui/raw/master/screenshot.png "FormSchema Demo with ElementUI")
 
 ## FormSchema API
 
@@ -334,6 +340,10 @@ To define custom element for rendering, the `components` prop:
 See [FormSchema ElementUI integration](https://gitlab.com/formschema/components/elementui) for a complete example.
 
 **TODO:** Add example code here
+
+## Contributing
+
+Please see [contributing guide](https://gitlab.com/formschema/native/blob/master/CONTRIBUTING.md).
 
 ## License
 
