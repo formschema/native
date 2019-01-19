@@ -362,11 +362,52 @@ See [json-schema-ref-parser documentation page](https://www.npmjs.com/package/js
 
 ## Custom Form Elements
 
-To define custom element for rendering, the `components` prop:
+To define custom element for rendering, you need to use the `Components` class and the `components` prop:
 
-See [FormSchema ElementUI integration](https://gitlab.com/formschema/components/elementui) for a complete example.
+```js
+// CustomUIComponents.js
 
-**TODO:** Add example code here
+export default (Components, options = defaultOptions) => {
+  // Create a Components instance
+  const components = new Components()
+
+  // Then use the `Components.set()` method to set your custom element
+  components.set('text', Text)
+  components.set('checkbox', Checkbox)
+  components.set('radio', Radio)
+  components.set('file', File)
+  components.set('select', Select)
+  components.set('option', Option)
+  components.set('hidden', 'input') // use the HTML native element
+  components.set('textarea', Textarea)
+
+  return components // return the Components instance reference
+}
+```
+
+```html
+<template>
+  <FormSchema v-model="model" :schema="schema" :components="components"/>
+</template>
+
+<script>
+  import FormSchema, { Components } from '@formschema/native'
+  import CustomUIComponents from './CustomUIComponents'
+
+  export default {
+    data: () => ({
+      schema: { /* ... */ },
+      components: CustomUIComponents(Components),
+      model: {}
+    }),
+    components: { FormSchema }
+  }
+</script>
+```
+
+[**ElementUI Example**](https://gitlab.com/formschema/components/elementui) 
+- Definition: https://gitlab.com/formschema/components/elementui/blob/master/lib/ElementUIComponents.js
+- Usage: https://gitlab.com/formschema/components/elementui/blob/master/demo/src/components/Subscription.vue
 
 ## Contributing
 
