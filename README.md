@@ -217,7 +217,7 @@ Define your [JSON Schema](http://json-schema.org) file:
 }
 ```
 
-### Working with Async Schema
+## Working with Async Schema
 
 You may want to use `FormSchema` with a schema loaded from a remote URL.
 
@@ -332,6 +332,33 @@ To render a [regex input](http://json-schema.org/latest/json-schema-validation.h
   }
 }
 ```
+
+## JSON Schema $ref Pointers
+
+To load a JSON Schema with `$ref` pointers, you need to install an additional dependency to resolve them:
+
+```js
+import $RefParser from 'json-schema-ref-parser'
+import FormSchema from '@formschema/native'
+import schemaWithPointers from './schema/with-pointers.json'
+
+export default {
+  created () {
+    $RefParser.dereference(schemaWithPointers, (err, schema) => {
+      if (err) {
+        console.error(err);
+      } else {
+        // `schema` is the resolved schema that contains your entire JSON Schema,
+        // including referenced files, combined into a single object
+        this.$refs.formSchema.load(schema)
+      }
+    })
+  },
+  components: { FormSchema }
+}
+```
+
+See [json-schema-ref-parser documentation page](https://www.npmjs.com/package/json-schema-ref-parser) for more details.
 
 ## Custom Form Elements
 
