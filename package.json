@@ -48,7 +48,8 @@
     "rollup-plugin-node-resolve": "^3.4.0",
     "rollup-plugin-uglify": "^4.0.0",
     "sinon": "^6.3.5",
-    "vue": "^2.5.22"
+    "vue": "^2.5.22",
+    "vue-template-compiler": "^2.5.22"
   },
   "dependencies": {}
 }
