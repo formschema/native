@@ -39,7 +39,6 @@ describe('FormSchemaInputArrayElement', () => {
     })
     const expected = '<input type="text" name="fieldName" value="Hello">'
 
-    expect(wrapper.isVueInstance()).toBeTruthy()
     expect(wrapper.html()).toEqual(expected)
   })
 
@@ -70,7 +69,6 @@ describe('FormSchemaInputArrayElement', () => {
     })
     const expected = '<input type="text" name="fieldName" value="Hello">'
 
-    expect(wrapper.isVueInstance()).toBeTruthy()
     expect(wrapper.html()).toEqual(expected)
   })
 
@@ -100,7 +98,6 @@ describe('FormSchemaInputArrayElement', () => {
     })
     const expected = '<input type="text" name="fieldName" value="Hello">'
 
-    expect(wrapper.isVueInstance()).toBeTruthy()
     expect(wrapper.html()).toEqual(expected)
   })
 })

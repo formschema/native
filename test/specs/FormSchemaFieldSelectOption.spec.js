@@ -32,7 +32,6 @@ describe('FormSchemaFieldSelectOption', () => {
 
     const expected = '<option value="option value">option label</option>'
 
-    expect(wrapper.isVueInstance()).toBeTruthy()
     expect(wrapper.html()).toEqual(expected)
   })
 

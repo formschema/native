@@ -36,8 +36,6 @@ describe('FormSchemaField', () => {
       }
     })
 
-    expect(wrapper.isVueInstance()).toBeTruthy()
-
     const input = wrapper.find('input')
     const expected = '<div><label>Name</label><div><input name="fieldName" type="text" value="Hello"></div></div>'
 
@@ -63,8 +61,6 @@ describe('FormSchemaField', () => {
       }
     })
 
-    expect(wrapper.isVueInstance()).toBeTruthy()
-
     const input = wrapper.find('input')
     const expected = '<input name="fieldName" type="text" value="Hello">'
 
@@ -86,8 +82,6 @@ describe('FormSchemaField', () => {
         props: { value }
       }
     })
-
-    expect(wrapper.isVueInstance()).toBeTruthy()
 
     const input = wrapper.find('input')
     const expected = '<input name="fieldName" type="text">'
