@@ -27,7 +27,7 @@ npm install --save @formschema/native
 
 ### props 
 
-- `schema` ***Object*** (*optional*) `default: {}`
+- `schema` ***Object*** (*optional*) `default: {}` 
 
   The JSON Schema object. 
 
@@ -55,11 +55,11 @@ npm install --save @formschema/native
   server.
   
   Possible values are:
-  - application/x-www-form-urlencoded: The default value if the
+  - `application/x-www-form-urlencoded`: The default value if the
   attribute is not specified.
-  - multipart/form-data: The value used for an `<input/>` element
+  - `multipart/form-data`: The value used for an `<input/>` element
   with the type attribute set to "file".
-  - text/plain (HTML5) 
+  - `text/plain` (HTML5). 
 
 - `method` ***String*** (*optional*) `default: 'post'` 
 
@@ -79,7 +79,7 @@ npm install --save @formschema/native
   This Boolean attribute indicates that the form is not to be
   validated when submitted. 
 
-- `components` ***Components*** (*optional*) `default: GLOBAL.components`
+- `components` ***Components*** (*optional*) `default: GLOBAL.components` 
 
   Use this prop to overwrite the default Native HTML Elements for
   custom components. 
@@ -108,7 +108,7 @@ npm install --save @formschema/native
 
 ### methods 
 
-- `load(schema, model)`
+- `load(schema, model)` 
 
   Load the given `schema` with initial filled `value`.
   Use this to load async schema. 
