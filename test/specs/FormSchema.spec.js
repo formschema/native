@@ -382,7 +382,18 @@ describe('FormSchema', () => {
       input.element.value = 'Sébastien'
 
       expect(wrapper.vm.reportValidity()).toBeTruthy()
-      expect(wrapper.vm.checkValidity()).toBeTruthy()
+    })
+
+    it('vm.checkValidity()', () => {
+      const wrapper = mount(component, {
+        propsData: { schema }
+      })
+
+      const input = wrapper.find('input')
+
+      input.element.value = ''
+
+      expect(wrapper.vm.checkValidity()).toBe(false)
     })
 
     it('vm.reset()', () => {
