@@ -416,6 +416,33 @@ describe('FormSchema', () => {
       expect(wrapper.vm.data).toEqual({ name: '' })
     })
 
+    describe('vm.submit()', () => {
+      it('should emit the submit event', () => {
+        const wrapper = mount(component, {
+          propsData: { schema }
+        })
+
+        const input = wrapper.find('input')
+
+        input.element.value = 'Sébastien'
+        input.trigger('input')
+
+        wrapper.vm.submit()
+
+        expect('submit' in wrapper.emitted()).toBeTruthy()
+      })
+
+      it('should not emit the submit event with invalid form', () => {
+        const wrapper = mount(component, {
+          propsData: { schema }
+        })
+
+        wrapper.vm.submit()
+
+        expect('submit' in wrapper.emitted()).toBe(false)
+      })
+    })
+
     it('vm.setErrorMessage(message)', () => {
       const wrapper = mount(component, {
         propsData: { schema }
