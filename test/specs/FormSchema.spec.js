@@ -432,14 +432,14 @@ describe('FormSchema', () => {
         expect('submit' in wrapper.emitted()).toBeTruthy()
       })
 
-      it('should not emit the submit event with invalid form', () => {
+      it('should emit the invalid event with invalid form', () => {
         const wrapper = mount(component, {
           propsData: { schema }
         })
 
         wrapper.vm.submit()
 
-        expect('submit' in wrapper.emitted()).toBe(false)
+        expect('invalid' in wrapper.emitted()).toBeTruthy()
       })
     })
 

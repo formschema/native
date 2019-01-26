@@ -439,6 +439,8 @@ export default {
          * Fired when a form is submitted
          */
         this.$emit('submit', event)
+      } else {
+        this.invalid()
       }
     },
 
