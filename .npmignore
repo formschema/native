@@ -20,3 +20,4 @@ demo
 *.sh
 *.yml
 .gitlab
+.codeline
