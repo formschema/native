@@ -239,6 +239,11 @@ describe('FormSchema', () => {
         expect(wrapper.find('form').element.getAttribute('method')).toEqual(props.method)
       })
 
+      it('should have form aria-label attribute', () => {
+        expect(wrapper.find('form').element.hasAttribute('aria-label')).toBeTruthy()
+        expect(wrapper.find('form').element.getAttribute('aria-label')).toEqual(schema.title)
+      })
+
       it('should have input label', () => {
         expect(wrapper.findAll('label').length).toEqual(1)
         expect(wrapper.find('label').html()).toEqual('<label for="x">Your name</label>')

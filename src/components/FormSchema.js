@@ -215,7 +215,8 @@ export default {
         enctype: this.enctype,
         method: this.method,
         autocomplete: this.autocomplete,
-        novalidate: this.novalidate
+        novalidate: this.novalidate,
+        'aria-label': title
       },
       props: {
         value: this.data
