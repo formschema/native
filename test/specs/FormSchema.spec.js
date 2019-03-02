@@ -257,7 +257,7 @@ describe('FormSchema', () => {
 
       it('should have form input', () => {
         expect(wrapper.findAll('input').length).toEqual(1)
-        expect(wrapper.find('input').html()).toEqual('<input id="x" type="text" name="name" required="required">')
+        expect(wrapper.find('input').html()).toEqual('<input id="x" type="text" name="name" required="required" aria-required="true">')
       })
 
       it('should not have buttons', () => {
@@ -319,7 +319,7 @@ describe('FormSchema', () => {
 
       it('should have form input', () => {
         expect(wrapper.findAll('input').length).toEqual(1)
-        expect(wrapper.find('input').html()).toEqual('<input id="x" type="text" name="name" required="required">')
+        expect(wrapper.find('input').html()).toEqual('<input id="x" type="text" name="name" required="required" aria-required="true">')
       })
 
       it('should not have buttons', () => {
@@ -345,7 +345,7 @@ describe('FormSchema', () => {
       it('should have form input', () => {
         expect(wrapper.emitted().input.pop()).toEqual([{ name: 'Lanister' }])
         expect(wrapper.findAll('input').length).toEqual(1)
-        expect(wrapper.find('input').html()).toEqual('<input id="x" type="text" name="name" value="Lanister" required="required">')
+        expect(wrapper.find('input').html()).toEqual('<input id="x" type="text" name="name" value="Lanister" required="required" aria-required="true">')
       })
     })
 

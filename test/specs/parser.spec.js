@@ -81,7 +81,8 @@ describe('lib/parser', () => {
           id: 'x',
           value: 'value',
           required: true,
-          disabled: true
+          disabled: true,
+          'aria-required': 'true'
         }
       }
 
@@ -1135,7 +1136,8 @@ describe('lib/parser', () => {
             name: 'bool',
             checked: false,
             required: true,
-            disabled: false
+            disabled: false,
+            'aria-required': 'true'
           }
         }]
 

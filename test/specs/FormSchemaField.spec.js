@@ -523,7 +523,7 @@ describe('FormSchemaField', () => {
       }
     })
 
-    const expected = '<div data-fs-field="x" data-fs-required="true"><label for="x">choices</label><div data-fs-field-input="x"><select multiple="multiple" id="x" name="fieldName" required="required"><option value=""></option><option value="v0" selected="selected">l1</option><option value="v1">l2</option></select><small>choices description</small></div></div>'
+    const expected = '<div data-fs-field="x" data-fs-required="true"><label for="x">choices</label><div data-fs-field-input="x"><select multiple="multiple" id="x" name="fieldName" required="required" aria-required="true"><option value=""></option><option value="v0" selected="selected">l1</option><option value="v1">l2</option></select><small>choices description</small></div></div>'
 
     expect(wrapper.html()).toEqual(expected)
   })

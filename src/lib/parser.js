@@ -61,8 +61,17 @@ export function setCommonFields (schema, field, model = null) {
   field.label = schema.title || ''
   field.description = schema.description || ''
   field.attrs.id = field.attrs.id || genId(field.attrs.name)
-  field.attrs.required = schema.required || false
   field.attrs.disabled = schema.disabled || false
+  field.attrs.required = schema.required || false
+
+  if (field.attrs.required) {
+    /**
+     * Add support with web browsers that don’t communicate the required
+     * attribute to assistive technology
+     * @see https://www.w3.org/WAI/tutorials/forms/validation/#validating-required-input
+     */
+    field.attrs['aria-required'] = 'true'
+  }
 }
 
 export function parseDefaultScalarValue (schema, fields, value) {
