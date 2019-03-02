@@ -50,14 +50,14 @@
     background-color: #eff0f1;
   }
 
-  h1 {
+  .form > legend {
     font-size: 1.7em;
     text-align: center;
     margin-top: 0;
     margin-bottom: .2em
   }
 
-  h1 + p {
+  .form > legend + p {
     display: block;
     text-align: center;
     margin-bottom: 1.2em
