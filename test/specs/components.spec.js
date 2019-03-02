@@ -12,8 +12,7 @@ import {
 describe('lib/components', () => {
   describe('Components()', () => {
     const defaultComponents = [
-      'title', 'description', 'error', 'formwrapper',
-      'form', 'text', 'option'
+      'title', 'description', 'error', 'form', 'text', 'option'
     ]
 
     describe('default components', () => {

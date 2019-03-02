@@ -149,12 +149,12 @@ export default {
       nodes.push(createElement(components.$.error.component, this.error))
     }
 
-    const formInputNodes = this.fields.map((field) => {
+    this.fields.forEach((field) => {
       const value = this.isScalarSchema
         ? this.data
         : this.data[field.attrs.name]
 
-      return createElement(FormSchemaField, {
+      const input = createElement(FormSchemaField, {
         field,
         components,
         props: { value },
@@ -208,13 +208,15 @@ export default {
           }
         }
       })
+
+      nodes.push(input)
     })
 
     if (this.$slots.default) {
-      this.$slots.default.forEach((node) => formInputNodes.push(node))
+      nodes.push(...this.$slots.default)
     }
 
-    nodes.push(createElement(components.$.form.component, {
+    return createElement(components.$.form.component, {
       ref: this.ref,
       attrs: {
         action: this.action,
@@ -232,12 +234,6 @@ export default {
         reset: this.reset,
         submit: this.submit,
         invalid: this.invalid
-      }
-    }, formInputNodes))
-
-    return createElement(components.$.formwrapper.component, {
-      attrs: {
-        id: this.ref
       }
     }, nodes)
   },

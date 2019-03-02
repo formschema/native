@@ -159,9 +159,8 @@ const ErrorElement = {
 }
 
 const TAGS = {
-  title: 'h1',
+  title: 'legend',
   description: 'p',
-  formwrapper: 'div',
   form: 'form',
   text: Input,
   select: Select,

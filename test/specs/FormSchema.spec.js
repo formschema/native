@@ -216,18 +216,18 @@ describe('FormSchema', () => {
         propsData: { schema, search }
       })
 
-      it('should have form title', () => {
-        expect(wrapper.findAll('h1').length).toEqual(1)
-        expect(wrapper.find('h1').html()).toEqual(`<h1>${schema.title}</h1>`)
+      it('should have form tag', () => {
+        expect(wrapper.findAll('form').length).toEqual(1)
+      })
+
+      it('should have form legend', () => {
+        expect(wrapper.findAll('form > legend').length).toEqual(1)
+        expect(wrapper.find('form > legend').html()).toEqual(`<legend>${schema.title}</legend>`)
       })
 
       it('should have form description', () => {
-        expect(wrapper.findAll('p').length).toEqual(1)
-        expect(wrapper.find('p').html()).toEqual(`<p>${schema.description}</p>`)
-      })
-
-      it('should have form tag', () => {
-        expect(wrapper.findAll('form').length).toEqual(1)
+        expect(wrapper.findAll('form > p').length).toEqual(1)
+        expect(wrapper.find('form > p').html()).toEqual(`<p>${schema.description}</p>`)
       })
 
       it('should have form enctype attribute', () => {
@@ -288,23 +288,18 @@ describe('FormSchema', () => {
         wrapper.vm.load(schema)
       })
 
-      it('should have form title', () => {
-        expect(wrapper.findAll('h1').length).toEqual(1)
-        expect(wrapper.find('h1').html()).toEqual(`<h1>${schema.title}</h1>`)
+      it('should have form tag', () => {
+        expect(wrapper.findAll('form').length).toEqual(1)
       })
 
       it('should have form title', () => {
-        expect(wrapper.findAll('h1').length).toEqual(1)
-        expect(wrapper.find('h1').html()).toEqual(`<h1>${schema.title}</h1>`)
+        expect(wrapper.findAll('form > legend').length).toEqual(1)
+        expect(wrapper.find('form > legend').html()).toEqual(`<legend>${schema.title}</legend>`)
       })
 
       it('should have form description', () => {
-        expect(wrapper.findAll('p').length).toEqual(1)
-        expect(wrapper.find('p').html()).toEqual(`<p>${schema.description}</p>`)
-      })
-
-      it('should have form tag', () => {
-        expect(wrapper.findAll('form').length).toEqual(1)
+        expect(wrapper.findAll('form > p').length).toEqual(1)
+        expect(wrapper.find('form > p').html()).toEqual(`<p>${schema.description}</p>`)
       })
 
       it('should have form enctype attribute', () => {
