@@ -12,7 +12,11 @@ const Input = {
     const nodes = [ element ]
 
     if (field.description) {
-      nodes.push(h('small', field.description))
+      nodes.push(h('small', {
+        attrs: {
+          id: field.descId
+        }
+      }, field.description))
     }
 
     if (!field.label || (field.isArrayField && !BLOCK_TYPES.includes(field.attrs.type))) {
@@ -62,7 +66,11 @@ const Select = {
     nodes.push(h('select', data, children))
 
     if (field.description) {
-      nodes.push(h('small', field.description))
+      nodes.push(h('small', {
+        attrs: {
+          id: field.descId
+        }
+      }, field.description))
     }
 
     return h(Label, data, nodes)
@@ -92,6 +100,7 @@ const Label = {
     return h('div', { attrs }, [
       h('label', {
         attrs: {
+          id: field.labelId,
           for: field.attrs.id
         }
       }, field.label),

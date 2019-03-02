@@ -244,12 +244,12 @@ describe('FormSchema', () => {
 
       it('should have input label', () => {
         expect(wrapper.findAll('label').length).toEqual(1)
-        expect(wrapper.find('label').html()).toEqual('<label for="x">Your name</label>')
+        expect(wrapper.find('label').html()).toEqual('<label id="x-label" for="x">Your name</label>')
       })
 
       it('should have form input', () => {
         expect(wrapper.findAll('input').length).toEqual(1)
-        expect(wrapper.find('input').html()).toEqual('<input id="x" type="text" name="name" required="required" aria-required="true">')
+        expect(wrapper.find('input').html()).toEqual('<input id="x" type="text" name="name" required="required" aria-required="true" aria-labelledby="x-label">')
       })
 
       it('should not have buttons', () => {
@@ -306,12 +306,12 @@ describe('FormSchema', () => {
 
       it('should have input label', () => {
         expect(wrapper.findAll('label').length).toEqual(1)
-        expect(wrapper.find('label').html()).toEqual('<label for="x">Your name</label>')
+        expect(wrapper.find('label').html()).toEqual('<label id="x-label" for="x">Your name</label>')
       })
 
       it('should have form input', () => {
         expect(wrapper.findAll('input').length).toEqual(1)
-        expect(wrapper.find('input').html()).toEqual('<input id="x" type="text" name="name" required="required" aria-required="true">')
+        expect(wrapper.find('input').html()).toEqual('<input id="x" type="text" name="name" required="required" aria-required="true" aria-labelledby="x-label">')
       })
 
       it('should not have buttons', () => {
@@ -337,7 +337,7 @@ describe('FormSchema', () => {
       it('should have form input', () => {
         expect(wrapper.emitted().input.pop()).toEqual([{ name: 'Lanister' }])
         expect(wrapper.findAll('input').length).toEqual(1)
-        expect(wrapper.find('input').html()).toEqual('<input id="x" type="text" name="name" value="Lanister" required="required" aria-required="true">')
+        expect(wrapper.find('input').html()).toEqual('<input id="x" type="text" name="name" value="Lanister" required="required" aria-required="true" aria-labelledby="x-label">')
       })
     })
 
@@ -463,7 +463,7 @@ describe('FormSchema', () => {
           propsData: { schema }
         })
 
-        const expected = '<form enctype="application/x-www-form-urlencoded" method="post"><div data-fs-field="x"><label for="x">choices</label><div data-fs-field-input="x"><select id="x" name="list"><option value="v0">v0</option><option value="v1">v1</option></select><small>choices description</small></div></div></form>'
+        const expected = '<form enctype="application/x-www-form-urlencoded" method="post"><div data-fs-field="x"><label id="x-label" for="x">choices</label><div data-fs-field-input="x"><select id="x" name="list" aria-labelledby="x-label x-desc"><option value="v0">v0</option><option value="v1">v1</option></select><small id="x-desc">choices description</small></div></div></form>'
 
         expect(wrapper.find('form').html()).toEqual(expected)
       })

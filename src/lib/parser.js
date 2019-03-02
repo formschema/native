@@ -56,11 +56,20 @@ export function setCommonFields (schema, field, model = null) {
     field.attrs.value = schema.default
   }
 
+  const id = field.attrs.id || genId(field.attrs.name)
+  const label = schema.title || ''
+  const description = schema.description || ''
+  const labelId = label ? `${id}-label` : void (0)
+  const descId = description ? `${id}-desc` : void (0)
+  const ariaLabelledby = [labelId, descId].filter((item) => item).join(' ')
+
   field.order = schema.order
   field.schemaType = schema.type
-  field.label = schema.title || ''
-  field.description = schema.description || ''
-  field.attrs.id = field.attrs.id || genId(field.attrs.name)
+  field.label = label
+  field.labelId = labelId
+  field.descId = descId
+  field.description = description
+  field.attrs.id = id
   field.attrs.disabled = schema.disabled || false
   field.attrs.required = schema.required || false
 
@@ -71,6 +80,15 @@ export function setCommonFields (schema, field, model = null) {
      * @see https://www.w3.org/WAI/tutorials/forms/validation/#validating-required-input
      */
     field.attrs['aria-required'] = 'true'
+  }
+
+  if (ariaLabelledby && !field.attrs.hasOwnProperty('aria-labelledby')) {
+    /**
+     * Use the WAI-ARIA aria-labelledby attribute to associate instructions
+     * with form controls
+     * @see https://www.w3.org/WAI/tutorials/forms/instructions/#using-aria-labelledby
+     */
+    field.attrs['aria-labelledby'] = ariaLabelledby
   }
 }
 
