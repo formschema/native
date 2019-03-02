@@ -79,6 +79,11 @@ npm install --save @formschema/native
   This Boolean attribute indicates that the form is not to be
   validated when submitted. 
 
+- `search` ***Boolean*** (*optional*) `default: false` 
+
+  Use this prop to enable `search` landmark role to identify a section
+  of the page used to search the page, site, or collection of sites. 
+
 - `components` ***Components*** (*optional*) `default: GLOBAL.components` 
 
   Use this prop to overwrite the default Native HTML Elements for
@@ -406,6 +411,7 @@ export default (Components, options = defaultOptions) => {
 ```
 
 [**ElementUI Example**](https://gitlab.com/formschema/components/elementui) 
+
 - Definition: https://gitlab.com/formschema/components/elementui/blob/master/lib/ElementUIComponents.js
 - Usage: https://gitlab.com/formschema/components/elementui/blob/master/demo/src/components/Subscription.vue
 
