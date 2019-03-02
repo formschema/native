@@ -95,6 +95,12 @@ export default {
     novalidate: { type: Boolean },
 
     /**
+     * Use this prop to enable `search` landmark role to identify a section
+     * of the page used to search the page, site, or collection of sites.
+     */
+    search: { type: Boolean, default: false },
+
+    /**
      * Use this prop to overwrite the default Native HTML Elements for
      * custom components.
      *
@@ -216,6 +222,7 @@ export default {
         method: this.method,
         autocomplete: this.autocomplete,
         novalidate: this.novalidate,
+        role: this.search ? 'search' : void (0),
         'aria-label': title
       },
       props: {

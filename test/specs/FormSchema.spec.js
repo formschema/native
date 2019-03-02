@@ -211,8 +211,9 @@ describe('FormSchema', () => {
     })
 
     describe('should successfully render the component', () => {
+      const search = true
       const wrapper = mount(component, {
-        propsData: { schema }
+        propsData: { schema, search }
       })
 
       it('should have form title', () => {
@@ -237,6 +238,11 @@ describe('FormSchema', () => {
       it('should have form method attribute', () => {
         expect(wrapper.find('form').element.hasAttribute('method')).toBeTruthy()
         expect(wrapper.find('form').element.getAttribute('method')).toEqual(props.method)
+      })
+
+      it('should have form role="search" attribute', () => {
+        expect(wrapper.find('form').element.hasAttribute('role')).toBeTruthy()
+        expect(wrapper.find('form').element.getAttribute('role')).toEqual('search')
       })
 
       it('should have form aria-label attribute', () => {
