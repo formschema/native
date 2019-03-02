@@ -145,10 +145,6 @@ npm install --save @formschema/native
 
   Reset the value of all elements of the parent form. 
 
-- `submit(event)` 
-
-  Send the content of the form to the server. 
-
 ## Usage
 
 In your Vue file:

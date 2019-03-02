@@ -431,6 +431,7 @@ export default {
 
     /**
      * Send the content of the form to the server.
+     * @private
      */
     submit (event) {
       if (this.checkValidity()) {
