@@ -149,14 +149,6 @@ npm install --save @formschema/native
 
   Send the content of the form to the server. 
 
-- `setErrorMessage(message)` 
-
-  Set a message error. 
-
-- `clearErrorMessage()` 
-
-  clear the message error. 
-
 ## Usage
 
 In your Vue file:

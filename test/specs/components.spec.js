@@ -12,7 +12,7 @@ import {
 describe('lib/components', () => {
   describe('Components()', () => {
     const defaultComponents = [
-      'title', 'description', 'error', 'form', 'text', 'option'
+      'title', 'description', 'form', 'text', 'option'
     ]
 
     describe('default components', () => {

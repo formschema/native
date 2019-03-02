@@ -182,14 +182,6 @@ describe('FormSchema', () => {
       expect(typeof component.methods.submit).toBe('function')
     })
 
-    it('should have a setErrorMessage method', () => {
-      expect(typeof component.methods.setErrorMessage).toBe('function')
-    })
-
-    it('should have a clearErrorMessage method', () => {
-      expect(typeof component.methods.clearErrorMessage).toBe('function')
-    })
-
     const wrapper = mount(component, {
       propsData: { schema: {} }
     })
@@ -447,33 +439,6 @@ describe('FormSchema', () => {
 
         expect('invalid' in wrapper.emitted()).toBeTruthy()
       })
-    })
-
-    it('vm.setErrorMessage(message)', () => {
-      const wrapper = mount(component, {
-        propsData: { schema }
-      })
-
-      wrapper.vm.setErrorMessage('error message')
-
-      expect(wrapper.vm.error).toEqual('error message')
-      expect(wrapper.findAll('[data-fs-error]').length).toEqual(1)
-      expect(wrapper.find('[data-fs-error]').html()).toEqual('<div data-fs-error="true">error message</div>')
-    })
-
-    it('vm.clearErrorMessage()', () => {
-      const wrapper = mount(component, {
-        propsData: { schema }
-      })
-
-      wrapper.vm.setErrorMessage('error message')
-
-      expect(wrapper.vm.error).toEqual('error message')
-
-      wrapper.vm.clearErrorMessage()
-
-      expect(wrapper.vm.error).toEqual(null)
-      expect(wrapper.findAll('[data-fs-error]').length).toEqual(0)
     })
   })
 

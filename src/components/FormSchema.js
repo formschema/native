@@ -117,7 +117,6 @@ export default {
     loadedSchema: {},
     fields: [],
     default: {},
-    error: null,
     data: {},
     inputValues: {},
     ready: false
@@ -143,10 +142,6 @@ export default {
     if (description) {
       nodes.push(createElement(
         components.$.description.component, description))
-    }
-
-    if (this.error) {
-      nodes.push(createElement(components.$.error.component, this.error))
     }
 
     this.fields.forEach((field) => {
@@ -446,20 +441,6 @@ export default {
       } else {
         this.invalid()
       }
-    },
-
-    /**
-     * Set a message error.
-     */
-    setErrorMessage (message) {
-      this.error = message
-    },
-
-    /**
-     * clear the message error.
-     */
-    clearErrorMessage () {
-      this.error = null
     }
   }
 }

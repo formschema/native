@@ -147,17 +147,6 @@ const ArrayButton = {
   }
 }
 
-const ErrorElement = {
-  functional: true,
-  render (h, { slots }) {
-    return h('div', {
-      attrs: {
-        'data-fs-error': true
-      }
-    }, slots().default)
-  }
-}
-
 const TAGS = {
   title: 'legend',
   description: 'p',
@@ -165,8 +154,7 @@ const TAGS = {
   text: Input,
   select: Select,
   option: 'option',
-  fieldset: Fieldset,
-  error: ErrorElement
+  fieldset: Fieldset
 }
 
 export class Components {
