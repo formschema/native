@@ -56,13 +56,56 @@ export function setCommonFields (schema, field, model = null) {
     field.attrs.value = schema.default
   }
 
+  const id = field.attrs.id || genId(field.attrs.name)
+  const labelId = schema.title ? `${id}-label` : void (0)
+  const descId = schema.description ? `${id}-desc` : void (0)
+  const ariaLabels = [labelId, descId].filter((item) => item)
+
   field.order = schema.order
   field.schemaType = schema.type
   field.label = schema.title || ''
   field.description = schema.description || ''
-  field.attrs.id = field.attrs.id || genId(field.attrs.name)
-  field.attrs.required = schema.required || false
+
+  field.attrs.id = id
   field.attrs.disabled = schema.disabled || false
+  field.attrs.required = schema.required || false
+
+  field.labelAttrs = {
+    id: labelId,
+    for: id
+  }
+
+  field.descAttrs = {
+    id: descId
+  }
+
+  if (field.attrs.required) {
+    /**
+     * Add support with web browsers that don’t communicate the required
+     * attribute to assistive technology
+     * @see https://www.w3.org/WAI/tutorials/forms/validation/#validating-required-input
+     */
+    field.attrs['aria-required'] = 'true'
+  }
+
+  if (ariaLabels.length && !field.attrs.hasOwnProperty('aria-labelledby')) {
+    /**
+     * Use the WAI-ARIA aria-labelledby attribute to associate instructions
+     * with form controls
+     * @see https://www.w3.org/WAI/tutorials/forms/instructions/#using-aria-labelledby
+     */
+    field.attrs['aria-labelledby'] = ariaLabels.join(' ')
+
+    if (ariaLabels.length >= 2) {
+      /**
+       * Add `tabindex="-1"` to elements that are referenced by aria-labelledby
+       * if it point to two or more elements for Internet Explorer
+       * compatibility
+       */
+      field.labelAttrs.tabindex = '-1'
+      field.descAttrs.tabindex = '-1'
+    }
+  }
 }
 
 export function parseDefaultScalarValue (schema, fields, value) {

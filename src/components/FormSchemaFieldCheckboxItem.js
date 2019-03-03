@@ -20,8 +20,12 @@ export default {
         : checked
     }
 
+    const labelAttrs = {
+      for: item.id
+    }
+
     const input = components.input({
-      field: { label, description, attrs },
+      field: { label, labelAttrs, description, attrs },
       fieldParent: field,
       listeners
     })

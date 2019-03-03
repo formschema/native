@@ -95,6 +95,12 @@ export default {
     novalidate: { type: Boolean },
 
     /**
+     * Use this prop to enable `search` landmark role to identify a section
+     * of the page used to search the page, site, or collection of sites.
+     */
+    search: { type: Boolean, default: false },
+
+    /**
      * Use this prop to overwrite the default Native HTML Elements for
      * custom components.
      *
@@ -111,7 +117,6 @@ export default {
     loadedSchema: {},
     fields: [],
     default: {},
-    error: null,
     data: {},
     inputValues: {},
     ready: false
@@ -139,16 +144,12 @@ export default {
         components.$.description.component, description))
     }
 
-    if (this.error) {
-      nodes.push(createElement(components.$.error.component, this.error))
-    }
-
-    const formInputNodes = this.fields.map((field) => {
+    this.fields.forEach((field) => {
       const value = this.isScalarSchema
         ? this.data
         : this.data[field.attrs.name]
 
-      return createElement(FormSchemaField, {
+      const input = createElement(FormSchemaField, {
         field,
         components,
         props: { value },
@@ -202,20 +203,24 @@ export default {
           }
         }
       })
+
+      nodes.push(input)
     })
 
     if (this.$slots.default) {
-      this.$slots.default.forEach((node) => formInputNodes.push(node))
+      nodes.push(...this.$slots.default)
     }
 
-    nodes.push(createElement(components.$.form.component, {
+    return createElement(components.$.form.component, {
       ref: this.ref,
       attrs: {
         action: this.action,
         enctype: this.enctype,
         method: this.method,
         autocomplete: this.autocomplete,
-        novalidate: this.novalidate
+        novalidate: this.novalidate,
+        role: this.search ? 'search' : void (0),
+        'aria-label': title
       },
       props: {
         value: this.data
@@ -224,12 +229,6 @@ export default {
         reset: this.reset,
         submit: this.submit,
         invalid: this.invalid
-      }
-    }, formInputNodes))
-
-    return createElement(components.$.formwrapper.component, {
-      attrs: {
-        id: this.ref
       }
     }, nodes)
   },
@@ -432,6 +431,7 @@ export default {
 
     /**
      * Send the content of the form to the server.
+     * @private
      */
     submit (event) {
       if (this.checkValidity()) {
@@ -442,20 +442,6 @@ export default {
       } else {
         this.invalid()
       }
-    },
-
-    /**
-     * Set a message error.
-     */
-    setErrorMessage (message) {
-      this.error = message
-    },
-
-    /**
-     * clear the message error.
-     */
-    clearErrorMessage () {
-      this.error = null
     }
   }
 }

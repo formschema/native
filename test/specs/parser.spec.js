@@ -59,6 +59,8 @@ describe('lib/parser', () => {
 
       expect(typeof field.attrs.id).toEqual('string')
 
+      delete field.labelAttrs
+      delete field.descAttrs
       delete field.attrs.id
 
       expect(field).toEqual(expected)
@@ -76,12 +78,23 @@ describe('lib/parser', () => {
       const expected = {
         schemaType: 'string',
         label: 'title value',
+        labelAttrs: {
+          id: 'x-label',
+          for: 'x',
+          tabindex: '-1'
+        },
+        descAttrs: {
+          id: 'x-desc',
+          tabindex: '-1'
+        },
         description: 'description value',
         attrs: {
           id: 'x',
           value: 'value',
           required: true,
-          disabled: true
+          disabled: true,
+          'aria-required': 'true',
+          'aria-labelledby': 'x-label x-desc'
         }
       }
 
@@ -109,6 +122,8 @@ describe('lib/parser', () => {
 
       setCommonFields(schema, field)
 
+      delete field.labelAttrs
+      delete field.descAttrs
       delete field.attrs.id
 
       expect(field).toEqual(expected)
@@ -133,6 +148,8 @@ describe('lib/parser', () => {
 
       setCommonFields(schema, field)
 
+      delete field.labelAttrs
+      delete field.descAttrs
       delete field.attrs.id
 
       expect(field).toEqual(expected)
@@ -157,6 +174,8 @@ describe('lib/parser', () => {
 
       setCommonFields(schema, field)
 
+      delete field.labelAttrs
+      delete field.descAttrs
       delete field.attrs.id
 
       expect(field).toEqual(expected)
@@ -181,6 +200,8 @@ describe('lib/parser', () => {
 
       setCommonFields(schema, field)
 
+      delete field.labelAttrs
+      delete field.descAttrs
       delete field.attrs.id
 
       expect(field).toEqual(expected)
@@ -308,6 +329,9 @@ describe('lib/parser', () => {
       const result = parseBoolean(schema)
 
       expect(typeof result.attrs.id).toEqual('string')
+
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -335,6 +359,9 @@ describe('lib/parser', () => {
       const result = parseBoolean(schema)
 
       expect(typeof result.attrs.id).toEqual('string')
+
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -364,6 +391,9 @@ describe('lib/parser', () => {
       const result = parseBoolean(schema, 'name')
 
       expect(typeof result.attrs.id).toEqual('string')
+
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -393,6 +423,9 @@ describe('lib/parser', () => {
       const result = parseBoolean(schema, 'name')
 
       expect(typeof result.attrs.id).toEqual('string')
+
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -421,6 +454,9 @@ describe('lib/parser', () => {
       const result = parseBoolean(schema, 'name')
 
       expect(typeof result.attrs.id).toEqual('string')
+
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -444,6 +480,9 @@ describe('lib/parser', () => {
       const result = parseString(schema)
 
       expect(typeof result.attrs.id).toEqual('string')
+
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -470,6 +509,9 @@ describe('lib/parser', () => {
       const result = parseString(schema)
 
       expect(typeof result.attrs.id).toEqual('string')
+
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -497,6 +539,9 @@ describe('lib/parser', () => {
       const result = parseString(schema, 'name')
 
       expect(typeof result.attrs.id).toEqual('string')
+
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -526,6 +571,9 @@ describe('lib/parser', () => {
       const result = parseString(schema)
 
       expect(typeof result.attrs.id).toEqual('string')
+
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -550,6 +598,9 @@ describe('lib/parser', () => {
       const result = parseString(schema)
 
       expect(typeof result.attrs.id).toEqual('string')
+
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -560,6 +611,9 @@ describe('lib/parser', () => {
       const result2 = parseString(schema)
 
       expect(typeof result2.attrs.id).toEqual('string')
+
+      delete result2.labelAttrs
+      delete result2.descAttrs
       delete result2.attrs.id
 
       expect(result2).toEqual(expected)
@@ -584,6 +638,9 @@ describe('lib/parser', () => {
       const result = parseString(schema)
 
       expect(typeof result.attrs.id).toEqual('string')
+
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -594,6 +651,9 @@ describe('lib/parser', () => {
       const result2 = parseString(schema)
 
       expect(typeof result2.attrs.id).toEqual('string')
+
+      delete result2.labelAttrs
+      delete result2.descAttrs
       delete result2.attrs.id
 
       expect(result2).toEqual(expected)
@@ -615,6 +675,9 @@ describe('lib/parser', () => {
       const result = parseString(schema)
 
       expect(typeof result.attrs.id).toEqual('string')
+
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -636,6 +699,9 @@ describe('lib/parser', () => {
       const result = parseString(schema)
 
       expect(typeof result.attrs.id).toEqual('string')
+
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -681,6 +747,9 @@ describe('lib/parser', () => {
       const result = parseArray(schema)
 
       expect(typeof result.attrs.id).toEqual('string')
+
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -711,6 +780,9 @@ describe('lib/parser', () => {
       const result = parseArray(schema)
 
       expect(typeof result.attrs.id).toEqual('string')
+
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -741,6 +813,9 @@ describe('lib/parser', () => {
       const result = parseArray(schema)
 
       expect(typeof result.attrs.id).toEqual('string')
+
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -767,6 +842,9 @@ describe('lib/parser', () => {
       const result = parseArray(schema, 'name')
 
       expect(typeof result.attrs.id).toEqual('string')
+
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -801,6 +879,9 @@ describe('lib/parser', () => {
       const result = parseArray(schema)
 
       expect(typeof result.attrs.id).toEqual('string')
+
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -833,6 +914,9 @@ describe('lib/parser', () => {
       const result = parseArray(schema)
 
       expect(typeof result.attrs.id).toEqual('string')
+
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -846,6 +930,9 @@ describe('lib/parser', () => {
       const result2 = parseArray(schema)
 
       expect(typeof result2.attrs.id).toEqual('string')
+
+      delete result2.labelAttrs
+      delete result2.descAttrs
       delete result2.attrs.id
 
       expect(result2).toEqual(expected)
@@ -874,6 +961,9 @@ describe('lib/parser', () => {
       const result = parseArray(schema)
 
       expect(typeof result.attrs.id).toEqual('string')
+
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
       delete result.items[0].id
 
@@ -904,6 +994,9 @@ describe('lib/parser', () => {
       const result = parseArray(schema)
 
       expect(typeof result.attrs.id).toEqual('string')
+
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
       delete result.items[0].id
 
@@ -931,6 +1024,9 @@ describe('lib/parser', () => {
         loadFields(schema, fields)
 
         expect(typeof fields[0].attrs.id).toEqual('string')
+
+        delete fields[0].labelAttrs
+        delete fields[0].descAttrs
         delete fields[0].attrs.id
 
         expect(fields).toEqual(expected)
@@ -959,6 +1055,9 @@ describe('lib/parser', () => {
         loadFields(schema, fields)
 
         expect(typeof fields[0].attrs.id).toEqual('string')
+
+        delete fields[0].labelAttrs
+        delete fields[0].descAttrs
         delete fields[0].attrs.id
 
         expect(fields).toEqual(expected)
@@ -983,6 +1082,9 @@ describe('lib/parser', () => {
         loadFields(schema, fields)
 
         expect(typeof fields[0].attrs.id).toEqual('string')
+
+        delete fields[0].labelAttrs
+        delete fields[0].descAttrs
         delete fields[0].attrs.id
 
         expect(fields).toEqual(expected)
@@ -1015,6 +1117,9 @@ describe('lib/parser', () => {
         loadFields(schema, fields)
 
         expect(typeof fields[0].attrs.id).toEqual('string')
+
+        delete fields[0].labelAttrs
+        delete fields[0].descAttrs
         delete fields[0].attrs.id
 
         expect(fields).toEqual(expected)
@@ -1045,6 +1150,9 @@ describe('lib/parser', () => {
         loadFields(schema, fields)
 
         expect(typeof fields[0].attrs.id).toEqual('string')
+
+        delete fields[0].labelAttrs
+        delete fields[0].descAttrs
         delete fields[0].attrs.id
 
         expect(fields).toEqual(expected)
@@ -1076,6 +1184,9 @@ describe('lib/parser', () => {
         loadFields(schema, fields)
 
         expect(typeof fields[0].attrs.id).toEqual('string')
+
+        delete fields[0].labelAttrs
+        delete fields[0].descAttrs
         delete fields[0].attrs.id
 
         expect(fields).toEqual(expected)
@@ -1112,6 +1223,9 @@ describe('lib/parser', () => {
         loadFields(schema, fields)
 
         expect(typeof fields[0].attrs.id).toEqual('string')
+
+        delete fields[0].labelAttrs
+        delete fields[0].descAttrs
         delete fields[0].attrs.id
 
         expect(fields).toEqual(expected)
@@ -1135,13 +1249,17 @@ describe('lib/parser', () => {
             name: 'bool',
             checked: false,
             required: true,
-            disabled: false
+            disabled: false,
+            'aria-required': 'true'
           }
         }]
 
         loadFields(schema, fields)
 
         expect(typeof fields[0].attrs.id).toEqual('string')
+
+        delete fields[0].labelAttrs
+        delete fields[0].descAttrs
         delete fields[0].attrs.id
 
         expect(fields).toEqual(expected)
@@ -1214,6 +1332,9 @@ describe('lib/parser', () => {
 
         fields.forEach((field) => {
           expect(typeof field.attrs.id).toEqual('string')
+
+          delete field.labelAttrs
+          delete field.descAttrs
           delete field.attrs.id
         })
 

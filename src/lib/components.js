@@ -12,7 +12,9 @@ const Input = {
     const nodes = [ element ]
 
     if (field.description) {
-      nodes.push(h('small', field.description))
+      nodes.push(h('small', {
+        attrs: field.descAttrs
+      }, field.description))
     }
 
     if (!field.label || (field.isArrayField && !BLOCK_TYPES.includes(field.attrs.type))) {
@@ -62,7 +64,9 @@ const Select = {
     nodes.push(h('select', data, children))
 
     if (field.description) {
-      nodes.push(h('small', field.description))
+      nodes.push(h('small', {
+        attrs: field.descAttrs
+      }, field.description))
     }
 
     return h(Label, data, nodes)
@@ -89,18 +93,17 @@ const Label = {
       'data-fs-required': field.attrs.required
     }
 
-    return h('div', { attrs }, [
-      h('label', {
-        attrs: {
-          for: field.attrs.id
-        }
-      }, field.label),
-      h('div', {
-        attrs: {
-          'data-fs-field-input': field.attrs.id
-        }
-      }, slots().default)
-    ])
+    const inputLabel = h('label', {
+      attrs: field.labelAttrs
+    }, field.label)
+
+    const inputField = h('div', {
+      attrs: {
+        'data-fs-field-input': field.attrs.id
+      }
+    }, slots().default)
+
+    return h('div', { attrs }, [ inputLabel, inputField ])
   }
 }
 
@@ -123,7 +126,9 @@ const Fieldset = {
     }
 
     if (field.description) {
-      nodes.push(h('small', field.description))
+      nodes.push(h('small', {
+        attrs: field.descAttrs
+      }, field.description))
     }
 
     if (!field.label) {
@@ -147,27 +152,14 @@ const ArrayButton = {
   }
 }
 
-const ErrorElement = {
-  functional: true,
-  render (h, { slots }) {
-    return h('div', {
-      attrs: {
-        'data-fs-error': true
-      }
-    }, slots().default)
-  }
-}
-
 const TAGS = {
-  title: 'h1',
+  title: 'legend',
   description: 'p',
-  formwrapper: 'div',
   form: 'form',
   text: Input,
   select: Select,
   option: 'option',
-  fieldset: Fieldset,
-  error: ErrorElement
+  fieldset: Fieldset
 }
 
 export class Components {
