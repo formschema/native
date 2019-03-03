@@ -4,7 +4,7 @@ import FormSchemaInput from './FormSchemaInput'
 export default {
   functional: true,
   render (createElement, { data, props, listeners }) {
-    const { field, fieldParent, components } = data
+    const { field, components } = data
     const { item, value, checked } = props
 
     const { label, description } = item
