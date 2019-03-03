@@ -87,6 +87,10 @@ describe('FormSchemaInput', () => {
   it('should successfully render a array field component with label', () => {
     const field = {
       label: 'array label',
+      labelAttrs: {
+        id: 'x-label',
+        for: 'x'
+      },
       attrs: {
         id: 'x',
         name: 'fieldName',
@@ -114,7 +118,7 @@ describe('FormSchemaInput', () => {
       }
     })
 
-    const expected = '<div><div data-fs-field="x"><label for="x">array label</label><div data-fs-field-input="x"><div data-fs-array-inputs="true"><input id="x" name="fieldName-0" type="text" data-fs-index="0" value="Value 1"><input id="x-1" name="fieldName-1" type="text" data-fs-index="1" value="Value 2"></div><button type="button">Add</button></div></div></div>'
+    const expected = '<div><div data-fs-field="x"><label id="x-label" for="x">array label</label><div data-fs-field-input="x"><div data-fs-array-inputs="true"><input id="x" name="fieldName-0" type="text" data-fs-index="0" value="Value 1"><input id="x-1" name="fieldName-1" type="text" data-fs-index="1" value="Value 2"></div><button type="button">Add</button></div></div></div>'
 
     expect(wrapper.html()).toEqual(expected)
   })

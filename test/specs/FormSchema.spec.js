@@ -30,12 +30,87 @@ const schema = {
     name: {
       type: 'string',
       title: 'Your name',
+      description: 'Your full name',
       attrs: {
         id: 'x'
       }
     }
   },
   required: ['name']
+}
+
+function runRenderTests({ wrapper, search }) {
+  it('should have form tag', () => {
+    expect(wrapper.findAll('form').length).toEqual(1)
+  })
+
+  it('should have form legend', () => {
+    expect(wrapper.findAll('form > legend').length).toEqual(1)
+    expect(wrapper.find('form > legend').html()).toEqual(`<legend>${schema.title}</legend>`)
+  })
+
+  it('should have form description', () => {
+    expect(wrapper.findAll('form > p').length).toEqual(1)
+    expect(wrapper.find('form > p').html()).toEqual(`<p>${schema.description}</p>`)
+  })
+
+  it('should have form enctype attribute', () => {
+    expect(wrapper.find('form').element.hasAttribute('enctype')).toBeTruthy()
+    expect(wrapper.find('form').element.getAttribute('enctype')).toEqual(props.enctype)
+  })
+
+  it('should have form method attribute', () => {
+    expect(wrapper.find('form').element.hasAttribute('method')).toBeTruthy()
+    expect(wrapper.find('form').element.getAttribute('method')).toEqual(props.method)
+  })
+
+  if (search) {
+    it('should have form role="search" attribute', () => {
+      expect(wrapper.find('form').element.hasAttribute('role')).toBeTruthy()
+      expect(wrapper.find('form').element.getAttribute('role')).toEqual('search')
+    })
+  } else {
+    it('should not have form role="search" attribute', () => {
+      expect(!wrapper.find('form').element.hasAttribute('role')).toBeTruthy()
+    })
+  }
+
+  it('should have form aria-label attribute', () => {
+    expect(wrapper.find('form').element.hasAttribute('aria-label')).toBeTruthy()
+    expect(wrapper.find('form').element.getAttribute('aria-label')).toEqual(schema.title)
+  })
+
+  it('should have input label', () => {
+    expect(wrapper.findAll('label').length).toEqual(1)
+    expect(wrapper.find('label').html()).toEqual('<label id="x-label" for="x" tabindex="-1">Your name</label>')
+  })
+
+  it('should have form input', () => {
+    expect(wrapper.findAll('input').length).toEqual(1)
+    expect(wrapper.find('input').html()).toEqual('<input id="x" type="text" name="name" required="required" aria-required="true" aria-labelledby="x-label x-desc">')
+  })
+
+  it('should have form input description', () => {
+    expect(wrapper.findAll('input + small').length).toEqual(1)
+    expect(wrapper.find('input + small').html()).toEqual('<small id="x-desc" tabindex="-1">Your full name</small>')
+  })
+
+  it('should not have buttons', () => {
+    expect(wrapper.findAll('button').length).toEqual(0)
+  })
+
+  it('should successfully render buttons via slots', () => {
+    const schema = { type: 'string' }
+    const wrapper = mount(component, {
+      propsData: { schema },
+      slots: {
+        default: '<button type="submit">Submit</button>'
+      }
+    })
+
+    expect(wrapper.findAll('button').length).toEqual(1)
+    expect(wrapper.find('button').html()).toEqual('<button type="submit">Submit</button>')
+  })
 }
 
 describe('FormSchema', () => {
@@ -203,74 +278,25 @@ describe('FormSchema', () => {
     })
 
     describe('should successfully render the component', () => {
+      const search = false
+      const wrapper = mount(component, {
+        propsData: { schema, search }
+      })
+
+      runRenderTests({ wrapper, search })
+    })
+
+    describe('should successfully render the component with props.search === true', () => {
       const search = true
       const wrapper = mount(component, {
         propsData: { schema, search }
       })
 
-      it('should have form tag', () => {
-        expect(wrapper.findAll('form').length).toEqual(1)
-      })
-
-      it('should have form legend', () => {
-        expect(wrapper.findAll('form > legend').length).toEqual(1)
-        expect(wrapper.find('form > legend').html()).toEqual(`<legend>${schema.title}</legend>`)
-      })
-
-      it('should have form description', () => {
-        expect(wrapper.findAll('form > p').length).toEqual(1)
-        expect(wrapper.find('form > p').html()).toEqual(`<p>${schema.description}</p>`)
-      })
-
-      it('should have form enctype attribute', () => {
-        expect(wrapper.find('form').element.hasAttribute('enctype')).toBeTruthy()
-        expect(wrapper.find('form').element.getAttribute('enctype')).toEqual(props.enctype)
-      })
-
-      it('should have form method attribute', () => {
-        expect(wrapper.find('form').element.hasAttribute('method')).toBeTruthy()
-        expect(wrapper.find('form').element.getAttribute('method')).toEqual(props.method)
-      })
-
-      it('should have form role="search" attribute', () => {
-        expect(wrapper.find('form').element.hasAttribute('role')).toBeTruthy()
-        expect(wrapper.find('form').element.getAttribute('role')).toEqual('search')
-      })
-
-      it('should have form aria-label attribute', () => {
-        expect(wrapper.find('form').element.hasAttribute('aria-label')).toBeTruthy()
-        expect(wrapper.find('form').element.getAttribute('aria-label')).toEqual(schema.title)
-      })
-
-      it('should have input label', () => {
-        expect(wrapper.findAll('label').length).toEqual(1)
-        expect(wrapper.find('label').html()).toEqual('<label id="x-label" for="x">Your name</label>')
-      })
-
-      it('should have form input', () => {
-        expect(wrapper.findAll('input').length).toEqual(1)
-        expect(wrapper.find('input').html()).toEqual('<input id="x" type="text" name="name" required="required" aria-required="true" aria-labelledby="x-label">')
-      })
-
-      it('should not have buttons', () => {
-        expect(wrapper.findAll('button').length).toEqual(0)
-      })
-
-      it('should successfully render buttons via slots', () => {
-        const schema = { type: 'string' }
-        const wrapper = mount(component, {
-          propsData: { schema },
-          slots: {
-            default: '<button type="submit">Submit</button>'
-          }
-        })
-
-        expect(wrapper.findAll('button').length).toEqual(1)
-        expect(wrapper.find('button').html()).toEqual('<button type="submit">Submit</button>')
-      })
+      runRenderTests({ wrapper, search })
     })
 
     describe('should successfully render the component with reactive schema - load(schema)', () => {
+      const search = false
       const wrapper = mount(component, {
         propsData: { schema: {} }
       })
@@ -280,43 +306,7 @@ describe('FormSchema', () => {
         wrapper.vm.load(schema)
       })
 
-      it('should have form tag', () => {
-        expect(wrapper.findAll('form').length).toEqual(1)
-      })
-
-      it('should have form title', () => {
-        expect(wrapper.findAll('form > legend').length).toEqual(1)
-        expect(wrapper.find('form > legend').html()).toEqual(`<legend>${schema.title}</legend>`)
-      })
-
-      it('should have form description', () => {
-        expect(wrapper.findAll('form > p').length).toEqual(1)
-        expect(wrapper.find('form > p').html()).toEqual(`<p>${schema.description}</p>`)
-      })
-
-      it('should have form enctype attribute', () => {
-        expect(wrapper.find('form').element.hasAttribute('enctype')).toBeTruthy()
-        expect(wrapper.find('form').element.getAttribute('enctype')).toEqual(props.enctype)
-      })
-
-      it('should have form method attribute', () => {
-        expect(wrapper.find('form').element.hasAttribute('method')).toBeTruthy()
-        expect(wrapper.find('form').element.getAttribute('method')).toEqual(props.method)
-      })
-
-      it('should have input label', () => {
-        expect(wrapper.findAll('label').length).toEqual(1)
-        expect(wrapper.find('label').html()).toEqual('<label id="x-label" for="x">Your name</label>')
-      })
-
-      it('should have form input', () => {
-        expect(wrapper.findAll('input').length).toEqual(1)
-        expect(wrapper.find('input').html()).toEqual('<input id="x" type="text" name="name" required="required" aria-required="true" aria-labelledby="x-label">')
-      })
-
-      it('should not have buttons', () => {
-        expect(wrapper.findAll('button').length).toEqual(0)
-      })
+      runRenderTests({ wrapper, search })
     })
 
     describe('should successfully render the component with reactive schema - load(schema, model)', () => {
@@ -337,7 +327,7 @@ describe('FormSchema', () => {
       it('should have form input', () => {
         expect(wrapper.emitted().input.pop()).toEqual([{ name: 'Lanister' }])
         expect(wrapper.findAll('input').length).toEqual(1)
-        expect(wrapper.find('input').html()).toEqual('<input id="x" type="text" name="name" value="Lanister" required="required" aria-required="true" aria-labelledby="x-label">')
+        expect(wrapper.find('input').html()).toEqual('<input id="x" type="text" name="name" value="Lanister" required="required" aria-required="true" aria-labelledby="x-label x-desc">')
       })
     })
 
@@ -463,7 +453,7 @@ describe('FormSchema', () => {
           propsData: { schema }
         })
 
-        const expected = '<form enctype="application/x-www-form-urlencoded" method="post"><div data-fs-field="x"><label id="x-label" for="x">choices</label><div data-fs-field-input="x"><select id="x" name="list" aria-labelledby="x-label x-desc"><option value="v0">v0</option><option value="v1">v1</option></select><small id="x-desc">choices description</small></div></div></form>'
+        const expected = '<form enctype="application/x-www-form-urlencoded" method="post"><div data-fs-field="x"><label id="x-label" for="x" tabindex="-1">choices</label><div data-fs-field-input="x"><select id="x" name="list" aria-labelledby="x-label x-desc"><option value="v0">v0</option><option value="v1">v1</option></select><small id="x-desc" tabindex="-1">choices description</small></div></div></form>'
 
         expect(wrapper.find('form').html()).toEqual(expected)
       })

@@ -59,7 +59,8 @@ describe('lib/parser', () => {
 
       expect(typeof field.attrs.id).toEqual('string')
 
-      delete field.labelId
+      delete field.labelAttrs
+      delete field.descAttrs
       delete field.attrs.id
 
       expect(field).toEqual(expected)
@@ -77,8 +78,15 @@ describe('lib/parser', () => {
       const expected = {
         schemaType: 'string',
         label: 'title value',
-        labelId: 'x-label',
-        descId: 'x-desc',
+        labelAttrs: {
+          id: 'x-label',
+          for: 'x',
+          tabindex: '-1'
+        },
+        descAttrs: {
+          id: 'x-desc',
+          tabindex: '-1'
+        },
         description: 'description value',
         attrs: {
           id: 'x',
@@ -114,7 +122,8 @@ describe('lib/parser', () => {
 
       setCommonFields(schema, field)
 
-      delete field.labelId
+      delete field.labelAttrs
+      delete field.descAttrs
       delete field.attrs.id
 
       expect(field).toEqual(expected)
@@ -139,7 +148,8 @@ describe('lib/parser', () => {
 
       setCommonFields(schema, field)
 
-      delete field.labelId
+      delete field.labelAttrs
+      delete field.descAttrs
       delete field.attrs.id
 
       expect(field).toEqual(expected)
@@ -164,7 +174,8 @@ describe('lib/parser', () => {
 
       setCommonFields(schema, field)
 
-      delete field.labelId
+      delete field.labelAttrs
+      delete field.descAttrs
       delete field.attrs.id
 
       expect(field).toEqual(expected)
@@ -189,7 +200,8 @@ describe('lib/parser', () => {
 
       setCommonFields(schema, field)
 
-      delete field.labelId
+      delete field.labelAttrs
+      delete field.descAttrs
       delete field.attrs.id
 
       expect(field).toEqual(expected)
@@ -318,7 +330,8 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelId
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -347,7 +360,8 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelId
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -378,7 +392,8 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelId
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -409,7 +424,8 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelId
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -439,7 +455,8 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelId
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -464,7 +481,8 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelId
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -492,7 +510,8 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelId
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -521,7 +540,8 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelId
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -552,7 +572,8 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelId
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -578,7 +599,8 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelId
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -590,7 +612,8 @@ describe('lib/parser', () => {
 
       expect(typeof result2.attrs.id).toEqual('string')
 
-      delete result2.labelId
+      delete result2.labelAttrs
+      delete result2.descAttrs
       delete result2.attrs.id
 
       expect(result2).toEqual(expected)
@@ -616,7 +639,8 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelId
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -628,7 +652,8 @@ describe('lib/parser', () => {
 
       expect(typeof result2.attrs.id).toEqual('string')
 
-      delete result2.labelId
+      delete result2.labelAttrs
+      delete result2.descAttrs
       delete result2.attrs.id
 
       expect(result2).toEqual(expected)
@@ -651,7 +676,8 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelId
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -674,7 +700,8 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelId
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -721,7 +748,8 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelId
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -753,7 +781,8 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelId
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -785,7 +814,8 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelId
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -813,7 +843,8 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelId
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -849,7 +880,8 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelId
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -883,7 +915,8 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelId
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
 
       expect(result).toEqual(expected)
@@ -898,7 +931,8 @@ describe('lib/parser', () => {
 
       expect(typeof result2.attrs.id).toEqual('string')
 
-      delete result2.labelId
+      delete result2.labelAttrs
+      delete result2.descAttrs
       delete result2.attrs.id
 
       expect(result2).toEqual(expected)
@@ -928,7 +962,8 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelId
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
       delete result.items[0].id
 
@@ -960,7 +995,8 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelId
+      delete result.labelAttrs
+      delete result.descAttrs
       delete result.attrs.id
       delete result.items[0].id
 
@@ -989,7 +1025,8 @@ describe('lib/parser', () => {
 
         expect(typeof fields[0].attrs.id).toEqual('string')
 
-        delete fields[0].labelId
+        delete fields[0].labelAttrs
+        delete fields[0].descAttrs
         delete fields[0].attrs.id
 
         expect(fields).toEqual(expected)
@@ -1019,7 +1056,8 @@ describe('lib/parser', () => {
 
         expect(typeof fields[0].attrs.id).toEqual('string')
 
-        delete fields[0].labelId
+        delete fields[0].labelAttrs
+        delete fields[0].descAttrs
         delete fields[0].attrs.id
 
         expect(fields).toEqual(expected)
@@ -1045,7 +1083,8 @@ describe('lib/parser', () => {
 
         expect(typeof fields[0].attrs.id).toEqual('string')
 
-        delete fields[0].labelId
+        delete fields[0].labelAttrs
+        delete fields[0].descAttrs
         delete fields[0].attrs.id
 
         expect(fields).toEqual(expected)
@@ -1079,7 +1118,8 @@ describe('lib/parser', () => {
 
         expect(typeof fields[0].attrs.id).toEqual('string')
 
-        delete fields[0].labelId
+        delete fields[0].labelAttrs
+        delete fields[0].descAttrs
         delete fields[0].attrs.id
 
         expect(fields).toEqual(expected)
@@ -1111,7 +1151,8 @@ describe('lib/parser', () => {
 
         expect(typeof fields[0].attrs.id).toEqual('string')
 
-        delete fields[0].labelId
+        delete fields[0].labelAttrs
+        delete fields[0].descAttrs
         delete fields[0].attrs.id
 
         expect(fields).toEqual(expected)
@@ -1144,7 +1185,8 @@ describe('lib/parser', () => {
 
         expect(typeof fields[0].attrs.id).toEqual('string')
 
-        delete fields[0].labelId
+        delete fields[0].labelAttrs
+        delete fields[0].descAttrs
         delete fields[0].attrs.id
 
         expect(fields).toEqual(expected)
@@ -1182,7 +1224,8 @@ describe('lib/parser', () => {
 
         expect(typeof fields[0].attrs.id).toEqual('string')
 
-        delete fields[0].labelId
+        delete fields[0].labelAttrs
+        delete fields[0].descAttrs
         delete fields[0].attrs.id
 
         expect(fields).toEqual(expected)
@@ -1215,7 +1258,8 @@ describe('lib/parser', () => {
 
         expect(typeof fields[0].attrs.id).toEqual('string')
 
-        delete fields[0].labelId
+        delete fields[0].labelAttrs
+        delete fields[0].descAttrs
         delete fields[0].attrs.id
 
         expect(fields).toEqual(expected)
@@ -1289,7 +1333,8 @@ describe('lib/parser', () => {
         fields.forEach((field) => {
           expect(typeof field.attrs.id).toEqual('string')
 
-          delete field.labelId
+          delete field.labelAttrs
+          delete field.descAttrs
           delete field.attrs.id
         })
 

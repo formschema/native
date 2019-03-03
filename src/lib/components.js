@@ -13,9 +13,7 @@ const Input = {
 
     if (field.description) {
       nodes.push(h('small', {
-        attrs: {
-          id: field.descId
-        }
+        attrs: field.descAttrs
       }, field.description))
     }
 
@@ -67,9 +65,7 @@ const Select = {
 
     if (field.description) {
       nodes.push(h('small', {
-        attrs: {
-          id: field.descId
-        }
+        attrs: field.descAttrs
       }, field.description))
     }
 
@@ -97,19 +93,17 @@ const Label = {
       'data-fs-required': field.attrs.required
     }
 
-    return h('div', { attrs }, [
-      h('label', {
-        attrs: {
-          id: field.labelId,
-          for: field.attrs.id
-        }
-      }, field.label),
-      h('div', {
-        attrs: {
-          'data-fs-field-input': field.attrs.id
-        }
-      }, slots().default)
-    ])
+    const inputLabel = h('label', {
+      attrs: field.labelAttrs
+    }, field.label)
+
+    const inputField = h('div', {
+      attrs: {
+        'data-fs-field-input': field.attrs.id
+      }
+    }, slots().default)
+
+    return h('div', { attrs }, [ inputLabel, inputField ])
   }
 }
 
@@ -132,7 +126,9 @@ const Fieldset = {
     }
 
     if (field.description) {
-      nodes.push(h('small', field.description))
+      nodes.push(h('small', {
+        attrs: field.descAttrs
+      }, field.description))
     }
 
     if (!field.label) {

@@ -319,7 +319,7 @@ describe('FormSchemaField', () => {
         }
       })
 
-      const expected = '<div data-fs-field="x"><label id="x-label" for="x">choices</label><div data-fs-field-input="x"><fieldset name="fieldName"><legend>choices description</legend><div data-fs-field="y"><label for="y">l1</label><div data-fs-field-input="y"><input id="y" name="fieldName" type="checkbox" value="v0"></div></div><div data-fs-field="z"><label for="z">l2</label><div data-fs-field-input="z"><input id="z" name="fieldName" type="checkbox" value="v1" checked="checked"></div></div></fieldset></div></div>'
+      const expected = '<div data-fs-field="x"><label id="x-label" for="x" tabindex="-1">choices</label><div data-fs-field-input="x"><fieldset name="fieldName"><legend>choices description</legend><div data-fs-field="y"><label for="y">l1</label><div data-fs-field-input="y"><input id="y" name="fieldName" type="checkbox" value="v0"></div></div><div data-fs-field="z"><label for="z">l2</label><div data-fs-field-input="z"><input id="z" name="fieldName" type="checkbox" value="v1" checked="checked"></div></div></fieldset></div></div>'
 
       expect(wrapper.html()).toEqual(expected)
     })
@@ -385,7 +385,7 @@ describe('FormSchemaField', () => {
         }
       })
 
-      const expected = '<div data-fs-field="x"><label id="x-label" for="x">choices</label><div data-fs-field-input="x"><select id="x" aria-labelledby="x-label x-desc"><option value="v0">l1</option><option value="v1">l2</option></select><small id="x-desc">choices description</small></div></div>'
+      const expected = '<div data-fs-field="x"><label id="x-label" for="x" tabindex="-1">choices</label><div data-fs-field-input="x"><select id="x" aria-labelledby="x-label x-desc"><option value="v0">l1</option><option value="v1">l2</option></select><small id="x-desc" tabindex="-1">choices description</small></div></div>'
 
       expect(wrapper.html()).toEqual(expected)
     })
@@ -419,7 +419,7 @@ describe('FormSchemaField', () => {
         }
       })
 
-      const expected = '<div data-fs-field="x"><label id="x-label" for="x">choices</label><div data-fs-field-input="x"><select id="x" name="list" aria-labelledby="x-label x-desc"><option value="v0">v0</option><option value="v1">v1</option></select><small id="x-desc">choices description</small></div></div>'
+      const expected = '<div data-fs-field="x"><label id="x-label" for="x" tabindex="-1">choices</label><div data-fs-field-input="x"><select id="x" name="list" aria-labelledby="x-label x-desc"><option value="v0">v0</option><option value="v1">v1</option></select><small id="x-desc" tabindex="-1">choices description</small></div></div>'
 
       expect(wrapper.html()).toEqual(expected)
     })
@@ -452,7 +452,7 @@ describe('FormSchemaField', () => {
       }
     })
 
-    const expected = '<div data-fs-field="x"><label id="x-label" for="x">choices</label><div data-fs-field-input="x"><select id="x" aria-labelledby="x-label x-desc"><option value="v0">l1</option><option value="v1" selected="selected">l2</option></select><small id="x-desc">choices description</small></div></div>'
+    const expected = '<div data-fs-field="x"><label id="x-label" for="x" tabindex="-1">choices</label><div data-fs-field-input="x"><select id="x" aria-labelledby="x-label x-desc"><option value="v0">l1</option><option value="v1" selected="selected">l2</option></select><small id="x-desc" tabindex="-1">choices description</small></div></div>'
 
     expect(wrapper.html()).toEqual(expected)
   })
@@ -485,7 +485,7 @@ describe('FormSchemaField', () => {
       }
     })
 
-    const expected = '<div data-fs-field="x"><label id="x-label" for="x">choices</label><div data-fs-field-input="x"><select multiple="multiple" id="x" name="fieldName" aria-labelledby="x-label x-desc"><option value="v0">l1</option><option value="v1" selected="selected">l2</option></select><small id="x-desc">choices description</small></div></div>'
+    const expected = '<div data-fs-field="x"><label id="x-label" for="x" tabindex="-1">choices</label><div data-fs-field-input="x"><select multiple="multiple" id="x" name="fieldName" aria-labelledby="x-label x-desc"><option value="v0">l1</option><option value="v1" selected="selected">l2</option></select><small id="x-desc" tabindex="-1">choices description</small></div></div>'
 
     expect(wrapper.html()).toEqual(expected)
   })
@@ -523,7 +523,7 @@ describe('FormSchemaField', () => {
       }
     })
 
-    const expected = '<div data-fs-field="x" data-fs-required="true"><label id="x-label" for="x">choices</label><div data-fs-field-input="x"><select multiple="multiple" id="x" name="fieldName" required="required" aria-required="true" aria-labelledby="x-label x-desc"><option value=""></option><option value="v0" selected="selected">l1</option><option value="v1">l2</option></select><small id="x-desc">choices description</small></div></div>'
+    const expected = '<div data-fs-field="x" data-fs-required="true"><label id="x-label" for="x" tabindex="-1">choices</label><div data-fs-field-input="x"><select multiple="multiple" id="x" name="fieldName" required="required" aria-required="true" aria-labelledby="x-label x-desc"><option value=""></option><option value="v0" selected="selected">l1</option><option value="v1">l2</option></select><small id="x-desc" tabindex="-1">choices description</small></div></div>'
 
     expect(wrapper.html()).toEqual(expected)
   })
