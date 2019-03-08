@@ -8,6 +8,7 @@
     "demo": "cd demo && npm run serve",
     "test": "vue-cli-service test:unit --colors --testMatch '<rootDir>/test/specs/*.spec.js' --testURL='http://localhost'",
     "lint": "vue-cli-service lint --no-fix",
+    "lint:fix": "vue-cli-service lint",
     "readme": "vuedoc.md --join src/components/*.js --ignore-name --ignore-data --section 'FormSchema API' --output README.md",
     "build": "rollup -c"
   },
@@ -33,7 +34,7 @@
     "@vue/cli-plugin-eslint": "^3.3.0",
     "@vue/cli-plugin-unit-jest": "^3.3.0",
     "@vue/cli-service": "^3.3.0",
-    "@vue/eslint-config-standard": "^3.0.5",
+    "@vue/eslint-config-airbnb": "^4.0.0",
     "@vue/test-utils": "^1.0.0-beta.28",
     "@vuedoc/md": "^1.6.0",
     "babel-core": "^6.26.3",

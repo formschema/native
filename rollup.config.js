@@ -1,9 +1,9 @@
 import { uglify } from 'rollup-plugin-uglify'
 import babel from 'rollup-plugin-babel'
-import pkg from './package.json'
 
 import resolve from 'rollup-plugin-node-resolve'
 import commonjs from 'rollup-plugin-commonjs'
+import pkg from './package.json'
 
 const DEST = 'dist'
 const MODULE_NAME = 'FormSchema'
@@ -20,7 +20,9 @@ const PLUGINS = [
   babel({
     exclude: 'node_modules/**',
     babelrc: false,
-    presets: [['@babel/env', { modules: false }]]
+    presets: [
+      [ '@babel/env', { modules: false } ]
+    ]
   }),
   uglify({
     compress: true,
@@ -38,7 +40,7 @@ function build (format, suffix = `${format}.min`) {
     output: {
       dir: DEST,
       file: `${MODULE_NAME}.${suffix}.js`,
-      format: format,
+      format,
       name: MODULE_NAME,
       indent: false,
       sourcemap: true,

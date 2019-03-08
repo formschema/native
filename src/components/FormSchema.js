@@ -132,7 +132,7 @@ export default {
     }
 
     const { title, description } = this.loadedSchema
-    const components = this.components
+    const { components } = this
     const nodes = []
 
     if (title) {
@@ -141,7 +141,8 @@ export default {
 
     if (description) {
       nodes.push(createElement(
-        components.$.description.component, description))
+        components.$.description.component, description
+      ))
     }
 
     this.fields.forEach((field) => {
@@ -158,7 +159,7 @@ export default {
             this.$forceUpdate()
           },
           input: (event) => {
-            const target = event.target
+            const { target } = event
             const data = event.target.value
             const eventInput = { field, data, target }
 
@@ -177,7 +178,7 @@ export default {
             this.emitInputEvent()
           },
           change: (event) => {
-            const target = event.target
+            const { target } = event
             const data = event.target.value
             const eventInput = { field, data, target }
 
@@ -219,7 +220,7 @@ export default {
         method: this.method,
         autocomplete: this.autocomplete,
         novalidate: this.novalidate,
-        role: this.search ? 'search' : void (0),
+        role: this.search ? 'search' : undefined,
         'aria-label': title
       },
       props: {
@@ -243,7 +244,8 @@ export default {
      * @note `model` is not a two-way data bindings.
      * To get the form data, use the `v-model` directive.
      *
-     * @note The default value of `model` is the initial model defined with the `v-model` directive.
+     * @note The default value of `model` is the initial model defined with the
+     * `v-model` directive.
      */
     load (schema, model = this.value, reset = true) {
       this.ready = false

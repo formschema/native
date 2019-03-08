@@ -7,11 +7,10 @@ export default {
     const { value, name = field.attrs.name } = props
     const inputData = assign({}, input.data)
 
-    inputData.attrs.name = inputData.props.name = name
-    inputData.attrs.value = inputData.props.value = typeof value === 'object'
-      ? value[name]
-      : value
-
+    inputData.attrs.name = name
+    inputData.props.name = inputData.attrs.name
+    inputData.attrs.value = typeof value === 'object' ? value[name] : value
+    inputData.props.value = inputData.attrs.value
     inputData.components = components
 
     return createElement(input.element.component, inputData, slots().default)

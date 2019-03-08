@@ -2,7 +2,7 @@ import { isScalar, assign } from './object'
 
 /* eslint-disable no-labels */
 
-const ARRAY_KEYWORDS = ['anyOf', 'oneOf', 'enum']
+const ARRAY_KEYWORDS = [ 'anyOf', 'oneOf', 'enum' ]
 
 export const SCHEMA_TYPES = Object.freeze({
   ARRAY: 'array',
@@ -57,9 +57,9 @@ export function setCommonFields (schema, field, model = null) {
   }
 
   const id = field.attrs.id || genId(field.attrs.name)
-  const labelId = schema.title ? `${id}-label` : void (0)
-  const descId = schema.description ? `${id}-desc` : void (0)
-  const ariaLabels = [labelId, descId].filter((item) => item)
+  const labelId = schema.title ? `${id}-label` : undefined
+  const descId = schema.description ? `${id}-desc` : undefined
+  const ariaLabels = [ labelId, descId ].filter((item) => item)
 
   field.order = schema.order
   field.schemaType = schema.type
@@ -180,9 +180,7 @@ export function parseDefaultObjectValue (schema, fields, value) {
       default:
         if (field.isArrayField) {
           if (data[name] instanceof Array) {
-            data[name] = data[name].filter((value) => {
-              return value !== undefined
-            })
+            data[name] = data[name].filter((value) => value !== undefined)
           } else {
             data[name] = []
           }
@@ -198,64 +196,6 @@ export function parseDefaultObjectValue (schema, fields, value) {
   })
 
   return data
-}
-
-export function loadFields (schema, fields, name = null, model = null) {
-  switch (schema.type) {
-    case SCHEMA_TYPES.OBJECT:
-      if (schema.required instanceof Array) {
-        schema.required.forEach((field) => {
-          schema.properties[field].required = true
-        })
-      }
-
-      const allProperties = Object.keys(schema.properties)
-      const properties = schema.order instanceof Array
-        ? schema.order
-        : allProperties
-
-      if (properties.length < allProperties.length) {
-        allProperties.forEach((prop) => {
-          if (!properties.includes(prop)) {
-            properties.push(prop)
-          }
-        })
-      }
-
-      if (model === null) {
-        model = {}
-      }
-
-      properties.forEach((key) => {
-        loadFields(schema.properties[key], fields, key, model[key] || null)
-      })
-      break
-
-    case SCHEMA_TYPES.BOOLEAN:
-      fields.push(parseBoolean(schema, name, model))
-      break
-
-    case SCHEMA_TYPES.ARRAY:
-      fields.push(parseArray(schema, name, model))
-      break
-
-    case SCHEMA_TYPES.INTEGER:
-    case SCHEMA_TYPES.NUMBER:
-    case SCHEMA_TYPES.STRING:
-      for (let keyword of ARRAY_KEYWORDS) {
-        if (schema.hasOwnProperty(keyword)) {
-          schema.items = {
-            type: schema.type,
-            enum: schema[keyword]
-          }
-
-          fields.push(parseArray(schema, name, model))
-          return
-        }
-      }
-      fields.push(parseString(schema, name, model))
-      break
-  }
 }
 
 export function parseBoolean (schema, name = null, model = null) {
@@ -362,7 +302,7 @@ export const setItemName = (name, isRadio = false) => (item, i) => {
 }
 
 export function arrayOrderedValues (field) {
-  return field.items.map((item) => item.checked ? item.value : undefined)
+  return field.items.map((item) => (item.checked ? item.value : undefined))
 }
 
 export function arrayUnorderedValues (field) {
@@ -372,12 +312,23 @@ export function arrayUnorderedValues (field) {
 }
 
 export function singleValue (field) {
-  const item = field.items.reverse().find((item) => item.checked || item.selected)
+  /* eslint-disable arrow-body-style */
+  const item = field.items.reverse().find((item) => {
+    return item.checked || item.selected
+  })
 
   return item ? item.value : ''
 }
 
-const NOT_ARRAY = [INPUT_TYPES.RADIO, INPUT_TYPES.CHECKBOX, INPUT_TYPES.SWITCH]
+const NOT_ARRAY = [
+  INPUT_TYPES.RADIO,
+  INPUT_TYPES.CHECKBOX,
+  INPUT_TYPES.SWITCH
+]
+
+function isValueEmpty (value) {
+  return value === undefined || value.length === 0
+}
 
 export function parseArray (schema, name = null, model = null) {
   const field = {
@@ -391,11 +342,11 @@ export function parseArray (schema, name = null, model = null) {
   setCommonFields(schema, field, model)
 
   field.items = []
-  field.minItems = parseInt(schema.minItems) || 1
-  field.maxItems = parseInt(schema.maxItems) || 1000
+  field.minItems = parseInt(schema.minItems, 10) || 1
+  field.maxItems = parseInt(schema.maxItems, 10) || 1000
 
   loop:
-  for (let keyword of ARRAY_KEYWORDS) {
+  for (const keyword of ARRAY_KEYWORDS) {
     if (schema.hasOwnProperty(keyword)) {
       switch (keyword) {
         case 'enum':
@@ -405,7 +356,7 @@ export function parseArray (schema, name = null, model = null) {
 
           field.items = parseItems(schema[keyword])
 
-          if (field.attrs.value === void (0) || field.attrs.value.length === 0) {
+          if (isValueEmpty(field.attrs.value)) {
             field.attrs.value = field.schemaType === 'array'
               ? arrayUnorderedValues(field)
               : singleValue(field)
@@ -416,9 +367,10 @@ export function parseArray (schema, name = null, model = null) {
           field.attrs.type = INPUT_TYPES.RADIO
           field.attrs.value = field.attrs.value || ''
 
-          field.items = parseItems(schema[keyword]).map(setItemName(name, true))
+          field.items = parseItems(schema[keyword])
+            .map(setItemName(name, true))
 
-          if (field.attrs.value === void (0) || field.attrs.value.length === 0) {
+          if (isValueEmpty(field.attrs.value)) {
             field.attrs.value = singleValue(field)
           }
           break loop
@@ -430,7 +382,7 @@ export function parseArray (schema, name = null, model = null) {
           field.items = parseItems(schema[keyword]).map(setItemName(name))
           field.isArrayField = true
 
-          if (field.attrs.value === void (0) || field.attrs.value.length === 0) {
+          if (isValueEmpty(field.attrs.value)) {
             field.attrs.value = arrayOrderedValues(field)
           }
           break loop
@@ -447,7 +399,7 @@ export function parseArray (schema, name = null, model = null) {
     field.attrs.multiple = field.schemaType === SCHEMA_TYPES.ARRAY
     field.attrs.value = field.attrs.value || field.attrs.multiple ? [] : ''
 
-    if (field.attrs.value === void (0) || field.attrs.value.length === 0) {
+    if (isValueEmpty(field.attrs.value)) {
       if (field.attrs.multiple) {
         field.isArrayField = true
         field.attrs.value = arrayUnorderedValues(field)
@@ -460,4 +412,64 @@ export function parseArray (schema, name = null, model = null) {
   }
 
   return field
+}
+
+export function loadFields (schema, fields, name = null, model = null) {
+  switch (schema.type) {
+    case SCHEMA_TYPES.OBJECT: {
+      if (schema.required instanceof Array) {
+        schema.required.forEach((field) => {
+          schema.properties[field].required = true
+        })
+      }
+
+      const allProperties = Object.keys(schema.properties)
+      const properties = schema.order instanceof Array
+        ? schema.order
+        : allProperties
+
+      if (properties.length < allProperties.length) {
+        allProperties.forEach((prop) => {
+          if (!properties.includes(prop)) {
+            properties.push(prop)
+          }
+        })
+      }
+
+      if (model === null) {
+        model = {}
+      }
+
+      properties.forEach((key) => {
+        loadFields(schema.properties[key], fields, key, model[key] || null)
+      })
+      break
+    }
+
+    case SCHEMA_TYPES.BOOLEAN:
+      fields.push(parseBoolean(schema, name, model))
+      break
+
+    case SCHEMA_TYPES.ARRAY:
+      fields.push(parseArray(schema, name, model))
+      break
+
+    case SCHEMA_TYPES.INTEGER:
+    case SCHEMA_TYPES.NUMBER:
+    case SCHEMA_TYPES.STRING:
+      for (const keyword of ARRAY_KEYWORDS) {
+        if (schema.hasOwnProperty(keyword)) {
+          schema.items = {
+            type: schema.type,
+            enum: schema[keyword]
+          }
+
+          fields.push(parseArray(schema, name, model))
+          return
+        }
+      }
+
+      fields.push(parseString(schema, name, model))
+      break
+  }
 }

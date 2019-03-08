@@ -3,7 +3,7 @@ import { assign } from '../lib/object'
 import { inputName } from '../lib/components'
 import FormSchemaInputArrayElement from './FormSchemaInputArrayElement'
 
-const unwrappingElements = [INPUT_TYPES.CHECKBOX, INPUT_TYPES.RADIO]
+const unwrappingElements = [ INPUT_TYPES.CHECKBOX, INPUT_TYPES.RADIO ]
 
 export const INPUT_ADDED_EVENT = 'array-button-clicked'
 
@@ -15,7 +15,7 @@ export default {
     const children = slots().default || []
 
     if (field.isArrayField && field.attrs.type !== INPUT_TYPES.SELECT) {
-      const name = field.attrs.name
+      const { name } = field.attrs
       const data = {
         input,
         field,
@@ -31,13 +31,13 @@ export default {
         return createElement(FormSchemaInputArrayElement, data, children)
       }
 
-      const id = input.data.attrs.id || genId(name)
-      const inputs = Array.apply(null, Array(field.itemsNum)).map((v, i) => {
+      const { id = genId(name) } = input.data.attrs
+      const inputs = Array(...Array(field.itemsNum)).map((v, i) => {
         data.props.name = inputName(field, i)
         input.data.attrs['data-fs-index'] = i
 
         if (i) {
-          input.data.attrs.id = id + '-' + i
+          input.data.attrs.id = `${id}-${i}`
         } else {
           input.data.attrs.id = id
         }
