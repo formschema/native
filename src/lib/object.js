@@ -1,3 +1,11 @@
+export function isScalar (value) {
+  if (value === null) {
+    return true
+  }
+
+  return /string|number|boolean|undefined/.test(typeof value)
+}
+
 export function equals (o1, o2) {
   if (isScalar(o1)) {
     return o1 === o2
@@ -9,14 +17,7 @@ export function equals (o1, o2) {
     return false
   }
 
-  return keys1.findIndex((key) => !o2.hasOwnProperty(key) || o1[key] !== o2[key]) === -1
-}
-
-export function isScalar (value) {
-  if (value === null) {
-    return true
-  }
-  return /string|number|boolean|undefined/.test(typeof value)
+  return !keys1.some((key) => !o2.hasOwnProperty(key) || o1[key] !== o2[key])
 }
 
 export function merge (dest, src) {
@@ -47,13 +48,13 @@ export function clone (object) {
 }
 
 export function clear (object) {
-  for (let key in object) {
+  for (const key in object) {
     delete object[key]
   }
 }
 
 export function isEmpty (object) {
-  for (let key in object) {
+  for (const key in object) {
     return false
   }
   return true

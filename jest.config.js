@@ -1,7 +1,7 @@
 module.exports = {
   expand: true,
   notify: true,
-  testMatch: ['<rootDir>/test/specs/*.spec.js'],
+  testMatch: [ '<rootDir>/test/specs/*.spec.js' ],
   collectCoverage: true,
   collectCoverageFrom: [
     '**/*.{js,vue}',

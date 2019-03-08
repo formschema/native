@@ -60,7 +60,7 @@ export default {
         }
         break
 
-      case INPUT_TYPES.SELECT:
+      case INPUT_TYPES.SELECT: {
         const items = [ ...field.items ]
 
         delete input.data.attrs.type
@@ -75,6 +75,7 @@ export default {
           }))
         })
         break
+      }
     }
 
     return createElement(FormSchemaInput, {

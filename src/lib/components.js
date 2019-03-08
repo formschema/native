@@ -1,11 +1,11 @@
 import { INPUT_TYPES } from './parser'
 
-const BLOCK_TYPES = [INPUT_TYPES.TEXTAREA, INPUT_TYPES.SELECT]
+const BLOCK_TYPES = [ INPUT_TYPES.TEXTAREA, INPUT_TYPES.SELECT ]
 
 const Input = {
   functional: true,
   render (h, { data, slots }) {
-    const field = data.field
+    const { field } = data
     const element = BLOCK_TYPES.includes(field.attrs.type)
       ? h(field.attrs.type, data, slots().default)
       : h('input', data)
@@ -17,7 +17,8 @@ const Input = {
       }, field.description))
     }
 
-    if (!field.label || (field.isArrayField && !BLOCK_TYPES.includes(field.attrs.type))) {
+    if (!field.label
+        || (field.isArrayField && !BLOCK_TYPES.includes(field.attrs.type))) {
       if (nodes.length === 1) {
         return nodes[0]
       }
@@ -31,8 +32,8 @@ const Input = {
 const CheckboxGroup = {
   functional: true,
   render (h, { data, slots }) {
-    const name = data.field.attrs.name
-    const description = data.field.description
+    const { name } = data.field.attrs
+    const { description } = data.field
 
     const children = [ ...slots().default ]
 
@@ -50,7 +51,7 @@ const Select = {
   functional: true,
   render (h, { data, slots }) {
     const nodes = []
-    const field = data.field
+    const { field } = data
     const children = [ ...slots().default ]
 
     if (field.attrs.required || field.attrs.placeholder) {
@@ -87,7 +88,7 @@ const ArrayInputs = {
 const Label = {
   functional: true,
   render (h, { data, slots }) {
-    const field = data.field
+    const { field } = data
     const attrs = {
       'data-fs-field': field.attrs.id,
       'data-fs-required': field.attrs.required
@@ -107,11 +108,20 @@ const Label = {
   }
 }
 
+const ArrayButton = {
+  functional: true,
+  render (h, { data }) {
+    return h('button', {
+      attrs: { type: 'button', ...data.props },
+      on: data.on
+    }, 'Add')
+  }
+}
+
 const Fieldset = {
   functional: true,
   render (h, { data, slots }) {
-    const field = data.field
-    const newItemButton = data.newItemButton
+    const { field, newItemButton } = data
     const nodes = []
 
     if (field.isArrayField) {
@@ -142,16 +152,6 @@ const Fieldset = {
   }
 }
 
-const ArrayButton = {
-  functional: true,
-  render (h, { data }) {
-    return h('button', {
-      attrs: { type: 'button', ...data.props },
-      on: data.on
-    }, 'Add')
-  }
-}
-
 const TAGS = {
   title: 'legend',
   description: 'p',
@@ -166,7 +166,7 @@ export class Components {
   constructor () {
     this.$ = {}
 
-    for (let type in TAGS) {
+    for (const type in TAGS) {
       this.set(type, TAGS[type])
     }
   }
@@ -177,7 +177,8 @@ export class Components {
 
   input ({ field, fieldParent = null, listeners = {} }) {
     const { type } = field.attrs
-    const element = field.hasOwnProperty('items') && groupedArrayTypes.includes(type)
+    const hasItems = field.hasOwnProperty('items')
+    const element = hasItems && groupedArrayTypes.includes(type)
       ? this.$.fieldset
       : this.$[type] || this.$[INPUT_TYPES.TEXT]
 
