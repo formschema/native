@@ -34,6 +34,7 @@ export function merge (dest, src) {
       if (!dest[key]) {
         dest[key] = {}
       }
+
       merge(dest[key], value)
     }
   })
@@ -57,5 +58,6 @@ export function isEmpty (object) {
   for (const key in object) {
     return false
   }
+
   return true
 }

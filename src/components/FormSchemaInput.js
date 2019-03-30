@@ -1,6 +1,5 @@
 import { genId, INPUT_TYPES } from '../lib/parser'
 import { assign } from '../lib/object'
-import { inputName } from '../lib/components'
 import FormSchemaInputArrayElement from './FormSchemaInputArrayElement'
 
 const unwrappingElements = [ INPUT_TYPES.CHECKBOX, INPUT_TYPES.RADIO ]
@@ -28,12 +27,11 @@ export default {
       if (unwrappingElements.includes(field.attrs.type)) {
         assign(data.attrs, input.data.field.attrs)
 
-        return createElement(FormSchemaInputArrayElement, data, children)
+        return createElement(input.element.component, data, children)
       }
 
       const { id = genId(name) } = input.data.attrs
       const inputs = Array(...Array(field.itemsNum)).map((v, i) => {
-        data.props.name = inputName(field, i)
         input.data.attrs['data-fs-index'] = i
 
         if (i) {

@@ -1,14 +1,11 @@
-'use strict'
+
 
 import sinon from 'sinon'
 
 import { mount } from '@vue/test-utils'
 import { Components } from '@/lib/components'
 
-import {
-  INPUT_ADDED_EVENT,
-  default as component
-} from '@/components/FormSchemaInput.js'
+import component, { INPUT_ADDED_EVENT } from '@/components/FormSchemaInput'
 
 /* global describe it expect */
 
@@ -58,13 +55,12 @@ describe('FormSchemaInput', () => {
         type: 'text'
       },
       itemsNum: 2,
-      isArrayField: true
+      isArrayField: true,
+      path: [ 'fieldName' ]
     }
     const input = components.input({ field })
-    const value = {
-      'fieldName-0': 'Value 1',
-      'fieldName-1': 'Value 2'
-    }
+    const value = [ 'Value 1', 'Value 2' ]
+
 
     const wrapper = mount({
       render (h) {
@@ -79,7 +75,7 @@ describe('FormSchemaInput', () => {
       }
     })
 
-    const expected = '<div><div data-fs-array-inputs="true"><input id="x" name="fieldName-0" type="text" data-fs-index="0" value="Value 1"><input id="x-1" name="fieldName-1" type="text" data-fs-index="1" value="Value 2"></div><button type="button">Add</button></div>'
+    const expected = '<div><div data-fs-array-inputs="true"><div data-fs-array-input="true"><input id="x" name="fieldName" type="text" data-fs-index="0" value="Value 1" data-fs-array-value="Value 1,Value 2"><button type="button">Remove</button></div><div data-fs-array-input="true"><input id="x-1" name="fieldName" type="text" data-fs-index="1" value="Value 2" data-fs-array-value="Value 1,Value 2"><button type="button">Remove</button></div></div><button type="button">Add</button></div>'
 
     expect(wrapper.html()).toEqual(expected)
   })
@@ -97,13 +93,11 @@ describe('FormSchemaInput', () => {
         type: 'text'
       },
       itemsNum: 2,
-      isArrayField: true
+      isArrayField: true,
+      path: [ 'fieldName' ]
     }
     const input = components.input({ field })
-    const value = {
-      'fieldName-0': 'Value 1',
-      'fieldName-1': 'Value 2'
-    }
+    const value = [ 'Value 1', 'Value 2' ]
 
     const wrapper = mount({
       render (h) {
@@ -118,7 +112,7 @@ describe('FormSchemaInput', () => {
       }
     })
 
-    const expected = '<div><div data-fs-field="x"><label id="x-label" for="x">array label</label><div data-fs-field-input="x"><div data-fs-array-inputs="true"><input id="x" name="fieldName-0" type="text" data-fs-index="0" value="Value 1"><input id="x-1" name="fieldName-1" type="text" data-fs-index="1" value="Value 2"></div><button type="button">Add</button></div></div></div>'
+    const expected = '<div><div data-fs-field="x"><label id="x-label" for="x">array label</label><div data-fs-field-input="x"><div data-fs-array-inputs="true"><div data-fs-array-input="true"><input id="x" name="fieldName" type="text" data-fs-index="0" value="Value 1" data-fs-array-value="Value 1,Value 2"><button type="button">Remove</button></div><div data-fs-array-input="true"><input id="x-1" name="fieldName" type="text" data-fs-index="1" value="Value 2" data-fs-array-value="Value 1,Value 2"><button type="button">Remove</button></div></div><button type="button">Add</button></div></div></div>'
 
     expect(wrapper.html()).toEqual(expected)
   })
@@ -130,16 +124,14 @@ describe('FormSchemaInput', () => {
       attrs: {
         id: 'x',
         type: 'password',
-        name: 'fieldName'
+        name: 'fieldName',
       },
       itemsNum: 2,
-      isArrayField: true
+      isArrayField: true,
+      path: [ 'fieldName' ]
     }
     const input = components.input({ field })
-    const value = {
-      'fieldName-0': 'Value 1',
-      'fieldName-1': 'Value 2'
-    }
+    const value = [ 'Value 1', 'Value 2' ]
 
     const wrapper = mount({
       render (h) {
@@ -154,7 +146,7 @@ describe('FormSchemaInput', () => {
       }
     })
 
-    const expected = '<div><div data-fs-array-inputs="true"><input id="x" type="password" name="fieldName-0" data-fs-index="0" value="Value 1"><input id="x-1" type="password" name="fieldName-1" data-fs-index="1" value="Value 2"></div><button type="button">Add</button></div>'
+    const expected = '<div><div data-fs-array-inputs="true"><input id="x" type="password" name="fieldName" data-fs-index="0" value="Value 1" data-fs-array-value="Value 1,Value 2"><input id="x-1" type="password" name="fieldName" data-fs-index="1" value="Value 2" data-fs-array-value="Value 1,Value 2"></div><button type="button">Add</button></div>'
 
     expect(wrapper.html()).toEqual(expected)
   })
@@ -164,18 +156,16 @@ describe('FormSchemaInput', () => {
       attrs: {
         id: 'x',
         type: 'password',
-        name: 'fieldName'
+        name: 'fieldName',
       },
       itemsNum: 2,
       maxItems: 3,
-      isArrayField: true
+      isArrayField: true,
+      path: [ 'fieldName' ]
     }
     const input = components.input({ field })
 
-    const value = {
-      'fieldName-0': 'Value 1',
-      'fieldName-1': 'Value 2'
-    }
+    const value = [ 'Value 1', 'Value 2' ]
 
     const listeners = {
       [INPUT_ADDED_EVENT]: sinon.spy()
@@ -195,7 +185,7 @@ describe('FormSchemaInput', () => {
       }
     })
 
-    const expected = '<div><div data-fs-array-inputs="true"><input id="x" type="password" name="fieldName-0" data-fs-index="0" value="Value 1"><input id="x-1" type="password" name="fieldName-1" data-fs-index="1" value="Value 2"></div><button type="button">Add</button></div>'
+    const expected = '<div><div data-fs-array-inputs="true"><input id="x" type="password" name="fieldName" data-fs-index="0" value="Value 1" data-fs-array-value="Value 1,Value 2"><input id="x-1" type="password" name="fieldName" data-fs-index="1" value="Value 2" data-fs-array-value="Value 1,Value 2"></div><button type="button">Add</button></div>'
 
     expect(wrapper.html()).toEqual(expected)
 

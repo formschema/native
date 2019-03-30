@@ -1,9 +1,9 @@
-'use strict'
+
 
 import { mount } from '@vue/test-utils'
 import { Components } from '@/lib/components'
 
-import component from '@/components/FormSchemaInputArrayElement.js'
+import component from '@/components/FormSchemaInputArrayElement'
 
 /* global describe it expect */
 
@@ -23,11 +23,7 @@ describe('FormSchemaInputArrayElement', () => {
       }
     }
     const input = components.input({ field })
-    const name = field.attrs.name
-    const vm = {
-      inputValues: {
-      }
-    }
+    const { name } = field.attrs
     const value = 'Hello'
     const wrapper = mount(component, {
       context: {
@@ -37,7 +33,7 @@ describe('FormSchemaInputArrayElement', () => {
         props: { value, name }
       }
     })
-    const expected = '<input type="text" name="fieldName" value="Hello">'
+    const expected = '<input type="text" name="fieldName" value="Hello" data-fs-array-value="Hello">'
 
     expect(wrapper.html()).toEqual(expected)
   })
@@ -51,14 +47,8 @@ describe('FormSchemaInputArrayElement', () => {
       }
     }
     const input = components.input({ field })
-    const name = field.attrs.name
-    const vm = {
-      inputValues: {
-      }
-    }
-    const value = {
-      [name]: 'Hello'
-    }
+    const { name } = field.attrs
+    const value = [ 'Hello' ]
     const wrapper = mount(component, {
       context: {
         input,
@@ -67,7 +57,7 @@ describe('FormSchemaInputArrayElement', () => {
         props: { value, name }
       }
     })
-    const expected = '<input type="text" name="fieldName" value="Hello">'
+    const expected = '<input type="text" name="fieldName" value="Hello" data-fs-array-value="Hello">'
 
     expect(wrapper.html()).toEqual(expected)
   })
@@ -81,13 +71,7 @@ describe('FormSchemaInputArrayElement', () => {
       }
     }
     const input = components.input({ field })
-    const vm = {
-      inputValues: {
-      }
-    }
-    const value = {
-      [field.attrs.name]: 'Hello'
-    }
+    const value = 'Hello'
     const wrapper = mount(component, {
       context: {
         input,
@@ -96,7 +80,7 @@ describe('FormSchemaInputArrayElement', () => {
         props: { value }
       }
     })
-    const expected = '<input type="text" name="fieldName" value="Hello">'
+    const expected = '<input type="text" name="fieldName" value="Hello" data-fs-array-value="Hello">'
 
     expect(wrapper.html()).toEqual(expected)
   })

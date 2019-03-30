@@ -35,7 +35,7 @@ module.exports = {
       'error',
       {
         classes: false,
-        variables: false
+        functions: false
       }
     ],
     'arrow-parens': [ 'error', 'always' ],
@@ -50,6 +50,11 @@ module.exports = {
     'no-restricted-syntax': 'off',
     'no-prototype-builtins': 'off',
     'space-before-function-paren': 'off',
-    'no-var': 'error'
+    'no-var': 'error',
+    'padding-line-between-statements': [
+      'error',
+      { 'blankLine': 'always', 'prev': 'block-like', 'next': '*' },
+      { 'blankLine': 'always', 'prev': '*', 'next': 'block-like' }
+    ]
   }
 }

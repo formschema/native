@@ -1,10 +1,11 @@
+import Vue from 'vue'
+
 import {
   genId,
   parseDefaultScalarValue,
   parseEventValue,
   parseDefaultObjectValue,
-  loadFields,
-  NUMBER_TYPES
+  loadFields
 } from '../lib/parser'
 
 import * as LibObject from '../lib/object'
@@ -59,6 +60,13 @@ export default {
      * Possible values are: `off` and `on`.
      */
     autocomplete: { type: String },
+
+    /**
+     * When set to true (default), checkbox inputs will automatically include
+     * brackets at the end of their names (e.g. name="Multicheckbox-Value1[]".
+     * Setting this property to false, disables this behaviour.
+     */
+    bracketedArrayInputName: { type: Boolean, default: true },
 
     /**
      * When the value of the method attribute is post, enctype is the
@@ -159,40 +167,11 @@ export default {
             this.$forceUpdate()
           },
           input: (event) => {
-            const { target } = event
-            const data = event.target.value
-            const eventInput = { field, data, target }
-
-            if (field.isArrayField) {
-              this.parseArrayValue(eventInput)
-            } else {
-              const parsedValue = parseEventValue(eventInput)
-
-              if (this.isScalarSchema) {
-                this.data = parsedValue
-              } else {
-                this.data[field.attrs.name] = parsedValue
-              }
-            }
-
+            this.processFieldEvent(event);
             this.emitInputEvent()
           },
           change: (event) => {
-            const { target } = event
-            const data = event.target.value
-            const eventInput = { field, data, target }
-
-            if (field.isArrayField) {
-              this.parseArrayValue(eventInput)
-            } else {
-              const parsedValue = parseEventValue(eventInput)
-
-              if (this.isScalarSchema) {
-                this.data = parsedValue
-              } else {
-                this.data[field.attrs.name] = parsedValue
-              }
-            }
+            this.processFieldEvent(event);
 
             if (!equals(this.data, this.default)) {
               /**
@@ -262,9 +241,6 @@ export default {
         case 'array':
         case 'object':
           this.data = parseDefaultObjectValue(schema, this.fields, model)
-
-          this.parseDefaultArrayValue()
-
           this.default = Object.freeze(clone(this.data))
           this.isScalarSchema = false
           break
@@ -288,28 +264,6 @@ export default {
     /**
      * @private
      */
-    parseDefaultArrayValue () {
-      this.fields.forEach((field) => {
-        if (field.isArrayField) {
-          const { type, name } = field.attrs
-
-          if (this.data[name] instanceof Array) {
-            this.data[name] = this.data[name].filter((value, i) => {
-              this.inputValues[inputName(field, i)] = value
-              return value !== undefined
-            })
-          }
-
-          field.itemsNum = type === 'checkbox'
-            ? field.items.length
-            : field.minItems
-        }
-      })
-    },
-
-    /**
-     * @private
-     */
     emitInputEvent () {
       /**
        * Fired synchronously when the value of an element is changed.
@@ -320,38 +274,29 @@ export default {
     /**
      * @private
      */
-    parseArrayValue (event) {
-      if (event.field.attrs.type === 'checkbox') {
-        if (event.target.checked) {
-          if (!this.data[event.field.attrs.name].includes(event.data)) {
-            this.data[event.field.attrs.name].push(event.data)
-          }
-        } else {
-          const index = this.data[event.field.attrs.name].indexOf(event.data)
+    setFieldValue (field, value) {
+      let property = this.data
+      const len = field.path.length
 
-          if (index > -1) {
-            this.data[event.field.attrs.name].splice(index, 1)
-          }
-        }
+      for (let i = 0; i < len - 1; i++) {
+        property = property[field.path[i]]
+      }
+
+      Vue.set(property, field.path[len - 1], value)
+    },
+
+    /**
+     * @private
+     */
+    processFieldEvent(event) {
+      const { field, value } = event
+      const eventInput = { field, data: value }
+      const parsedValue = parseEventValue(eventInput)
+
+      if (this.isScalarSchema) {
+        this.data = parsedValue
       } else {
-        const index = event.target.getAttribute('data-fs-index')
-        const key = inputName(event.field, index)
-
-        this.inputValues[key] = NUMBER_TYPES.includes(event.field.attrs.type)
-          ? Number(event.data)
-          : event.data
-
-        const values = []
-
-        for (let i = 0; i < event.field.itemsNum; i++) {
-          const currentValue = this.inputValues[inputName(event.field, i)]
-
-          if (currentValue || currentValue === 0) {
-            values.push(currentValue)
-          }
-        }
-
-        this.data[event.field.attrs.name] = values
+        this.setFieldValue(field, parsedValue)
       }
     },
 

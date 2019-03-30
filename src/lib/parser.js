@@ -23,7 +23,8 @@ export const INPUT_TYPES = Object.freeze({
   SWITCH: 'switch',
   TEXT: 'text',
   TEXTAREA: 'textarea',
-  URL: 'url'
+  URL: 'url',
+  OBJECT: 'object'
 })
 
 export const NUMBER_TYPES = Object.freeze([
@@ -47,7 +48,8 @@ export function genId (prefix = '') {
   return suffix
 }
 
-export function setCommonFields (schema, field, model = null) {
+/* eslint-disable-next-line max-len */
+export function setCommonFields (schema, field, name, path, model = null, required = []) {
   if (model !== null) {
     field.attrs.value = model
   } else if (field.attrs.hasOwnProperty('value')) {
@@ -61,6 +63,15 @@ export function setCommonFields (schema, field, model = null) {
   const descId = schema.description ? `${id}-desc` : undefined
   const ariaLabels = [ labelId, descId ].filter((item) => item)
 
+  if (name) {
+    field.attrs.name = name
+    field.path = path ? [ ...path, name ] : [ name ]
+
+    if (required.includes(name)) {
+      field.attrs.required = true
+    }
+  }
+
   field.order = schema.order
   field.schemaType = schema.type
   field.label = schema.title || ''
@@ -68,7 +79,9 @@ export function setCommonFields (schema, field, model = null) {
 
   field.attrs.id = id
   field.attrs.disabled = schema.disabled || false
-  field.attrs.required = schema.required || false
+  field.attrs.required = field.attrs.required
+    || (schema.required === true)
+    || false
 
   field.labelAttrs = {
     id: labelId,
@@ -126,10 +139,10 @@ export function parseDefaultScalarValue (schema, fields, value) {
   return undefined
 }
 
-export function parseEventValue ({ target, field, data }) {
+export function parseEventValue ({ field, data }) {
   switch (field.schemaType) {
     case SCHEMA_TYPES.BOOLEAN:
-      return target.checked === true
+      return data || false
 
     case SCHEMA_TYPES.STRING:
       return data || ''
@@ -139,6 +152,7 @@ export function parseEventValue ({ target, field, data }) {
       if (data !== undefined) {
         return Number(data)
       }
+
       break
 
     case SCHEMA_TYPES.ARRAY:
@@ -169,7 +183,7 @@ export function parseDefaultObjectValue (schema, fields, value) {
         : field.attrs.value
 
     const target = {}
-    const eventInput = { field, data: itemValue, target }
+    const eventInput = { field, data: itemValue }
 
     switch (field.schemaType) {
       case SCHEMA_TYPES.BOOLEAN:
@@ -177,20 +191,45 @@ export function parseDefaultObjectValue (schema, fields, value) {
         data[name] = parseEventValue(eventInput)
         break
 
+      case SCHEMA_TYPES.OBJECT:
+        data[name] = parseDefaultObjectValue(schema, field.fields, value)
+        break
+
       default:
+        data[name] = parseEventValue(eventInput)
+
         if (field.isArrayField) {
           if (data[name] instanceof Array) {
             data[name] = data[name].filter((value) => value !== undefined)
           } else {
+            // Initialize array value to field.minItems size
             data[name] = []
+          }
+
+          const startIndex = Math.max(data[name].length, 0)
+          const endIndex = Math.max(data[name].length, field.minItems)
+
+          for (let i = startIndex; i < endIndex; i++) {
+            /**
+             * If field.items is present (this is fed by schema enum),
+             * use these values to populate the array
+             */
+            if (field.items && field.items.length > i) {
+              data[name].push(field.items[i].value)
+            } else {
+              data[name][i] = ''
+            }
           }
 
           field.itemsNum = type === INPUT_TYPES.CHECKBOX
             ? field.items.length
-            : field.minItems
+            : value
+              ? data[name].length
+              : field.minItems
         } else {
           data[name] = parseEventValue(eventInput)
         }
+
         break
     }
   })
@@ -198,16 +237,96 @@ export function parseDefaultObjectValue (schema, fields, value) {
   return data
 }
 
-export function parseBoolean (schema, name = null, model = null) {
+/* eslint-disable-next-line max-len */
+export function loadFields (schema, fields, name = null, model = null, path = null, required = []) {
+  switch (schema.type) {
+    case SCHEMA_TYPES.OBJECT:
+      fields.push(...parseObject(schema, name, model, path))
+      break
+
+    case SCHEMA_TYPES.BOOLEAN:
+      fields.push(parseBoolean(schema, name, model, path, required))
+      break
+
+    case SCHEMA_TYPES.ARRAY:
+      fields.push(parseArray(schema, name, model, path, required))
+      break
+
+    case SCHEMA_TYPES.INTEGER:
+    case SCHEMA_TYPES.NUMBER:
+    case SCHEMA_TYPES.STRING:
+      for (const keyword of ARRAY_KEYWORDS) {
+        if (schema.hasOwnProperty(keyword)) {
+          schema.items = {
+            type: schema.type,
+            enum: schema[keyword]
+          }
+          fields.push(parseArray(schema, name, model, path, required))
+          return
+        }
+      }
+
+      fields.push(parseString(schema, name, model, path, required))
+      break
+  }
+}
+
+/* eslint-disable-next-line max-len */
+export function parseObject (schema, name = null, model = null, path = null, required = []) {
+  if (!schema.hasOwnProperty('properties')) {
+    schema.properties = {}
+  }
+
+  const allProperties = Object.keys(schema.properties)
+  const properties = schema.order instanceof Array
+    ? schema.order
+    : allProperties
+
+  if (properties.length < allProperties.length) {
+    allProperties.forEach((prop) => {
+      if (!properties.includes(prop)) {
+        properties.push(prop)
+      }
+    })
+  }
+
+  if (model === null) {
+    model = {}
+  }
+
   const field = {
     attrs: schema.attrs || {}
   }
 
-  if (name) {
-    field.attrs.name = name
+  if (schema.required instanceof Array) {
+    required.push(...schema.required)
   }
 
-  setCommonFields(schema, field, model)
+  field.attrs.type = INPUT_TYPES.OBJECT
+  setCommonFields(schema, field, name, path, model, required)
+  field.fields = []
+
+  properties.forEach((key) => {
+    loadFields(
+      schema.properties[key],
+      field.fields,
+      key,
+      model[key] || null,
+      field.path,
+      required
+    )
+  })
+
+  return name ? [ field ] : field.fields
+}
+
+/* eslint-disable-next-line max-len */
+export function parseBoolean (schema, name = null, model = null, path, required = []) {
+  const field = {
+    attrs: schema.attrs || {}
+  }
+
+  setCommonFields(schema, field, name, path, model, required)
 
   if (!field.attrs.type) {
     field.attrs.type = INPUT_TYPES.CHECKBOX
@@ -222,7 +341,8 @@ export function parseBoolean (schema, name = null, model = null) {
   return field
 }
 
-export function parseString (schema, name = null, model = null) {
+/* eslint-disable-next-line max-len */
+export function parseString (schema, name = null, model = null, path = null, required = []) {
   const field = {
     attrs: schema.attrs || {}
   }
@@ -237,12 +357,14 @@ export function parseString (schema, name = null, model = null) {
         if (!field.attrs.type) {
           field.attrs.type = INPUT_TYPES.EMAIL
         }
+
         break
 
       case 'uri':
         if (!field.attrs.type) {
           field.attrs.type = INPUT_TYPES.URL
         }
+
         break
     }
   }
@@ -253,11 +375,7 @@ export function parseString (schema, name = null, model = null) {
       : INPUT_TYPES.TEXT
   }
 
-  if (name) {
-    field.attrs.name = name
-  }
-
-  setCommonFields(schema, field, model)
+  setCommonFields(schema, field, name, path, model, required)
 
   if (schema.minLength) {
     field.attrs.minlength = schema.minLength
@@ -330,19 +448,16 @@ function isValueEmpty (value) {
   return value === undefined || value.length === 0
 }
 
-export function parseArray (schema, name = null, model = null) {
+/* eslint-disable-next-line max-len */
+export function parseArray (schema, name = null, model = null, path = null, required = []) {
   const field = {
     attrs: schema.attrs || {}
   }
 
-  if (name) {
-    field.attrs.name = name
-  }
-
-  setCommonFields(schema, field, model)
+  setCommonFields(schema, field, name, path, model, required)
 
   field.items = []
-  field.minItems = parseInt(schema.minItems, 10) || 1
+  field.minItems = parseInt(schema.minItems, 10) || 0
   field.maxItems = parseInt(schema.maxItems, 10) || 1000
 
   loop:
@@ -354,13 +469,14 @@ export function parseArray (schema, name = null, model = null) {
             field.attrs.type = INPUT_TYPES.SELECT
           }
 
-          field.items = parseItems(schema[keyword])
+          field.items = parseItems(schema[keyword]).map(setItemName(name, true))
 
           if (isValueEmpty(field.attrs.value)) {
             field.attrs.value = field.schemaType === 'array'
               ? arrayUnorderedValues(field)
               : singleValue(field)
           }
+
           break loop
 
         case 'oneOf':
@@ -373,6 +489,7 @@ export function parseArray (schema, name = null, model = null) {
           if (isValueEmpty(field.attrs.value)) {
             field.attrs.value = singleValue(field)
           }
+
           break loop
 
         case 'anyOf':
@@ -385,6 +502,7 @@ export function parseArray (schema, name = null, model = null) {
           if (isValueEmpty(field.attrs.value)) {
             field.attrs.value = arrayOrderedValues(field)
           }
+
           break loop
       }
     }
@@ -397,7 +515,7 @@ export function parseArray (schema, name = null, model = null) {
       : INPUT_TYPES.TEXT
   } else if (field.attrs.type === INPUT_TYPES.SELECT) {
     field.attrs.multiple = field.schemaType === SCHEMA_TYPES.ARRAY
-    field.attrs.value = field.attrs.value || field.attrs.multiple ? [] : ''
+    field.attrs.value = field.attrs.value || (field.attrs.multiple ? [] : '')
 
     if (isValueEmpty(field.attrs.value)) {
       if (field.attrs.multiple) {
@@ -412,64 +530,4 @@ export function parseArray (schema, name = null, model = null) {
   }
 
   return field
-}
-
-export function loadFields (schema, fields, name = null, model = null) {
-  switch (schema.type) {
-    case SCHEMA_TYPES.OBJECT: {
-      if (schema.required instanceof Array) {
-        schema.required.forEach((field) => {
-          schema.properties[field].required = true
-        })
-      }
-
-      const allProperties = Object.keys(schema.properties)
-      const properties = schema.order instanceof Array
-        ? schema.order
-        : allProperties
-
-      if (properties.length < allProperties.length) {
-        allProperties.forEach((prop) => {
-          if (!properties.includes(prop)) {
-            properties.push(prop)
-          }
-        })
-      }
-
-      if (model === null) {
-        model = {}
-      }
-
-      properties.forEach((key) => {
-        loadFields(schema.properties[key], fields, key, model[key] || null)
-      })
-      break
-    }
-
-    case SCHEMA_TYPES.BOOLEAN:
-      fields.push(parseBoolean(schema, name, model))
-      break
-
-    case SCHEMA_TYPES.ARRAY:
-      fields.push(parseArray(schema, name, model))
-      break
-
-    case SCHEMA_TYPES.INTEGER:
-    case SCHEMA_TYPES.NUMBER:
-    case SCHEMA_TYPES.STRING:
-      for (const keyword of ARRAY_KEYWORDS) {
-        if (schema.hasOwnProperty(keyword)) {
-          schema.items = {
-            type: schema.type,
-            enum: schema[keyword]
-          }
-
-          fields.push(parseArray(schema, name, model))
-          return
-        }
-      }
-
-      fields.push(parseString(schema, name, model))
-      break
-  }
 }

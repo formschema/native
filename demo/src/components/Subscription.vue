@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <FormSchema class="form" ref="formSchema" v-model="model" @submit.prevent>
+    <FormSchema class="form" ref="formSchema" v-model="model" :bracketed-array-input-name="false" @submit.prevent>
       <div class="buttons">
         <button type="submit">Subscribe</button>
       </div>
@@ -73,7 +73,7 @@
     margin-bottom: 5px;
   }
 
-  label {
+  [data-fs-field] label {
     display: block;
     width: 120px;
     text-align: right;
@@ -83,8 +83,21 @@
   [data-fs-field-input] {
   }
 
-  .buttons {
-    padding-left: 130px;
+  [data-fs-array-input] * {
+    display:inline-block;
+  }
+
+  [data-fs-array-input] button {
+    margin-left: 1em;
+  }
+
+  [data-fs-object-field] {
+    display: block;
+    margin-bottom: 5px;
+  }
+
+  [data-fs-object-field] > label {
+    text-align: left;
   }
 
   input {

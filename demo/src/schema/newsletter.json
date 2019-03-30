@@ -4,14 +4,40 @@
   "title": "Newsletter Subscription",
   "description": "Sign up for free newsletters and get more delivered to your inbox",
   "properties": {
-    "name": {
-      "type": "string",
-      "minLength": 8,
-      "maxLength": 80,
+     "name": {
+      "type": "object",
       "title": "Full Name",
-      "attrs": {
-        "placeholder": "Your Full Name",
-        "title": "Please enter your full name"
+      "properties": {
+        "first_name": {
+          "type": "string",
+          "title": "First Name",
+          "minLength": 8,
+          "maxLength": 80,
+          "attrs": {
+            "placeholder": "Your First Name",
+            "title": "Please enter your first name"
+            }
+        },
+        "middle_name": {
+          "type": "string",
+          "title": "Middle Name",
+          "minLength": 8,
+          "maxLength": 80,
+          "attrs": {
+            "placeholder": "Your Middle Name",
+            "title": "Please enter your middle name"
+            }
+        },
+        "last_name": {
+          "type": "string",
+          "title": "Last Name",
+          "minLength": 8,
+          "maxLength": 80,
+          "attrs": {
+            "placeholder": "Your Last Name",
+            "title": "Please enter your last name"
+            }
+        }
       }
     },
     "email": {
@@ -60,6 +86,7 @@
       "items": {
         "type": "string"
       },
+      "default": ["a","b"],
       "attrs": {
         "typeX": "password"
       }
@@ -75,15 +102,21 @@
       "anyOf": [
         { "value": "daily", "label": "Daily News" },
         { "value": "promotion", "label": "Promotion" }
-      ]
+      ],
+      "attrs": {
+        "type": "checkbox"
+      }
     },
     "groupedRadio": {
-      "type": "array",
+      "type": "string",
       "title": "Frequence",
-      "oneOf": [
+      "enum": [
         { "value": "daily", "label": "Daily News" },
         { "value": "weekly", "label": "Weekly News" }
-      ]
+      ],
+      "attrs": {
+        "type": "radio"
+      }
     },
     "agree": {
       "type": "boolean",
