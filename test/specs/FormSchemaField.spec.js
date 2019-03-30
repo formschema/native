@@ -1,10 +1,10 @@
-'use strict'
+
 
 import { mount } from '@vue/test-utils'
 import { loadFields } from '@/lib/parser'
 import { Components } from '@/lib/components'
 
-import component from '@/components/FormSchemaField.js'
+import component from '@/components/FormSchemaField'
 import sinon from 'sinon'
 
 /* global describe it expect */
@@ -25,18 +25,14 @@ describe('FormSchemaField', () => {
         value: 'Hello'
       }
     }
-    const value = {
-      [field.attrs.name]: field.attrs.value
-    }
     const wrapper = mount(component, {
       context: {
         field,
         components,
-        props: { value }
+        props: { value: field.attrs.value }
       }
     })
 
-    const input = wrapper.find('input')
     const expected = '<div><label>Name</label><div><input name="fieldName" type="text" value="Hello"></div></div>'
 
     expect(wrapper.html()).toEqual(expected)
@@ -61,7 +57,6 @@ describe('FormSchemaField', () => {
       }
     })
 
-    const input = wrapper.find('input')
     const expected = '<input name="fieldName" type="text" value="Hello">'
 
     expect(wrapper.html()).toEqual(expected)
@@ -83,7 +78,6 @@ describe('FormSchemaField', () => {
       }
     })
 
-    const input = wrapper.find('input')
     const expected = '<input name="fieldName" type="text">'
 
     expect(wrapper.html()).toEqual(expected)
@@ -117,7 +111,7 @@ describe('FormSchemaField', () => {
     expect(textarea.html()).toEqual('<textarea name="fieldName">Sébastien</textarea>')
   })
 
-  describe('component with field.attrs.type === redio', () => {
+  describe('component with field.attrs.type === radio', () => {
     const field = {
       attrs: {
         name: 'fieldName',
@@ -174,7 +168,7 @@ describe('FormSchemaField', () => {
 
   describe('component with field.attrs.type === radio and items', () => {
     const field = {
-      isArrayField: true,
+      isArrayField: false,
       attrs: {
         id: 'x',
         name: 'fieldName',
@@ -185,7 +179,7 @@ describe('FormSchemaField', () => {
         { id: 'z', label: 'l2', value: '1' }
       ]
     }
-    const value = ['1']
+    const value = '1'
 
     it('should successfully render the component', () => {
       const wrapper = mount(component, {
@@ -218,9 +212,6 @@ describe('FormSchemaField', () => {
       })
 
       const input = wrapper.find('input')
-      const expectedData = {
-        fieldName: input.element.value
-      }
 
       input.trigger('click')
 
@@ -237,7 +228,7 @@ describe('FormSchemaField', () => {
         value: 'Hello'
       }
     }
-    const value = field.attrs.value
+    const { value } = field.attrs
 
     it('should successfully render the component', () => {
       const wrapper = mount(component, {
@@ -270,9 +261,6 @@ describe('FormSchemaField', () => {
       })
 
       const input = wrapper.find('input')
-      const expectedData = {
-        fieldName: input.element.value
-      }
 
       input.trigger('click')
 
@@ -307,7 +295,7 @@ describe('FormSchemaField', () => {
 
     loadFields(schema, fields)
 
-    const value = ['v1']
+    const value = [ 'v1' ]
     const field = fields[0]
 
     it('should successfully render the component', () => {
@@ -319,7 +307,7 @@ describe('FormSchemaField', () => {
         }
       })
 
-      const expected = '<div data-fs-field="x"><label id="x-label" for="x" tabindex="-1">choices</label><div data-fs-field-input="x"><fieldset name="fieldName"><legend>choices description</legend><div data-fs-field="y"><label for="y">l1</label><div data-fs-field-input="y"><input id="y" name="fieldName" type="checkbox" value="v0"></div></div><div data-fs-field="z"><label for="z">l2</label><div data-fs-field-input="z"><input id="z" name="fieldName" type="checkbox" value="v1" checked="checked"></div></div></fieldset></div></div>'
+      const expected = '<div data-fs-field="x"><label id="x-label" for="x" tabindex="-1">choices</label><div data-fs-field-input="x"><fieldset name="fieldName"><legend>choices description</legend><div data-fs-field="y"><label for="y">l1</label><div data-fs-field-input="y"><input id="y" name="fieldName" type="checkbox" value="v0" data-fs-array-value="v1"></div></div><div data-fs-field="z"><label for="z">l2</label><div data-fs-field-input="z"><input id="z" name="fieldName" type="checkbox" value="v1" checked="checked" data-fs-array-value="v1"></div></div></fieldset></div></div>'
 
       expect(wrapper.html()).toEqual(expected)
     })
@@ -342,7 +330,6 @@ describe('FormSchemaField', () => {
 
       const input = wrapper.find('input')
       const input1 = wrapper.findAll('input').at(1)
-
       input.trigger('click')
 
       expect(input.element.checked).toBe(true)
@@ -399,7 +386,7 @@ describe('FormSchemaField', () => {
             type: 'string',
             title: 'choices',
             description: 'choices description',
-            enum: ['v0', 'v1'],
+            enum: [ 'v0', 'v1' ],
             attrs: {
               id: 'x'
             }
@@ -476,7 +463,7 @@ describe('FormSchemaField', () => {
     loadFields(schema, fields)
 
     const field = fields[0]
-    const value = ['v1']
+    const value = [ 'v1' ]
     const wrapper = mount(component, {
       context: {
         field,
@@ -508,13 +495,13 @@ describe('FormSchemaField', () => {
           }
         }
       },
-      required: ['fieldName']
+      required: [ 'fieldName' ]
     }
 
     loadFields(schema, fields)
 
     const field = fields[0]
-    const value = ['v0']
+    const value = [ 'v0' ]
     const wrapper = mount(component, {
       context: {
         field,
@@ -527,8 +514,48 @@ describe('FormSchemaField', () => {
 
     expect(wrapper.html()).toEqual(expected)
   })
+
+  describe('component with field.attrs.type === object', () => {
+    const field = {
+      attrs: {
+        name: 'fieldName',
+        type: 'object',
+        value: {}
+      },
+      fields: [
+        {
+          attrs: {
+            name: 'stringFieldName',
+            type: 'text'
+          }
+        },
+        {
+          attrs: {
+            name: 'boolFieldName',
+            type: 'checkbox'
+          }
+        }
+      ]
+    }
+    const value = {}
+    it('should successfully render the component', () => {
+      const wrapper = mount(component, {
+        context: {
+          field,
+          components,
+          props: { value }
+        }
+      })
+
+      expect(wrapper.findAll('fieldset').length).toEqual(1)
+      const fieldset = wrapper.find('fieldset')
+      const expected = '<fieldset name="fieldName"><input name="stringFieldName" type="text"><input name="boolFieldName" type="checkbox"></fieldset>'
+
+      expect(fieldset.html()).toEqual(expected)
+    })
+  })
 /*
-//*/
+// */
 //   it('should successfully emit input event', () => {
 //     const field = {
 //       attrs: {

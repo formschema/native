@@ -1,9 +1,9 @@
-'use strict'
+
 
 import { mount } from '@vue/test-utils'
 import { Components } from '@/lib/components'
 
-import component from '@/components/FormSchemaFieldSelectOption.js'
+import component from '@/components/FormSchemaFieldSelectOption'
 
 /* global describe beforeEach it expect */
 
@@ -51,7 +51,7 @@ describe('FormSchemaFieldSelectOption', () => {
   })
 
   it('should successfully render the component with explicit selected value', () => {
-    const value = option.value
+    const { value } = option
     const wrapper = mount(component, {
       context: {
         props: { option, value },

@@ -1,9 +1,3 @@
 {
-  "presets": ["es2015", "stage-2"],
-  "plugins": [
-    ["transform-runtime", {
-      "helpers": false,
-      "polyfill": false
-    }]
-  ]
+  "presets": ["@babel/preset-env"]
 }

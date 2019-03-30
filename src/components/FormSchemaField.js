@@ -1,10 +1,9 @@
 import { SCHEMA_TYPES, INPUT_TYPES } from '../lib/parser'
-
 import FormSchemaInput from './FormSchemaInput'
 import FormSchemaFieldCheckboxItem from './FormSchemaFieldCheckboxItem'
 import FormSchemaFieldSelectOption from './FormSchemaFieldSelectOption'
 
-export default {
+const FormSchemaField = {
   functional: true,
   render (createElement, { data, props, listeners }) {
     const { field, components } = data
@@ -26,7 +25,7 @@ export default {
         if (field.hasOwnProperty('items')) {
           field.items.forEach((item) => {
             children.push(createElement(FormSchemaFieldCheckboxItem, {
-              field: { ...field, isArrayField: false },
+              field,
               components,
               fieldParent: field,
               props: { item, value },
@@ -34,6 +33,7 @@ export default {
             }))
           })
         }
+
         break
 
       case INPUT_TYPES.CHECKBOX:
@@ -48,25 +48,25 @@ export default {
             }))
           })
         } else if (field.schemaType === SCHEMA_TYPES.BOOLEAN) {
-          const item = { label: field.label, id: field.attrs.id }
-          const checked = value === true
-
           return createElement(FormSchemaFieldCheckboxItem, {
             field,
             components,
-            props: { item, value, checked },
+            props: {
+              item: { label: field.label, id: field.attrs.id },
+              value,
+              checked: value === true
+            },
             on: listeners
           })
         }
+
         break
 
-      case INPUT_TYPES.SELECT: {
-        const items = [ ...field.items ]
-
+      case INPUT_TYPES.SELECT:
         delete input.data.attrs.type
         delete input.data.attrs.value
 
-        items.forEach((option) => {
+        field.items.forEach((option) => {
           children.push(createElement(FormSchemaFieldSelectOption, {
             field,
             components,
@@ -75,7 +75,23 @@ export default {
           }))
         })
         break
-      }
+
+      // Adding handling of object fields (recursive calling of
+      // createElement with FormSchemaField for each child)
+      case INPUT_TYPES.OBJECT:
+        field.fields.forEach((child) => {
+          children.push(createElement(FormSchemaField, {
+            field: child,
+            components,
+            props: { value: value[child.attrs.name] },
+            on: listeners
+          }))
+        })
+
+        return createElement(components.$.fieldset.component, {
+          field,
+          on: listeners
+        }, children)
     }
 
     return createElement(FormSchemaInput, {
@@ -87,3 +103,5 @@ export default {
     }, children)
   }
 }
+
+export default FormSchemaField

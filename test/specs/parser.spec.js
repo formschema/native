@@ -1,4 +1,4 @@
-'use strict'
+
 
 import {
   s4,
@@ -15,8 +15,27 @@ import {
   parseString,
   parseItems,
   parseArray,
+  parseObject,
   loadFields
 } from '@/lib/parser'
+
+function sanitizeField (field) {
+  if (field.hasOwnProperty('attrs')) {
+    delete field.attrs.id
+  }
+
+  delete field.id
+  delete field.labelAttrs
+  delete field.descAttrs
+  sanitizeFields(field.fields)
+  sanitizeFields(field.items)
+}
+
+function sanitizeFields (fields) {
+  for (const fieldIndex in fields) {
+    sanitizeField(fields[fieldIndex])
+  }
+}
 
 /* global describe it expect */
 
@@ -200,9 +219,7 @@ describe('lib/parser', () => {
 
       setCommonFields(schema, field)
 
-      delete field.labelAttrs
-      delete field.descAttrs
-      delete field.attrs.id
+      sanitizeField(field)
 
       expect(field).toEqual(expected)
     })
@@ -273,7 +290,7 @@ describe('lib/parser', () => {
           { label: 'l2', value: 2, checked: false }
         ]
       }
-      const expected = [undefined, 1, undefined]
+      const expected = [ undefined, 1, undefined ]
 
       expect(arrayOrderedValues(field)).toEqual(expected)
     })
@@ -289,7 +306,7 @@ describe('lib/parser', () => {
           { label: 'l3', value: 3, selected: true }
         ]
       }
-      const expected = [1, 3]
+      const expected = [ 1, 3 ]
 
       expect(arrayUnorderedValues(field)).toEqual(expected)
     })
@@ -330,9 +347,7 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelAttrs
-      delete result.descAttrs
-      delete result.attrs.id
+      sanitizeField(result)
 
       expect(result).toEqual(expected)
     })
@@ -360,9 +375,7 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelAttrs
-      delete result.descAttrs
-      delete result.attrs.id
+      sanitizeField(result)
 
       expect(result).toEqual(expected)
     })
@@ -379,6 +392,7 @@ describe('lib/parser', () => {
         schemaType: 'boolean',
         label: '',
         description: '',
+        path: [ 'name' ],
         attrs: {
           name: 'name',
           type: 'radio',
@@ -392,9 +406,7 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelAttrs
-      delete result.descAttrs
-      delete result.attrs.id
+      sanitizeField(result)
 
       expect(result).toEqual(expected)
     })
@@ -411,6 +423,7 @@ describe('lib/parser', () => {
         schemaType: 'boolean',
         label: '',
         description: '',
+        path: [ 'name' ],
         attrs: {
           name: 'name',
           type: 'radio',
@@ -424,9 +437,7 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelAttrs
-      delete result.descAttrs
-      delete result.attrs.id
+      sanitizeField(result)
 
       expect(result).toEqual(expected)
     })
@@ -442,6 +453,7 @@ describe('lib/parser', () => {
         schemaType: 'boolean',
         label: '',
         description: '',
+        path: [ 'name' ],
         attrs: {
           name: 'name',
           type: 'radio',
@@ -455,9 +467,7 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelAttrs
-      delete result.descAttrs
-      delete result.attrs.id
+      sanitizeField(result)
 
       expect(result).toEqual(expected)
     })
@@ -481,9 +491,7 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelAttrs
-      delete result.descAttrs
-      delete result.attrs.id
+      sanitizeField(result)
 
       expect(result).toEqual(expected)
     })
@@ -510,9 +518,7 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelAttrs
-      delete result.descAttrs
-      delete result.attrs.id
+      sanitizeField(result)
 
       expect(result).toEqual(expected)
     })
@@ -528,6 +534,7 @@ describe('lib/parser', () => {
         schemaType: 'string',
         label: '',
         description: '',
+        path: [ 'name' ],
         attrs: {
           name: 'name',
           type: 'file',
@@ -540,9 +547,7 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelAttrs
-      delete result.descAttrs
-      delete result.attrs.id
+      sanitizeField(result)
 
       expect(result).toEqual(expected)
     })
@@ -572,9 +577,7 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelAttrs
-      delete result.descAttrs
-      delete result.attrs.id
+      sanitizeField(result)
 
       expect(result).toEqual(expected)
     })
@@ -599,9 +602,7 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelAttrs
-      delete result.descAttrs
-      delete result.attrs.id
+      sanitizeField(result)
 
       expect(result).toEqual(expected)
 
@@ -612,9 +613,7 @@ describe('lib/parser', () => {
 
       expect(typeof result2.attrs.id).toEqual('string')
 
-      delete result2.labelAttrs
-      delete result2.descAttrs
-      delete result2.attrs.id
+      sanitizeField(result2)
 
       expect(result2).toEqual(expected)
     })
@@ -639,9 +638,7 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelAttrs
-      delete result.descAttrs
-      delete result.attrs.id
+      sanitizeField(result)
 
       expect(result).toEqual(expected)
 
@@ -652,9 +649,7 @@ describe('lib/parser', () => {
 
       expect(typeof result2.attrs.id).toEqual('string')
 
-      delete result2.labelAttrs
-      delete result2.descAttrs
-      delete result2.attrs.id
+      sanitizeField(result2)
 
       expect(result2).toEqual(expected)
     })
@@ -676,9 +671,7 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelAttrs
-      delete result.descAttrs
-      delete result.attrs.id
+      sanitizeField(result)
 
       expect(result).toEqual(expected)
     })
@@ -700,9 +693,7 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelAttrs
-      delete result.descAttrs
-      delete result.attrs.id
+      sanitizeField(result)
 
       expect(result).toEqual(expected)
     })
@@ -710,13 +701,13 @@ describe('lib/parser', () => {
 
   describe('parseItems(items)', () => {
     it('should successfully parse array with object items', () => {
-      const items = [{ value: 'v', label: 'l' }]
+      const items = [ { value: 'v', label: 'l' } ]
 
       expect(parseItems(items)).toEqual(items)
     })
 
     it('should successfully parse array with non object items', () => {
-      const items = ['a', 'b']
+      const items = [ 'a', 'b' ]
       const expected = [
         { value: 'a', label: 'a' },
         { value: 'b', label: 'b' }
@@ -735,7 +726,7 @@ describe('lib/parser', () => {
         description: '',
         isArrayField: true,
         items: [],
-        minItems: 1,
+        minItems: 0,
         maxItems: 1000,
         attrs: {
           type: 'text',
@@ -748,9 +739,7 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelAttrs
-      delete result.descAttrs
-      delete result.attrs.id
+      sanitizeField(result)
 
       expect(result).toEqual(expected)
     })
@@ -768,7 +757,7 @@ describe('lib/parser', () => {
         description: '',
         isArrayField: true,
         items: [],
-        minItems: 1,
+        minItems: 0,
         maxItems: 1000,
         attrs: {
           type: 'file',
@@ -781,9 +770,7 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelAttrs
-      delete result.descAttrs
-      delete result.attrs.id
+      sanitizeField(result)
 
       expect(result).toEqual(expected)
     })
@@ -801,7 +788,7 @@ describe('lib/parser', () => {
         description: '',
         isArrayField: true,
         items: [],
-        minItems: 1,
+        minItems: 0,
         maxItems: 1000,
         attrs: {
           type: 'number',
@@ -814,9 +801,7 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelAttrs
-      delete result.descAttrs
-      delete result.attrs.id
+      sanitizeField(result)
 
       expect(result).toEqual(expected)
     })
@@ -829,8 +814,9 @@ describe('lib/parser', () => {
         description: '',
         isArrayField: true,
         items: [],
-        minItems: 1,
+        minItems: 0,
         maxItems: 1000,
+        path: [ 'name' ],
         attrs: {
           name: 'name',
           type: 'text',
@@ -843,9 +829,7 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelAttrs
-      delete result.descAttrs
-      delete result.attrs.id
+      sanitizeField(result)
 
       expect(result).toEqual(expected)
     })
@@ -880,9 +864,7 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelAttrs
-      delete result.descAttrs
-      delete result.attrs.id
+      sanitizeField(result)
 
       expect(result).toEqual(expected)
     })
@@ -890,7 +872,7 @@ describe('lib/parser', () => {
     it('should successfully parse with defined schema.enum', () => {
       const schema = {
         type: 'array',
-        enum: [{ value: 'v', label: 'l' }],
+        enum: [ { value: 'v', label: 'l' } ],
         attrs: {
           type: 'text'
         }
@@ -900,9 +882,9 @@ describe('lib/parser', () => {
         label: '',
         description: '',
         isArrayField: true,
-        minItems: 1,
+        minItems: 0,
         maxItems: 1000,
-        items: [{ value: 'v', label: 'l' }],
+        items: [ { value: 'v', label: 'l', name: 'l' } ],
         attrs: {
           type: 'text',
           value: [],
@@ -915,15 +897,13 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelAttrs
-      delete result.descAttrs
-      delete result.attrs.id
+      sanitizeField(result)
 
       expect(result).toEqual(expected)
 
       delete schema.attrs
 
-      expected.isArrayField = true,
+      expected.isArrayField = true
       expected.attrs.type = 'select'
       expected.attrs.multiple = true
 
@@ -931,9 +911,7 @@ describe('lib/parser', () => {
 
       expect(typeof result2.attrs.id).toEqual('string')
 
-      delete result2.labelAttrs
-      delete result2.descAttrs
-      delete result2.attrs.id
+      sanitizeField(result2)
 
       expect(result2).toEqual(expected)
     })
@@ -941,15 +919,15 @@ describe('lib/parser', () => {
     it('should successfully parse with defined schema.oneOf', () => {
       const schema = {
         type: 'array',
-        oneOf: [{ value: 'v', label: 'l' }]
+        oneOf: [ { value: 'v', label: 'l' } ]
       }
       const expected = {
         schemaType: 'array',
         label: '',
         description: '',
-        minItems: 1,
+        minItems: 0,
         maxItems: 1000,
-        items: [{ value: 'v', label: 'l', name: 'l' }],
+        items: [ { value: 'v', label: 'l', name: 'l' } ],
         attrs: {
           type: 'radio',
           value: '',
@@ -962,10 +940,7 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelAttrs
-      delete result.descAttrs
-      delete result.attrs.id
-      delete result.items[0].id
+      sanitizeField(result)
 
       expect(result).toEqual(expected)
     })
@@ -973,19 +948,19 @@ describe('lib/parser', () => {
     it('should successfully parse with defined schema.anyOf', () => {
       const schema = {
         type: 'array',
-        anyOf: [{ value: 'v', label: 'l' }]
+        anyOf: [ { value: 'v', label: 'l' } ]
       }
       const expected = {
         schemaType: 'array',
         label: '',
         description: '',
         isArrayField: true,
-        minItems: 1,
+        minItems: 0,
         maxItems: 1000,
-        items: [{ value: 'v', label: 'l', name: 'l' }],
+        items: [ { value: 'v', label: 'l', name: 'l' } ],
         attrs: {
           type: 'checkbox',
-          value: [undefined],
+          value: [ undefined ],
           required: false,
           disabled: false
         }
@@ -995,12 +970,386 @@ describe('lib/parser', () => {
 
       expect(typeof result.attrs.id).toEqual('string')
 
-      delete result.labelAttrs
-      delete result.descAttrs
-      delete result.attrs.id
-      delete result.items[0].id
+      sanitizeField(result)
 
       expect(result).toEqual(expected)
+    })
+  })
+
+  describe('parseObject(schema, name = null)', () => {
+    it('should successfully parse an empty schema', () => {
+      const schema = { type: 'object' }
+      const expected = []
+      const result = parseObject(schema)
+
+      expect(result).toEqual(expected)
+    })
+
+    it('should successfully parse a schema with a defined name', () => {
+      const schema = {
+        type: 'object'
+      }
+      const expected = {
+        schemaType: 'object',
+        label: '',
+        description: '',
+        fields: [],
+        path: [ 'name' ],
+        attrs: {
+          name: 'name',
+          type: 'object',
+          required: false,
+          disabled: false,
+          value: {}
+        }
+      }
+      const result = parseObject(schema, 'name')
+
+      expect(Array.isArray(result)).toBeTruthy()
+      expect(result.length).toEqual(1)
+
+      sanitizeFields(result)
+
+      expect(result[0]).toEqual(expected)
+    })
+
+    it('should successfully parse a schema with a single string property', () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          string_prop_name: {
+            type: 'string'
+          }
+        }
+      }
+      const expected = {
+        schemaType: 'object',
+        label: '',
+        description: '',
+        path: [ 'name' ],
+        fields: [
+          {
+            schemaType: 'string',
+            label: '',
+            description: '',
+            path: [ 'name', 'string_prop_name' ],
+            attrs: {
+              type: 'text',
+              name: 'string_prop_name',
+              required: false,
+              disabled: false
+            }
+          }
+        ],
+        attrs: {
+          name: 'name',
+          type: 'object',
+          required: false,
+          disabled: false,
+          value: {}
+        }
+      }
+      const result = parseObject(schema, 'name')
+
+      expect(Array.isArray(result)).toBeTruthy()
+      expect(result.length).toEqual(1)
+      expect(Array.isArray(result[0].fields)).toBeTruthy()
+      expect(result[0].fields.length).toEqual(1)
+
+      sanitizeFields(result)
+
+      expect(result[0]).toEqual(expected)
+    })
+
+    it('should successfully parse a schema with multiple properties', () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          string_prop_name: {
+            type: 'string'
+          },
+          bool_prop_name: {
+            type: 'boolean'
+          },
+          array_prop_name: {
+            type: 'array'
+          }
+        }
+      }
+      const expected = {
+        schemaType: 'object',
+        label: '',
+        description: '',
+        path: [ 'name' ],
+        fields: [
+          {
+            schemaType: 'string',
+            label: '',
+            description: '',
+            path: [ 'name', 'string_prop_name' ],
+            attrs: {
+              type: 'text',
+              name: 'string_prop_name',
+              required: false,
+              disabled: false
+            }
+          },
+          {
+            schemaType: 'boolean',
+            label: '',
+            description: '',
+            path: [ 'name', 'bool_prop_name' ],
+            attrs: {
+              type: 'checkbox',
+              name: 'bool_prop_name',
+              required: false,
+              disabled: false,
+              checked: false
+            }
+          },
+          {
+            schemaType: 'array',
+            label: '',
+            description: '',
+            isArrayField: true,
+            items: [],
+            minItems: 0,
+            maxItems: 1000,
+            path: [ 'name', 'array_prop_name' ],
+            attrs: {
+              type: 'text',
+              name: 'array_prop_name',
+              required: false,
+              disabled: false
+            }
+          }
+        ],
+        attrs: {
+          name: 'name',
+          type: 'object',
+          required: false,
+          disabled: false,
+          value: {}
+        }
+      }
+      const result = parseObject(schema, 'name')
+
+      expect(Array.isArray(result)).toBeTruthy()
+      expect(result.length).toEqual(1)
+      expect(Array.isArray(result[0].fields)).toBeTruthy()
+      expect(result[0].fields.length).toEqual(3)
+
+      sanitizeFields(result)
+
+      expect(result[0]).toEqual(expected)
+    })
+
+    it('should successfully parse an unnamed schema with multiple properties', () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          string_prop_name: {
+            type: 'string'
+          },
+          bool_prop_name: {
+            type: 'boolean'
+          },
+          array_prop_name: {
+            type: 'array'
+          }
+        }
+      }
+      const expected = [
+        {
+          schemaType: 'string',
+          label: '',
+          description: '',
+          path: [ 'string_prop_name' ],
+          attrs: {
+            type: 'text',
+            name: 'string_prop_name',
+            required: false,
+            disabled: false
+          }
+        },
+        {
+          schemaType: 'boolean',
+          label: '',
+          description: '',
+          path: [ 'bool_prop_name' ],
+          attrs: {
+            type: 'checkbox',
+            name: 'bool_prop_name',
+            required: false,
+            disabled: false,
+            checked: false
+          }
+        },
+        {
+          schemaType: 'array',
+          label: '',
+          description: '',
+          isArrayField: true,
+          items: [],
+          minItems: 0,
+          maxItems: 1000,
+          path: [ 'array_prop_name' ],
+          attrs: {
+            type: 'text',
+            name: 'array_prop_name',
+            required: false,
+            disabled: false
+          }
+        }
+      ]
+      const result = parseObject(schema)
+
+      expect(Array.isArray(result)).toBeTruthy()
+      expect(result.length).toEqual(3)
+
+      sanitizeFields(result)
+
+      expect(result).toEqual(expected)
+    })
+
+    it('should successfully parse a schema with nested properties', () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          string_prop_name: {
+            type: 'string'
+          },
+          nested_prop_name: {
+            type: 'object',
+            properties: {
+              array_prop_name: {
+                type: 'array'
+              },
+              more_nested_prop_name: {
+                type: 'object',
+                properties: {
+                  bool_prop_name: {
+                    type: 'boolean'
+                  }
+                }
+              }
+            }
+          },
+          empty_nested_prop_name: {
+            type: 'object'
+          }
+        }
+      }
+      const expected = {
+        schemaType: 'object',
+        label: '',
+        description: '',
+        path: [ 'name' ],
+        fields: [
+          {
+            schemaType: 'string',
+            label: '',
+            description: '',
+            path: [ 'name', 'string_prop_name' ],
+            attrs: {
+              type: 'text',
+              name: 'string_prop_name',
+              required: false,
+              disabled: false
+            }
+          },
+          {
+            schemaType: 'object',
+            label: '',
+            description: '',
+            path: [ 'name', 'nested_prop_name' ],
+            attrs: {
+              type: 'object',
+              name: 'nested_prop_name',
+              required: false,
+              disabled: false,
+              value: {}
+            },
+            fields: [
+              {
+                schemaType: 'array',
+                label: '',
+                description: '',
+                isArrayField: true,
+                items: [],
+                minItems: 0,
+                maxItems: 1000,
+                path: [ 'name', 'nested_prop_name', 'array_prop_name' ],
+                attrs: {
+                  type: 'text',
+                  name: 'array_prop_name',
+                  required: false,
+                  disabled: false
+                }
+              },
+              {
+                schemaType: 'object',
+                label: '',
+                description: '',
+                path: [ 'name', 'nested_prop_name', 'more_nested_prop_name' ],
+                attrs: {
+                  type: 'object',
+                  name: 'more_nested_prop_name',
+                  required: false,
+                  disabled: false,
+                  value: {}
+                },
+                fields: [
+                  {
+                    schemaType: 'boolean',
+                    label: '',
+                    description: '',
+                    path: [ 'name', 'nested_prop_name', 'more_nested_prop_name', 'bool_prop_name' ],
+                    attrs: {
+                      type: 'checkbox',
+                      name: 'bool_prop_name',
+                      required: false,
+                      disabled: false,
+                      checked: false
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            schemaType: 'object',
+            label: '',
+            description: '',
+            path: [ 'name', 'empty_nested_prop_name' ],
+            attrs: {
+              type: 'object',
+              name: 'empty_nested_prop_name',
+              required: false,
+              disabled: false,
+              value: {}
+            },
+            fields: []
+          }
+        ],
+        attrs: {
+          name: 'name',
+          type: 'object',
+          required: false,
+          disabled: false,
+          value: {}
+        }
+      }
+      const result = parseObject(schema, 'name')
+
+      expect(Array.isArray(result)).toBeTruthy()
+      expect(result.length).toEqual(1)
+      expect(Array.isArray(result[0].fields)).toBeTruthy()
+      expect(result[0].fields.length).toEqual(3)
+
+      sanitizeFields(result)
+
+      expect(result[0]).toEqual(expected)
     })
   })
 
@@ -1009,7 +1358,7 @@ describe('lib/parser', () => {
       it('should successfully load the schema', () => {
         const fields = []
         const schema = { type: 'boolean' }
-        const expected = [{
+        const expected = [ {
           schemaType: 'boolean',
           label: '',
           description: '',
@@ -1019,15 +1368,13 @@ describe('lib/parser', () => {
             required: false,
             disabled: false
           }
-        }]
+        } ]
 
         loadFields(schema, fields)
 
         expect(typeof fields[0].attrs.id).toEqual('string')
 
-        delete fields[0].labelAttrs
-        delete fields[0].descAttrs
-        delete fields[0].attrs.id
+        sanitizeFields(fields)
 
         expect(fields).toEqual(expected)
       })
@@ -1037,28 +1384,26 @@ describe('lib/parser', () => {
       it('should successfully load the schema', () => {
         const fields = []
         const schema = { type: 'array' }
-        const expected = [{
+        const expected = [ {
           schemaType: 'array',
           label: '',
           description: '',
           isArrayField: true,
           items: [],
-          minItems: 1,
+          minItems: 0,
           maxItems: 1000,
           attrs: {
             type: 'text',
             required: false,
             disabled: false
           }
-        }]
+        } ]
 
         loadFields(schema, fields)
 
         expect(typeof fields[0].attrs.id).toEqual('string')
 
-        delete fields[0].labelAttrs
-        delete fields[0].descAttrs
-        delete fields[0].attrs.id
+        sanitizeFields(fields)
 
         expect(fields).toEqual(expected)
       })
@@ -1068,7 +1413,7 @@ describe('lib/parser', () => {
       it('should successfully load the schema', () => {
         const fields = []
         const schema = { type: 'integer' }
-        const expected = [{
+        const expected = [ {
           schemaType: 'integer',
           label: '',
           description: '',
@@ -1077,15 +1422,13 @@ describe('lib/parser', () => {
             required: false,
             disabled: false
           }
-        }]
+        } ]
 
         loadFields(schema, fields)
 
         expect(typeof fields[0].attrs.id).toEqual('string')
 
-        delete fields[0].labelAttrs
-        delete fields[0].descAttrs
-        delete fields[0].attrs.id
+        sanitizeFields(fields)
 
         expect(fields).toEqual(expected)
       })
@@ -1096,15 +1439,15 @@ describe('lib/parser', () => {
         const fields = []
         const schema = {
           type: 'string',
-          enum: [{ value: 'v', label: 'l' }]
+          enum: [ { value: 'v', label: 'l' } ]
         }
-        const expected = [{
+        const expected = [ {
           schemaType: 'string',
           label: '',
           description: '',
-          minItems: 1,
+          minItems: 0,
           maxItems: 1000,
-          items: [{ value: 'v', label: 'l' }],
+          items: [ { value: 'v', label: 'l', name: 'l' } ],
           attrs: {
             type: 'select',
             value: '',
@@ -1112,15 +1455,13 @@ describe('lib/parser', () => {
             disabled: false,
             multiple: false
           }
-        }]
+        } ]
 
         loadFields(schema, fields)
 
         expect(typeof fields[0].attrs.id).toEqual('string')
 
-        delete fields[0].labelAttrs
-        delete fields[0].descAttrs
-        delete fields[0].attrs.id
+        sanitizeFields(fields)
 
         expect(fields).toEqual(expected)
       })
@@ -1129,15 +1470,15 @@ describe('lib/parser', () => {
         const fields = []
         const schema = {
           type: 'string',
-          enum: ['v']
+          enum: [ 'v' ]
         }
-        const expected = [{
+        const expected = [ {
           schemaType: 'string',
           label: '',
           description: '',
-          minItems: 1,
+          minItems: 0,
           maxItems: 1000,
-          items: [{ value: 'v', label: 'v' }],
+          items: [ { value: 'v', label: 'v', name: 'v' } ],
           attrs: {
             type: 'select',
             value: '',
@@ -1145,15 +1486,13 @@ describe('lib/parser', () => {
             disabled: false,
             multiple: false
           }
-        }]
+        } ]
 
         loadFields(schema, fields)
 
         expect(typeof fields[0].attrs.id).toEqual('string')
 
-        delete fields[0].labelAttrs
-        delete fields[0].descAttrs
-        delete fields[0].attrs.id
+        sanitizeFields(fields)
 
         expect(fields).toEqual(expected)
       })
@@ -1168,10 +1507,11 @@ describe('lib/parser', () => {
             bool: { type: 'boolean' }
           }
         }
-        const expected = [{
+        const expected = [ {
           schemaType: 'boolean',
           label: '',
           description: '',
+          path: [ 'bool' ],
           attrs: {
             type: 'checkbox',
             name: 'bool',
@@ -1179,15 +1519,13 @@ describe('lib/parser', () => {
             required: false,
             disabled: false
           }
-        }]
+        } ]
 
         loadFields(schema, fields)
 
         expect(typeof fields[0].attrs.id).toEqual('string')
 
-        delete fields[0].labelAttrs
-        delete fields[0].descAttrs
-        delete fields[0].attrs.id
+        sanitizeFields(fields)
 
         expect(fields).toEqual(expected)
       })
@@ -1199,17 +1537,18 @@ describe('lib/parser', () => {
           properties: {
             string: {
               type: 'string',
-              enum: ['v']
+              enum: [ 'v' ]
             }
           }
         }
-        const expected = [{
+        const expected = [ {
           schemaType: 'string',
           label: '',
           description: '',
-          minItems: 1,
+          minItems: 0,
           maxItems: 1000,
-          items: [{ value: 'v', label: 'v' }],
+          path: [ 'string' ],
+          items: [ { value: 'v', label: 'v', name: 'string', ref: 'string-0' } ],
           attrs: {
             type: 'select',
             name: 'string',
@@ -1218,15 +1557,13 @@ describe('lib/parser', () => {
             disabled: false,
             multiple: false
           }
-        }]
+        } ]
 
         loadFields(schema, fields)
 
         expect(typeof fields[0].attrs.id).toEqual('string')
 
-        delete fields[0].labelAttrs
-        delete fields[0].descAttrs
-        delete fields[0].attrs.id
+        sanitizeFields(fields)
 
         expect(fields).toEqual(expected)
       })
@@ -1238,12 +1575,13 @@ describe('lib/parser', () => {
           properties: {
             bool: { type: 'boolean' }
           },
-          required: ['bool']
+          required: [ 'bool' ]
         }
-        const expected = [{
+        const expected = [ {
           schemaType: 'boolean',
           label: '',
           description: '',
+          path: [ 'bool' ],
           attrs: {
             type: 'checkbox',
             name: 'bool',
@@ -1252,15 +1590,13 @@ describe('lib/parser', () => {
             disabled: false,
             'aria-required': 'true'
           }
-        }]
+        } ]
 
         loadFields(schema, fields)
 
         expect(typeof fields[0].attrs.id).toEqual('string')
 
-        delete fields[0].labelAttrs
-        delete fields[0].descAttrs
-        delete fields[0].attrs.id
+        sanitizeFields(fields)
 
         expect(fields).toEqual(expected)
       })
@@ -1275,13 +1611,14 @@ describe('lib/parser', () => {
             one: { type: 'boolean' },
             four: { type: 'boolean' }
           },
-          order: ['one', 'two']
+          order: [ 'one', 'two' ]
         }
         const expected = [
           {
             schemaType: 'boolean',
             label: '',
             description: '',
+            path: [ 'one' ],
             attrs: {
               type: 'checkbox',
               name: 'one',
@@ -1294,6 +1631,7 @@ describe('lib/parser', () => {
             schemaType: 'boolean',
             label: '',
             description: '',
+            path: [ 'two' ],
             attrs: {
               type: 'checkbox',
               name: 'two',
@@ -1306,6 +1644,7 @@ describe('lib/parser', () => {
             schemaType: 'boolean',
             label: '',
             description: '',
+            path: [ 'three' ],
             attrs: {
               type: 'checkbox',
               name: 'three',
@@ -1318,6 +1657,7 @@ describe('lib/parser', () => {
             schemaType: 'boolean',
             label: '',
             description: '',
+            path: [ 'four' ],
             attrs: {
               type: 'checkbox',
               name: 'four',
@@ -1333,9 +1673,7 @@ describe('lib/parser', () => {
         fields.forEach((field) => {
           expect(typeof field.attrs.id).toEqual('string')
 
-          delete field.labelAttrs
-          delete field.descAttrs
-          delete field.attrs.id
+          sanitizeField(field)
         })
 
         expect(fields).toEqual(expected)
@@ -1380,7 +1718,7 @@ describe('lib/parser', () => {
           values.forEach((value, i) => {
             it(`should parse ${JSON.stringify(value)} with default value === ${JSON.stringify(value)}`, () => {
               const schema = {
-                type: type,
+                type,
                 default: value
               }
 
@@ -1399,7 +1737,7 @@ describe('lib/parser', () => {
 
             it(`should parse ${JSON.stringify(value)} with initial value === ${JSON.stringify(value)}`, () => {
               const schema = {
-                type: type
+                type
               }
 
               const fields = []
@@ -1416,7 +1754,7 @@ describe('lib/parser', () => {
 
               it(`should parse ${JSON.stringify(value)} with default === ${JSON.stringify(initial)} and initial === ${JSON.stringify(value)}`, () => {
                 const schema = {
-                  type: type,
+                  type,
                   default: initial
                 }
 
@@ -1431,7 +1769,7 @@ describe('lib/parser', () => {
 
               it(`should parse ${JSON.stringify(value)} with default === ${JSON.stringify(initial)} and attrs.value === ${JSON.stringify(value)}`, () => {
                 const schema = {
-                  type: type,
+                  type,
                   default: initial,
                   attrs: { value }
                 }
@@ -1453,7 +1791,7 @@ describe('lib/parser', () => {
 
               it(`should parse ${JSON.stringify(value)} with initial === ${JSON.stringify(initial)} and attrs.value === ${JSON.stringify(value)}`, () => {
                 const schema = {
-                  type: type,
+                  type,
                   attrs: { value }
                 }
 
@@ -1501,7 +1839,7 @@ describe('lib/parser', () => {
       },
       {
         type: 'array',
-        values: [ undefined, [], [1] ]
+        values: [ undefined, [], [ 1 ] ]
       },
       {
         type: 'object',
@@ -1519,7 +1857,7 @@ describe('lib/parser', () => {
 
             const expected = data === undefined && type === 'string'
               ? ''
-              : ['integer', 'number'].includes(type) && data !== undefined
+              : [ 'integer', 'number' ].includes(type) && data !== undefined
                 ? parseFloat(data)
                 : type === 'array' && data === undefined
                   ? []
@@ -1568,7 +1906,7 @@ describe('lib/parser', () => {
             const fields = []
             const expected = value === undefined && type === 'string'
               ? ''
-              : ['integer', 'number'].includes(type) && value !== undefined
+              : [ 'integer', 'number' ].includes(type) && value !== undefined
                 ? parseFloat(value)
                 : value
 
@@ -1582,13 +1920,13 @@ describe('lib/parser', () => {
       })
     })
 
-    describe(`should successfully parse with array schema`, () => {
+    describe('should successfully parse with array schema', () => {
       [
         [],
-        ['x'],
-        ['x', 'z'],
-        ['x', 'y', 'z'],
-        ['z', 'x', 'y']
+        [ 'x' ],
+        [ 'x', 'z' ],
+        [ 'x', 'y', 'z' ],
+        [ 'z', 'x', 'y' ]
       ].forEach((value) => {
         it(`should parse ${JSON.stringify(value)} with input value === ${JSON.stringify(value)}`, () => {
           const schema = {
@@ -1604,10 +1942,10 @@ describe('lib/parser', () => {
 
           loadFields(schema, fields)
 
-          const expected = [...value]
+          const expected = [ ...value ]
           const result = parseDefaultObjectValue(schema, fields, value)
 
-          expect([...result]).toEqual(expected)
+          expect([ ...result ]).toEqual(expected)
         })
 
         it(`should parse { x: ${JSON.stringify(value)} } with input value === ${JSON.stringify(value)}`, () => {

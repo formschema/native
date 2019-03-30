@@ -1,4 +1,4 @@
-'use strict'
+
 
 import {
   Components,
@@ -7,7 +7,7 @@ import {
   inputName
 } from '@/lib/components'
 
-/* global describe it expect beforeEach */
+/* global describe it expect */
 
 describe('lib/components', () => {
   describe('Components()', () => {
@@ -20,20 +20,20 @@ describe('lib/components', () => {
 
       defaultComponents.forEach((type) => {
         describe(`component ${type}`, () => {
-          it(`should have a right defined type`, () => {
+          it('should have a right defined type', () => {
             expect(instance.$[type].type).toEqual(type)
           })
 
-          it(`should have a component entry defined`, () => {
+          it('should have a component entry defined', () => {
             expect(instance.$[type].hasOwnProperty('component')).toBeTruthy()
           })
 
           if (typeof instance.$[type].component === 'object') {
-            it(`should have a thruthy component.functional`, () => {
+            it('should have a thruthy component.functional', () => {
               expect(instance.$[type].component.functional).toBeTruthy()
             })
 
-            it(`should have a render function`, () => {
+            it('should have a render function', () => {
               expect(typeof instance.$[type].component.render).toEqual('function')
             })
           }

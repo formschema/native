@@ -48,6 +48,12 @@ npm install --save @formschema/native
   
   Possible values are: `off` and `on`. 
 
+- `bracketed-array-input-name` ***Boolean*** (*optional*) `default: true` 
+
+  When set to true (default), checkbox inputs will automatically include
+  brackets at the end of their names (e.g. name="Multicheckbox-Value1[]".
+  Setting this property to false, disables this behaviour. 
+
 - `enctype` ***String*** (*optional*) `default: 'application/x-www-form-urlencoded'` 
 
   When the value of the method attribute is post, enctype is the
