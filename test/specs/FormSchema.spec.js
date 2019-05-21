@@ -641,6 +641,72 @@ describe('FormSchema', () => {
 
         expect(wrapper.html()).toEqual(expected)
       })
+
+      it('should render a simple schema with default model', () => {
+        const schema = {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+              attrs: {
+                id: '1'
+              }
+            }
+          }
+        }
+
+        const value = {
+          name: 'Jon Snow'
+        }
+
+        const expected = '<form enctype="application/x-www-form-urlencoded" method="post"><input id="1" type="text" value="Jon Snow" name="name"></form>'
+
+        const wrapper = mount(component, {
+          propsData: { schema, value }
+        })
+
+        expect(wrapper.html()).toEqual(expected)
+      })
+
+      it('should render a nested schema with default model', () => {
+        const schema = {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'object',
+              properties: {
+                first: {
+                  type: 'string',
+                  attrs: {
+                    id: '1'
+                  }
+                },
+                last: {
+                  type: 'string',
+                  attrs: {
+                    id: '2'
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        const value = {
+          name: {
+            first: 'Jon',
+            last: 'Snow'
+          }
+        }
+
+        const expected = '<form enctype="application/x-www-form-urlencoded" method="post"><fieldset name="name"><input id="1" type="text" value="Jon" name="first"><input id="2" type="text" value="Snow" name="last"></fieldset></form>'
+
+        const wrapper = mount(component, {
+          propsData: { schema, value }
+        })
+
+        expect(wrapper.html()).toEqual(expected)
+      })
     })
 
     describe('nested object element', () => {
@@ -806,6 +872,74 @@ describe('FormSchema', () => {
         delete attrs.id
 
         expect(attrs).toEqual(expected)
+      })
+    })
+
+    describe('with type === object', () => {
+      it('should emit an input event for a simple schema with default model', () => {
+        const schema = {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string'
+            }
+          }
+        }
+
+        const value = {
+          name: 'Jon Snow'
+        }
+
+        const expected = {
+          name: 'Jon Snow'
+        }
+
+        const wrapper = mount(component, {
+          propsData: { schema, value }
+        })
+
+        expect(Object.keys(wrapper.emitted())).toEqual([ 'input' ])
+        expect(wrapper.emitted().input.pop()).toEqual([ expected ])
+      })
+
+      it('should emit an input event for a nested schema with default model', () => {
+        const schema = {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'object',
+              properties: {
+                first: {
+                  type: 'string'
+                },
+                last: {
+                  type: 'string'
+                }
+              }
+            }
+          }
+        }
+
+        const value = {
+          name: {
+            first: 'Jon',
+            last: 'Snow'
+          }
+        }
+
+        const expected = {
+          name: {
+            first: 'Jon',
+            last: 'Snow'
+          }
+        }
+
+        const wrapper = mount(component, {
+          propsData: { schema, value }
+        })
+
+        expect(Object.keys(wrapper.emitted())).toEqual([ 'input' ])
+        expect(wrapper.emitted().input.pop()).toEqual([ expected ])
       })
     })
   })

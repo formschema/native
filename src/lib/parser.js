@@ -191,13 +191,19 @@ export function parseDefaultObjectValue (schema, fields, value) {
         data[name] = parseEventValue(eventInput)
         break
 
-      case SCHEMA_TYPES.OBJECT:
-        data[name] = parseDefaultObjectValue(schema, field.fields, value)
+      case SCHEMA_TYPES.OBJECT: {
+        const nestedSchema = schema.properties[name]
+        const nestedValue = typeof value !== 'undefined' && value !== null
+          ? value[name]
+          : value
+
+        data[name] = parseDefaultObjectValue(
+          nestedSchema, field.fields, nestedValue
+        )
         break
+      }
 
       default:
-        data[name] = parseEventValue(eventInput)
-
         if (field.isArrayField) {
           if (data[name] instanceof Array) {
             data[name] = data[name].filter((value) => value !== undefined)
