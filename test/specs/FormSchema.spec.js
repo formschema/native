@@ -606,6 +606,95 @@ describe('FormSchema', () => {
         expect(wrapper.find('form').html()).toEqual(expected)
       })
     })
+
+    describe('object element', () => {
+      it('should render an object', () => {
+        const schema = {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+              attrs: {
+                id: '1'
+              }
+            }
+          }
+        }
+        const wrapper = mount(component, {
+          propsData: { schema }
+        })
+
+        const expected = '<form enctype="application/x-www-form-urlencoded" method="post"><input id="1" type="text" name="name"></form>'
+
+        expect(wrapper.find('form').html()).toEqual(expected)
+      })
+
+      it('should render an empty object', () => {
+        const schema = {
+          type: 'object'
+        }
+        const wrapper = mount(component, {
+          propsData: { schema }
+        })
+
+        const expected = undefined
+
+        expect(wrapper.html()).toEqual(expected)
+      })
+    })
+
+    describe('nested object element', () => {
+      it('should render a nested object', () => {
+        const schema = {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'object',
+              properties: {
+                first: {
+                  type: 'string',
+                  attrs: {
+                    id: '1'
+                  }
+                },
+                last: {
+                  type: 'string',
+                  attrs: {
+                    id: '2'
+                  }
+                }
+              }
+            }
+          }
+        }
+        const wrapper = mount(component, {
+          propsData: { schema }
+        })
+
+        const expected = '<form enctype="application/x-www-form-urlencoded" method="post"><fieldset name="name"><input id="1" type="text" name="first"><input id="2" type="text" name="last"></fieldset></form>'
+
+        expect(wrapper.find('form').html()).toEqual(expected)
+      })
+
+      it('should render a nested empty object', () => {
+        const schema = {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'object',
+              properties: {}
+            }
+          }
+        }
+        const wrapper = mount(component, {
+          propsData: { schema }
+        })
+
+        const expected = '<form enctype="application/x-www-form-urlencoded" method="post"><fieldset name="name"></fieldset></form>'
+
+        expect(wrapper.find('form').html()).toEqual(expected)
+      })
+    })
   })
 
   describe('should successfully emit input and change events', () => {

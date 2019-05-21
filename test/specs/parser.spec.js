@@ -1212,6 +1212,56 @@ describe('lib/parser', () => {
       expect(result).toEqual(expected)
     })
 
+    it('should successfully parse a schema with an empty properties', () => {
+      const schema = {
+        type: 'object',
+        properties: {}
+      }
+      const expected = []
+      const result = parseObject(schema)
+
+      expect(Array.isArray(result)).toBeTruthy()
+      expect(result.length).toEqual(0)
+
+      sanitizeFields(result)
+
+      expect(result).toEqual(expected)
+    })
+
+    it('should successfully parse a schema with an empty nested properties', () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          nested: {
+            type: 'object',
+            properties: {}
+          }
+        }
+      }
+      const expected = [
+        {
+          attrs: {
+            disabled: false,
+            name: 'nested',
+            required: false,
+            type: 'object',
+            value: {}
+          },
+          description: '',
+          fields: [],
+          label: '',
+          order: undefined,
+          path: [ 'nested' ],
+          schemaType: 'object'
+        }
+      ]
+      const result = parseObject(schema)
+
+      sanitizeFields(result)
+
+      expect(result).toEqual(expected)
+    })
+
     it('should successfully parse a schema with nested properties', () => {
       const schema = {
         type: 'object',
@@ -1675,6 +1725,23 @@ describe('lib/parser', () => {
 
           sanitizeField(field)
         })
+
+        expect(fields).toEqual(expected)
+      })
+
+      it('should successfully load a scalar field', () => {
+        const fields = []
+        const schema = {
+          type: 'object',
+          properties: {}
+        }
+        const expected = []
+
+        loadFields(schema, fields)
+
+        expect(fields.length).toEqual(0)
+
+        sanitizeFields(fields)
 
         expect(fields).toEqual(expected)
       })

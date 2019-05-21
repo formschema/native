@@ -23,7 +23,7 @@ module.exports = {
       'error',
       {
         code: 80,
-        comments: 100,
+        comments: 107,
         tabWidth: 2,
         ignoreUrls: true,
         ignoreRegExpLiterals: true,

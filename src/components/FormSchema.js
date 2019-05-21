@@ -302,6 +302,8 @@ export default {
 
     /**
      * Get the HTML form reference.
+     *
+     * @returns {HTMLFormElement|undefined} - Returns the HTML form element or `undefined` for empty object
      */
     form () {
       return this.$refs[this.ref]
@@ -371,7 +373,7 @@ export default {
 
       const form = this.form()
 
-      if ('reset' in form) {
+      if (form && 'reset' in form) {
         form.reset()
       }
     },

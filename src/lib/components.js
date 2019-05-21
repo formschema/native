@@ -20,14 +20,19 @@ function getEventData (element, event) {
   if (field.attrs.type === INPUT_TYPES.CHECKBOX) {
     if (field.isArrayField) {
       ({ value } = element.data.props)
+
       const index = value.indexOf(event.target.value)
 
       if (event.target.checked) {
-        if (index === -1) value.push(event.target.value)
+        if (index === -1) {
+          value.push(event.target.value)
+        }
       } else if (index > -1) {
         value.splice(index, 1)
       }
-    } else value = event.target.checked
+    } else {
+      value = event.target.checked
+    }
   } else if (field.attrs.type === INPUT_TYPES.RADIO) {
     if (event.target.checked) {
       ({ value } = field.attrs)
@@ -40,7 +45,7 @@ function getEventData (element, event) {
     value[index] = event.target.value
 
     for (let i = 0; i < value.length; i++) {
-      value[i] = (value[i] !== undefined) ? value[i] : ''
+      value[i] = value[i] !== undefined ? value[i] : ''
     }
   }
 
@@ -68,7 +73,7 @@ const Label = {
       attrs: {
         'data-fs-field-input': field.attrs.id
       }
-    }, slots().default)
+    }, slots().default || [])
 
     return h('div', { attrs }, [ inputLabel, inputField ])
   }
@@ -142,16 +147,17 @@ const Input = {
 
 const CheckboxGroup = {
   functional: true,
-  render (h, { data, slots }) {
-    const { name } = data.field.attrs
-    const { description } = data.field
+  render (h, context) {
+    const { name } = context.data.field.attrs
+    const { description } = context.data.field
+    const slots = context.slots().default || []
 
-    const children = [ ...slots().default ]
+    const children = [ ...slots ]
 
     if (description) {
       children.unshift(h('legend', description))
 
-      delete data.field.description
+      delete context.data.field.description
     }
 
     return h('fieldset', { attrs: { name } }, children)
@@ -160,11 +166,12 @@ const CheckboxGroup = {
 
 const Select = {
   functional: true,
-  render (h, { data, slots }) {
+  render (h, context) {
     const nodes = []
-    const { field } = data
-    const children = [ ...slots().default ]
-    const listeners = data.on
+    const { field } = context.data
+    const slots = context.slots().default || []
+    const children = [ ...slots ]
+    const listeners = context.data.on
 
     if (field.attrs.required || field.attrs.placeholder) {
       children.unshift(h('option', {
@@ -174,9 +181,10 @@ const Select = {
       }, field.attrs.placeholder))
     }
 
-    const element = h('select', { ...data,
+    const element = h('select', {
+      ...context.data,
       on: {
-        ...data.on,
+        ...listeners,
         input (event) {
           listeners.input(getEventData(element, event))
         },
@@ -193,7 +201,7 @@ const Select = {
       }, field.description))
     }
 
-    return h(Label, data, nodes)
+    return h(Label, context.data, nodes)
   }
 }
 
