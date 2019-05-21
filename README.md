@@ -133,6 +133,9 @@ npm install --save @formschema/native
 
   Get the HTML form reference. 
 
+   **return value:** 
+
+     - **HTMLFormElement,undefined** -  Returns the HTML form element or `undefined` for empty object 
 - `reportValidity()` 
 
   Returns true if the element's child controls satisfy their
