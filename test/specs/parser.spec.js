@@ -1403,6 +1403,128 @@ describe('lib/parser', () => {
     })
   })
 
+  describe('parseObject(schema, name = null, model = null)', () => {
+    it('should successfully parse a simple schema with default model', () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          name: {
+            type: 'string'
+          }
+        }
+      }
+
+      const model = {
+        name: 'Jon Snow'
+      }
+
+      const expected = [
+        {
+          schemaType: 'string',
+          label: '',
+          description: '',
+          path: [ 'name' ],
+          order: undefined,
+          attrs: {
+            name: 'name',
+            type: 'text',
+            required: false,
+            disabled: false,
+            value: 'Jon Snow'
+          }
+        }
+      ]
+
+      const result = parseObject(schema, null, model)
+
+      sanitizeFields(result)
+
+      expect(result).toEqual(expected)
+    })
+
+    it('should successfully parse a nested schema with default model', () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          name: {
+            type: 'object',
+            properties: {
+              first: {
+                type: 'string'
+              },
+              last: {
+                type: 'string'
+              }
+            }
+          }
+        }
+      }
+
+      const model = {
+        name: {
+          first: 'Jon',
+          last: 'Snow'
+        }
+      }
+
+      const expected = [
+        {
+          schemaType: 'object',
+          label: '',
+          description: '',
+          path: [ 'name' ],
+          order: undefined,
+          attrs: {
+            name: 'name',
+            type: 'object',
+            required: false,
+            disabled: false,
+            value: {
+              first: 'Jon',
+              last: 'Snow'
+            }
+          },
+          fields: [
+            {
+              schemaType: 'string',
+              label: '',
+              description: '',
+              path: [ 'name', 'first' ],
+              order: undefined,
+              attrs: {
+                name: 'first',
+                type: 'text',
+                required: false,
+                disabled: false,
+                value: 'Jon'
+              }
+            },
+            {
+              schemaType: 'string',
+              label: '',
+              description: '',
+              path: [ 'name', 'last' ],
+              order: undefined,
+              attrs: {
+                name: 'last',
+                type: 'text',
+                required: false,
+                disabled: false,
+                value: 'Snow'
+              }
+            }
+          ]
+        }
+      ]
+
+      const result = parseObject(schema, null, model)
+
+      sanitizeFields(result)
+
+      expect(result).toEqual(expected)
+    })
+  })
+
   describe('loadFields(schema, fields, name = null)', () => {
     describe('schema.type === boolean', () => {
       it('should successfully load the schema', () => {
@@ -2039,6 +2161,76 @@ describe('lib/parser', () => {
 
           expect(result).toEqual(expected)
         })
+      })
+    })
+
+    describe('should successfully parse with object schema', () => {
+      it('should parse with a simple schema and default model', () => {
+        const schema = {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string'
+            }
+          }
+        }
+
+        const value = {
+          name: 'Jon Snow'
+        }
+
+        const expected = {
+          name: 'Jon Snow'
+        }
+
+        const fields = []
+
+        loadFields(schema, fields)
+
+        const result = parseDefaultObjectValue(schema, fields, value)
+
+        expect(result).toEqual(expected)
+      })
+
+      it('should parse with a nested schema and default model', () => {
+        const schema = {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'object',
+              properties: {
+                first: {
+                  type: 'string'
+                },
+                last: {
+                  type: 'string'
+                }
+              }
+            }
+          }
+        }
+
+        const value = {
+          name: {
+            first: 'Jon',
+            last: 'Snow'
+          }
+        }
+
+        const expected = {
+          name: {
+            first: 'Jon',
+            last: 'Snow'
+          }
+        }
+
+        const fields = []
+
+        loadFields(schema, fields)
+
+        const result = parseDefaultObjectValue(schema, fields, value)
+
+        expect(result).toEqual(expected)
       })
     })
   })
