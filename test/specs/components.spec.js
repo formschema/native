@@ -12,11 +12,18 @@ import {
 describe('lib/components', () => {
   describe('Components()', () => {
     const defaultComponents = [
-      'title', 'description', 'form', 'text', 'option'
+      'title', 'description', 'form',
+      'text', 'select', 'option', 'fieldset'
     ]
 
     describe('default components', () => {
       const instance = new Components()
+
+      it('should have default components', () => {
+        const components = Object.keys(instance.$)
+
+        expect(components).toEqual(defaultComponents)
+      })
 
       defaultComponents.forEach((type) => {
         describe(`component ${type}`, () => {
