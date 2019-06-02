@@ -48,14 +48,18 @@ const FormSchemaField = {
             }))
           })
         } else if (field.schemaType === SCHEMA_TYPES.BOOLEAN) {
+          const item = {
+            id: field.attrs.id,
+            label: field.label,
+            description: field.description
+          }
+
+          const checked = value === true
+
           return createElement(FormSchemaFieldCheckboxItem, {
             field,
             components,
-            props: {
-              item: { label: field.label, id: field.attrs.id },
-              value,
-              checked: value === true
-            },
+            props: { item, value, checked },
             on: listeners
           })
         }
