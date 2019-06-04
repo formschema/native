@@ -228,6 +228,7 @@ describe('FormSchemaField', () => {
         value: 'Hello'
       }
     }
+
     const { value } = field.attrs
 
     it('should successfully render the component', () => {
@@ -240,6 +241,35 @@ describe('FormSchemaField', () => {
       })
 
       const expected = '<input name="fieldName" type="checkbox" value="Hello">'
+
+      expect(wrapper.html()).toEqual(expected)
+    })
+
+    it('should successfully render the component with description', () => {
+      const field = {
+        description: 'Hello Description',
+        attrs: {
+          name: 'fieldName',
+          type: 'checkbox',
+          value: 'Hello'
+        }
+      }
+
+      const { value } = field.attrs
+
+      const WrapperComponent = {
+        functional: true,
+        render(h) {
+          return h('div', h(component, {
+            field,
+            components,
+            props: { value }
+          }))
+        }
+      }
+
+      const wrapper = mount(WrapperComponent)
+      const expected = '<div><input name="fieldName" type="checkbox" value="Hello"><small>Hello Description</small></div>'
 
       expect(wrapper.html()).toEqual(expected)
     })
