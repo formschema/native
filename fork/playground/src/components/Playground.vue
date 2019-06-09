@@ -1,13 +1,18 @@
 <template>
   <div class="playground">
-    <div class="form-model">
-      <div class="schema">
+    <div class="playground__input">
+      <div class="playground__input__schema">
         <h2>Schema</h2>
-        <textarea v-model="rawSchema"/>
+        <div class="playground__input__schema__editor">
+          <PrismEditor
+            :code="rawSchema"
+            language="json"
+            @change="setRawSchema"/>
+        </div>
       </div>
-      <div class="form">
+      <div class="playground__input__rendering">
         <h2>Rendering</h2>
-        <div ref="form">
+        <div ref="form" class="playground__input__rendering__viewport">
           <FormSchema :schema="schema" :descriptor="descriptor" v-model="model" @ready="generateCode" @submit.prevent>
             <div class="buttons">
               <button type="submit">Subscribe</button>
@@ -15,29 +20,37 @@
           </FormSchema>
         </div>
       </div>
-      <div class="model">
+      <div class="playground__input__model">
         <h2>Model</h2>
         <pre>{{ model }}</pre>
       </div>
     </div>
-    <div class="code">
+    <div class="playground__output">
       <h2>Generated HTML</h2>
-      <pre><code ref="code" class="language-html"/></pre>
+      <div class="playground__output__code">
+        <PrismEditor :code="code" language="html" readonly/>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-  import htmlBeautify from 'html-beautify';
+  import '../libs/Prism';
+  import '../styles/Prism.css';
+
+  import { html } from 'js-beautify';
+
+  import PrismEditor from 'vue-prism-editor';
   import FormSchema from '../../../dist/FormSchema.esm';
   import Schema from '../schema/newsletter';
 
   export default {
-    components: { FormSchema },
+    components: { PrismEditor, FormSchema },
     data: () => ({
       model: undefined,
       rawSchema: JSON.stringify(Schema, null, 2),
-      code: null,
+      code: '',
+      formatter: null,
       descriptor: {
         properties: {
           name: {
@@ -112,15 +125,17 @@
       }
     },
     methods: {
+      setRawSchema(value) {
+        try {
+          JSON.parse(value);
+
+          this.rawSchema = value;
+        } catch(e) {}
+      },
       generateCode() {
-        const code = htmlBeautify(this.$refs.form.innerHTML);
-        const formatedCode = code.replace(/\s+<!---->/g, '')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;');
+        const code = this.$refs.form.innerHTML;
 
-        this.$refs.code.innerHTML = formatedCode;
-
-        setTimeout(window.Prism.highlightAll, 200);
+        this.code = html(code.replace(/\s+<!---->/g, ''));
       }
     }
   }
@@ -132,68 +147,92 @@
     margin: auto;
     display: flex;
     flex-direction: column;
+    color: #f5f5f5;
+    background-color: #333333;
+    overflow: hidden;
   }
 
-  .form-model {
+  .playground h2 {
+    margin: 0;
+    padding: 10px;
+    font-size: .90em;
+    font-weight: 400;
+    width: 100%;
+    border-bottom: 1px solid rgba(255, 255, 255, .1);
+  }
+
+  .playground pre {
+    margin: 0;
+  }
+
+  .playground__input {
     display: flex;
     flex-direction: row;
+    max-height: 550px;
   }
 
-  .schema,
-  .form,
-  .model,
-  .code {
-    padding: 20px;
-  }
-
-  h2 {
-    margin: 0;
-    font-size: 1em;
-  }
-
-  .schema {
+  .playground__input__schema {
     display: flex;
     flex-direction: column;
-    background-color: #c5cdd6;
   }
 
-  .schema textarea {
+  .playground__input__schema__editor {
     flex: 1;
-    min-width: 400px;
-    min-height: 300px;
-  }
-
-  .form {
-    flex: 1;
-    background-color: #c5cdd6;
-  }
-
-  .model {
-    margin: 0;
-    background-color: #eff0f1;
-  }
-
-  .code {
-    background-color: #b9c4d1;
+    display: flex;
+    align-items: flex-start;
+    max-width: 500px;
     overflow: auto;
   }
 
-  .form > legend {
+  .playground__input__rendering {
+  }
+
+  .playground__input__rendering,
+  .playground__input__model {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    overflow: hidden;
+  }
+
+  .playground__input__rendering__viewport {
+    padding: 20px;
+    overflow: auto;
+    margin: auto;
+    color: #333;
+    background-color: #f5f5f5;
+  }
+
+  .playground__input__rendering legend {
     font-size: 1.7em;
     text-align: center;
     margin-top: 0;
     margin-bottom: .2em
   }
 
-  .form > legend + p {
+  .playground__input__rendering legend + p {
     display: block;
     text-align: center;
     margin-bottom: 1.2em
   }
 
-  small {
-    line-height: 20px;
+  .playground__input__rendering input,
+  .playground__input__rendering textarea,
+  .playground__input__rendering select {
     display: block;
+  }
+
+  .playground__input__model {
+    margin: 0;
+  }
+
+  .playground__output {
+  }
+
+  .playground__output__code {
+    display: flex;
+    max-height: 400px;
+    overflow: auto;
   }
 
   [data-fs-field] {
@@ -216,9 +255,5 @@
   [data-fs-kind="enum"] [data-fs-field] label {
     text-align: left;
     flex: 1;
-  }
-
-  input, textarea, select {
-    display: block;
   }
 </style>

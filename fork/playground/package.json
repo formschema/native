@@ -1,13 +1,13 @@
 {
-  "name": "demo",
+  "name": "playground",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve --port 8182"
+    "serve": "vue-cli-service serve --port 8183"
   },
   "dependencies": {
-    "html-beautify": "^1.0.4",
-    "vue": "^2.5.13"
+    "vue": "^2.5.13",
+    "vue-prism-editor": "^0.2.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.0.0-alpha.12",
