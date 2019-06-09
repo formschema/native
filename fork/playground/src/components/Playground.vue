@@ -135,7 +135,7 @@
       generateCode() {
         const code = this.$refs.form.innerHTML;
 
-        this.code = html(code.replace(/\s+<!---->/g, ''));
+        this.code = html(code.replace(/\s*<!---->/g, ''));
       }
     }
   }
@@ -145,11 +145,14 @@
   .playground {
     text-align: left;
     margin: auto;
-    display: flex;
+    /* display: flex; */
     flex-direction: column;
     color: #f5f5f5;
     background-color: #333333;
     overflow: hidden;
+
+    position: relative;
+    height: 100%;
   }
 
   .playground h2 {
@@ -158,7 +161,6 @@
     font-size: .90em;
     font-weight: 400;
     width: 100%;
-    border-bottom: 1px solid rgba(255, 255, 255, .1);
   }
 
   .playground pre {
@@ -168,7 +170,18 @@
   .playground__input {
     display: flex;
     flex-direction: row;
-    max-height: 550px;
+    /* max-height: 550px; */
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60%;
+  }
+
+  .playground h2,
+  .playground__input {
+    border-bottom: 1px solid rgba(255, 255, 255, .1);
   }
 
   .playground__input__schema {
@@ -185,6 +198,8 @@
   }
 
   .playground__input__rendering {
+    border-left: 1px solid rgba(255, 255, 255, .1);
+    border-right: 1px solid rgba(255, 255, 255, .1);
   }
 
   .playground__input__rendering,
@@ -224,14 +239,24 @@
 
   .playground__input__model {
     margin: 0;
+    min-width: 100px;
   }
 
   .playground__output {
+    position: absolute;
+    top: 60%;
+    left: 0;
+    width: 100%;
+    height: 40%;
+
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
 
   .playground__output__code {
+    flex: 1;
     display: flex;
-    max-height: 400px;
     overflow: auto;
   }
 
