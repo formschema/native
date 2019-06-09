@@ -172,7 +172,6 @@
   .playground__input {
     display: flex;
     flex-direction: row;
-    /* max-height: 550px; */
 
     position: absolute;
     top: 0;
@@ -213,11 +212,13 @@
   }
 
   .playground__input__rendering__viewport {
+    flex: 1;
     padding: 20px;
     overflow: auto;
     margin: auto;
     color: #333;
     background-color: #f5f5f5;
+    font-size: .8em;
   }
 
   .playground__input__rendering legend {
