@@ -2,8 +2,6 @@ import { NumberParser } from '@/parsers/NumberParser';
 
 export class IntegerParser extends NumberParser {
   parse() {
-    this.field.kind = 'integer';
-
     this.parseField();
     this.parseInputValue();
 
@@ -18,5 +16,11 @@ export class IntegerParser extends NumberParser {
 
       this.field.attrs.input.max = Number.parseInt(exclusiveMaximum, 10) - 1;
     }
+  }
+
+  parseField() {
+    super.parseField();
+
+    this.field.kind = this.parent && this.parent.schema.enum ? 'radio' : 'integer';
   }
 }

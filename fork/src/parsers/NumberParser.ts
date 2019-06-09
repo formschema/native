@@ -3,11 +3,6 @@ import { NumberField, ScalarDescriptor } from '@/types';
 
 export class NumberParser extends AbstractParser<number, ScalarDescriptor, NumberField> {
   parse() {
-    this.field.kind = 'number';
-    this.field.attrs.input.type = 'number';
-    this.field.attrs.input.min = this.schema.minimum;
-    this.field.attrs.input.max = this.schema.maximum;
-
     this.parseField();
     this.parseInputValue();
 
@@ -22,6 +17,19 @@ export class NumberParser extends AbstractParser<number, ScalarDescriptor, Numbe
 
       this.field.attrs.input.max = Number.parseFloat(exclusiveMaximum) - 0.1;
     }
+  }
+
+  parseField() {
+    this.field.kind = this.parent && this.parent.schema.enum ? 'radio' : 'number';
+    this.field.attrs.input.type = 'number';
+    this.field.attrs.input.min = this.schema.minimum;
+    this.field.attrs.input.max = this.schema.maximum;
+
+    if (this.schema.hasOwnProperty('multipleOf')) {
+      this.field.attrs.input.step = this.schema.multipleOf;
+    }
+
+    super.parseField();
   }
 
   parseValue(data: any): number {
