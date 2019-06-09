@@ -23,6 +23,35 @@ npm install --save @formschema/native
 
 ![formschema-demo-elementui](https://gitlab.com/formschema/components/elementui/raw/master/screenshot.png "FormSchema Demo with ElementUI")
 
+## Usage
+
+```html
+<template>
+  <FormSchema :schema="schema" v-model="model" @submit.prevent="submit">
+    <button type="submit">Subscribe</button>
+  </FormSchema>
+</template>
+
+<script>
+  import FormSchema from '@formschema/native'
+  import schema from './schema/newsletter-subscription.json'
+
+  export default {
+    data: () => ({
+      schema: schema,
+      model: {}
+    }),
+    methods: {
+      submit (e) {
+        // this.model contains the valid data according your JSON Schema.
+        // You can submit your model to the server here
+      }
+    },
+    components: { FormSchema }
+  }
+</script>
+```
+
 ## Features
 
 - [Keywords for Applying Subschemas With Boolean Logic](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.7)
@@ -51,6 +80,7 @@ npm install --save @formschema/native
 
 - [enum](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.1.2) is used to render multiple choices input
 - [maximum](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.2.2), [exclusiveMaximum](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.2.3), [minimum](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.2.4) and [exclusiveMinimum](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.2.5) are used to render numeric fields
+- [multipleOf](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.2.1) is used to render the input attribute `step`
 - [maxLength](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.3.1), [minLength](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.3.2) and [pattern](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.3.3) are used to render string fields
 - [contentEncoding](https://json-schema.org/latest/json-schema-validation.html#rfc.section.8.3)
 - [contentMediaType](https://json-schema.org/latest/json-schema-validation.html#rfc.section.8.4)
@@ -65,7 +95,6 @@ Since FormSchema is just a form generator, some JSON Schema validation keywords
 are irrelevant:
 
 - [const](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.1.3)
-- [multipleOf](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.2.1)
 - [writeOnly](https://json-schema.org/latest/json-schema-validation.html#rfc.section.10.3)
 - [examples](https://json-schema.org/latest/json-schema-validation.html#rfc.section.10.4)
 
@@ -200,71 +229,6 @@ are irrelevant:
 
   Reset the value of all elements of the parent form.
 
-## Usage
-
-In your Vue file:
-
-```html
-<template>
-  <FormSchema :schema="schema" v-model="model" @submit="submit">
-    <button type="submit">Subscribe</button>
-  </FormSchema>
-</template>
-
-<script>
-  import FormSchema from '@formschema/native'
-  import schema from './schema/newsletter-subscription.json'
-
-  export default {
-    data: () => ({
-      schema: schema,
-      model: {}
-    }),
-    methods: {
-      submit (e) {
-        // this.model contains the valid data according your JSON Schema.
-        // You can submit your model to the server here
-      }
-    },
-    components: { FormSchemaNative }
-  }
-</script>
-```
-
-Define your [JSON Schema](http://json-schema.org) file:
-
-```json
-{
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "type": "object",
-  "title": "Newsletter Subscription",
-  "properties": {
-    "name": {
-      "type": "string",
-      "minLength": 8,
-      "maxLength": 80,
-      "attrs": {
-        "placeholder": "Full Name",
-        "title": "Please enter your full name"
-      }
-    },
-    "email": {
-      "type": "string",
-      "maxLength": 120,
-      "attrs": {
-        "type": "email",
-        "placeholder": "Email"
-      }
-    },
-    "lists": {
-      "type": "string",
-      "enum": ["Daily New", "Promotion"]
-    }
-  },
-  "required": ["name", "email", "lists"]
-}
-```
-
 ## Working with Async Schema
 
 You may want to use `FormSchema` with a schema loaded from a remote URL.
@@ -273,8 +237,7 @@ To do that, use the `load(schema[, value = undefined])` method:
 
 ```html
 <template>
-  <!-- set a reference to your FormSchema instance -->
-  <FormSchema ref="formSchema"/>
+  <FormSchema v-model="schema"/>
 </template>
 
 <script>
@@ -282,9 +245,12 @@ To do that, use the `load(schema[, value = undefined])` method:
   import FormSchema from '@formschema/native'
 
   export default {
+    data: () => ({
+      schema: {}
+    }),
     created () {
       axios.get('/api/schema/subscription.json').then(({ data }) => {
-        this.$refs.formSchema.load(data)
+        this.schema = data
       })
     },
     components: { FormSchema }
@@ -300,14 +266,13 @@ To define multiple checkbox, use the [JSON Schema keyword `anyOf`](http://json-s
 
 ```json
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
     "multipleCheckbox": {
       "type": "array",
       "anyOf": [
-        { "value": "daily", "label": "Daily New" },
-        { "value": "promotion", "label": "Promotion" }
+        "daily",
+        "promotion"
       ]
     }
   }
@@ -316,24 +281,20 @@ To define multiple checkbox, use the [JSON Schema keyword `anyOf`](http://json-s
 
 ## Grouped Radio elements
 
-To group radio elements, use the [JSON Schema keyword `enum`](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.23) and `attrs.type === 'radio'`:
+To group radio elements, use the [JSON Schema keyword `enum`](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.23):
 
 **schema.json**
 
 ```json
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
     "groupedRadio": {
       "type": "string",
       "enum": [
-        { "value": "daily", "label": "Daily New" },
-        { "value": "promotion", "label": "Promotion" }
-      ],
-      "attrs": {
-        "type": "radio"
-      }
+        "daily",
+        "promotion"
+      ]
     }
   }
 }
@@ -347,7 +308,6 @@ To render a [array field](http://json-schema.org/latest/json-schema-validation.h
 
 ```json
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
     "arrayInput": {
@@ -370,7 +330,6 @@ To render a [regex input](http://json-schema.org/latest/json-schema-validation.h
 
 ```json
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
     "regexInput": {
