@@ -1,4 +1,4 @@
-import { uglify } from 'rollup-plugin-uglify';
+import { terser } from 'rollup-plugin-terser';
 import typescript from 'rollup-plugin-typescript';
 
 import resolve from 'rollup-plugin-node-resolve';
@@ -13,7 +13,7 @@ const ResolvePlugin = resolve({
   browser: true
 });
 
-const UglifyPlugin = uglify({
+const TerserPlugin = terser({
   compress: true,
   output: {
     comments: new RegExp(`^ ${pkg.name}`)
@@ -25,7 +25,8 @@ const ES6_PLUGINS = [
   ResolvePlugin,
   typescript({
     target: 'es6'
-  })
+  }),
+  TerserPlugin
 ];
 
 const ES5_PLUGINS = [
@@ -33,15 +34,15 @@ const ES5_PLUGINS = [
   typescript({
     target: 'es5'
   }),
-  UglifyPlugin
+  TerserPlugin
 ];
 
-function build (format, suffix = `${format}.min`) {
+function build (format, suffix = format) {
   return {
     input: 'src/components/FormSchema.ts',
     cache: false,
     output: {
-      file: `${DEST}/${MODULE_NAME}.${suffix}.js`,
+      file: `${DEST}/${MODULE_NAME}.${suffix}.min.js`,
       format,
       name: MODULE_NAME,
       indent: false,

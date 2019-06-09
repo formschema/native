@@ -2,7 +2,7 @@
   "name": "@formschema/native",
   "version": "2.0.0-alpha.2",
   "description": "Vue component form based on JSON Schema",
-  "main": "dist/FormSchema.esm.js",
+  "main": "dist/FormSchema.esm.min.js",
   "browser": "dist/FormSchema.umd.min.js",
   "scripts": {
     "playground": "cd playground && npm run serve",
@@ -22,7 +22,8 @@
     "vue",
     "form",
     "json",
-    "schema"
+    "schema",
+    "jsonschema"
   ],
   "author": "Sébastien Demanou",
   "license": "MIT",
@@ -46,8 +47,8 @@
     "regenerator-runtime": "^0.12.1",
     "rollup": "^1.14.4",
     "rollup-plugin-node-resolve": "^5.0.1",
+    "rollup-plugin-terser": "^5.0.0",
     "rollup-plugin-typescript": "^1.0.1",
-    "rollup-plugin-uglify": "^6.0.2",
     "sinon": "^6.3.5",
     "ts-jest": "^24.0.2",
     "tslib": "^1.9.3",

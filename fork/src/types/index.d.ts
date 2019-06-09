@@ -30,6 +30,7 @@ export interface NumberAttributes extends InputAttributes {
   type: 'number';
   min?: number;
   max?: number;
+  step?: number;
 }
 
 export interface NullAttributes extends InputAttributes {

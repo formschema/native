@@ -41,7 +41,7 @@
   import { html } from 'js-beautify';
 
   import PrismEditor from 'vue-prism-editor';
-  import FormSchema from '../../../dist/FormSchema.esm';
+  import FormSchema from '../../../dist/FormSchema.esm.min.js';
   import Schema from '../schema/newsletter';
 
   export default {
