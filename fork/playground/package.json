@@ -10,8 +10,8 @@
     "vue-prism-editor": "^0.2.1"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.0.0-alpha.12",
-    "@vue/cli-service": "^3.0.0-alpha.12"
+    "@vue/cli-plugin-babel": "^3.8.0",
+    "@vue/cli-service": "^3.8.0"
   },
   "babel": {
     "presets": [
