@@ -1,0 +1,61 @@
+{
+  "name": "@formschema/native",
+  "version": "2.0.0-alpha.2",
+  "description": "Vue component form based on JSON Schema",
+  "main": "dist/FormSchema.esm.js",
+  "browser": "dist/FormSchema.umd.min.js",
+  "scripts": {
+    "demo": "cd demo && npm run serve",
+    "test": "vue-cli-service test:unit",
+    "testdebug": "node --inspect-brk ./node_modules/@vue/cli-service/bin/vue-cli-service.js test:unit --runInBand",
+    "lint": "vue-cli-service lint --no-fix",
+    "lint:fix": "vue-cli-service lint",
+    "lint-test": "eslint test",
+    "readme": "vuedoc.md --join src/components/*.js --ignore-name --ignore-data --section 'FormSchema API' --output README.md",
+    "build": "rollup -c"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/formschema/native.git"
+  },
+  "keywords": [
+    "vue",
+    "form",
+    "json",
+    "schema"
+  ],
+  "author": "Sébastien Demanou",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://gitlab.com/formschema/native/issues"
+  },
+  "homepage": "https://gitlab.com/formschema/native",
+  "devDependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "@types/jest": "^24.0.13",
+    "@vue/cli-plugin-babel": "^3.8.0",
+    "@vue/cli-plugin-eslint": "^3.8.0",
+    "@vue/cli-plugin-unit-jest": "^3.8.0",
+    "@vue/cli-service": "^3.8.0",
+    "@vue/eslint-config-airbnb": "^4.0.0",
+    "@vue/test-utils": "^1.0.0-beta.28",
+    "@vuedoc/md": "^1.6.0",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-jest": "^24.8.0",
+    "regenerator-runtime": "^0.12.1",
+    "rollup": "^1.14.4",
+    "rollup-plugin-node-resolve": "^5.0.1",
+    "rollup-plugin-typescript": "^1.0.1",
+    "rollup-plugin-uglify": "^6.0.2",
+    "sinon": "^6.3.5",
+    "ts-jest": "^24.0.2",
+    "tslib": "^1.9.3",
+    "typescript": "^3.5.1",
+    "vue": "^2.6.10",
+    "vue-template-compiler": "^2.6.10"
+  },
+  "peerDependencies": {
+    "vue": "^2.6.10"
+  }
+}

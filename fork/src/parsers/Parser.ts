@@ -1,0 +1,56 @@
+import { AbstractParserOptions } from '@/types';
+
+import { Parent } from '@/parsers/AbstractParser';
+import { BooleanParser } from '@/parsers/BooleanParser';
+import { IntegerParser } from '@/parsers/IntegerParser';
+import { NullParser } from '@/parsers/NullParser';
+import { NumberParser } from '@/parsers/NumberParser';
+import { StringParser } from '@/parsers/StringParser';
+import { ObjectParser } from '@/parsers/ObjectParser';
+import { EnumParser } from '@/parsers/EnumParser';
+import { ListParser } from '@/parsers/ListParser';
+
+export const Parser = Object.freeze({
+  get(options: AbstractParserOptions<any, any>, parent?: Parent) {
+    let parser = null;
+
+    if (options.schema.enum instanceof Array) {
+      parser = options.schema.enum.length > 4
+        ? new ListParser(options, parent)
+        : new EnumParser(options, parent);
+    } else {
+      switch (options.schema.type) {
+        case 'boolean':
+          parser = new BooleanParser(options, parent);
+          break;
+
+        case 'integer':
+          parser = new IntegerParser(options, parent);
+          break;
+
+        case 'null':
+          parser = new NullParser(options, parent);
+          break;
+
+        case 'number':
+          parser = new NumberParser(options, parent);
+          break;
+
+        case 'object':
+          parser = new ObjectParser(options, parent);
+          break;
+
+        case 'string':
+          parser = new StringParser(options, parent);
+          break;
+
+        default:
+          throw new TypeError(`Unknow type ${options.schema.type}`);
+      }
+    }
+
+    parser.parse();
+
+    return parser;
+  }
+});
