@@ -133,9 +133,11 @@
         } catch(e) {}
       },
       generateCode() {
-        const code = this.$refs.form.innerHTML;
+        const code = this.$refs.form.innerHTML.replace(/\s*<!---->/g, '');
 
-        this.code = html(code.replace(/\s*<!---->/g, ''));
+        this.code = html(code, {
+          indent_size: 2
+        });
       }
     }
   }

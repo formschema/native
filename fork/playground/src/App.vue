@@ -15,10 +15,10 @@
       Playground
     },
     created() {
-      window.addEventListener('resize', this.updateSize);
+      window.addEventListener('resize', this.updateSize, false);
     },
     beforeDestroy() {
-      window.removeEventListener('resize', this.updateSize);
+      window.removeEventListener('resize', this.updateSize, false);
     },
     mounted() {
       this.updateSize();
