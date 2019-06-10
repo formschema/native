@@ -44,6 +44,7 @@
   import '../styles/Prism.css';
 
   import { html } from 'js-beautify';
+  import $RefParser from 'json-schema-ref-parser';
 
   import PrismEditor from 'vue-prism-editor';
   import FormSchema from '../../../dist/FormSchema.esm.min.js';
@@ -54,6 +55,7 @@
     data: () => ({
       model: undefined,
       rawSchema: JSON.stringify(Schema, null, 2),
+      schema: {},
       code: '',
       formatter: null,
       descriptor: {
@@ -125,12 +127,20 @@
       }
     }),
     computed: {
-      schema() {
+      parsedSchema() {
         return JSON.parse(this.rawSchema);
       },
       rawModel() {
         return JSON.stringify(this.model, null, 2);
       }
+    },
+    watch: {
+      parsedSchema(value) {
+        this.dereferenceSchema();
+      }
+    },
+    created() {
+      this.dereferenceSchema();
     },
     methods: {
       setRawSchema(value) {
@@ -139,6 +149,14 @@
 
           this.rawSchema = value;
         } catch(e) {}
+      },
+      dereferenceSchema() {
+        $RefParser.dereference(this.parsedSchema)
+          .then((schema) => {
+            this.schema = schema;
+            console.log(schema)
+          })
+          .catch((err) => console.error(err));
       },
       generateCode() {
         const code = this.$refs.form.innerHTML.replace(/\s*<!---->/g, '');
@@ -206,6 +224,14 @@
     overflow: auto;
   }
 
+  .playground__input__schema__editor,
+  .playground__input__model__value,
+  .playground__output__code {
+    background-color: #2d2d2d;
+    flex: 1;
+    width: 100%;
+  }
+
   .playground__input__rendering {
     border-left: 1px solid rgba(255, 255, 255, .1);
     border-right: 1px solid rgba(255, 255, 255, .1);
@@ -217,6 +243,11 @@
     flex-direction: column;
     align-items: flex-start;
     overflow: hidden;
+    width: 100%;
+  }
+
+  .playground__input__model {
+    max-width: 300px;
   }
 
   .playground__input__rendering__viewport {
@@ -227,6 +258,7 @@
     color: #333;
     background-color: #f5f5f5;
     font-size: .8em;
+    width: 100%;
   }
 
   .playground__input__rendering__viewport__card {
@@ -261,11 +293,11 @@
     margin-bottom: .2em
   }
 
-  .playground__input__rendering fieldset[data-fs-root="true"] > legend {
+  .playground__input__rendering form > fieldset > legend {
     font-size: 18px;
   }
 
-  .playground__input__rendering fieldset[data-fs-root="true"] > p {
+  .playground__input__rendering form > fieldset > p {
     margin-bottom: 25px;
   }
 
@@ -317,6 +349,7 @@
   }
 
   [data-fs-field] {
+    flex: 1;
     display: flex;
     flex-direction: row;
     margin-bottom: 5px;
@@ -341,5 +374,24 @@
   [data-fs-kind="enum"] [data-fs-field] label {
     text-align: left;
     flex: 1;
+  }
+
+  [data-fs-input] {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  [data-fs-input="array"] > [data-fs-field] {
+    flex-direction: column;
+  }
+
+  [data-fs-input="array"] > [data-fs-field] label {
+    text-align: left;
+  }
+
+  [data-fs-input="array"] > [data-fs-field] [data-fs-input] {
+    margin-bottom: 5px;
   }
 </style>

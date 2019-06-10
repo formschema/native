@@ -1,11 +1,13 @@
 import { Components } from '@/lib/Components';
 import { InputElement } from '@/components/InputElement';
+import { ArrayElement } from '@/components/ArrayElement';
 import { FieldsetElement } from '@/components/FieldsetElement';
 import { SelectElement } from '@/components/SelectElement';
 import { TextareaElement } from '@/components/TextareaElement';
 
 export const NativeElements = new Components();
 
+NativeElements.set('array', ArrayElement);
 NativeElements.set('boolean', InputElement);
 NativeElements.set('string', InputElement);
 NativeElements.set('radio', InputElement);

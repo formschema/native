@@ -52,9 +52,10 @@ export type SchemaType = 'object' | 'array' | 'string' | 'number' | 'integer' | 
 export type FieldKind = SchemaType | 'enum' | 'radio' | 'list' | 'textarea';
 export type Component = string | VueComponent | Function;
 
-export interface Field<T extends FieldKind, X = Attributes, Y = ScalarDescriptor | ObjectDescriptor> {
-  kind: FieldKind;
+export interface Field<T extends FieldKind, X = Attributes, Y = DescriptorType> {
+  kind: T;
   isRoot: boolean;
+  required: boolean;
   attrs: {
     input: X;
     label: {
@@ -80,9 +81,21 @@ export interface NumberField extends Field<'number', NumberAttributes, ScalarDes
 export interface NullField extends Field<'null', NullAttributes, ScalarDescriptor> {}
 export interface StringField extends Field<'string', StringAttributes, ScalarDescriptor> {}
 export interface RadioField extends Field<'radio', RadioAttributes, ScalarDescriptor> {}
+export interface ItemField extends Field<any, Attributes, DescriptorType> {}
 
 export interface EnumField extends Field<'enum', Attributes, ScalarDescriptor> {
   children: RadioField[];
+}
+
+export interface ArrayField extends Field<'array', Attributes, ScalarDescriptor> {
+  items: ItemField[];
+  labels: string[];
+  additionalItems: ItemField[];
+  additionalLabels: string[];
+  minItems: number;
+  maxItems?: number;
+  uniqueItems: boolean;
+  count: number;
 }
 
 export interface ListItem {
@@ -95,7 +108,7 @@ export interface ListField extends Field<'enum', Attributes, ScalarDescriptor> {
   items: ListItem[];
 }
 
-export type ObjectFieldChild = Field<any, Attributes, ScalarDescriptor | ObjectDescriptor>;
+export type ObjectFieldChild = Field<any, Attributes, DescriptorType>;
 export interface ObjectField extends Field<'object', Attributes, ObjectDescriptor> {
   children: ObjectFieldChild[];
   isArrayField?: boolean;
@@ -133,12 +146,17 @@ export interface ScalarDescriptor extends AbstractUISchemaDescriptor {
 
 export interface ObjectDescriptor extends AbstractUISchemaDescriptor {
   properties?: {
-    [property: string]: ScalarDescriptor | ObjectDescriptor;
+    [property: string]: DescriptorType;
   };
   order?: string[];
 }
 
-export type DescriptorConstructor = <T = ScalarDescriptor | ObjectDescriptor>(schema: JsonSchema, kind?: FieldKind) => T;
+export interface ArrayDescriptor extends AbstractUISchemaDescriptor {
+  items?: DescriptorType[];
+}
+
+export type DescriptorType = ScalarDescriptor | ObjectDescriptor | ArrayDescriptor;
+export type DescriptorConstructor = <T = DescriptorType>(schema: JsonSchema, kind?: FieldKind) => T;
 
 export interface IFormSchema<T> extends Vue {
   // props

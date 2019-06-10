@@ -1,6 +1,7 @@
 import { AbstractParserOptions } from '@/types';
 
 import { Parent } from '@/parsers/AbstractParser';
+import { ArrayParser } from '@/parsers/ArrayParser';
 import { BooleanParser } from '@/parsers/BooleanParser';
 import { IntegerParser } from '@/parsers/IntegerParser';
 import { NullParser } from '@/parsers/NullParser';
@@ -20,6 +21,10 @@ export const Parser = Object.freeze({
         : new EnumParser(options, parent);
     } else {
       switch (options.schema.type) {
+        case 'array':
+          parser = new ArrayParser(options, parent);
+          break;
+
         case 'boolean':
           parser = new BooleanParser(options, parent);
           break;
@@ -45,7 +50,7 @@ export const Parser = Object.freeze({
           break;
 
         default:
-          throw new TypeError(`Unknow type ${options.schema.type}`);
+          throw new TypeError(`Unknow schema type '${options.schema.type}'`);
       }
     }
 

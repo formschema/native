@@ -14,11 +14,14 @@ import {
 } from '@/types';
 
 export class ObjectParser<T extends Dictionary = object> extends AbstractParser<T, ObjectDescriptor, ObjectField> {
-  readonly required: string[] = [];
   readonly properties: Dictionary<JsonSchema> = {};
 
   get kind(): FieldKind {
     return 'object';
+  }
+
+  get required() {
+    return this.schema.required instanceof Array ? this.schema.required : [];
   }
 
   get propertiesList() {
@@ -70,10 +73,6 @@ export class ObjectParser<T extends Dictionary = object> extends AbstractParser<
   }
 
   parse() {
-    if (this.schema.required instanceof Array) {
-      this.required.push(...this.schema.required);
-    }
-
     if (this.schema.properties) {
       Object.assign(this.properties, this.schema.properties);
     }

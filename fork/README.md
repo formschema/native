@@ -65,6 +65,7 @@ npm install --save @formschema/native
   FormSchema parses keywords `maximum`, `minimum`, `exclusiveMaximum` and `exclusiveMinimum` to generate HTML attributes `max` and `min`.
 - [Validation Keywords for Strings](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.3)<br>
   FormSchema parses keywords `maxLength`, `minLength`, `pattern` to generate HTML attributes `maxlength`, `minlength` and `pattern`.
+- [Validation Keywords for Arrays](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4)
 - [Semantic Validation With "format"](https://json-schema.org/latest/json-schema-validation.html#rfc.section.7)<br>
   FormSchema uses:
   - HTML input `date` to render schema with `format: 'date'`
@@ -82,6 +83,7 @@ npm install --save @formschema/native
 - [maximum](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.2.2), [exclusiveMaximum](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.2.3), [minimum](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.2.4) and [exclusiveMinimum](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.2.5) are used to render numeric fields
 - [multipleOf](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.2.1) is used to render the input attribute `step`
 - [maxLength](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.3.1), [minLength](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.3.2) and [pattern](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.3.3) are used to render string fields
+- [items](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4.1), [additionalItems](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4.2), [maxItems](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4.3), [minItems](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4.4) and [uniqueItems](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4.5) are used to render array fields
 - [contentEncoding](https://json-schema.org/latest/json-schema-validation.html#rfc.section.8.3)
 - [contentMediaType](https://json-schema.org/latest/json-schema-validation.html#rfc.section.8.4)
 - [title](https://json-schema.org/latest/json-schema-validation.html#rfc.section.10.1) is used to render the input label
@@ -95,6 +97,7 @@ Since FormSchema is just a form generator, some JSON Schema validation keywords
 are irrelevant:
 
 - [const](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.1.3)
+- [contains](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4.6)
 - [writeOnly](https://json-schema.org/latest/json-schema-validation.html#rfc.section.10.3)
 - [examples](https://json-schema.org/latest/json-schema-validation.html#rfc.section.10.4)
 
@@ -345,21 +348,18 @@ To render a [regex input](http://json-schema.org/latest/json-schema-validation.h
 To load a JSON Schema with `$ref` pointers, you need to install an additional dependency to resolve them:
 
 ```js
-import $RefParser from 'json-schema-ref-parser'
-import FormSchema from '@formschema/native'
-import schemaWithPointers from './schema/with-pointers.json'
+import $RefParser from 'json-schema-ref-parser';
+import FormSchema from '@formschema/native';
+import schemaWithPointers from './schema/with-pointers.json';
 
 export default {
   created () {
-    $RefParser.dereference(schemaWithPointers, (err, schema) => {
-      if (err) {
-        console.error(err);
-      } else {
-        // `schema` is the resolved schema that contains your entire JSON Schema,
-        // including referenced files, combined into a single object
-        this.$refs.formSchema.load(schema)
-      }
-    })
+    $RefParser.dereference(schemaWithPointers)
+      .then((schema) => {
+        // `schema` is the resolved schema that contains your entire JSON
+        // Schema, including referenced files, combined into a single object
+        this.schema = schema;
+      });
   },
   components: { FormSchema }
 }

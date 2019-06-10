@@ -46,24 +46,3 @@ export const CreateStateInput = (tag: string) => ({
     return h(tag, { ...data, on }, nodes);
   }
 }) as FunctionalComponentOptions;
-
-export const ArrayInputs: FunctionalComponentOptions = {
-  functional: true,
-  render(h, { slots }) {
-    return h('div', {
-      attrs: {
-        'data-fs-array-inputs': true
-      }
-    }, slots().default);
-  }
-};
-
-export const ArrayButton: FunctionalComponentOptions = {
-  functional: true,
-  render(h, { data }) {
-    return h('button', {
-      attrs: { type: 'button', ...data.props },
-      on: data.on
-    }, 'Add');
-  }
-};

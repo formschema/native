@@ -1,14 +1,15 @@
 import { FunctionalComponentOptions } from 'vue';
 import { HelperElement } from "@/components/HelperElement";
+import { Dictionary } from '@/types';
 
 export const FieldElement: FunctionalComponentOptions = {
   name: 'FieldElement',
   functional: true,
   render(h, { data, props, slots }) {
-    const attrs = {
+    const attrs: Dictionary = {
       'data-fs-kind': props.field.kind,
       'data-fs-field': props.field.attrs.input.name,
-      'data-fs-required': props.field.attrs.input.required
+      'data-fs-required': props.field.required
     };
 
     const labelElement = h('label', {

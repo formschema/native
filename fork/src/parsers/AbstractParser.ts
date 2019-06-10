@@ -42,12 +42,16 @@ export abstract class AbstractParser<T, X extends AbstractUISchemaDescriptor, Y 
 
     const attrs = this.descriptor.attrs || {};
     const props = this.descriptor.props || {};
+    const isRequired = parent && (parent as any).required instanceof Array
+      ? (parent as any).required.includes(this.options.name)
+      : true;
 
     delete attrs.name;
 
     this.field = {
       kind: this.kind,
       isRoot: this.isRoot,
+      required: isRequired,
       attrs: {
         input: {
           type: undefined,
@@ -78,6 +82,10 @@ export abstract class AbstractParser<T, X extends AbstractUISchemaDescriptor, Y 
     return this.descriptor.kind
       ? this.options.descriptorConstructor<X>(this.schema, this.descriptor.kind).component
       : undefined;
+  }
+
+  get parsedSchema() {
+    return this.options.schema;
   }
 
   abstract parse(): void;
@@ -121,9 +129,7 @@ export abstract class AbstractParser<T, X extends AbstractUISchemaDescriptor, Y 
     }
 
     this.field.attrs.input.readonly = this.schema.readOnly || false;
-    this.field.attrs.input.required = this.parent && (this.parent as any).required instanceof Array
-      ? (this.parent as any).required.includes(this.options.name)
-      : true;
+    this.field.attrs.input.required = this.field.required;
 
     this.field.attrs.label = {
       id: labelId,
@@ -134,7 +140,7 @@ export abstract class AbstractParser<T, X extends AbstractUISchemaDescriptor, Y 
       id: descId
     };
 
-    if (this.field.attrs.input.required) {
+    if (this.field.required) {
       /**
        * Add support with web browsers that don’t communicate the required
        * attribute to assistive technology

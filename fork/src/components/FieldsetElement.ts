@@ -5,11 +5,7 @@ export const FieldsetElement: FunctionalComponentOptions = {
   name: 'FieldsetElement',
   functional: true,
   render(h, { data, props }) {
-    const attrs = {
-      ...props.field.attrs.input,
-      'data-fs-root': props.field.isRoot
-    };
-
+    const attrs = props.field.attrs.input;
     const nodes = props.field.children.map((field) => {
       return h(field.component, {
         attrs: field.attrs.input,

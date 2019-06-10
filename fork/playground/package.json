@@ -6,6 +6,7 @@
     "serve": "vue-cli-service serve --port 8183"
   },
   "dependencies": {
+    "json-schema-ref-parser": "^6.1.0",
     "vue": "^2.6.10",
     "vue-prism-editor": "^0.2.1"
   },
