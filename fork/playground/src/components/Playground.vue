@@ -12,17 +12,22 @@
       </div>
       <div class="playground__input__rendering">
         <h2>Rendering</h2>
-        <div ref="form" class="playground__input__rendering__viewport">
-          <FormSchema :schema="schema" :descriptor="descriptor" v-model="model" @ready="generateCode" @submit.prevent>
-            <div class="buttons">
-              <button type="submit">Subscribe</button>
-            </div>
-          </FormSchema>
+        <div class="playground__input__rendering__viewport">
+          <div ref="form" class="playground__input__rendering__viewport__card">
+            <FormSchema v-bind="{ schema, descriptor }" v-model="model" @ready="generateCode" @submit.prevent>
+              <div class="playground__input__rendering__viewport__card__buttons">
+                <button type="submit">Submit</button>
+                <button type="reset">Reset</button>
+              </div>
+            </FormSchema>
+          </div>
         </div>
       </div>
       <div class="playground__input__model">
         <h2>Model</h2>
-        <pre>{{ model }}</pre>
+        <div class="playground__input__model__value">
+          <PrismEditor :code="rawModel" language="json" readonly/>
+        </div>
       </div>
     </div>
     <div class="playground__output">
@@ -122,6 +127,9 @@
     computed: {
       schema() {
         return JSON.parse(this.rawSchema);
+      },
+      rawModel() {
+        return JSON.stringify(this.model, null, 2);
       }
     },
     methods: {
@@ -159,8 +167,8 @@
 
   .playground h2 {
     margin: 0;
-    padding: 10px;
-    font-size: .90em;
+    padding: 8px;
+    font-size: 12px;
     font-weight: 400;
     width: 100%;
   }
@@ -221,6 +229,31 @@
     font-size: .8em;
   }
 
+  .playground__input__rendering__viewport__card {
+    border-radius: 10px;
+    box-shadow: 0 0 2rem 0 rgba(136,152,170, .45);
+    background-color: #fff;
+    padding: 20px 20px;
+    max-width: 400px;
+    margin: auto;
+  }
+
+  .playground__input__rendering__viewport__card__buttons {
+    text-align: center;
+  }
+
+  .playground__input__rendering__viewport__card__buttons button:not(:first-child) {
+    margin-left: 15px;
+  }
+
+  .playground__input__rendering fieldset {
+    border: none;
+    border-bottom: 1px solid rgba(0, 0, 0, .2);
+
+    padding: 10px 0;
+    margin-bottom: 10px;
+  }
+
   .playground__input__rendering legend {
     font-size: 1.7em;
     text-align: center;
@@ -228,10 +261,18 @@
     margin-bottom: .2em
   }
 
-  .playground__input__rendering legend + p {
-    display: block;
+  .playground__input__rendering p {
     text-align: center;
-    margin-bottom: 1.2em
+    margin-top: 0;
+  }
+
+  .playground__input__rendering fieldset fieldset legend {
+    display: block;
+    font-size: 14px;
+    text-align: left;
+    width: 100%;
+    padding: 0 0 2px;
+    border-bottom: 1px solid rgba(0, 0, 0, .2);
   }
 
   .playground__input__rendering input,
@@ -272,8 +313,13 @@
   [data-fs-field] label {
     display: block;
     width: 120px;
+    min-width: 120px;
     text-align: right;
     margin-right: 10px
+  }
+
+  [data-fs-field] label:active {
+    outline: none;
   }
 
   [data-fs-kind="enum"] [data-fs-field] {

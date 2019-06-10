@@ -1,83 +1,83 @@
-{
-  "type": "object",
-  "title": "Newsletter Subscription",
-  "description": "Sign up for free newsletters and get more delivered to your inbox",
-  "properties": {
-     "name": {
-      "type": "object",
-      "title": "Full Name",
-      "properties": {
-        "first_name": {
-          "type": "string",
-          "title": "First Name",
-          "minLength": 8,
-          "maxLength": 80,
-          "default": "Jon"
+  {
+    "type": "object",
+    "title": "Newsletter Subscription",
+    "description": "Sign up for free newsletters and get more delivered to your inbox",
+    "properties": {
+      "name": {
+        "type": "object",
+        "title": "Full Name",
+        "properties": {
+          "first_name": {
+            "type": "string",
+            "title": "First Name",
+            "minLength": 8,
+            "maxLength": 80,
+            "default": "Jon"
+          },
+          "middle_name": {
+            "type": "string",
+            "title": "Middle Name",
+            "minLength": 8,
+            "maxLength": 80
+          },
+          "last_name": {
+            "type": "string",
+            "title": "Last Name",
+            "minLength": 8,
+            "maxLength": 80
+          }
         },
-        "middle_name": {
-          "type": "string",
-          "title": "Middle Name",
-          "minLength": 8,
-          "maxLength": 80
-        },
-        "last_name": {
-          "type": "string",
-          "title": "Last Name",
-          "minLength": 8,
-          "maxLength": 80
-        }
+        "required": ["first_name"]
       },
-      "required": ["first_name"]
+      "email": {
+        "type": "string",
+        "format": "email",
+        "maxLength": 120,
+        "title": "Email",
+        "default": "hello@example.com"
+      },
+      "day": {
+        "type": "string",
+        "title": "Day",
+        "enum": [
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday",
+          "saturday",
+          "sunday"
+        ]
+      },
+      "source": {
+        "type": "string",
+        "maxLength": 120
+      },
+      "password": {
+        "type": "string",
+        "title": "password",
+        "default": "hello"
+      },
+      "regex": {
+        "type": "string",
+        "title": "regex",
+        "pattern": "[a-e]+"
+      },
+      "frequence": {
+        "type": "string",
+        "title": "Frequence",
+        "enum": [
+          "daily",
+          "weekly"
+        ]
+      },
+      "agree": {
+        "type": "boolean",
+        "title": "Agree",
+        "description": "You agree to receive occasional updates and special offers for vue-json-schema updates.",
+        "default": false
+      }
     },
-    "email": {
-      "type": "string",
-      "format": "email",
-      "maxLength": 120,
-      "title": "Email",
-      "default": "hello@example.com"
-    },
-    "day": {
-      "type": "string",
-      "title": "Day",
-      "enum": [
-        "monday",
-        "tuesday",
-        "wednesday",
-        "thursday",
-        "friday",
-        "saturday",
-        "sunday"
-      ]
-    },
-    "source": {
-      "type": "string",
-      "maxLength": 120
-    },
-    "password": {
-      "type": "string",
-      "title": "password",
-      "default": "hello"
-    },
-    "regex": {
-      "type": "string",
-      "title": "regex",
-      "pattern": "[a-e]+"
-    },
-    "frequence": {
-      "type": "string",
-      "title": "Frequence",
-      "enum": [
-        "daily",
-        "weekly"
-      ]
-    },
-    "agree": {
-      "type": "boolean",
-      "title": "Agree",
-      "description": "You agree to receive occasional updates and special offers for vue-json-schema updates.",
-      "default": false
-    }
-  },
-  "additionalProperties": false,
-  "required": ["name", "email", "lists", "aList"]
-}
+    "additionalProperties": false,
+    "required": ["name", "email", "lists", "aList"]
+  }
