@@ -6,11 +6,12 @@ import {
   FieldKind,
   ScalarDescriptor,
   ObjectDescriptor,
-  ArrayDescriptor
+  ArrayDescriptor,
+  DescriptorType
 } from '@/types';
 
 export const Descriptor = {
-  get<T = ScalarDescriptor | ObjectDescriptor>(schema: JsonSchema, kind?: FieldKind): T {
+  get<T = DescriptorType>(schema: JsonSchema, kind?: FieldKind): T {
     const element = NativeElements.get(kind || schema.type);
     const component = element || NativeElements.get(schema.type);
 
@@ -34,10 +35,11 @@ export const Descriptor = {
         component: component,
         attrs: {},
         props: {},
-        items: []
+        items: [],
+        addButtonLabel: '+'
       };
 
-      return descriptor as T;
+      return descriptor as unknown as T;
     }
 
     const descriptor: ObjectDescriptor = {

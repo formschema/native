@@ -16,31 +16,16 @@ function renderField(h, field, props) {
 export const ArrayElement: FunctionalComponentOptions = {
   name: 'ArrayElement',
   functional: true,
-  render(h, { props }) {
+  render(h, { data, props }) {
     const attrs = props.field.attrs.input;
-    const nodesx = props.field.items.map((field) => {
-      return h(field.component, {
-        attrs: field.attrs.input,
-        props: {
-          ...props,
-          field: field,
-          value: field.model
-        }
-      });
-    });
-
-    const max = props.field.maxItems
-      ? props.field.maxItems + props.field.additionalItems.length
-      : -1;
-
-    const limit = max === -1
+    const limit = props.field.count < props.field.max
       ? props.field.count
-      : props.field.count < props.field.maxItems
-        ? props.field.count
-        : props.field.maxItems;
+      : props.field.maxItems || props.field.items.length;
 
     const nodes = Array(...Array(limit)).map((x, i) => {
-      const field = props.field.items[0];
+      const field = props.field.definedAsObject
+        ? props.field.items[0]
+        : props.field.items[i];
 
       return renderField(h, field, props);
     });
@@ -51,19 +36,7 @@ export const ArrayElement: FunctionalComponentOptions = {
       });
     }
 
-    const addButtonElement = h(ArrayButton, {
-      attrs: {
-        disabled: props.field.count === max
-      },
-      props: props,
-      on: {
-        click() {
-          props.field.count++;
-        }
-      }
-    });
-
-    nodes.push(addButtonElement);
+    nodes.push(h(ArrayButton, data));
 
     return h(FieldElement, { attrs, props }, nodes);
   }

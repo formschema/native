@@ -220,7 +220,7 @@
     flex: 1;
     display: flex;
     align-items: flex-start;
-    max-width: 500px;
+    max-width: 400px;
     overflow: auto;
   }
 
@@ -326,6 +326,7 @@
   }
 
   .playground__input__model {
+    flex: 0;
     margin: 0;
     min-width: 100px;
   }

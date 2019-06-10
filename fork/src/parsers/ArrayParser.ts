@@ -52,6 +52,8 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
       } else {
         this.items.push(this.schema.items);
       }
+    } else {
+      this.items.push({ type: 'string' });
     }
 
     if (this.schema.additionalItems) {
@@ -68,6 +70,7 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
   parseField() {
     super.parseField();
 
+    this.field.definedAsObject = !Array.isArray(this.schema.items);
     this.field.items = this.fields;
     this.field.labels = this.field.items.map(({ descriptor }, i) => descriptor.label || `Item ${i}`);
     this.field.additionalItems = this.additionalFields;
@@ -79,6 +82,8 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
       : this.schema.minItems || 0;
 
     this.field.count = this.field.minItems;
+    this.field.total = this.field.items.length + this.field.additionalItems.length;
+    this.field.max = this.field.maxItems ? this.field.maxItems : this.field.total;
   }
 
   parseValue(data: any): string {

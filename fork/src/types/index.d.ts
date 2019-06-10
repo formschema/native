@@ -88,6 +88,7 @@ export interface EnumField extends Field<'enum', Attributes, ScalarDescriptor> {
 }
 
 export interface ArrayField extends Field<'array', Attributes, ScalarDescriptor> {
+  definedAsObject: boolean;
   items: ItemField[];
   labels: string[];
   additionalItems: ItemField[];
@@ -96,6 +97,8 @@ export interface ArrayField extends Field<'array', Attributes, ScalarDescriptor>
   maxItems?: number;
   uniqueItems: boolean;
   count: number;
+  total: number;
+  max: number;
 }
 
 export interface ListItem {
@@ -153,6 +156,7 @@ export interface ObjectDescriptor extends AbstractUISchemaDescriptor {
 
 export interface ArrayDescriptor extends AbstractUISchemaDescriptor {
   items?: DescriptorType[];
+  addButtonLabel: string;
 }
 
 export type DescriptorType = ScalarDescriptor | ObjectDescriptor | ArrayDescriptor;
