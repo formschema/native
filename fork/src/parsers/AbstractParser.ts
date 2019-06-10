@@ -22,12 +22,11 @@ export abstract class AbstractParser<T, X extends AbstractUISchemaDescriptor, Y 
   readonly descriptor: X;
 
   constructor(options: AbstractParserOptions<T, X>, parent?: Parent) {
+    this.parent = parent;
+    this.options = options;
     this.isRoot = !parent;
     this.isEnum = !!parent && parent.schema.enum instanceof Array;
-    this.model = this.parseValue(options.model);
-    this.options = options;
-    this.parent = parent;
-    this.name = parent
+    this.name = parent && !this.isEnum
       ? options.name
         ? parent.isRoot
           ? options.name
@@ -37,6 +36,7 @@ export abstract class AbstractParser<T, X extends AbstractUISchemaDescriptor, Y 
     const defaultDescriptor = options.descriptorConstructor<X>(this.schema);
 
     this.descriptor = options.descriptor || defaultDescriptor;
+    this.model = this.parseValue(options.model);
 
     this.parseDescriptor();
 

@@ -43,7 +43,7 @@ export class EnumParser extends AbstractParser<any, ScalarDescriptor, EnumField>
         model: item,
         descriptor: this.options.descriptorConstructor(itemSchema),
         descriptorConstructor: this.options.descriptorConstructor,
-        name: this.options.name
+        name: this.name
       };
 
       const parser = Parser.get(options, this);
