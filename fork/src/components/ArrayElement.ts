@@ -1,10 +1,14 @@
-import { FunctionalComponentOptions } from 'vue';
-import { FieldElement } from './FieldElement';
-import { ArrayButton } from './ArrayButton';
+import { CreateElement } from 'vue';
+import { FieldsetElement } from '@/components/FieldsetElement';
+import { ArrayButton } from '@/components/ArrayButton';
+import { ElementProps, ArrayItemField, ArrayField, ArrayComponent } from '@/types';
 
-function renderField(h, field, props) {
+function renderField(h: CreateElement, field: ArrayItemField, props: ElementProps<ArrayField>) {
   return h(field.component, {
-    attrs: field.attrs.input,
+    attrs: {
+      ...field.attrs.input,
+      value: field.model
+    },
     props: {
       ...props,
       field: field,
@@ -13,12 +17,11 @@ function renderField(h, field, props) {
   });
 }
 
-export const ArrayElement: FunctionalComponentOptions = {
+export const ArrayElement: ArrayComponent = {
   name: 'ArrayElement',
   functional: true,
   render(h, { data, props }) {
-    const attrs = props.field.attrs.input;
-    const limit = props.field.count < props.field.max
+    const limit = props.field.count < props.field.max || props.field.max === -1
       ? props.field.count
       : props.field.maxItems || props.field.items.length;
 
@@ -27,7 +30,9 @@ export const ArrayElement: FunctionalComponentOptions = {
         ? props.field.items[0]
         : props.field.items[i];
 
-      return renderField(h, field, props);
+      const model = props.field.model[i] || field.default;
+
+      return renderField(h, { ...field, model }, props);
     });
 
     if (limit < props.field.count) {
@@ -38,6 +43,6 @@ export const ArrayElement: FunctionalComponentOptions = {
 
     nodes.push(h(ArrayButton, data));
 
-    return h(FieldElement, { attrs, props }, nodes);
+    return h(FieldsetElement, data, nodes);
   }
 };

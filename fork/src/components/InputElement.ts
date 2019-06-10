@@ -1,8 +1,8 @@
-import { FunctionalComponentOptions } from 'vue';
 import { CreateInput } from '@/lib/NativeElementsLib';
 import { FieldElement } from "@/components/FieldElement";
+import { InputComponent } from '@/types';
 
-export const InputElement: FunctionalComponentOptions = {
+export const InputElement: InputComponent = {
   name: 'InputElement',
   functional: true,
   render(h, { data }) {

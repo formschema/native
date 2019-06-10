@@ -1,12 +1,12 @@
-import { FunctionalComponentOptions } from 'vue';
 import { HelperElement } from "@/components/HelperElement";
+import { FieldsetComponent } from '@/types';
 
-export const FieldsetElement: FunctionalComponentOptions = {
+export const FieldsetElement: FieldsetComponent = {
   name: 'FieldsetElement',
   functional: true,
-  render(h, { data, props }) {
+  render(h, { data, props, slots }) {
     const attrs = props.field.attrs.input;
-    const nodes = props.field.children.map((field) => {
+    const nodes = slots().default || props.field.children.map((field) => {
       return h(field.component, {
         attrs: field.attrs.input,
         props: {

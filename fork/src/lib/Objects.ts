@@ -1,65 +1,64 @@
 import { Dictionary } from '@/types';
 
-export function isScalar (value: any) {
-  if (value === null) {
-    return true
-  }
-
-  return /string|number|boolean|undefined/.test(typeof value)
-}
-
 export const Objects = Object.freeze({
-  equals (o1: Dictionary, o2: Dictionary) {
-    if (isScalar(o1)) {
-      return o1 === o2
+  isScalar(value: any) {
+    if (value === null) {
+      return true;
     }
 
-    const keys1 = Object.keys(o1)
+    return /string|number|boolean|undefined/.test(typeof value);
+  },
+  equals(o1: any, o2: any) {
+    if (Objects.isScalar(o1)) {
+      return o1 === o2;
+    }
+
+    const keys1 = Object.keys(o1);
 
     if (keys1.length !== Object.keys(o2).length) {
-      return false
+      return false;
     }
 
-    return !keys1.some((key) => !o2.hasOwnProperty(key) || o1[key] !== o2[key])
+    return !keys1.some((key) => !o2.hasOwnProperty(key) || o1[key] !== o2[key]);
   },
 
-  assign (dest: Dictionary, src: Dictionary) {
+  assign(dest: Dictionary, src: Dictionary) {
     Object.keys(src).forEach((key) => {
-      const value = src[key]
+      const value = src[key];
 
-      if (isScalar(value)) {
-        dest[key] = value
+      if (Objects.isScalar(value)) {
+        dest[key] = value;
       } else if (value instanceof Array) {
-        dest[key] = [ ...value ]
+        dest[key] = [ ...value ];
       } else if (value instanceof Function) {
-        dest[key] = value
+        dest[key] = value;
       } else {
         if (!dest[key]) {
-          dest[key] = {}
+          dest[key] = {};
         }
 
-        this.assign(dest[key], value)
+        this.assign(dest[key], value);
       }
     })
 
-    return dest
+    return dest;
   },
 
-  clone (object: Dictionary) {
-    return this.assign({}, object)
+  clone(object: Dictionary) {
+    return this.assign({}, object);
   },
 
-  clear (object: Dictionary) {
+  clear(object: Dictionary) {
     for (const key in object) {
       delete object[key];
     }
   },
 
-  isEmpty (object: Dictionary) {
+  isEmpty(object: Dictionary) {
     for (const key in object) {
-      return false
+      return false;
     }
 
-    return true
+    return true;
   }
 });

@@ -1,6 +1,6 @@
-import { FunctionalComponentOptions } from 'vue';
+import { ArrayButtonComponent } from '@/types';
 
-export const ArrayButton: FunctionalComponentOptions = {
+export const ArrayButton: ArrayButtonComponent = {
   functional: true,
   name: 'ArrayButton',
   render(h, { props }) {

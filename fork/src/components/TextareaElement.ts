@@ -1,8 +1,8 @@
-import { FunctionalComponentOptions } from 'vue';
 import { CreateInput } from '@/lib/NativeElementsLib';
 import { FieldElement } from "@/components/FieldElement";
+import { TextareaComponent } from '@/types';
 
-export const TextareaElement: FunctionalComponentOptions = {
+export const TextareaElement: TextareaComponent = {
   name: 'TextareaElement',
   functional: true,
   render(h, { data, props }) {

@@ -7,7 +7,7 @@ import {
   AbstractParserOptions,
   AbstractUISchemaDescriptor,
   FieldKind,
-  ItemField
+  ArrayItemField
 } from '@/types';
 import { JsonSchema } from '@/types/jsonschema';
 import { Objects } from '@/lib/Objects';
@@ -28,18 +28,23 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
     return this.getFields(this.additionalItems);
   }
 
-  getFields(items: JsonSchema[]): ItemField[] {
-    return items.map((itemSchema) => {
+  getFields(items: JsonSchema[]): ArrayItemField[] {
+    return items.map((itemSchema, i) => {
+      const defaultDescriptor = this.options.descriptorConstructor(itemSchema);
+      const itemDescriptor = this.field.descriptor.items
+        ? this.field.descriptor.items[i] || defaultDescriptor
+        : defaultDescriptor;
+
       const options: AbstractParserOptions<any, AbstractUISchemaDescriptor> = {
         schema: itemSchema,
         model: itemSchema.default,
-        descriptor: this.options.descriptorConstructor(itemSchema),
+        descriptor: itemDescriptor,
         descriptorConstructor: this.options.descriptorConstructor,
         name: this.name
       };
 
       const parser = Parser.get(options, this);
-      const field: ItemField = parser.field as any;
+      const field: ArrayItemField = parser.field as any;
 
       return field as any;
     });
@@ -72,7 +77,7 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
 
     this.field.definedAsObject = !Array.isArray(this.schema.items);
     this.field.items = this.fields;
-    this.field.labels = this.field.items.map(({ descriptor }, i) => descriptor.label || `Item ${i}`);
+    this.field.model = this.schema.default || [];
     this.field.additionalItems = this.additionalFields;
     this.field.additionalLabels = this.field.additionalItems.map(({ descriptor }, i) => descriptor.label || `Item ${i}`);
     this.field.uniqueItems = this.schema.uniqueItems === true;
@@ -81,9 +86,14 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
       ? this.schema.minItems || 1
       : this.schema.minItems || 0;
 
-    this.field.count = this.field.minItems;
+    this.field.count = this.field.minItems || this.field.model.length;
     this.field.total = this.field.items.length + this.field.additionalItems.length;
     this.field.max = this.field.maxItems ? this.field.maxItems : this.field.total;
+
+    if (this.field.max < this.field.minItems) {
+      this.field.max = -1;
+      this.field.total = -1;
+    }
   }
 
   parseValue(data: any): string {

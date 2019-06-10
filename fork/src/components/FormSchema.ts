@@ -1,12 +1,10 @@
-import { ComponentOptions } from 'vue/types/options'
-import { IFormSchema, Field } from '@/types';
+import { FormSchemaComponent } from '@/types';
 import { UniqueId } from '@/lib/UniqueId';
 import { Parser } from '@/parsers/Parser';
 import { JsonSchema } from '@/types/jsonschema';
 import { Objects } from '@/lib/Objects';
 import { Components } from '@/lib/Components';
 import { NativeElements } from "@/lib/NativeElements";
-import { AbstractParser } from '@/parsers/AbstractParser';
 import { Descriptor } from "@/descriptors/Descriptor";
 
 export const GLOBAL = {
@@ -14,7 +12,7 @@ export const GLOBAL = {
   Descriptor
 };
 
-export default {
+const FormSchema: FormSchemaComponent = {
   name: 'FormSchema',
   model: {
     prop: 'value',
@@ -71,7 +69,7 @@ export default {
     /**
      * UI Schema Descriptor to use for rendering.
      *
-     * @type {ScalarDescriptor | ObjectDescriptor | DescriptorConstructor}
+     * @type {ScalarDescriptor | ObjectDescriptor | ArrayDescriptor | DescriptorConstructor}
      */
     descriptor: {
       type: [ Object, Function ],
@@ -80,14 +78,12 @@ export default {
   },
   data: () => ({
     ref: UniqueId.get('form-schema'),
-    fields: [],
+    field: null,
     default: {},
-    data: undefined,
-    inputValues: {},
-    parser: null
+    data: undefined
   }),
   watch: {
-    schema(value) {
+    schema(value: JsonSchema) {
       this.load(value, this.value, false);
     }
   },
@@ -95,16 +91,16 @@ export default {
     this.load(this.schema, this.value, false);
   },
   render(createElement) {
-    if (this.parser === null) {
-      return null;
+    if (this.field === null) {
+      return null as any; // nothing to render
     }
 
-    console.log(this.parser)
+    console.log(this.field)
 
-    const root = createElement(this.parser.field.component, {
-      attrs: this.parser.field.attrs.input,
+    const root = createElement(this.field.component, {
+      attrs: this.field.attrs.input,
       props: {
-        field: this.parser.field,
+        field: this.field,
         value: this.data,
         components: this.components
       },
@@ -117,9 +113,9 @@ export default {
           this.emitInputEvent();
         },
         change: (event: Event) => {
-          this.processFieldEvent(event);
+          // this.processFieldEvent(event);
 
-          if (!equals(this.data, this.default)) {
+          if (!Objects.equals(this.data, this.default)) {
             /**
              * Fired when a change to the element's value is committed
              * by the user.
@@ -171,25 +167,27 @@ export default {
      * @note The default value of `model` is the initial model defined with the
      * `v-model` directive.
      */
-    load (schema: JsonSchema, model: any = this.value, reset = true) {
+    load (schema: JsonSchema, model: any = undefined, reset = true) {
       if (Objects.isEmpty(schema)) {
-        this.parser = null;
+        this.field = null;
       } else {
         const descriptorConstructor = this.descriptor instanceof Function
           ? this.descriptor
           : GLOBAL.Descriptor.get;
 
         const descriptor = this.descriptor instanceof Function
-          ? descriptorConstructor(schema)
-          : this.descriptor;
+          ? this.descriptor(schema)
+          : GLOBAL.Descriptor.get(schema);
 
-        this.parser = Parser.get({
+        const parser = Parser.get({
           schema: this.schema,
-          model: model,
+          model: typeof model === 'undefined' ? this.value : model,
           name: this.name,
           descriptor: descriptor,
           descriptorConstructor: descriptorConstructor
         });
+
+        this.field = parser.field;
       }
 
       this.emitInputEvent();
@@ -225,16 +223,16 @@ export default {
      * are reported to the user.
      */
     reportValidity () {
-      const controls = this.form().elements
-      let validity = true
+      const controls: HTMLInputElement[] = this.form().elements as any;
+      let validity = true;
 
       for (let i = 0; i < controls.length; i++) {
         if ('checkValidity' in controls[i]) {
-          validity = validity && controls[i].checkValidity()
+          validity = validity && controls[i].checkValidity();
         }
       }
 
-      return validity
+      return validity;
     },
 
     /**
@@ -247,31 +245,17 @@ export default {
        * checked before submitting their owner form, or after the
        * `checkValidity()` of the element or its owner form is called.
        */
-      this.$emit('invalid', e)
+      this.$emit('invalid', e);
     },
 
     /**
      * Reset the value of all elements of the parent form.
      */
     reset () {
-      Objects.clear(this.inputValues)
-
-      this.fields.forEach((field) => {
-        const { name } = field.attrs.input;
-
-        this.$set(this.data, name, this.default[name])
-
-        if (field.isArrayField) {
-          this.data[name].forEach((value, i) => {
-            this.inputValues[inputName(field, i)] = value
-          });
-        }
-      })
-
       const form = this.form()
 
       if (form && 'reset' in form) {
-        form.reset()
+        form.reset();
       }
     },
 
@@ -290,4 +274,6 @@ export default {
       }
     }
   }
-} as ComponentOptions<IFormSchema<AbstractParser<any, Field<any>>>>
+};
+
+export default FormSchema;

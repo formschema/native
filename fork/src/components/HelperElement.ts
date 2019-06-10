@@ -1,6 +1,6 @@
-import { FunctionalComponentOptions } from 'vue';
+import { HelperComponent } from '@/types';
 
-export const HelperElement = {
+export const HelperElement: HelperComponent = {
   name: 'HelperElement',
   functional: true,
   render(h, { props }) {
@@ -13,6 +13,6 @@ export const HelperElement = {
       return h(tag, data, props.field.descriptor.description);
     }
 
-    return null;
+    return null as any; // render nothing
   }
-} as FunctionalComponentOptions;
+};

@@ -10,7 +10,7 @@
     "testdebug": "node --inspect-brk ./node_modules/@vue/cli-service/bin/vue-cli-service.js test:unit --runInBand",
     "lint": "vue-cli-service lint --no-fix",
     "lint:fix": "vue-cli-service lint",
-    "lint-test": "eslint test",
+    "lint-test": "eslint tests",
     "readme": "vuedoc.md --join src/components/*.js --ignore-name --ignore-data --section 'FormSchema API' --output README.md",
     "build": "rollup -c"
   },
@@ -45,7 +45,7 @@
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^24.8.0",
     "regenerator-runtime": "^0.12.1",
-    "rollup": "^1.14.5",
+    "rollup": "^1.14.6",
     "rollup-plugin-node-resolve": "^5.0.1",
     "rollup-plugin-terser": "^5.0.0",
     "rollup-plugin-typescript": "^1.0.1",

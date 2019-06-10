@@ -12,6 +12,7 @@ import {
   FieldKind,
   RadioField
 } from '@/types';
+import { UniqueId } from '@/lib/UniqueId';
 
 export class EnumParser extends AbstractParser<any, ScalarDescriptor, EnumField> {
   readonly enums: any[] = [];
@@ -27,6 +28,8 @@ export class EnumParser extends AbstractParser<any, ScalarDescriptor, EnumField>
   }
 
   get children(): RadioField[] {
+    const radioName = this.name || UniqueId.get();
+
     return this.enums.map((item) => {
       const itemSchema: JsonSchema = {
         ...Objects.assign({}, this.schema) as JsonSchema,
@@ -43,7 +46,7 @@ export class EnumParser extends AbstractParser<any, ScalarDescriptor, EnumField>
         model: item,
         descriptor: this.options.descriptorConstructor(itemSchema),
         descriptorConstructor: this.options.descriptorConstructor,
-        name: this.name
+        name: radioName
       };
 
       const parser = Parser.get(options, this);

@@ -1,10 +1,10 @@
-import { FunctionalComponentOptions } from 'vue';
 import { CreateInput } from '@/lib/NativeElementsLib';
 import { HelperElement } from "@/components/HelperElement";
 import { FieldElement } from "@/components/FieldElement";
+import { ListComponent } from '@/types';
 
-export const SelectElement: FunctionalComponentOptions = {
-  name: 'SelectElement',
+export const ListElement: ListComponent = {
+  name: 'ListElement',
   functional: true,
   render(h, { data, props }) {
     const children = props.field.items.map(({ label, value, selected }) => {

@@ -7,11 +7,11 @@ import {
   ScalarDescriptor,
   ObjectDescriptor,
   ArrayDescriptor,
-  DescriptorType
+  DescriptorInstance
 } from '@/types';
 
 export const Descriptor = {
-  get<T = DescriptorType>(schema: JsonSchema, kind?: FieldKind): T {
+  get<T = DescriptorInstance>(schema: JsonSchema, kind?: FieldKind): T {
     const element = NativeElements.get(kind || schema.type);
     const component = element || NativeElements.get(schema.type);
 

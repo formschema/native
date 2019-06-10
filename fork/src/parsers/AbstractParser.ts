@@ -3,7 +3,6 @@ import { UniqueId } from '@/lib/UniqueId';
 
 import {
   Field,
-  InputAttributes,
   AbstractUISchemaDescriptor,
   AbstractParserOptions,
   FieldKind
@@ -14,7 +13,8 @@ export type Parent = AbstractParser<any, AbstractUISchemaDescriptor, Field<any>>
 export abstract class AbstractParser<T, X extends AbstractUISchemaDescriptor, Y extends Field<any>> {
   readonly isRoot: boolean;
   readonly isEnum: boolean;
-  readonly name: string;
+  readonly isArrayItem: boolean;
+  readonly name?: string;
   readonly parent?: Parent;
   readonly model: T;
   readonly options: AbstractParserOptions<T, X>;
@@ -26,12 +26,13 @@ export abstract class AbstractParser<T, X extends AbstractUISchemaDescriptor, Y 
     this.options = options;
     this.isRoot = !parent;
     this.isEnum = !!parent && parent.schema.enum instanceof Array;
+    this.isArrayItem = !!parent && parent.schema.type === 'array'
     this.name = parent && !this.isEnum
       ? options.name
-        ? parent.isRoot
+        ? parent.isRoot || this.isArrayItem
           ? options.name
-          : `${parent.name}.${options.name}` : UniqueId.get(parent.name, '.')
-      : options.name || UniqueId.get();
+          : `${parent.name}.${options.name}` : options.name
+      : options.name;
 
     const defaultDescriptor = options.descriptorConstructor<X>(this.schema);
 
@@ -49,13 +50,16 @@ export abstract class AbstractParser<T, X extends AbstractUISchemaDescriptor, Y 
     delete attrs.name;
 
     this.field = {
+      name: this.name,
       kind: this.kind,
       isRoot: this.isRoot,
       required: isRequired,
+      default: options.schema.default,
+      model: this.value,
       attrs: {
         input: {
           type: undefined,
-          name: this.name,
+          name: this.isArrayItem && this.name ? `${this.name}[]` : this.name,
           ...attrs
         }
       },
@@ -75,6 +79,16 @@ export abstract class AbstractParser<T, X extends AbstractUISchemaDescriptor, Y 
   }
 
   get type(): string | undefined {
+    return undefined;
+  }
+
+  get value() {
+    if (this.model !== null) {
+      return this.parseValue(this.model);
+    } else if (this.schema.hasOwnProperty('default')) {
+      return this.parseValue(this.schema.default);
+    }
+
     return undefined;
   }
 
@@ -102,14 +116,6 @@ export abstract class AbstractParser<T, X extends AbstractUISchemaDescriptor, Y 
 
     if (!this.descriptor.hasOwnProperty('description')) {
       this.descriptor.description = this.schema.description;
-    }
-  }
-
-  protected parseInputValue() {
-    if (this.model !== null) {
-      (this.field.attrs.input as InputAttributes).value = this.parseValue(this.model) as any;
-    } else if (this.schema.default) {
-      (this.field.attrs.input as InputAttributes).value = this.parseValue(this.schema.default) as any;
     }
   }
 

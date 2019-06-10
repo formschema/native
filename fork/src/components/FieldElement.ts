@@ -1,14 +1,13 @@
-import { FunctionalComponentOptions } from 'vue';
 import { HelperElement } from "@/components/HelperElement";
-import { Dictionary } from '@/types';
+import { Dictionary, FieldComponent } from '@/types';
 
-export const FieldElement: FunctionalComponentOptions = {
+export const FieldElement: FieldComponent = {
   name: 'FieldElement',
   functional: true,
   render(h, { data, props, slots }) {
     const attrs: Dictionary = {
       'data-fs-kind': props.field.kind,
-      'data-fs-field': props.field.attrs.input.name,
+      'data-fs-field': props.field.name,
       'data-fs-required': props.field.required
     };
 
@@ -16,14 +15,16 @@ export const FieldElement: FunctionalComponentOptions = {
       attrs: props.field.attrs.label
     }, props.field.descriptor.label);
 
-    const fieldElement = h('div', {
-      attrs: {
-        'data-fs-input': props.field.attrs.input.type || props.field.kind
-      }
-    }, [
+    const fieldNodes = [
       ...slots().default,
       h(HelperElement, data)
-    ]);
+    ];
+
+    const fieldElement = h('div', {
+      attrs: {
+        'data-fs-input': (props.field.attrs.input as any).type || props.field.kind
+      }
+    }, fieldNodes);
 
     const nodes = [ labelElement, fieldElement ];
 

@@ -6,7 +6,7 @@ function s4 () {
 
 export const UniqueId = Object.freeze({
   get (prefix = '', delimiter = '-') {
-    const suffix = s4() + s4()
+    const suffix = s4() + s4();
 
     return prefix ? prefix + delimiter + suffix : suffix;
   }

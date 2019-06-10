@@ -1,9 +1,7 @@
-import { Dictionary, FieldKind, Component } from '@/types';
-
-export type ComponentsType = 'form' | FieldKind;
+import { Dictionary, Component, ComponentsType } from '@/types';
 
 export class Components {
-  $: Dictionary<Component>;
+  readonly $: Dictionary<Component>;
 
   constructor () {
     this.$ = {

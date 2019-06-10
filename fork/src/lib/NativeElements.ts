@@ -2,7 +2,7 @@ import { Components } from '@/lib/Components';
 import { InputElement } from '@/components/InputElement';
 import { ArrayElement } from '@/components/ArrayElement';
 import { FieldsetElement } from '@/components/FieldsetElement';
-import { SelectElement } from '@/components/SelectElement';
+import { ListElement } from '@/components/ListElement';
 import { TextareaElement } from '@/components/TextareaElement';
 
 export const NativeElements = new Components();
@@ -15,5 +15,5 @@ NativeElements.set('enum', FieldsetElement);
 NativeElements.set('number', InputElement);
 NativeElements.set('integer', InputElement);
 NativeElements.set('object', FieldsetElement);
-NativeElements.set('list', SelectElement);
+NativeElements.set('list', ListElement);
 NativeElements.set('textarea', TextareaElement);

@@ -12,7 +12,6 @@ export class NumberParser extends AbstractParser<number, ScalarDescriptor, Numbe
 
   parse() {
     this.parseField();
-    this.parseInputValue();
   }
 
   parseExclusiveKeywords() {
@@ -34,6 +33,7 @@ export class NumberParser extends AbstractParser<number, ScalarDescriptor, Numbe
 
     this.field.attrs.input.min = this.schema.minimum;
     this.field.attrs.input.max = this.schema.maximum;
+    this.field.attrs.input.value = this.field.model as any;
 
     if (this.schema.hasOwnProperty('multipleOf')) {
       this.field.attrs.input.step = this.schema.multipleOf;

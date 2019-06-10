@@ -40,15 +40,15 @@
 </template>
 
 <script>
-  import '../libs/Prism';
-  import '../styles/Prism.css';
+  import '@/libs/Prism';
+  import '@/styles/Prism.css';
 
   import { html } from 'js-beautify';
   import $RefParser from 'json-schema-ref-parser';
 
   import PrismEditor from 'vue-prism-editor';
   import FormSchema from '../../../dist/FormSchema.esm.min.js';
-  import Schema from '../schema/newsletter';
+  import Schema from '@/schema/newsletter';
 
   export default {
     components: { PrismEditor, FormSchema },
@@ -349,14 +349,14 @@
     overflow: auto;
   }
 
-  [data-fs-field] {
+  [data-fs-kind] {
     flex: 1;
     display: flex;
     flex-direction: row;
     margin-bottom: 5px;
   }
 
-  [data-fs-field] label {
+  [data-fs-kind] > label {
     display: block;
     width: 120px;
     min-width: 120px;
@@ -364,15 +364,15 @@
     margin-right: 10px
   }
 
-  [data-fs-field] label:active {
+  [data-fs-kind] > label:active {
     outline: none;
   }
 
-  [data-fs-kind="enum"] [data-fs-field] {
+  [data-fs-kind="enum"] [data-fs-kind] {
     flex-direction: row-reverse;
   }
 
-  [data-fs-kind="enum"] [data-fs-field] label {
+  [data-fs-kind="enum"] [data-fs-kind] label {
     text-align: left;
     flex: 1;
   }
@@ -384,15 +384,19 @@
     align-items: flex-start;
   }
 
-  [data-fs-input="array"] > [data-fs-field] {
+  [data-fs-input="array"] > [data-fs-kind] {
     flex-direction: column;
   }
 
-  [data-fs-input="array"] > [data-fs-field] label {
+  [data-fs-input="array"] > [data-fs-kind] label {
     text-align: left;
   }
 
-  [data-fs-input="array"] > [data-fs-field] [data-fs-input] {
+  [data-fs-input="array"] > [data-fs-input] {
     margin-bottom: 5px;
+  }
+
+  [data-fs-input="array"] > [data-fs-input] > * {
+    margin-left: 0;
   }
 </style>
