@@ -43,6 +43,11 @@ export interface StringAttributes extends InputAttributes {
   pattern?: string;
 }
 
+export interface RadioAttributes extends InputAttributes {
+  type: 'radio';
+  checked: boolean;
+}
+
 export type SchemaType = 'object' | 'array' | 'string' | 'number' | 'integer' | 'boolean' | 'null';
 export type FieldKind = SchemaType | 'enum' | 'radio' | 'list' | 'textarea';
 export type Component = string | VueComponent | Function;
@@ -74,10 +79,10 @@ export interface BooleanField extends Field<'boolean', BooleanAttributes, Scalar
 export interface NumberField extends Field<'number', NumberAttributes, ScalarDescriptor> {}
 export interface NullField extends Field<'null', NullAttributes, ScalarDescriptor> {}
 export interface StringField extends Field<'string', StringAttributes, ScalarDescriptor> {}
+export interface RadioField extends Field<'radio', RadioAttributes, ScalarDescriptor> {}
 
-export type EnumFieldChild = Field<any, Attributes, ScalarDescriptor>;
 export interface EnumField extends Field<'enum', Attributes, ScalarDescriptor> {
-  children: EnumFieldChild[];
+  children: RadioField[];
 }
 
 export interface ListItem {

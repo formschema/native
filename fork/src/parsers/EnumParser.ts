@@ -9,8 +9,8 @@ import {
   ScalarDescriptor,
   AbstractParserOptions,
   AbstractUISchemaDescriptor,
-  EnumFieldChild,
-  FieldKind
+  FieldKind,
+  RadioField
 } from '@/types';
 
 export class EnumParser extends AbstractParser<any, ScalarDescriptor, EnumField> {
@@ -26,7 +26,7 @@ export class EnumParser extends AbstractParser<any, ScalarDescriptor, EnumField>
       : this.options.descriptorConstructor(this.schema, 'enum').component;
   }
 
-  get children(): EnumFieldChild[] {
+  get children(): RadioField[] {
     return this.enums.map((item) => {
       const itemSchema: JsonSchema = {
         ...Objects.assign({}, this.schema) as JsonSchema,
@@ -46,9 +46,12 @@ export class EnumParser extends AbstractParser<any, ScalarDescriptor, EnumField>
         name: this.options.name
       };
 
-      const { field } = Parser.get(options, this);
+      const parser = Parser.get(options, this);
+      const field: RadioField = parser.field as any;
 
-      return field;
+      field.attrs.input.checked = item === this.model;
+
+      return field as any;
     });
   }
 
