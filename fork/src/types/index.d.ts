@@ -1,14 +1,17 @@
+import { VNode } from 'vue/types/vnode';
 import { Vue, CreateElement } from 'vue/types/vue';
 
 import {
   Component as VueComponent,
   FunctionalComponentOptions,
   ComponentOptions,
-  VNode
-} from 'vue';
+  PropsDefinition,
+  RecordPropsDefinition,
+  RenderContext,
+  AsyncComponent
+} from 'vue/types/options';
 
 import { JsonSchema } from "@/types/jsonschema";
-import { PropsDefinition, RecordPropsDefinition, RenderContext } from 'vue/types/options';
 
 export type Scalar = boolean | number | null | string;
 export type Dictionary<T = any> = { [key: string]: T };
@@ -61,7 +64,7 @@ export interface RadioAttributes extends InputAttributes {
 
 export type SchemaType = 'object' | 'array' | 'string' | 'number' | 'integer' | 'boolean' | 'null';
 export type FieldKind = SchemaType | 'enum' | 'radio' | 'list' | 'textarea';
-export type Component = string | VueComponent | Function;
+export type Component = string | VueComponent | AsyncComponent;
 
 export interface Field<T extends FieldKind, X = Attributes, Y = DescriptorInstance, Z = any> {
   kind: T;
