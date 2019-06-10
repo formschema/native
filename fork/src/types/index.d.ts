@@ -8,11 +8,9 @@ export interface AttrsDeclaration {}
 export interface Attributes extends AttrsDeclaration {
   id: string;
   name: string;
-  tabindex?: string;
   readonly: boolean;
   required: boolean;
-  'data-fs-kind'?: FieldKind;
-  'aria-required'?: 'true' | 'false';
+  'aria-required'?: 'true';
   'aria-labelledby'?: string;
 }
 
@@ -27,7 +25,7 @@ export interface BooleanAttributes extends InputAttributes {
 }
 
 export interface NumberAttributes extends InputAttributes {
-  type: 'number';
+  type: 'number' | 'radio';
   min?: number;
   max?: number;
   step?: number;
@@ -51,18 +49,17 @@ export type Component = string | VueComponent | Function;
 
 export interface Field<T extends FieldKind, X = Attributes, Y = ScalarDescriptor | ObjectDescriptor> {
   kind: FieldKind;
-  label: T;
-  description: string;
+  isRoot: boolean;
   attrs: {
     input: X;
     label: {
       id?: string;
       for: string;
-      tabindex?: string;
+      tabindex?: '-1';
     };
     description: {
       id?: string;
-      tabindex?: string;
+      tabindex?: '-1';
     };
   };
   props: {

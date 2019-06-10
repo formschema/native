@@ -9,12 +9,17 @@ import {
   AbstractParserOptions,
   AbstractUISchemaDescriptor,
   ObjectFieldChild,
-  DescriptorConstructor
+  DescriptorConstructor,
+  FieldKind
 } from '@/types';
 
 export class ObjectParser<T extends Dictionary = object> extends AbstractParser<T, ObjectDescriptor, ObjectField> {
   readonly required: string[] = [];
   readonly properties: Dictionary<JsonSchema> = {};
+
+  get kind(): FieldKind {
+    return 'object';
+  }
 
   get propertiesList() {
     const keys = Object.keys(this.properties);
@@ -73,7 +78,6 @@ export class ObjectParser<T extends Dictionary = object> extends AbstractParser<
       Object.assign(this.properties, this.schema.properties);
     }
 
-    this.field.kind = 'object';
     this.field.children = this.children;
 
     this.parseField();

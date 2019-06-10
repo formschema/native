@@ -26,10 +26,10 @@ export const EnumElement: FunctionalComponentOptions = {
       nodes.unshift(helper);
     }
 
-    if (props.field.label) {
+    if (props.field.descriptor.label) {
       const legend = h('legend', {
         attrs: props.field.attrs.label
-      }, props.field.label);
+      }, props.field.descriptor.label);
 
       nodes.unshift(legend);
     }

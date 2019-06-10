@@ -1,9 +1,17 @@
 import { AbstractParser } from '@/parsers/AbstractParser';
-import { StringField, ScalarDescriptor } from '@/types';
+import { StringField, ScalarDescriptor, FieldKind } from '@/types';
 
 export class StringParser extends AbstractParser<string, ScalarDescriptor, StringField> {
+  get kind(): FieldKind {
+    return this.isEnum ? 'radio' : 'string';
+  }
+
   get type() {
-    if (this.field.kind === 'radio') {
+    if (this.field.attrs.input.type) {
+      return this.field.attrs.input.type;
+    }
+
+    if (this.isEnum) {
       return 'radio';
     }
 
@@ -30,17 +38,12 @@ export class StringParser extends AbstractParser<string, ScalarDescriptor, Strin
   }
 
   parse() {
-    this.field.kind = this.parent && this.parent.schema.enum ? 'radio' : 'string';
+    this.parseField();
+    this.parseInputValue();
+
     this.field.attrs.input.minlength = this.schema.minLength;
     this.field.attrs.input.maxlength = this.schema.maxLength;
     this.field.attrs.input.pattern = this.schema.pattern;
-
-    if (!this.field.attrs.input.type) {
-      this.field.attrs.input.type = this.type;
-    }
-
-    this.parseField();
-    this.parseInputValue();
   }
 
   parseValue(data: any): string {

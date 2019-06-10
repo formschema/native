@@ -5,13 +5,15 @@ import {
   Field,
   InputAttributes,
   AbstractUISchemaDescriptor,
-  AbstractParserOptions
+  AbstractParserOptions,
+  FieldKind
 } from '@/types';
 
 export type Parent = AbstractParser<any, AbstractUISchemaDescriptor, Field<any>>;
 
 export abstract class AbstractParser<T, X extends AbstractUISchemaDescriptor, Y extends Field<any>> {
   readonly isRoot: boolean;
+  readonly isEnum: boolean;
   readonly name: string;
   readonly parent?: Parent;
   readonly model: T;
@@ -21,6 +23,7 @@ export abstract class AbstractParser<T, X extends AbstractUISchemaDescriptor, Y 
 
   constructor(options: AbstractParserOptions<T, X>, parent?: Parent) {
     this.isRoot = !parent;
+    this.isEnum = !!parent && parent.schema.enum instanceof Array;
     this.model = this.parseValue(options.model);
     this.options = options;
     this.parent = parent;
@@ -35,19 +38,21 @@ export abstract class AbstractParser<T, X extends AbstractUISchemaDescriptor, Y 
 
     this.descriptor = options.descriptor || defaultDescriptor;
 
+    this.parseDescriptor();
+
     const attrs = this.descriptor.attrs || {};
     const props = this.descriptor.props || {};
 
-    this.parseDescriptor();
+    delete attrs.name;
 
     this.field = {
-      kind: options.schema.type,
-      label: this.descriptor.label,
-      description: this.descriptor.description,
+      kind: this.kind,
+      isRoot: this.isRoot,
       attrs: {
         input: {
-          ...attrs,
-          name: this.name
+          type: undefined,
+          name: this.name,
+          ...attrs
         }
       },
       props: Objects.clone(props),
@@ -61,6 +66,14 @@ export abstract class AbstractParser<T, X extends AbstractUISchemaDescriptor, Y 
     return this.options.schema;
   }
 
+  get kind(): FieldKind {
+    return this.options.schema.type;
+  }
+
+  get type(): string | undefined {
+    return undefined;
+  }
+
   get defaultComponent() {
     return this.descriptor.kind
       ? this.options.descriptorConstructor<X>(this.schema, this.descriptor.kind).component
@@ -71,6 +84,10 @@ export abstract class AbstractParser<T, X extends AbstractUISchemaDescriptor, Y 
   abstract parseValue(data: any): T;
 
   protected parseDescriptor() {
+    if (!this.descriptor.kind) {
+      this.descriptor.kind = this.kind;
+    }
+
     if (!this.descriptor.hasOwnProperty('label')) {
       this.descriptor.label = this.schema.title;
     }
@@ -93,16 +110,17 @@ export abstract class AbstractParser<T, X extends AbstractUISchemaDescriptor, Y 
     const labelId = this.field.descriptor.label ? `${id}-label` : undefined;
     const descId = this.field.descriptor.description ? `${id}-desc` : undefined;
     const ariaLabels = [ labelId, descId ].filter((item) => item);
+    const type = this.type;
+
+    if (type) {
+      (this.field.attrs.input as any).type = type;
+    }
 
     if (!this.field.attrs.input.id) {
       this.field.attrs.input.id = id;
     }
 
-    if (!this.field.attrs.input.hasOwnProperty('readonly')) {
-      this.field.attrs.input.readonly = this.schema.readOnly || false;
-    }
-
-    this.field.attrs.input['data-fs-kind'] = this.field.kind;
+    this.field.attrs.input.readonly = this.schema.readOnly || false;
     this.field.attrs.input.required = this.parent && (this.parent as any).required instanceof Array
       ? (this.parent as any).required.includes(this.options.name)
       : true;

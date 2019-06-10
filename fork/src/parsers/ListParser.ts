@@ -1,8 +1,12 @@
 import { AbstractParser } from '@/parsers/AbstractParser';
-import { ListField, ListItem, ScalarDescriptor } from '@/types';
+import { ListField, ListItem, ScalarDescriptor, FieldKind } from '@/types';
 
 export class ListParser extends AbstractParser<any, ScalarDescriptor, ListField> {
   readonly enums: any[] = [];
+
+  get kind(): FieldKind {
+    return 'list';
+  }
 
   get defaultComponent() {
     return this.descriptor.kind
@@ -25,7 +29,6 @@ export class ListParser extends AbstractParser<any, ScalarDescriptor, ListField>
       this.enums.push(...this.schema.enum);
     }
 
-    this.field.kind = 'list';
     this.field.items = this.items;
 
     this.parseField();

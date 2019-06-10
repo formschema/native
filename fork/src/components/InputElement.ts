@@ -6,10 +6,8 @@ export const InputElement: FunctionalComponentOptions = {
   name: 'InputElement',
   functional: true,
   render(h, { data }) {
-    const nodes = [
+    return h(FieldElement, data, [
       CreateInput(h, 'input', data, [])
-    ];
-
-    return h(FieldElement, data, nodes);
+    ]);
   }
 };

@@ -6,17 +6,18 @@ export const FieldElement: FunctionalComponentOptions = {
   functional: true,
   render(h, { data, props, slots }) {
     const attrs = {
-      'data-fs-field': props.field.attrs.input.id,
+      'data-fs-kind': props.field.kind,
+      'data-fs-field': props.field.attrs.input.name,
       'data-fs-required': props.field.attrs.input.required
     };
 
     const labelElement = h('label', {
       attrs: props.field.attrs.label
-    }, props.field.label);
+    }, props.field.descriptor.label);
 
     const fieldElement = h('div', {
       attrs: {
-        'data-fs-field-input': true
+        'data-fs-input': props.field.attrs.input.type || props.field.kind
       }
     }, [
       ...slots().default,

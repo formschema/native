@@ -6,10 +6,8 @@ export const TextareaElement: FunctionalComponentOptions = {
   name: 'TextareaElement',
   functional: true,
   render(h, { data, props }) {
-    const nodes = [
+    return h(FieldElement, data, [
       CreateInput(h, 'textarea', data, props.field.model)
-    ];
-
-    return h(FieldElement, data, nodes);
+    ]);
   }
 };

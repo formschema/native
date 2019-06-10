@@ -3,7 +3,6 @@ import { NullField, ScalarDescriptor } from '@/types';
 
 export class NullParser extends AbstractParser<null, ScalarDescriptor, NullField> {
   parse() {
-    this.field.kind = 'null';
     this.field.attrs.input.type = 'hidden';
     this.field.attrs.input.value = '\u0000';
 

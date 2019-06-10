@@ -39,7 +39,7 @@ export const CreateStateInput = (tag: string) => ({
     props.value = attrs.checked !== true;
 
     const nodes = [
-      h('div', props.field.label),
+      h('div', props.field.descriptor.label),
       h(HelperElement, data)
     ].filter(({ tag }) => tag);
 

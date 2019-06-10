@@ -9,11 +9,16 @@ import {
   ScalarDescriptor,
   AbstractParserOptions,
   AbstractUISchemaDescriptor,
-  EnumFieldChild
+  EnumFieldChild,
+  FieldKind
 } from '@/types';
 
 export class EnumParser extends AbstractParser<any, ScalarDescriptor, EnumField> {
   readonly enums: any[] = [];
+
+  get kind(): FieldKind {
+    return 'enum';
+  }
 
   get defaultComponent() {
     return this.descriptor.kind
@@ -52,7 +57,6 @@ export class EnumParser extends AbstractParser<any, ScalarDescriptor, EnumField>
       this.enums.push(...this.schema.enum);
     }
 
-    this.field.kind = 'enum';
     this.field.children = this.children;
 
     this.parseField();

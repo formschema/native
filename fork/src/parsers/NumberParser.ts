@@ -1,11 +1,21 @@
 import { AbstractParser } from '@/parsers/AbstractParser';
-import { NumberField, ScalarDescriptor } from '@/types';
+import { NumberField, ScalarDescriptor, FieldKind } from '@/types';
 
 export class NumberParser extends AbstractParser<number, ScalarDescriptor, NumberField> {
+  get kind(): FieldKind {
+    return this.isEnum ? 'radio' : 'number';
+  }
+
+  get type() {
+    return this.isEnum ? 'radio' : 'number';
+  }
+
   parse() {
     this.parseField();
     this.parseInputValue();
+  }
 
+  parseExclusiveKeywords() {
     if (this.schema.hasOwnProperty('exclusiveMinimum')) {
       const exclusiveMinimum = this.schema.exclusiveMinimum as any;
 
@@ -20,8 +30,8 @@ export class NumberParser extends AbstractParser<number, ScalarDescriptor, Numbe
   }
 
   parseField() {
-    this.field.kind = this.parent && this.parent.schema.enum ? 'radio' : 'number';
-    this.field.attrs.input.type = 'number';
+    super.parseField();
+
     this.field.attrs.input.min = this.schema.minimum;
     this.field.attrs.input.max = this.schema.maximum;
 
@@ -29,7 +39,7 @@ export class NumberParser extends AbstractParser<number, ScalarDescriptor, Numbe
       this.field.attrs.input.step = this.schema.multipleOf;
     }
 
-    super.parseField();
+    this.parseExclusiveKeywords();
   }
 
   parseValue(data: any): number {
