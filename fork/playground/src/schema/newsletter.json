@@ -39,6 +39,7 @@
       "day": {
         "type": "string",
         "title": "Day",
+        "default": "tuesday",
         "enum": [
           "monday",
           "tuesday",
@@ -66,6 +67,7 @@
       "frequence": {
         "type": "string",
         "title": "Frequence",
+        "default": "weekly",
         "enum": [
           "daily",
           "weekly"

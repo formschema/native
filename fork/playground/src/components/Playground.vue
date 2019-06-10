@@ -261,9 +261,21 @@
     margin-bottom: .2em
   }
 
+  .playground__input__rendering fieldset[data-fs-root="true"] > legend {
+    font-size: 18px;
+  }
+
+  .playground__input__rendering fieldset[data-fs-root="true"] > p {
+    margin-bottom: 25px;
+  }
+
   .playground__input__rendering p {
     text-align: center;
     margin-top: 0;
+  }
+
+  .playground__input__rendering span {
+    color: rgba(0, 0, 0, .6);
   }
 
   .playground__input__rendering fieldset fieldset legend {

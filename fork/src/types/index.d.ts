@@ -81,9 +81,9 @@ export interface EnumField extends Field<'enum', Attributes, ScalarDescriptor> {
 }
 
 export interface ListItem {
-  index: number;
-  value: string;
   label: string;
+  value: string;
+  selected: boolean;
 }
 
 export interface ListField extends Field<'enum', Attributes, ScalarDescriptor> {

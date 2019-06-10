@@ -15,9 +15,9 @@ export class ListParser extends AbstractParser<any, ScalarDescriptor, ListField>
   }
 
   get items(): ListItem[] {
-    return this.enums.map((item, i) => ({
-      index: i,
+    return this.enums.map((item) => ({
       value: item,
+      selected: this.model === item,
       label: this.descriptor.labels
         ? this.descriptor.labels[item] || item
         : item

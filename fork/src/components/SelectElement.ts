@@ -7,8 +7,8 @@ export const SelectElement: FunctionalComponentOptions = {
   name: 'SelectElement',
   functional: true,
   render(h, { data, props }) {
-    const children = props.field.items.map(({ value, label }) => {
-      const attrs = { value };
+    const children = props.field.items.map(({ label, value, selected }) => {
+      const attrs = { value, selected };
 
       return h('option', { attrs }, label);
     });
