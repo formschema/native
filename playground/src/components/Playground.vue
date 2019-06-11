@@ -248,6 +248,7 @@
   }
 
   .playground__input__rendering {
+    width: 100%;
     border-left: 1px solid rgba(255, 255, 255, .1);
     border-right: 1px solid rgba(255, 255, 255, .1);
   }
@@ -258,16 +259,11 @@
     flex-direction: column;
     align-items: flex-start;
     overflow: hidden;
-    width: 100%;
-  }
-
-  .playground__input__model {
-    max-width: 300px;
   }
 
   .playground__input__rendering__viewport {
     flex: 1;
-    padding: 20px;
+    padding: 20px 0 40px;
     overflow: auto;
     margin: auto;
     color: #333;
@@ -365,7 +361,7 @@
   .playground__input__model {
     flex: 0;
     margin: 0;
-    min-width: 300px;
+    min-width: 180px;
   }
 
   .playground__output {
