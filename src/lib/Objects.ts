@@ -37,7 +37,7 @@ export const Objects = Object.freeze({
           dest[key] = {};
         }
 
-        this.assign(dest[key], value);
+        Objects.assign(dest[key] as any, value as any);
       }
     });
 
@@ -45,7 +45,7 @@ export const Objects = Object.freeze({
   },
 
   clone(object: Dictionary) {
-    return this.assign({}, object);
+    return Objects.assign({}, object);
   },
 
   clear(object: Dictionary) {
