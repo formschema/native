@@ -1,9 +1,9 @@
-import { Dictionary, Component, ComponentsType, IComponents } from '@/types';
+import { Dictionary, Component, ComponentsType, ComponentsDeclaration } from '@/types';
 
-export class Components implements IComponents {
-  readonly $: Dictionary<Component>;
+export class Components implements ComponentsDeclaration {
+  public readonly $: Dictionary<Component>;
 
-  constructor () {
+  public constructor () {
     this.$ = {
       form: 'form',
       boolean: 'input',
@@ -15,11 +15,11 @@ export class Components implements IComponents {
     };
   }
 
-  set(kind: ComponentsType, component: Component) {
+  public set(kind: ComponentsType, component: Component) {
     this.$[kind] = component;
   }
 
-  get(kind: ComponentsType) {
+  public get(kind: ComponentsType) {
     return this.$[kind] || this.$.default;
   }
 }

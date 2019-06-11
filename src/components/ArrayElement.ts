@@ -36,7 +36,7 @@ export const ArrayElement: ArrayComponent = {
     });
 
     if (limit < props.field.count) {
-      props.field.additionalItems.forEach((field) =>  {
+      props.field.additionalItems.forEach((field) => {
         nodes.push(renderField(h, field, props));
       });
     }

@@ -11,25 +11,29 @@ import {
 
 export type Parent = AbstractParser<any, AbstractUISchemaDescriptor, UnknowField>;
 
-export abstract class AbstractParser<T_Model, T_Descriptor extends AbstractUISchemaDescriptor, T_Field extends Field<any>> {
-  readonly isRoot: boolean;
-  readonly isEnumItem: boolean;
-  readonly isArrayItem: boolean;
-  readonly name?: string;
-  readonly parent?: Parent;
-  readonly root: Parent;
-  model: T_Model;
-  readonly options: AbstractParserOptions<T_Model, T_Descriptor>;
-  readonly field: T_Field;
-  readonly descriptor: T_Descriptor;
+export abstract class AbstractParser<
+  TModel,
+  TDescriptor extends AbstractUISchemaDescriptor,
+  TField extends Field<any>
+> {
+  protected readonly isRoot: boolean;
+  protected readonly isEnumItem: boolean;
+  protected readonly isArrayItem: boolean;
+  protected readonly name?: string;
+  protected readonly parent?: Parent;
+  protected readonly root: Parent;
+  protected model: TModel;
+  protected readonly options: AbstractParserOptions<TModel, TDescriptor>;
+  public readonly field: TField;
+  protected readonly descriptor: TDescriptor;
 
-  constructor(options: AbstractParserOptions<T_Model, T_Descriptor>, parent?: Parent) {
+  public constructor(options: AbstractParserOptions<TModel, TDescriptor>, parent?: Parent) {
     this.parent = parent;
     this.options = options;
     this.root = parent ? parent.root || this : this;
     this.isRoot = !parent;
     this.isEnumItem = !!parent && parent.schema.enum instanceof Array;
-    this.isArrayItem = !!parent && parent.schema.type === 'array'
+    this.isArrayItem = !!parent && parent.schema.type === 'array';
     this.name = parent && !this.isEnumItem
       ? options.name
         ? parent.isRoot || this.isArrayItem
@@ -37,7 +41,7 @@ export abstract class AbstractParser<T_Model, T_Descriptor extends AbstractUISch
           : `${parent.name}.${options.name}` : options.name
       : options.name;
 
-    const defaultDescriptor = options.descriptorConstructor<T_Descriptor>(this.schema);
+    const defaultDescriptor = options.descriptorConstructor<TDescriptor>(this.schema);
 
     this.descriptor = options.descriptor || defaultDescriptor;
     this.model = this.parseValue(this.initialValue);
@@ -59,7 +63,7 @@ export abstract class AbstractParser<T_Model, T_Descriptor extends AbstractUISch
       isRoot: this.isRoot,
       required: isRequired,
       default: this.parseValue(options.schema.default),
-      set: (value: T_Model) => {
+      set: (value: TModel) => {
         if (this.isEnumItem) {
           this.setEnumValue(value);
         } else {
@@ -71,7 +75,7 @@ export abstract class AbstractParser<T_Model, T_Descriptor extends AbstractUISch
       get model() {
         return self.model;
       },
-      set model(value: T_Model) {
+      set model(value: TModel) {
         self.model = value;
 
         if (parent) {
@@ -80,15 +84,15 @@ export abstract class AbstractParser<T_Model, T_Descriptor extends AbstractUISch
 
             // options.$vue.$set(parent.field.model, options.name as string, self.model);
           } else {
-            console.log('unset:>', { value, parent })
+            // console.log('unset:>', { value, parent });
           }
         } else {
-          console.log('unset:>', { value, parent })
+          // console.log('unset:>', { value, parent });
         }
       },
       attrs: {
         input: {
-          type: void(0),
+          type: undefined,
           name: this.isArrayItem && this.name ? `${this.name}[]` : this.name,
           ...attrs
         }
@@ -96,50 +100,53 @@ export abstract class AbstractParser<T_Model, T_Descriptor extends AbstractUISch
       props: Objects.clone(props),
       descriptor: this.descriptor,
       component: this.descriptor.component || this.defaultComponent || defaultDescriptor.component,
-      parent: parent ? parent.field : void(0)
+      parent: parent ? parent.field : undefined
     } as any;
   }
 
-  get schema() {
+  public get schema() {
     return this.options.schema;
   }
 
-  get kind(): FieldKind {
+  public get kind(): FieldKind {
     return this.options.schema.type;
   }
 
-  get type(): string | undefined {
-    return void(0);
+  public get type(): string | undefined {
+    return undefined;
   }
 
-  get initialValue() {
-    if (this.options.model !== void(0)) {
+  protected get initialValue() {
+    if (typeof this.options.model !== 'undefined') {
       return this.options.model;
-    } else if (this.schema.hasOwnProperty('default')) {
+    }
+
+    if (this.schema.hasOwnProperty('default')) {
       return this.schema.default;
     }
 
-    return void(0);
+    return undefined;
   }
 
-  get defaultComponent() {
+  protected get defaultComponent() {
     return this.descriptor.kind
-      ? this.options.descriptorConstructor<T_Descriptor>(this.schema, this.descriptor.kind).component
-      : void(0);
+      ? this.options.descriptorConstructor<TDescriptor>(this.schema, this.descriptor.kind).component
+      : undefined;
   }
 
-  get parsedSchema() {
+  protected get parsedSchema() {
     return this.options.schema;
   }
 
-  abstract parse(): void;
-  abstract parseValue(data: any): T_Model;
+  public abstract parse(): void;
 
-  setValue(value: T_Model) {
+  protected abstract parseValue(data: any): TModel;
+
+  protected setValue(value: TModel) {
     this.field.model = this.parseValue(value);
   }
 
-  setEnumValue(value: T_Model) {
+  protected setEnumValue(value: TModel) {
     if (this.parent) {
       this.parent.field.model = value;
     }
@@ -161,8 +168,8 @@ export abstract class AbstractParser<T_Model, T_Descriptor extends AbstractUISch
 
   protected parseField() {
     const id = this.field.attrs.input.id || UniqueId.get(this.name);
-    const labelId = this.field.descriptor.label ? `${id}-label` : void(0);
-    const descId = this.field.descriptor.description ? `${id}-desc` : void(0);
+    const labelId = this.field.descriptor.label ? `${id}-label` : undefined;
+    const descId = this.field.descriptor.description ? `${id}-desc` : undefined;
     const ariaLabels = [ labelId, descId ].filter((item) => item);
     const type = this.type;
 

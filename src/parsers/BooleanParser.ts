@@ -2,18 +2,18 @@ import { AbstractParser } from '@/parsers/AbstractParser';
 import { BooleanField, ScalarDescriptor } from '@/types';
 
 export class BooleanParser extends AbstractParser<boolean, ScalarDescriptor, BooleanField> {
-  parse() {
+  public parse(): void {
     this.parseField();
 
     this.field.attrs.input.type = 'checkbox';
     this.field.attrs.input.checked = this.field.model === true;
   }
 
-  setValue(checked: boolean) {
+  protected setValue(checked: boolean): void {
     this.field.model = checked;
   }
 
-  parseValue(data: any): boolean {
-    return data || false;
+  protected parseValue(checked: boolean): boolean {
+    return checked || false;
   }
 }

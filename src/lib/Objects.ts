@@ -39,7 +39,7 @@ export const Objects = Object.freeze({
 
         this.assign(dest[key], value);
       }
-    })
+    });
 
     return dest;
   },

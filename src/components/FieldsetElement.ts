@@ -1,4 +1,4 @@
-import { HelperElement } from "@/components/HelperElement";
+import { HelperElement } from '@/components/HelperElement';
 import { FieldsetComponent } from '@/types';
 
 export const FieldsetElement: FieldsetComponent = {

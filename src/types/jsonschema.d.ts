@@ -49,7 +49,7 @@ export interface JsonSchema {
    * Default json for the object represented by
    * this schema
    */
-  'default'?: any;
+  'default'?: unknown;
 
   // ///////////////////////////////////////////////
   // Number Validation
@@ -130,7 +130,7 @@ export interface JsonSchema {
    * {"type": "string",
      *  "enum": ["red", "green", "blue"]}
    */
-  'enum'?: any[];
+  'enum'?: unknown[];
   /**
    * The basic type of this schema, can be one of
    * [string, number, object, array, boolean, null]

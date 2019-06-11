@@ -14,20 +14,20 @@ import {
 } from '@/types';
 import { UniqueId } from '@/lib/UniqueId';
 
-export class EnumParser extends AbstractParser<any, ScalarDescriptor, EnumField> {
-  readonly enums: any[] = [];
+export class EnumParser extends AbstractParser<unknown, ScalarDescriptor, EnumField> {
+  protected readonly enums: any[] = [];
 
-  get kind(): FieldKind {
+  public get kind(): FieldKind {
     return 'enum';
   }
 
-  get defaultComponent() {
+  protected get defaultComponent() {
     return this.descriptor.kind
       ? this.options.descriptorConstructor<ScalarDescriptor>(this.schema, this.descriptor.kind).component
       : this.options.descriptorConstructor(this.schema, 'enum').component;
   }
 
-  get children(): RadioField[] {
+  protected get children(): RadioField[] {
     const radioName = this.name || UniqueId.get();
 
     return this.enums.map((item) => {
@@ -41,7 +41,7 @@ export class EnumParser extends AbstractParser<any, ScalarDescriptor, EnumField>
 
       delete itemSchema.enum;
 
-      const options: AbstractParserOptions<any, AbstractUISchemaDescriptor> = {
+      const options: AbstractParserOptions<unknown, AbstractUISchemaDescriptor> = {
         schema: itemSchema,
         model: item,
         descriptor: this.options.descriptorConstructor(itemSchema),
@@ -51,15 +51,15 @@ export class EnumParser extends AbstractParser<any, ScalarDescriptor, EnumField>
       };
 
       const parser = Parser.get(options, this);
-      const field: RadioField = parser.field as any;
+      const field = parser.field as unknown as RadioField;
 
       field.attrs.input.checked = item === this.model;
 
-      return field as any;
+      return field;
     });
   }
 
-  parse() {
+  public parse() {
     if (this.schema.enum instanceof Array) {
       this.enums.push(...this.schema.enum);
     }
@@ -69,7 +69,7 @@ export class EnumParser extends AbstractParser<any, ScalarDescriptor, EnumField>
     this.parseField();
   }
 
-  parseValue(data: any): string {
-    return data !== void(0) ? data : '';
+  protected parseValue(data: unknown): unknown {
+    return typeof data !== 'undefined' ? data : '';
   }
 }

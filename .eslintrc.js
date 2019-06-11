@@ -5,25 +5,50 @@ module.exports = {
   env: {
     browser: true
   },
+  parser: '@typescript-eslint/parser',
+  plugins: [
+    'import',
+    '@typescript-eslint'
+  ],
   extends: [
     'eslint:recommended',
-    'plugin:vue/strongly-recommended',
-    '@vue/airbnb',
-    '@vue/typescript'
+    'airbnb-base',
+    'plugin:import/errors',
+    'plugin:import/warnings',
+    'plugin:import/typescript',
+    'plugin:@typescript-eslint/eslint-recommended',
+    'plugin:@typescript-eslint/recommended'
   ],
+  settings: {
+    'import/resolver': {
+      typescript: {}
+    }
+  },
   rules: {
+    'import/no-unresolved': 'error',
+    '@typescript-eslint/indent': ['error', 2],
+    '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
+    'import/prefer-default-export': 'off',
+    'import/no-extraneous-dependencies': 'off',
+    'import/no-cycle': 'off',
     'comma-dangle': 'off',
-    'semi': 'off',
+    'prefer-destructuring': 'off',
+    'semi': ['error', 'always'],
     'class-methods-use-this': 'error',
     'block-scoped-var': 'error',
     'no-console': 'error',
     'no-debugger': 'error',
     'no-lonely-if': 'error',
     'no-plusplus': 'off',
+    'lines-between-class-members': 'off',
+    'class-methods-use-this': ['error', {
+      exceptMethods: ['type', 'kind', 'parseValue']
+    }],
     'max-len': [
       'error',
       {
-        code: 80,
+        code: 120,
         comments: 120,
         tabWidth: 2,
         ignoreUrls: true,
@@ -40,7 +65,8 @@ module.exports = {
       }
     ],
     'arrow-parens': [ 'error', 'always' ],
-    'arrow-body-style': [ 'error', 'as-needed' ],
+    'arrow-body-style': 'off',
+    'object-shorthand': 'off',
     'guard-for-in': 'off',
     'no-nested-ternary': 'off',
     'object-curly-newline': 'off',
@@ -57,8 +83,5 @@ module.exports = {
       { 'blankLine': 'always', 'prev': 'block-like', 'next': '*' },
       { 'blankLine': 'always', 'prev': '*', 'next': 'block-like' }
     ]
-  },
-  parserOptions: {
-    parser: '@typescript-eslint/parser'
   }
 }

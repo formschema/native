@@ -1,25 +1,20 @@
 import { VNode } from 'vue/types/vnode';
 import { Vue, CreateElement } from 'vue/types/vue';
+import { JsonSchema } from '@/types/jsonschema';
 
 import {
   Component as VueComponent,
   FunctionalComponentOptions,
   ComponentOptions,
-  PropsDefinition,
-  RecordPropsDefinition,
   RenderContext,
   AsyncComponent
 } from 'vue/types/options';
 
-import { JsonSchema } from "@/types/jsonschema";
-
 export type Scalar = boolean | number | null | string;
-export type Dictionary<T = any> = { [key: string]: T };
+export interface Dictionary<T = unknown> { [key: string]: T }
 export type ComponentsType = 'form' | FieldKind;
 
-export interface AttrsDeclaration {}
-
-export interface Attributes extends AttrsDeclaration {
+export interface Attributes {
   id: string;
   name?: string;
   readonly: boolean;
@@ -67,15 +62,20 @@ export type SchemaType = 'object' | 'array' | 'string' | 'number' | 'integer' | 
 export type FieldKind = SchemaType | 'enum' | 'radio' | 'list' | 'textarea';
 export type Component = string | VueComponent | AsyncComponent;
 
-export interface Field<T_Kind extends FieldKind, T_Attributes = Attributes, T_Descriptor = DescriptorInstance, T_Model = any> {
-  kind: T_Kind;
+export interface Field<
+  TKind extends FieldKind,
+  TAttributes = Attributes,
+  TDescriptor = DescriptorInstance,
+  TModel = unknown
+> {
+  kind: TKind;
   name?: string;
   isRoot: boolean;
   required: boolean;
-  default?: T_Model;
-  model: T_Model;
+  default?: TModel;
+  model: TModel;
   attrs: {
-    input: T_Attributes;
+    input: TAttributes;
     label: {
       id?: string;
       for: string;
@@ -87,20 +87,19 @@ export interface Field<T_Kind extends FieldKind, T_Attributes = Attributes, T_De
     };
   };
   props: {
-    [prop: string]: any;
+    [prop: string]: unknown;
   };
-  descriptor: T_Descriptor;
+  descriptor: TDescriptor;
   component: Component;
   parent?: Field<any>;
-  set(value: T_Model): void;
+  set(value: TModel): void;
 }
 
-export interface BooleanField extends Field<'boolean', BooleanAttributes, ScalarDescriptor, boolean> {}
-export interface NumberField extends Field<'number', NumberAttributes, ScalarDescriptor, number> {}
-export interface NullField extends Field<'null', NullAttributes, ScalarDescriptor, null> {}
-export interface StringField extends Field<'string', StringAttributes, ScalarDescriptor, string> {}
-export interface RadioField extends Field<'radio', RadioAttributes, ScalarDescriptor, string> {}
-
+export type BooleanField = Field<'boolean', BooleanAttributes, ScalarDescriptor, boolean>;
+export type NumberField = Field<'number', NumberAttributes, ScalarDescriptor, number>;
+export type NullField = Field<'null', NullAttributes, ScalarDescriptor, null>;
+export type StringField = Field<'string', StringAttributes, ScalarDescriptor, string>;
+export type RadioField = Field<'radio', RadioAttributes, ScalarDescriptor, string>;
 export type InputField = BooleanField | NumberField | NullField | StringField | RadioField;
 export type UnknowField = Field<any, Attributes, DescriptorInstance>;
 
@@ -143,13 +142,13 @@ export interface ObjectField extends Field<'object', Attributes, ObjectDescripto
   order: string[];
 }
 
-export interface AbstractParserOptions<T_Model, T_Descriptor extends AbstractUISchemaDescriptor> {
+export interface AbstractParserOptions<TModel, TDescriptor extends AbstractUISchemaDescriptor> {
   readonly schema: JsonSchema;
-  readonly model: T_Model;
-  readonly descriptor?: T_Descriptor;
+  readonly model: TModel;
+  readonly descriptor?: TDescriptor;
   readonly descriptorConstructor: DescriptorConstructor;
   readonly name?: string;
-  readonly $vue: Vue
+  readonly $vue: Vue;
 }
 
 export interface AbstractUISchemaDescriptor {
@@ -158,10 +157,10 @@ export interface AbstractUISchemaDescriptor {
   description?: string;
   component?: Component;
   attrs?: {
-    [attr: string]: any;
+    [attr: string]: unknown;
   };
   props?: {
-    [prop: string]: any;
+    [prop: string]: unknown;
   };
 }
 
@@ -186,19 +185,10 @@ export interface ArrayDescriptor extends AbstractUISchemaDescriptor {
 export type DescriptorInstance = ScalarDescriptor | ObjectDescriptor | ArrayDescriptor;
 export type DescriptorConstructor = <T = DescriptorInstance>(schema: JsonSchema, kind?: FieldKind) => T;
 
-export type FormSchemaData = (this: Vue) => ({
-  ref: string;
-  field: UnknowField | null;
-  default: any;
-  data: any;
-});
-
-export type FormSchemaComputed = {};
-
 export interface FormSchemaVue extends Vue {
   // props
   schema: JsonSchema;
-  value?: any;
+  value?: unknown;
   id: string;
   name?: string;
   search: boolean;
@@ -232,7 +222,7 @@ export interface FormSchemaMethods {
 }
 
 export interface FormSchemaComponent<V extends FormSchemaVue = FormSchemaVue> extends ComponentOptions<V> {
-  watch?: Record<string, WatchOptionsWithHandler<V, any> | WatchHandler<V, any> | string>;
+  watch?: Record<string, WatchOptionsWithHandler<V, unknown> | WatchHandler<V, unknown> | string>;
 
   render?(this: V, createElement: CreateElement, hack: RenderContext<Props>): VNode;
   renderError?(this: V, createElement: CreateElement, err: Error): VNode;
@@ -252,8 +242,7 @@ export interface FormSchemaComponent<V extends FormSchemaVue = FormSchemaVue> ex
   serverPrefetch?(this: V): Promise<void>;
 }
 
-export type Props = Record<string, any>;
-
+export type Props = Record<string, unknown>;
 export type WatchHandler<V extends Vue, T> = (this: V, val: T, oldVal: T) => void;
 
 export interface WatchOptions {
@@ -265,29 +254,29 @@ export interface WatchOptionsWithHandler<V extends Vue, T> extends WatchOptions 
   handler: WatchHandler<V, T>;
 }
 
-interface IComponents {
+export interface ComponentsDeclaration {
   readonly $: Dictionary<Component>;
   set(kind: ComponentsType, component: Component): void;
   get(kind: ComponentsType): Component;
 }
 
-interface ElementProps<T extends Field<any>> {
+export interface ElementProps<T extends Field<any>> {
   field: T;
-  value: any;
+  value: unknown;
   disabled: boolean;
-  components: IComponents;
+  components: ComponentsDeclaration;
 }
 
-type ArrayButtonComponent = FunctionalComponentOptions<ElementProps<ArrayField>>;
-type ArrayComponent = FunctionalComponentOptions<ElementProps<ArrayField>>;
-type BooleanComponent = FunctionalComponentOptions<ElementProps<BooleanField>>;
-type InputComponent = FunctionalComponentOptions<ElementProps<InputField>>;
-type FieldComponent = FunctionalComponentOptions<ElementProps<UnknowField>>;
-type FieldsetComponent = FunctionalComponentOptions<ElementProps<ObjectField>>;
-type HelperComponent = FunctionalComponentOptions<ElementProps<UnknowField>>;
-type ListComponent = FunctionalComponentOptions<ElementProps<ListField>>;
-type TextareaComponent = FunctionalComponentOptions<ElementProps<StringField>>;
+export type ArrayButtonComponent = FunctionalComponentOptions<ElementProps<ArrayField>>;
+export type ArrayComponent = FunctionalComponentOptions<ElementProps<ArrayField>>;
+export type BooleanComponent = FunctionalComponentOptions<ElementProps<BooleanField>>;
+export type InputComponent = FunctionalComponentOptions<ElementProps<InputField>>;
+export type FieldComponent = FunctionalComponentOptions<ElementProps<UnknowField>>;
+export type FieldsetComponent = FunctionalComponentOptions<ElementProps<ObjectField>>;
+export type HelperComponent = FunctionalComponentOptions<ElementProps<UnknowField>>;
+export type ListComponent = FunctionalComponentOptions<ElementProps<ListField>>;
+export type TextareaComponent = FunctionalComponentOptions<ElementProps<StringField>>;
 
-interface InputEvent extends Event {
+export interface InputEvent extends Event {
   readonly target: any;
 }

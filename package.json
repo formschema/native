@@ -8,8 +8,8 @@
     "playground": "cd playground && npm run serve",
     "test": "vue-cli-service test:unit",
     "testdebug": "node --inspect-brk ./node_modules/@vue/cli-service/bin/vue-cli-service.js test:unit --runInBand",
-    "lint": "vue-cli-service lint --no-fix",
-    "lint:fix": "vue-cli-service lint",
+    "lint": "eslint src/**/*",
+    "lint:fix": "eslint --fix src/**/*",
     "lint-test": "eslint tests",
     "readme": "vuedoc.md --join src/components/*.js --ignore-name --ignore-data --section 'FormSchema API' --output README.md",
     "build": "rollup -c"
@@ -36,15 +36,18 @@
     "@babel/preset-env": "^7.4.5",
     "@types/jest": "^24.0.13",
     "@types/sinon": "^7.0.12",
-    "@vue/cli-plugin-babel": "^3.8.0",
-    "@vue/cli-plugin-eslint": "^3.8.0",
+    "@typescript-eslint/eslint-plugin": "^1.10.2",
+    "@typescript-eslint/parser": "^1.10.2",
     "@vue/cli-plugin-unit-jest": "^3.8.0",
     "@vue/cli-service": "^3.8.0",
-    "@vue/eslint-config-airbnb": "^4.0.0",
     "@vue/test-utils": "^1.0.0-beta.28",
     "@vuedoc/md": "^1.6.0",
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^24.8.0",
+    "eslint": "^5.3.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-import-resolver-typescript": "^1.1.1",
+    "eslint-plugin-import": "^2.17.3",
     "regenerator-runtime": "^0.12.1",
     "rollup": "^1.14.6",
     "rollup-plugin-node-resolve": "^5.0.1",
@@ -54,10 +57,8 @@
     "ts-jest": "^24.0.2",
     "tslib": "^1.9.3",
     "typescript": "^3.5.1",
+    "typescript-eslint-parser": "^22.0.0",
     "vue": "^2.6.10",
     "vue-template-compiler": "^2.6.10"
-  },
-  "peerDependencies": {
-    "vue": "^2.6.10"
   }
 }

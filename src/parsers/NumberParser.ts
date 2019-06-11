@@ -2,39 +2,39 @@ import { AbstractParser } from '@/parsers/AbstractParser';
 import { NumberField, ScalarDescriptor, FieldKind } from '@/types';
 
 export class NumberParser extends AbstractParser<number, ScalarDescriptor, NumberField> {
-  get kind(): FieldKind {
+  public get kind(): FieldKind {
     return this.isEnumItem ? 'radio' : 'number';
   }
 
-  get type() {
+  public get type() {
     return this.isEnumItem ? 'radio' : 'number';
   }
 
-  parse() {
+  public parse() {
     this.parseField();
   }
 
-  parseExclusiveKeywords() {
+  protected parseExclusiveKeywords() {
     if (this.schema.hasOwnProperty('exclusiveMinimum')) {
-      const exclusiveMinimum = this.schema.exclusiveMinimum as any;
+      const exclusiveMinimum = this.schema.exclusiveMinimum as number;
 
-      this.field.attrs.input.min = Number.parseFloat(exclusiveMinimum) + 0.1;
+      this.field.attrs.input.min = exclusiveMinimum + 0.1;
     }
 
     if (this.schema.hasOwnProperty('exclusiveMaximum')) {
-      const exclusiveMaximum = this.schema.exclusiveMaximum as any;
+      const exclusiveMaximum = this.schema.exclusiveMaximum as number;
 
-      this.field.attrs.input.max = Number.parseFloat(exclusiveMaximum) - 0.1;
+      this.field.attrs.input.max = exclusiveMaximum - 0.1;
     }
   }
 
-  parseField() {
+  protected parseField() {
     super.parseField();
 
     this.field.attrs.input.min = this.schema.minimum;
     this.field.attrs.input.max = this.schema.maximum;
 
-    if (!Number.isNaN(this.field.model) && this.field.model !== void(0)) {
+    if (!Number.isNaN(this.field.model) && typeof this.field.model !== 'undefined') {
       this.field.attrs.input.value = `${this.field.model}`;
     }
 
@@ -45,9 +45,9 @@ export class NumberParser extends AbstractParser<number, ScalarDescriptor, Numbe
     this.parseExclusiveKeywords();
   }
 
-  parseValue(data: any): number {
-    const value = data !== void(0) ? Number(data) : data;
+  protected parseValue(data: number): number {
+    const value = typeof data !== 'undefined' ? Number(data) : data;
 
-    return Number.isNaN(value) ? void(0) as any : Number.parseFloat(value);
+    return Number.isNaN(value) ? undefined as any : Number.parseFloat(`${value}`);
   }
 }

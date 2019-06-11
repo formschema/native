@@ -3,9 +3,9 @@ import { UniqueId as UniqueIdLib } from '@/lib/UniqueId';
 import { Parser } from '@/parsers/Parser';
 import { JsonSchema } from '@/types/jsonschema';
 import { Objects as ObjectsLib } from '@/lib/Objects';
-import { Components as ComponentsLib} from '@/lib/Components';
-import { NativeElements } from "@/lib/NativeElements";
-import { NativeDescriptor } from "@/descriptors/NativeDescriptor";
+import { Components as ComponentsLib } from '@/lib/Components';
+import { NativeElements } from '@/lib/NativeElements';
+import { NativeDescriptor } from '@/descriptors/NativeDescriptor';
 
 export const GLOBAL = {
   Elements: NativeElements,
@@ -155,7 +155,7 @@ const FormSchema: FormSchemaComponent = {
      * @note The default value of `model` is the initial model defined with the
      * `v-model` directive.
      */
-    load (schema: JsonSchema, model: any = undefined, reset = true) {
+    load (schema: JsonSchema, model: unknown = undefined, reset = true) {
       if (Objects.isEmpty(schema)) {
         this.field = null;
       } else {
@@ -246,7 +246,7 @@ const FormSchema: FormSchemaComponent = {
      * Reset the value of all elements of the parent form.
      */
     reset () {
-      const form = this.form()
+      const form = this.form();
 
       if (form && 'reset' in form) {
         form.reset();

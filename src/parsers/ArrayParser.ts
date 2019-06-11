@@ -13,31 +13,31 @@ import {
 } from '@/types';
 
 export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField> {
-  readonly items: any[] = [];
-  readonly additionalItems: any[] = [];
+  protected readonly items: any[] = [];
+  protected readonly additionalItems: any[] = [];
 
-  get kind(): FieldKind {
+  public get kind(): FieldKind {
     return 'array';
   }
 
-  get fields() {
+  protected get fields() {
     return this.getFields(this.items);
   }
 
-  get additionalFields() {
+  protected get additionalFields() {
     return this.getFields(this.additionalItems);
   }
 
-  getFields(items: JsonSchema[]): ArrayItemField[] {
+  protected getFields(items: JsonSchema[]): ArrayItemField[] {
     return items.map((itemSchema, i) => {
       const defaultDescriptor = this.options.descriptorConstructor(itemSchema);
       const itemDescriptor = this.field.descriptor.items
         ? this.field.descriptor.items[i] || defaultDescriptor
         : defaultDescriptor;
 
-      const options: AbstractParserOptions<any, AbstractUISchemaDescriptor> = {
+      const options: AbstractParserOptions<unknown, AbstractUISchemaDescriptor> = {
         schema: itemSchema,
-        model: this.model[i] !== void(0) ? this.model[i] : itemSchema.default,
+        model: typeof this.model[i] !== 'undefined' ? this.model[i] : itemSchema.default,
         descriptor: itemDescriptor,
         descriptorConstructor: this.options.descriptorConstructor,
         name: this.name,
@@ -45,13 +45,13 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
       };
 
       const parser = Parser.get(options, this);
-      const field: ArrayItemField = parser.field as any;
+      const field: ArrayItemField = parser.field;
 
-      return field as any;
+      return field;
     });
   }
 
-  parse() {
+  public parse() {
     if (this.schema.items) {
       if (this.schema.items instanceof Array) {
         this.items.push(...this.schema.items);
@@ -63,7 +63,7 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
     }
 
     if (this.schema.additionalItems) {
-      const additionalItems: JsonSchema = this.schema.additionalItems as any;
+      const additionalItems = this.schema.additionalItems as JsonSchema;
 
       if (!Objects.isEmpty(additionalItems)) {
         this.additionalItems.push(this.schema.additionalItems);
@@ -73,12 +73,11 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
     this.parseField();
   }
 
-  parseField() {
+  protected parseField() {
     super.parseField();
 
     this.field.definedAsObject = !Array.isArray(this.schema.items);
     this.field.items = this.fields;
-    this.field.model = this.schema.default || [];
     this.field.additionalItems = this.additionalFields;
     this.field.additionalLabels = this.field.additionalItems.map(({ descriptor }, i) => descriptor.label || `Item ${i}`);
     this.field.uniqueItems = this.schema.uniqueItems === true;
@@ -97,7 +96,7 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
     }
   }
 
-  parseValue(data: any): string {
-    return data !== void(0) ? data : '';
+  protected parseValue(data: unknown[]): unknown[] {
+    return data instanceof Array ? data : [];
   }
 }

@@ -1,5 +1,5 @@
-import { HelperElement } from "@/components/HelperElement";
-import { Dictionary, FieldComponent } from '@/types';
+import { HelperElement } from '@/components/HelperElement';
+import { Dictionary, FieldComponent, StringAttributes } from '@/types';
 
 export const FieldElement: FieldComponent = {
   name: 'FieldElement',
@@ -22,7 +22,7 @@ export const FieldElement: FieldComponent = {
 
     const fieldElement = h('div', {
       attrs: {
-        'data-fs-input': (props.field.attrs.input as any).type || props.field.kind
+        'data-fs-input': (props.field.attrs.input as StringAttributes).type || props.field.kind
       }
     }, fieldNodes);
 

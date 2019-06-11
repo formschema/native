@@ -1,5 +1,5 @@
 import { CreateInput } from '@/lib/CreateInput';
-import { FieldElement } from "@/components/FieldElement";
+import { FieldElement } from '@/components/FieldElement';
 import { InputComponent, InputField } from '@/types';
 
 export const InputElement: InputComponent = {

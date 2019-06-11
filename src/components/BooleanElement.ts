@@ -1,4 +1,4 @@
-import { FieldElement } from "@/components/FieldElement";
+import { FieldElement } from '@/components/FieldElement';
 import { BooleanComponent, InputEvent } from '@/types';
 
 export const BooleanElement: BooleanComponent = {
