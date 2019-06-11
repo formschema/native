@@ -5,11 +5,11 @@ import { JsonSchema } from '@/types/jsonschema';
 import { Objects as ObjectsLib } from '@/lib/Objects';
 import { Components as ComponentsLib} from '@/lib/Components';
 import { NativeElements } from "@/lib/NativeElements";
-import { Descriptor } from "@/descriptors/Descriptor";
+import { NativeDescriptor } from "@/descriptors/NativeDescriptor";
 
 export const GLOBAL = {
-  NativeElements,
-  Descriptor
+  Elements: NativeElements,
+  Descriptor: NativeDescriptor
 };
 
 export const Objects = ObjectsLib;
@@ -72,7 +72,7 @@ const FormSchema: FormSchemaComponent = {
      */
     components: {
       type: Components,
-      default: () => GLOBAL.NativeElements
+      default: () => GLOBAL.Elements
     },
 
     /**

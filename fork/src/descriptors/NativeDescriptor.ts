@@ -10,16 +10,15 @@ import {
   DescriptorInstance
 } from '@/types';
 
-export const Descriptor = {
+export const NativeDescriptor = {
   get<T = DescriptorInstance>(schema: JsonSchema, kind?: FieldKind): T {
     const element = NativeElements.get(kind || schema.type);
-    const component = element || NativeElements.get(schema.type);
 
     if (Schema.isScalar(schema)) {
       const descriptor: ScalarDescriptor = {
         label: schema.title,
         description: schema.description,
-        component: component,
+        component: element,
         attrs: {},
         props: {},
         labels: {}
@@ -32,7 +31,7 @@ export const Descriptor = {
       const descriptor: ArrayDescriptor = {
         label: schema.title,
         description: schema.description,
-        component: component,
+        component: element,
         attrs: {},
         props: {},
         items: [],
@@ -45,7 +44,7 @@ export const Descriptor = {
     const descriptor: ObjectDescriptor = {
       label: schema.title,
       description: schema.description,
-      component: component,
+      component: element,
       attrs: {},
       props: {},
       order: []
