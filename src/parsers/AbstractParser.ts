@@ -6,7 +6,8 @@ import {
   AbstractUISchemaDescriptor,
   AbstractParserOptions,
   FieldKind,
-  UnknowField
+  UnknowField,
+  Dictionary
 } from '@/types';
 
 export type Parent = AbstractParser<any, AbstractUISchemaDescriptor, UnknowField>;
@@ -80,7 +81,9 @@ export abstract class AbstractParser<
 
         if (parent) {
           if (parent.schema.type === 'object') {
-            parent.field.model[options.name as string] = self.model;
+            const parentModel = parent.field.model as any;
+
+            parentModel[options.name as string] = self.model;
 
             // options.$vue.$set(parent.field.model, options.name as string, self.model);
           } else {

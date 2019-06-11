@@ -222,7 +222,7 @@ export interface FormSchemaMethods {
 }
 
 export interface FormSchemaComponent<V extends FormSchemaVue = FormSchemaVue> extends ComponentOptions<V> {
-  watch?: Record<string, WatchOptionsWithHandler<V, unknown> | WatchHandler<V, unknown> | string>;
+  watch?: Record<string, WatchOptionsWithHandler<V, any> | WatchHandler<V, any> | string>;
 
   render?(this: V, createElement: CreateElement, hack: RenderContext<Props>): VNode;
   renderError?(this: V, createElement: CreateElement, err: Error): VNode;
