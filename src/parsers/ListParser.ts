@@ -1,7 +1,7 @@
 import { AbstractParser } from '@/parsers/AbstractParser';
 import { ListField, ListItem, ScalarDescriptor, FieldKind } from '@/types';
 
-export class ListParser extends AbstractParser<any, ScalarDescriptor, ListField> {
+export class ListParser extends AbstractParser<unknown, ScalarDescriptor, ListField> {
   protected readonly enums: any[] = [];
 
   public get kind(): FieldKind {
@@ -34,7 +34,7 @@ export class ListParser extends AbstractParser<any, ScalarDescriptor, ListField>
     this.parseField();
   }
 
-  protected parseValue(data: any): any[] {
-    return data instanceof Array ? data : [];
+  protected parseValue(data: any): unknown {
+    return typeof data !== 'undefined' ? data : undefined;
   }
 }
