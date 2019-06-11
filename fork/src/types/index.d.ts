@@ -24,6 +24,7 @@ export interface Attributes extends AttrsDeclaration {
   name?: string;
   readonly: boolean;
   required: boolean;
+  disabled?: boolean;
   'aria-required'?: 'true';
   'aria-labelledby'?: string;
 }
@@ -66,15 +67,15 @@ export type SchemaType = 'object' | 'array' | 'string' | 'number' | 'integer' | 
 export type FieldKind = SchemaType | 'enum' | 'radio' | 'list' | 'textarea';
 export type Component = string | VueComponent | AsyncComponent;
 
-export interface Field<T extends FieldKind, X = Attributes, Y = DescriptorInstance, Z = any> {
-  kind: T;
+export interface Field<T_Kind extends FieldKind, T_Attributes = Attributes, T_Descriptor = DescriptorInstance, T_Model = any> {
+  kind: T_Kind;
   name?: string;
   isRoot: boolean;
   required: boolean;
-  default?: Z;
-  model: Z;
+  default?: T_Model;
+  model: T_Model;
   attrs: {
-    input: X;
+    input: T_Attributes;
     label: {
       id?: string;
       for: string;
@@ -88,9 +89,10 @@ export interface Field<T extends FieldKind, X = Attributes, Y = DescriptorInstan
   props: {
     [prop: string]: any;
   };
-  descriptor: Y;
+  descriptor: T_Descriptor;
   component: Component;
-  parent?: Field<any>
+  parent?: Field<any>;
+  set(value: T_Model): void;
 }
 
 export interface BooleanField extends Field<'boolean', BooleanAttributes, ScalarDescriptor, boolean> {}
@@ -141,12 +143,13 @@ export interface ObjectField extends Field<'object', Attributes, ObjectDescripto
   order: string[];
 }
 
-export interface AbstractParserOptions<T, X extends AbstractUISchemaDescriptor> {
+export interface AbstractParserOptions<T_Model, T_Descriptor extends AbstractUISchemaDescriptor> {
   readonly schema: JsonSchema;
-  readonly model: T;
-  readonly descriptor?: X;
+  readonly model: T_Model;
+  readonly descriptor?: T_Descriptor;
   readonly descriptorConstructor: DescriptorConstructor;
   readonly name?: string;
+  readonly $vue: Vue
 }
 
 export interface AbstractUISchemaDescriptor {
@@ -199,6 +202,7 @@ export interface FormSchemaVue extends Vue {
   id: string;
   name?: string;
   search: boolean;
+  disabled: boolean;
   components: any;
   descriptor: DescriptorInstance | DescriptorConstructor;
 
@@ -261,15 +265,29 @@ export interface WatchOptionsWithHandler<V extends Vue, T> extends WatchOptions 
   handler: WatchHandler<V, T>;
 }
 
-interface ElementProps<T> {
+interface IComponents {
+  readonly $: Dictionary<Component>;
+  set(kind: ComponentsType, component: Component): void;
+  get(kind: ComponentsType): Component;
+}
+
+interface ElementProps<T extends Field<any>> {
   field: T;
+  value: any;
+  disabled: boolean;
+  components: IComponents;
 }
 
 type ArrayButtonComponent = FunctionalComponentOptions<ElementProps<ArrayField>>;
 type ArrayComponent = FunctionalComponentOptions<ElementProps<ArrayField>>;
+type BooleanComponent = FunctionalComponentOptions<ElementProps<BooleanField>>;
 type InputComponent = FunctionalComponentOptions<ElementProps<InputField>>;
 type FieldComponent = FunctionalComponentOptions<ElementProps<UnknowField>>;
 type FieldsetComponent = FunctionalComponentOptions<ElementProps<ObjectField>>;
 type HelperComponent = FunctionalComponentOptions<ElementProps<UnknowField>>;
 type ListComponent = FunctionalComponentOptions<ElementProps<ListField>>;
 type TextareaComponent = FunctionalComponentOptions<ElementProps<StringField>>;
+
+interface InputEvent extends Event {
+  readonly target: any;
+}

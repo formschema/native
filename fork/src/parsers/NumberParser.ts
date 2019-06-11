@@ -33,7 +33,10 @@ export class NumberParser extends AbstractParser<number, ScalarDescriptor, Numbe
 
     this.field.attrs.input.min = this.schema.minimum;
     this.field.attrs.input.max = this.schema.maximum;
-    this.field.attrs.input.value = this.field.model as any;
+
+    if (!Number.isNaN(this.field.model) && this.field.model !== void(0)) {
+      this.field.attrs.input.value = `${this.field.model}`;
+    }
 
     if (this.schema.hasOwnProperty('multipleOf')) {
       this.field.attrs.input.step = this.schema.multipleOf;
@@ -43,6 +46,8 @@ export class NumberParser extends AbstractParser<number, ScalarDescriptor, Numbe
   }
 
   parseValue(data: any): number {
-    return data !== undefined ? Number(data) : data;
+    const value = data !== void(0) ? Number(data) : data;
+
+    return Number.isNaN(value) ? void(0) as any : Number.parseFloat(value);
   }
 }

@@ -4,11 +4,12 @@ import { ArrayElement } from '@/components/ArrayElement';
 import { FieldsetElement } from '@/components/FieldsetElement';
 import { ListElement } from '@/components/ListElement';
 import { TextareaElement } from '@/components/TextareaElement';
+import { BooleanElement } from '@/components/BooleanElement';
 
 export const NativeElements = new Components();
 
 NativeElements.set('array', ArrayElement);
-NativeElements.set('boolean', InputElement);
+NativeElements.set('boolean', BooleanElement);
 NativeElements.set('string', InputElement);
 NativeElements.set('radio', InputElement);
 NativeElements.set('enum', FieldsetElement);

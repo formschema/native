@@ -1,5 +1,7 @@
 import { Parser } from '@/parsers/Parser';
 import { AbstractParser } from '@/parsers/AbstractParser';
+import { JsonSchema } from '@/types/jsonschema';
+import { Objects } from '@/lib/Objects';
 
 import {
   ArrayField,
@@ -9,8 +11,6 @@ import {
   FieldKind,
   ArrayItemField
 } from '@/types';
-import { JsonSchema } from '@/types/jsonschema';
-import { Objects } from '@/lib/Objects';
 
 export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField> {
   readonly items: any[] = [];
@@ -37,10 +37,11 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
 
       const options: AbstractParserOptions<any, AbstractUISchemaDescriptor> = {
         schema: itemSchema,
-        model: itemSchema.default,
+        model: this.model[i] !== void(0) ? this.model[i] : itemSchema.default,
         descriptor: itemDescriptor,
         descriptorConstructor: this.options.descriptorConstructor,
-        name: this.name
+        name: this.name,
+        $vue: this.options.$vue
       };
 
       const parser = Parser.get(options, this);

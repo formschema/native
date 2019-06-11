@@ -1,6 +1,6 @@
-import { Dictionary, Component, ComponentsType } from '@/types';
+import { Dictionary, Component, ComponentsType, IComponents } from '@/types';
 
-export class Components {
+export class Components implements IComponents {
   readonly $: Dictionary<Component>;
 
   constructor () {

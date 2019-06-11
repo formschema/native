@@ -10,20 +10,22 @@ import {
 
 export type Parent = AbstractParser<any, AbstractUISchemaDescriptor, Field<any>>;
 
-export abstract class AbstractParser<T, X extends AbstractUISchemaDescriptor, Y extends Field<any>> {
+export abstract class AbstractParser<T_Model, T_Descriptor extends AbstractUISchemaDescriptor, T_Field extends Field<any>> {
   readonly isRoot: boolean;
   readonly isEnum: boolean;
   readonly isArrayItem: boolean;
   readonly name?: string;
   readonly parent?: Parent;
-  readonly model: T;
-  readonly options: AbstractParserOptions<T, X>;
-  readonly field: Y;
-  readonly descriptor: X;
+  readonly root: Parent;
+  model: T_Model;
+  readonly options: AbstractParserOptions<T_Model, T_Descriptor>;
+  readonly field: T_Field;
+  readonly descriptor: T_Descriptor;
 
-  constructor(options: AbstractParserOptions<T, X>, parent?: Parent) {
+  constructor(options: AbstractParserOptions<T_Model, T_Descriptor>, parent?: Parent) {
     this.parent = parent;
     this.options = options;
+    this.root = parent ? parent.root || this : this;
     this.isRoot = !parent;
     this.isEnum = !!parent && parent.schema.enum instanceof Array;
     this.isArrayItem = !!parent && parent.schema.type === 'array'
@@ -34,13 +36,14 @@ export abstract class AbstractParser<T, X extends AbstractUISchemaDescriptor, Y 
           : `${parent.name}.${options.name}` : options.name
       : options.name;
 
-    const defaultDescriptor = options.descriptorConstructor<X>(this.schema);
+    const defaultDescriptor = options.descriptorConstructor<T_Descriptor>(this.schema);
 
     this.descriptor = options.descriptor || defaultDescriptor;
-    this.model = this.parseValue(options.model);
+    this.model = this.parseValue(this.initialValue);
 
     this.parseDescriptor();
 
+    const self = this;
     const attrs = this.descriptor.attrs || {};
     const props = this.descriptor.props || {};
     const isRequired = parent && (parent as any).required instanceof Array
@@ -54,8 +57,29 @@ export abstract class AbstractParser<T, X extends AbstractUISchemaDescriptor, Y 
       kind: this.kind,
       isRoot: this.isRoot,
       required: isRequired,
-      default: options.schema.default,
-      model: this.value,
+      default: this.parseValue(options.schema.default),
+      set: (value: T_Model) => {
+        this.setValue(value);
+        options.$vue.$emit('input', this.root.model);
+      },
+      get model() {
+        return self.model;
+      },
+      set model(value: T_Model) {
+        self.model = value;
+
+        if (parent) {
+          if (parent.schema.type === 'object') {
+            parent.field.model[options.name as string] = self.model;
+
+            // options.$vue.$set(parent.field.model, options.name as string, self.model);
+          } else {
+            console.log('unset:>', { value, parent })
+          }
+        } else {
+          console.log('unset:>', { value, parent })
+        }
+      },
       attrs: {
         input: {
           type: undefined,
@@ -82,11 +106,11 @@ export abstract class AbstractParser<T, X extends AbstractUISchemaDescriptor, Y 
     return undefined;
   }
 
-  get value() {
-    if (this.model !== null) {
-      return this.parseValue(this.model);
+  get initialValue() {
+    if (this.options.model !== undefined) {
+      return this.options.model;
     } else if (this.schema.hasOwnProperty('default')) {
-      return this.parseValue(this.schema.default);
+      return this.schema.default;
     }
 
     return undefined;
@@ -94,7 +118,7 @@ export abstract class AbstractParser<T, X extends AbstractUISchemaDescriptor, Y 
 
   get defaultComponent() {
     return this.descriptor.kind
-      ? this.options.descriptorConstructor<X>(this.schema, this.descriptor.kind).component
+      ? this.options.descriptorConstructor<T_Descriptor>(this.schema, this.descriptor.kind).component
       : undefined;
   }
 
@@ -103,7 +127,11 @@ export abstract class AbstractParser<T, X extends AbstractUISchemaDescriptor, Y 
   }
 
   abstract parse(): void;
-  abstract parseValue(data: any): T;
+  abstract parseValue(data: any): T_Model;
+
+  setValue(value: T_Model) {
+    this.field.model = this.parseValue(value);
+  }
 
   protected parseDescriptor() {
     if (!this.descriptor.kind) {

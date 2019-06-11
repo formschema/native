@@ -1,136 +1,94 @@
-{
-  "definitions": {
-    "Thing": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string",
-          "default": "Default name"
-        }
-      }
-    }
-  },
-  "type": "object",
-  "properties": {
-    "listOfStrings": {
-      "type": "array",
-      "title": "A list of strings",
-      "items": {
+  {
+    "type": "object",
+    "title": "Newsletter Subscription",
+    "description": "Sign up for free newsletters and get more delivered to your inbox",
+    "properties": {
+      "name": {
+        "type": "object",
+        "title": "Full Name",
+        "properties": {
+          "first_name": {
+            "type": "string",
+            "title": "First Name",
+            "minLength": 8,
+            "maxLength": 80,
+            "default": "Jon"
+          },
+          "middle_name": {
+            "type": "string",
+            "title": "Middle Name",
+            "minLength": 8,
+            "maxLength": 80
+          },
+          "last_name": {
+            "type": "string",
+            "title": "Last Name",
+            "minLength": 8,
+            "maxLength": 80
+          }
+        },
+        "required": ["first_name"]
+      },
+      "int": {
+        "type": "integer",
+        "title": "Integer"
+      },
+      "float": {
+        "type": "number",
+        "title": "Float",
+        "default": 12.5
+      },
+      "email": {
         "type": "string",
-        "default": "bazinga"
-      }
-    },
-    "multipleChoicesList": {
-      "type": "array",
-      "title": "A multiple choices list",
-      "items": {
+        "format": "email",
+        "maxLength": 120,
+        "title": "Email",
+        "default": "hello@example.com"
+      },
+      "day": {
         "type": "string",
+        "title": "Day",
+        "default": "tuesday",
         "enum": [
-          "foo",
-          "bar",
-          "fuzz",
-          "qux"
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday",
+          "saturday",
+          "sunday"
         ]
       },
-      "uniqueItems": true
-    },
-    "fixedItemsList": {
-      "type": "array",
-      "title": "A list of fixed items",
-      "items": [
-        {
-          "title": "A string value",
-          "type": "string",
-          "default": "lorem ipsum"
-        },
-        {
-          "title": "a boolean value",
-          "type": "boolean"
-        }
-      ],
-      "additionalItems": {
-        "title": "Additional item",
-        "type": "number"
-      }
-    },
-    "minItemsList": {
-      "type": "array",
-      "title": "A list with a minimal number of items",
-      "minItems": 3,
-      "items": {
-        "$ref": "#/definitions/Thing"
-      }
-    },
-    "defaultsAndMinItems": {
-      "type": "array",
-      "title": "List and item level defaults",
-      "minItems": 5,
-      "default": [
-        "carp",
-        "trout",
-        "bream"
-      ],
-      "items": {
+      "source": {
         "type": "string",
-        "default": "unidentified"
-      }
-    },
-    "nestedList": {
-      "type": "array",
-      "title": "Nested list",
-      "items": {
-        "type": "array",
-        "title": "Inner list",
-        "items": {
-          "type": "string",
-          "default": "lorem ipsum"
-        }
-      }
-    },
-    "unorderable": {
-      "title": "Unorderable items",
-      "type": "array",
-      "items": {
+        "maxLength": 120
+      },
+      "password": {
         "type": "string",
-        "default": "lorem ipsum"
+        "title": "password",
+        "default": "hello"
+      },
+      "regex": {
+        "type": "string",
+        "title": "regex",
+        "pattern": "[a-e]+"
+      },
+      "frequence": {
+        "type": "string",
+        "title": "Frequence",
+        "default": "weekly",
+        "enum": [
+          "daily",
+          "weekly"
+        ]
+      },
+      "agree": {
+        "type": "boolean",
+        "title": "Agree",
+        "description": "You agree to receive occasional updates and special offers for vue-json-schema updates.",
+        "default": false
       }
     },
-    "unremovable": {
-      "title": "Unremovable items",
-      "type": "array",
-      "items": {
-        "type": "string",
-        "default": "lorem ipsum"
-      }
-    },
-    "noToolbar": {
-      "title": "No add, remove and order buttons",
-      "type": "array",
-      "items": {
-        "type": "string",
-        "default": "lorem ipsum"
-      }
-    },
-    "fixedNoToolbar": {
-      "title": "Fixed array without buttons",
-      "type": "array",
-      "items": [
-        {
-          "title": "A number",
-          "type": "number",
-          "default": 42
-        },
-        {
-          "title": "A boolean",
-          "type": "boolean",
-          "default": false
-        }
-      ],
-      "additionalItems": {
-        "title": "A string",
-        "type": "string",
-        "default": "lorem ipsum"
-      }
-    }
+    "additionalProperties": false,
+    "required": ["name", "email", "lists", "aList"]
   }
-}

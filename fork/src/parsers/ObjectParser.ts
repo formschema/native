@@ -13,8 +13,8 @@ import {
   FieldKind
 } from '@/types';
 
-export class ObjectParser<T extends Dictionary = object> extends AbstractParser<T, ObjectDescriptor, ObjectField> {
-  readonly properties: Dictionary<JsonSchema> = {};
+export class ObjectParser<T_Model extends Dictionary = object> extends AbstractParser<T_Model, ObjectDescriptor, ObjectField> {
+  properties: Dictionary<JsonSchema> = {};
 
   get kind(): FieldKind {
     return 'object';
@@ -43,13 +43,14 @@ export class ObjectParser<T extends Dictionary = object> extends AbstractParser<
 
   get children(): ObjectFieldChild[] {
     return this.propertiesList
-      .map((key) => ({
+      .map((key): AbstractParserOptions<any, AbstractUISchemaDescriptor> => ({
         schema: this.properties[key],
-        model: this.model[key] || this.properties[key].default,
+        model: this.model.hasOwnProperty(key) ? this.model[key] : this.properties[key].default,
         descriptor: this.getChildDescriptor(key),
         descriptorConstructor: this.getChildDescriptorConstructor(key),
-        name: key
-      } as AbstractParserOptions<any, AbstractUISchemaDescriptor>))
+        name: key,
+        $vue: this.options.$vue
+      }))
       .map((options) => Parser.get(options, this))
       .map((parser) => parser.field);
   }
@@ -74,14 +75,14 @@ export class ObjectParser<T extends Dictionary = object> extends AbstractParser<
 
   parse() {
     if (this.schema.properties) {
-      Object.assign(this.properties, this.schema.properties);
+      this.properties = this.schema.properties;
     }
 
     this.field.children = this.children;
 
     this.parseField();
 
-    if (!this.parent) {
+    if (this.isRoot) {
       delete this.field.attrs.input.name;
     }
   }
@@ -93,7 +94,7 @@ export class ObjectParser<T extends Dictionary = object> extends AbstractParser<
     delete this.field.attrs.input['aria-required'];
   }
 
-  parseValue(data: any): T {
+  parseValue(data: any): T_Model {
     return data || {};
   }
 }

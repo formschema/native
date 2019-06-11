@@ -37,6 +37,14 @@ export class StringParser extends AbstractParser<string, ScalarDescriptor, Strin
     }
   }
 
+  setValue(value: any) {
+    if (this.isEnum && this.parent) {
+      this.parent.field.model = this.field.model;
+    } else {
+      this.field.model = this.parseValue(value);
+    }
+  }
+
   parse() {
     this.parseField();
 

@@ -19,4 +19,10 @@ export class IntegerParser extends NumberParser {
       this.field.attrs.input.max = Number.parseInt(exclusiveMaximum, 10) - 1;
     }
   }
+
+  parseValue(data: any): number {
+    const value = data !== void(0) ? Number(data) : data;
+
+    return Number.isNaN(value) ? void(0) as any : Number.parseInt(value, 10);
+  }
 }

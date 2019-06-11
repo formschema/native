@@ -13,8 +13,18 @@
       <div class="playground__input__rendering">
         <h2>Rendering</h2>
         <div class="playground__input__rendering__viewport">
-          <div ref="form" class="playground__input__rendering__viewport__card">
-            <FormSchema v-bind="{ schema, descriptor }" v-model="model" @ready="generateCode" @submit.prevent>
+          <div class="playground__input__rendering__viewport__options">
+            <label>
+              <input type="checkbox" v-model="disabled" @change="updateRenderKey">
+              <span>Disable</span>
+            </label>
+            <label>
+              <input type="checkbox" v-model="search" @change="updateRenderKey">
+              <span>Search</span>
+            </label>
+          </div>
+          <div ref="form" class="playground__input__rendering__viewport__card" :key="renderKey">
+            <FormSchema v-bind="{ schema, descriptor, disabled, search }" v-model="model" @ready="generateCode" @submit.prevent>
               <div class="playground__input__rendering__viewport__card__buttons">
                 <button type="submit">Submit</button>
                 <button type="reset">Reset</button>
@@ -47,7 +57,7 @@
   import $RefParser from 'json-schema-ref-parser';
 
   import PrismEditor from 'vue-prism-editor';
-  import FormSchema from '../../../dist/FormSchema.esm.min.js';
+  import FormSchema, { UniqueId } from '../../../dist/FormSchema.esm.min.js';
   import Schema from '@/schema/newsletter';
 
   export default {
@@ -58,6 +68,9 @@
       schema: {},
       code: '',
       formatter: null,
+      disabled: false,
+      search: false,
+      renderKey: UniqueId.get('code'),
       descriptor: {
         properties: {
           name: {
@@ -154,7 +167,6 @@
         $RefParser.dereference(this.parsedSchema)
           .then((schema) => {
             this.schema = schema;
-            console.log(schema)
           })
           .catch((err) => console.error(err));
       },
@@ -164,6 +176,9 @@
         this.code = html(code, {
           indent_size: 2
         });
+      },
+      updateRenderKey() {
+        this.renderKey = UniqueId.get('code');
       }
     }
   }
@@ -261,6 +276,31 @@
     width: 100%;
   }
 
+  .playground__input__rendering__viewport__options {
+    text-align: left;
+    padding: 0 15px 20px;
+
+    display: flex;
+    flex-direction: row;
+  }
+
+  .playground__input__rendering__viewport__options label {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .playground__input__rendering__viewport__options label:not(:first-child) {
+    margin-left: 20px;
+  }
+
+  .playground__input__rendering__viewport__options label input {
+  }
+
+  .playground__input__rendering__viewport__options label span {
+    flex: 1;
+  }
+
   .playground__input__rendering__viewport__card {
     border-radius: 10px;
     box-shadow: 0 0 2rem 0 rgba(136,152,170, .45);
@@ -278,7 +318,7 @@
     margin-left: 15px;
   }
 
-  .playground__input__rendering fieldset {
+  .playground__input__rendering__viewport__card fieldset {
     border: none;
     border-bottom: 1px solid rgba(0, 0, 0, .2);
 
@@ -286,7 +326,7 @@
     margin-bottom: 10px;
   }
 
-  .playground__input__rendering legend {
+  .playground__input__rendering__viewport__card legend {
     font-size: 1.7em;
     text-align: center;
     margin-top: 0;
@@ -306,7 +346,7 @@
     margin-top: 0;
   }
 
-  .playground__input__rendering span {
+  .playground__input__rendering__viewport__card span {
     color: rgba(0, 0, 0, .6);
   }
 
@@ -319,16 +359,16 @@
     border-bottom: 1px solid rgba(0, 0, 0, .2);
   }
 
-  .playground__input__rendering input,
-  .playground__input__rendering textarea,
-  .playground__input__rendering select {
+  .playground__input__rendering__viewport__card input,
+  .playground__input__rendering__viewport__card textarea,
+  .playground__input__rendering__viewport__card select {
     display: block;
   }
 
   .playground__input__model {
     flex: 0;
     margin: 0;
-    min-width: 100px;
+    min-width: 300px;
   }
 
   .playground__output {

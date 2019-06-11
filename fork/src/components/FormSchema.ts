@@ -1,9 +1,9 @@
 import { FormSchemaComponent } from '@/types';
-import { UniqueId } from '@/lib/UniqueId';
+import { UniqueId as UniqueIdLib } from '@/lib/UniqueId';
 import { Parser } from '@/parsers/Parser';
 import { JsonSchema } from '@/types/jsonschema';
-import { Objects } from '@/lib/Objects';
-import { Components } from '@/lib/Components';
+import { Objects as ObjectsLib } from '@/lib/Objects';
+import { Components as ComponentsLib} from '@/lib/Components';
 import { NativeElements } from "@/lib/NativeElements";
 import { Descriptor } from "@/descriptors/Descriptor";
 
@@ -11,6 +11,10 @@ export const GLOBAL = {
   NativeElements,
   Descriptor
 };
+
+export const Objects = ObjectsLib;
+export const UniqueId = UniqueIdLib;
+export const Components = ComponentsLib;
 
 const FormSchema: FormSchemaComponent = {
   name: 'FormSchema',
@@ -58,6 +62,11 @@ const FormSchema: FormSchemaComponent = {
     search: { type: Boolean, default: false },
 
     /**
+     * Indicates whether the form elements are disabled or not.
+     */
+    disabled: { type: Boolean, default: false },
+
+    /**
      * Use this prop to overwrite the default Native HTML Elements with
      * custom components.
      */
@@ -79,8 +88,8 @@ const FormSchema: FormSchemaComponent = {
   data: () => ({
     ref: UniqueId.get('form-schema'),
     field: null,
-    default: {},
-    data: undefined
+    default: undefined,
+    data: {}
   }),
   watch: {
     schema(value: JsonSchema) {
@@ -95,34 +104,13 @@ const FormSchema: FormSchemaComponent = {
       return null as any; // nothing to render
     }
 
-    console.log(this.field)
-
     const root = createElement(this.field.component, {
       attrs: this.field.attrs.input,
       props: {
         field: this.field,
         value: this.data,
+        disabled: this.disabled,
         components: this.components
-      },
-      on: {
-        // [INPUT_ADDED_EVENT]: () => {
-        //   this.$forceUpdate()
-        // },
-        input: (event: Event) => {
-          // this.processFieldEvent(event);
-          this.emitInputEvent();
-        },
-        change: (event: Event) => {
-          // this.processFieldEvent(event);
-
-          if (!Objects.equals(this.data, this.default)) {
-            /**
-             * Fired when a change to the element's value is committed
-             * by the user.
-             */
-            this.$emit('change', this.data);
-          }
-        }
       }
     });
 
@@ -131,8 +119,6 @@ const FormSchema: FormSchemaComponent = {
     if (this.$slots.default) {
       nodes.push(...this.$slots.default);
     }
-
-    this.$nextTick(() => this.$emit('ready'));
 
     return createElement(this.components.get('form'), {
       ref: this.ref,
@@ -144,6 +130,8 @@ const FormSchema: FormSchemaComponent = {
       },
       props: {
         value: this.data,
+        search: this.search,
+        disabled: this.disabled,
         components: this.components
       },
       on: {
@@ -177,19 +165,21 @@ const FormSchema: FormSchemaComponent = {
 
         const descriptor = this.descriptor instanceof Function
           ? this.descriptor(schema)
-          : GLOBAL.Descriptor.get(schema);
+          : this.descriptor || GLOBAL.Descriptor.get(schema);
 
         const parser = Parser.get({
           schema: this.schema,
           model: typeof model === 'undefined' ? this.value : model,
           name: this.name,
           descriptor: descriptor,
-          descriptorConstructor: descriptorConstructor
+          descriptorConstructor: descriptorConstructor,
+          $vue: this
         });
 
         this.field = parser.field;
       }
 
+      this.$nextTick(() => this.$emit('ready'));
       this.emitInputEvent();
 
       if (reset) {
@@ -201,16 +191,20 @@ const FormSchema: FormSchemaComponent = {
      * @private
      */
     emitInputEvent () {
+      if (this.field === null) {
+        return;
+      }
+
       /**
        * Fired synchronously when the value of an element is changed.
        */
-      this.$emit('input', this.data);
+      this.$emit('input', this.field.model);
     },
 
     /**
      * Get the HTML form reference.
      *
-     * @returns {HTMLFormElement|undefined} - Returns the HTML form element or `undefined` for empty object
+     * @returns {HTMLFormElement|VNode|undefined} - Returns the HTML form element or `undefined` for empty object
      */
     form () {
       return this.$refs[this.ref];
