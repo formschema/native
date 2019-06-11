@@ -218,7 +218,7 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 60%;
+    height: 70%;
   }
 
   .playground h2,
@@ -370,10 +370,10 @@
 
   .playground__output {
     position: absolute;
-    top: 60%;
+    top: 70%;
     left: 0;
     width: 100%;
-    height: 40%;
+    height: 30%;
 
     overflow: hidden;
     display: flex;
