@@ -23,6 +23,7 @@
  */
 
 export interface JsonSchema {
+  [key: string]: unknown;
   $ref?: string;
   // ///////////////////////////////////////////////
   // Schema Metadata

@@ -6,8 +6,7 @@ import {
   AbstractUISchemaDescriptor,
   AbstractParserOptions,
   FieldKind,
-  UnknowField,
-  Dictionary
+  UnknowField
 } from '@/types';
 
 export type Parent = AbstractParser<any, AbstractUISchemaDescriptor, UnknowField>;

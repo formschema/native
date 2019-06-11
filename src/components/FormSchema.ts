@@ -156,7 +156,7 @@ const FormSchema: FormSchemaComponent = {
      * `v-model` directive.
      */
     load (schema: JsonSchema, model: unknown = undefined, reset = true) {
-      if (Objects.isEmpty(schema)) {
+      if (Objects.isEmpty<JsonSchema>(schema)) {
         this.field = null;
       } else {
         const descriptorConstructor = this.descriptor instanceof Function

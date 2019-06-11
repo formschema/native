@@ -22,7 +22,7 @@ export const Objects = Object.freeze({
     return !keys1.some((key) => !o2.hasOwnProperty(key) || o1[key] !== o2[key]);
   },
 
-  assign(dest: Dictionary, src: Dictionary) {
+  assign<T extends Dictionary = Dictionary<any>>(dest: any, src: T) {
     Object.keys(src).forEach((key) => {
       const value = src[key];
 
@@ -44,17 +44,17 @@ export const Objects = Object.freeze({
     return dest;
   },
 
-  clone(object: Dictionary) {
-    return Objects.assign({}, object);
+  clone<T extends Dictionary = Dictionary<any>>(object: T) {
+    return Objects.assign<T>({} as any, object);
   },
 
-  clear(object: Dictionary) {
+  clear<T extends Dictionary = Dictionary<any>>(object: T) {
     for (const key in object) {
       delete object[key];
     }
   },
 
-  isEmpty(object: Dictionary) {
+  isEmpty<T extends Dictionary = Dictionary<any>>(object: T) {
     for (const key in object) {
       return false;
     }

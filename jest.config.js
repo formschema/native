@@ -3,8 +3,7 @@ module.exports = {
   notify: true,
   collectCoverage: true,
   collectCoverageFrom: [
-    // 'src/**/*.ts'
-    'src/(descriptors|lib)/*.ts'
+    'src/**/*.ts'
   ],
   moduleFileExtensions: [
     'js', 'json', 'ts'

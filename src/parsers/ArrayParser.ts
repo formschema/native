@@ -66,7 +66,7 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
       const additionalItems = this.schema.additionalItems as JsonSchema;
 
       if (!Objects.isEmpty(additionalItems)) {
-        this.additionalItems.push(this.schema.additionalItems);
+        this.additionalItems.push(this.additionalItems);
       }
     }
 

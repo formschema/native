@@ -14,7 +14,7 @@ import {
 } from '@/types';
 
 export class ObjectParser<
-  TModel extends Dictionary = object
+  TModel extends Dictionary = Dictionary
 > extends AbstractParser<TModel, ObjectDescriptor, ObjectField> {
   protected properties: Dictionary<JsonSchema> = {};
 

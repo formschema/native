@@ -32,7 +32,7 @@ export class EnumParser extends AbstractParser<unknown, ScalarDescriptor, EnumFi
 
     return this.enums.map((item) => {
       const itemSchema: JsonSchema = {
-        ...Objects.assign({}, this.schema) as JsonSchema,
+        ...Objects.clone(this.schema) as JsonSchema,
         title: this.descriptor.labels
           ? this.descriptor.labels[item] || item
           : item,
