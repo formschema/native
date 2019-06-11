@@ -23,144 +23,11 @@ npm install --save @formschema/native
 
 ![formschema-demo-elementui](https://gitlab.com/formschema/components/elementui/raw/master/screenshot.png "FormSchema Demo with ElementUI")
 
-## FormSchema API
-
-### props 
-
-- `schema` ***Object*** (*optional*) `default: {}` 
-
-  The JSON Schema object. 
-
-- `v-model` ***Number|String|Array|Object|Boolean*** (*optional*) `default: undefined` 
-
-  Use this directive to create two-way data bindings with the
-  component. It automatically picks the correct way to update the
-  element based on the input type. 
-
-- `action` ***String*** (*optional*) 
-
-  The URI of a program that processes the form information. 
-
-- `autocomplete` ***String*** (*optional*) 
-
-  This property indicates whether the value of the control can be
-  automatically completed by the browser.
-  
-  Possible values are: `off` and `on`. 
-
-- `bracketed-array-input-name` ***Boolean*** (*optional*) `default: true` 
-
-  When set to true (default), checkbox inputs will automatically include
-  brackets at the end of their names (e.g. name="Multicheckbox-Value1[]".
-  Setting this property to false, disables this behaviour. 
-
-- `enctype` ***String*** (*optional*) `default: 'application/x-www-form-urlencoded'` 
-
-  When the value of the method attribute is post, enctype is the
-  MIME type of content that is used to submit the form to the
-  server.
-  
-  Possible values are:
-  - `application/x-www-form-urlencoded`: The default value if the
-  attribute is not specified.
-  - `multipart/form-data`: The value used for an `<input/>` element
-  with the type attribute set to "file".
-  - `text/plain` (HTML5). 
-
-- `method` ***String*** (*optional*) `default: 'post'` 
-
-  The HTTP method that the browser uses to submit the form.
-  
-  Possible values are:
-  - `post`: Corresponds to the HTTP POST method ; form data are
-  included in the body of the form and sent to the server.
-  - `get`: Corresponds to the HTTP GET method; form data are
-  appended to the action attribute URI with a '?' as separator,
-  and the resulting URI is sent to the server. Use this method
-  when the form has no side-effects and contains only ASCII
-  characters. 
-
-- `novalidate` ***Boolean*** (*optional*) 
-
-  This Boolean attribute indicates that the form is not to be
-  validated when submitted. 
-
-- `search` ***Boolean*** (*optional*) `default: false` 
-
-  Use this prop to enable `search` landmark role to identify a section
-  of the page used to search the page, site, or collection of sites. 
-
-- `components` ***Components*** (*optional*) `default: GLOBAL.components` 
-
-  Use this prop to overwrite the default Native HTML Elements for
-  custom components. 
-
-### events 
-
-- `change` 
-
-  Fired when a change to the element's value is committed
-  by the user. 
-
-- `input` 
-
-  Fired synchronously when the value of an element is changed. 
-
-- `invalid` 
-
-  Fired when a submittable element has been checked and doesn't
-  satisfy its constraints. The validity of submittable elements is
-  checked before submitting their owner form, or after the
-  `checkValidity()` of the element or its owner form is called. 
-
-- `submit` 
-
-  Fired when a form is submitted 
-
-### methods 
-
-- `load(schema, model)` 
-
-  Load the given `schema` with initial filled `value`.
-  Use this to load async schema. 
-
-  **parameters:** 
-
-     - `schema` **object** - The JSON Schema object to load 
-     - `model` **Number|String|Array|Object|Boolean** - The initial data for the schema. 
-
-- `form()` 
-
-  Get the HTML form reference. 
-
-   **return value:** 
-
-     - **HTMLFormElement,undefined** -  Returns the HTML form element or `undefined` for empty object 
-- `reportValidity()` 
-
-  Returns true if the element's child controls satisfy their
-  validation constraints. When false is returned, cancelable invalid
-  events are fired for each invalid child and validation problems
-  are reported to the user. 
-
-- `checkValidity()` 
-
-  Checks whether the form has any constraints and whether it
-  satisfies them. If the form fails its constraints, the browser
-  fires a cancelable `invalid` event at the element, and then
-  returns false. 
-
-- `reset()` 
-
-  Reset the value of all elements of the parent form. 
-
 ## Usage
-
-In your Vue file:
 
 ```html
 <template>
-  <FormSchema :schema="schema" v-model="model" @submit="submit">
+  <FormSchema :schema="schema" v-model="model" @submit.prevent="submit">
     <button type="submit">Subscribe</button>
   </FormSchema>
 </template>
@@ -180,44 +47,190 @@ In your Vue file:
         // You can submit your model to the server here
       }
     },
-    components: { FormSchemaNative }
+    components: { FormSchema }
   }
 </script>
 ```
 
-Define your [JSON Schema](http://json-schema.org) file:
+## Features
 
-```json
-{
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "type": "object",
-  "title": "Newsletter Subscription",
-  "properties": {
-    "name": {
-      "type": "string",
-      "minLength": 8,
-      "maxLength": 80,
-      "attrs": {
-        "placeholder": "Full Name",
-        "title": "Please enter your full name"
-      }
-    },
-    "email": {
-      "type": "string",
-      "maxLength": 120,
-      "attrs": {
-        "type": "email",
-        "placeholder": "Email"
-      }
-    },
-    "lists": {
-      "type": "string",
-      "enum": ["Daily New", "Promotion"]
-    }
-  },
-  "required": ["name", "email", "lists"]
-}
-```
+- [Keywords for Applying Subschemas With Boolean Logic](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.7)
+- [Validation Keywords for Any Instance Type](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.1)<br>
+  FormSchema uses:
+  - HTML input `text` to render schema with `type: 'string'`
+  - HTML input `number` to render schema with `type: 'number' | 'integer'`
+  - HTML input `hidden` to render schema with `type: 'null'`
+  - HTML input `checkbox` to render schema with `type: 'boolean'`
+- [Validation Keywords for Numeric Instances (number and integer)](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.2)<br>
+  FormSchema parses keywords `maximum`, `minimum`, `exclusiveMaximum` and `exclusiveMinimum` to generate HTML attributes `max` and `min`.
+- [Validation Keywords for Strings](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.3)<br>
+  FormSchema parses keywords `maxLength`, `minLength`, `pattern` to generate HTML attributes `maxlength`, `minlength` and `pattern`.
+- [Validation Keywords for Arrays](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4)
+- [Semantic Validation With "format"](https://json-schema.org/latest/json-schema-validation.html#rfc.section.7)<br>
+  FormSchema uses:
+  - HTML input `date` to render schema with `format: 'date'`
+  - HTML input `datetime-local` to render schema with `format: 'date-time'`
+  - HTML input `email` to render schema with `format: 'email' | 'idn-email'`
+  - HTML input `time` to render schema with `format: 'time'`
+  - HTML input `url` to render schema with `format: 'uri'`
+- [String-Encoding Non-JSON Data](https://json-schema.org/latest/json-schema-validation.html#rfc.section.8)
+- [Schema Re-Use With "definitions"](https://json-schema.org/latest/json-schema-validation.html#rfc.section.9) (see [JSON Schema $ref Pointers](#json-schema-ref-pointers))
+- [Schema Annotations](https://json-schema.org/latest/json-schema-validation.html#rfc.section.10)
+
+## Supported Keywords
+
+- [enum](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.1.2) is used to render multiple choices input
+- [maximum](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.2.2), [exclusiveMaximum](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.2.3), [minimum](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.2.4) and [exclusiveMinimum](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.2.5) are used to render numeric fields
+- [multipleOf](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.2.1) is used to render the input attribute `step`
+- [maxLength](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.3.1), [minLength](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.3.2) and [pattern](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.3.3) are used to render string fields
+- [items](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4.1), [additionalItems](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4.2), [maxItems](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4.3), [minItems](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4.4) and [uniqueItems](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4.5) are used to render array fields
+- [contentEncoding](https://json-schema.org/latest/json-schema-validation.html#rfc.section.8.3)
+- [contentMediaType](https://json-schema.org/latest/json-schema-validation.html#rfc.section.8.4)
+- [title](https://json-schema.org/latest/json-schema-validation.html#rfc.section.10.1) is used to render the input label
+- [description](https://json-schema.org/latest/json-schema-validation.html#rfc.section.10.1) is used to render the input description
+- [default](https://json-schema.org/latest/json-schema-validation.html#rfc.section.10.2) is used to define the default input value
+- [readOnly](https://json-schema.org/latest/json-schema-validation.html#rfc.section.10.3) is used to render a field as an read-only input
+
+## Irrelevant (ignored) Keywords
+
+Since FormSchema is just a form generator, some JSON Schema validation keywords
+are irrelevant:
+
+- [const](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.1.3)
+- [contains](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4.6)
+- [writeOnly](https://json-schema.org/latest/json-schema-validation.html#rfc.section.10.3)
+- [examples](https://json-schema.org/latest/json-schema-validation.html#rfc.section.10.4)
+
+## FormSchema API
+
+### props
+
+- `schema` ***Object*** (*optional*) `default: {}`
+
+  The JSON Schema object.
+
+- `v-model` ***Number|String|Array|Object|Boolean*** (*optional*) `default: undefined`
+
+  Use this directive to create two-way data bindings with the
+  component. It automatically picks the correct way to update the
+  element based on the input type.
+
+- `action` ***String*** (*optional*)
+
+  The URI of a program that processes the form information.
+
+- `autocomplete` ***String*** (*optional*)
+
+  This property indicates whether the value of the control can be
+  automatically completed by the browser.
+
+  Possible values are: `off` and `on`.
+
+- `bracketed-array-input-name` ***Boolean*** (*optional*) `default: true`
+
+  When set to true (default), checkbox inputs will automatically include
+  brackets at the end of their names (e.g. name="Multicheckbox-Value1[]".
+  Setting this property to false, disables this behaviour.
+
+- `enctype` ***String*** (*optional*) `default: 'application/x-www-form-urlencoded'`
+
+  When the value of the method attribute is post, enctype is the
+  MIME type of content that is used to submit the form to the
+  server.
+
+  Possible values are:
+  - `application/x-www-form-urlencoded`: The default value if the
+  attribute is not specified.
+  - `multipart/form-data`: The value used for an `<input/>` element
+  with the type attribute set to "file".
+  - `text/plain` (HTML5).
+
+- `method` ***String*** (*optional*) `default: 'post'`
+
+  The HTTP method that the browser uses to submit the form.
+
+  Possible values are:
+  - `post`: Corresponds to the HTTP POST method ; form data are
+  included in the body of the form and sent to the server.
+  - `get`: Corresponds to the HTTP GET method; form data are
+  appended to the action attribute URI with a '?' as separator,
+  and the resulting URI is sent to the server. Use this method
+  when the form has no side-effects and contains only ASCII
+  characters.
+
+- `novalidate` ***Boolean*** (*optional*)
+
+  This Boolean attribute indicates that the form is not to be
+  validated when submitted.
+
+- `search` ***Boolean*** (*optional*) `default: false`
+
+  Use this prop to enable `search` landmark role to identify a section
+  of the page used to search the page, site, or collection of sites.
+
+- `components` ***Components*** (*optional*) `default: GLOBAL.components`
+
+  Use this prop to overwrite the default Native HTML Elements for
+  custom components.
+
+### events
+
+- `change`
+
+  Fired when a change to the element's value is committed
+  by the user.
+
+- `input`
+
+  Fired synchronously when the value of an element is changed.
+
+- `invalid`
+
+  Fired when a submittable element has been checked and doesn't
+  satisfy its constraints. The validity of submittable elements is
+  checked before submitting their owner form, or after the
+  `checkValidity()` of the element or its owner form is called.
+
+- `submit`
+
+  Fired when a form is submitted
+
+### methods
+
+- `load(schema, model)`
+
+  Load the given `schema` with initial filled `value`.
+  Use this to load async schema.
+
+  **parameters:**
+
+     - `schema` **object** - The JSON Schema object to load
+     - `model` **Number|String|Array|Object|Boolean** - The initial data for the schema.
+
+- `form()`
+
+  Get the HTML form reference.
+
+   **return value:**
+
+     - **HTMLFormElement,undefined** -  Returns the HTML form element or `undefined` for empty object
+- `reportValidity()`
+
+  Returns true if the element's child controls satisfy their
+  validation constraints. When false is returned, cancelable invalid
+  events are fired for each invalid child and validation problems
+  are reported to the user.
+
+- `checkValidity()`
+
+  Checks whether the form has any constraints and whether it
+  satisfies them. If the form fails its constraints, the browser
+  fires a cancelable `invalid` event at the element, and then
+  returns false.
+
+- `reset()`
+
+  Reset the value of all elements of the parent form.
 
 ## Working with Async Schema
 
@@ -227,8 +240,7 @@ To do that, use the `load(schema[, value = undefined])` method:
 
 ```html
 <template>
-  <!-- set a reference to your FormSchema instance -->
-  <FormSchema ref="formSchema"/>
+  <FormSchema v-model="schema"/>
 </template>
 
 <script>
@@ -236,9 +248,12 @@ To do that, use the `load(schema[, value = undefined])` method:
   import FormSchema from '@formschema/native'
 
   export default {
+    data: () => ({
+      schema: {}
+    }),
     created () {
       axios.get('/api/schema/subscription.json').then(({ data }) => {
-        this.$refs.formSchema.load(data)
+        this.schema = data
       })
     },
     components: { FormSchema }
@@ -254,14 +269,13 @@ To define multiple checkbox, use the [JSON Schema keyword `anyOf`](http://json-s
 
 ```json
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
     "multipleCheckbox": {
       "type": "array",
       "anyOf": [
-        { "value": "daily", "label": "Daily New" },
-        { "value": "promotion", "label": "Promotion" }
+        "daily",
+        "promotion"
       ]
     }
   }
@@ -270,24 +284,20 @@ To define multiple checkbox, use the [JSON Schema keyword `anyOf`](http://json-s
 
 ## Grouped Radio elements
 
-To group radio elements, use the [JSON Schema keyword `enum`](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.23) and `attrs.type === 'radio'`:
+To group radio elements, use the [JSON Schema keyword `enum`](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.23):
 
 **schema.json**
 
 ```json
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
     "groupedRadio": {
       "type": "string",
       "enum": [
-        { "value": "daily", "label": "Daily New" },
-        { "value": "promotion", "label": "Promotion" }
-      ],
-      "attrs": {
-        "type": "radio"
-      }
+        "daily",
+        "promotion"
+      ]
     }
   }
 }
@@ -301,7 +311,6 @@ To render a [array field](http://json-schema.org/latest/json-schema-validation.h
 
 ```json
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
     "arrayInput": {
@@ -324,7 +333,6 @@ To render a [regex input](http://json-schema.org/latest/json-schema-validation.h
 
 ```json
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
     "regexInput": {
@@ -340,21 +348,18 @@ To render a [regex input](http://json-schema.org/latest/json-schema-validation.h
 To load a JSON Schema with `$ref` pointers, you need to install an additional dependency to resolve them:
 
 ```js
-import $RefParser from 'json-schema-ref-parser'
-import FormSchema from '@formschema/native'
-import schemaWithPointers from './schema/with-pointers.json'
+import $RefParser from 'json-schema-ref-parser';
+import FormSchema from '@formschema/native';
+import schemaWithPointers from './schema/with-pointers.json';
 
 export default {
   created () {
-    $RefParser.dereference(schemaWithPointers, (err, schema) => {
-      if (err) {
-        console.error(err);
-      } else {
-        // `schema` is the resolved schema that contains your entire JSON Schema,
-        // including referenced files, combined into a single object
-        this.$refs.formSchema.load(schema)
-      }
-    })
+    $RefParser.dereference(schemaWithPointers)
+      .then((schema) => {
+        // `schema` is the resolved schema that contains your entire JSON
+        // Schema, including referenced files, combined into a single object
+        this.schema = schema;
+      });
   },
   components: { FormSchema }
 }
@@ -364,27 +369,31 @@ See [json-schema-ref-parser documentation page](https://www.npmjs.com/package/js
 
 ## Custom Form Elements
 
-To define custom element for rendering, you need to use the `Components` class and the `components` prop:
+To define custom elements for rendering, you need to use the `Components` class and the `components` prop:
 
 ```js
-// CustomUIComponents.js
+// MyCustomElements.js
 
-export default (Components, options = defaultOptions) => {
-  // Create a Components instance
-  const components = new Components()
+import { Components } from '@formschela/native';
+import { InputElement } from '@/components/InputElement';
+import { ArrayElement } from '@/components/ArrayElement';
+import { FieldsetElement } from '@/components/FieldsetElement';
+import { ListElement } from '@/components/ListElement';
+import { TextareaElement } from '@/components/TextareaElement';
+import { BooleanElement } from '@/components/BooleanElement';
 
-  // Then use the `Components.set()` method to set your custom element
-  components.set('text', Text)
-  components.set('checkbox', Checkbox)
-  components.set('radio', Radio)
-  components.set('file', File)
-  components.set('select', Select)
-  components.set('option', Option)
-  components.set('hidden', 'input') // use the HTML native element
-  components.set('textarea', Textarea)
+export const MyCustomElements = new Components();
 
-  return components // return the Components instance reference
-}
+MyCustomElements.set('array', ArrayElement);
+MyCustomElements.set('boolean', BooleanElement);
+MyCustomElements.set('string', InputElement);
+MyCustomElements.set('radio', InputElement);
+MyCustomElements.set('enum', FieldsetElement);
+MyCustomElements.set('number', InputElement);
+MyCustomElements.set('integer', InputElement);
+MyCustomElements.set('object', FieldsetElement);
+MyCustomElements.set('list', ListElement);
+MyCustomElements.set('textarea', TextareaElement);
 ```
 
 ```html
@@ -394,12 +403,12 @@ export default (Components, options = defaultOptions) => {
 
 <script>
   import FormSchema, { Components } from '@formschema/native'
-  import CustomUIComponents from './CustomUIComponents'
+  import { MyCustomElements } from './MyCustomElements'
 
   export default {
     data: () => ({
       schema: { /* ... */ },
-      components: CustomUIComponents(Components),
+      components: MyCustomElements,
       model: {}
     }),
     components: { FormSchema }
@@ -407,7 +416,7 @@ export default (Components, options = defaultOptions) => {
 </script>
 ```
 
-[**ElementUI Example**](https://gitlab.com/formschema/components/elementui) 
+[**ElementUI Example**](https://gitlab.com/formschema/components/elementui)
 
 - Definition: https://gitlab.com/formschema/components/elementui/blob/master/lib/ElementUIComponents.js
 - Usage: https://gitlab.com/formschema/components/elementui/blob/master/demo/src/components/Subscription.vue

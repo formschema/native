@@ -1,16 +1,17 @@
 /* eslint-disable quote-props */
 
 module.exports = {
-  'root': true,
-  'env': {
-    'browser': true
+  root: true,
+  env: {
+    browser: true
   },
-  'extends': [
+  extends: [
     'eslint:recommended',
     'plugin:vue/strongly-recommended',
-    '@vue/airbnb'
+    '@vue/airbnb',
+    '@vue/typescript'
   ],
-  'rules': {
+  rules: {
     'comma-dangle': 'off',
     'semi': 'off',
     'class-methods-use-this': 'error',
@@ -56,5 +57,8 @@ module.exports = {
       { 'blankLine': 'always', 'prev': 'block-like', 'next': '*' },
       { 'blankLine': 'always', 'prev': '*', 'next': 'block-like' }
     ]
+  },
+  parserOptions: {
+    parser: '@typescript-eslint/parser'
   }
 }
