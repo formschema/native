@@ -1,4 +1,4 @@
-import { CreateInput } from '@/lib/NativeElementsLib';
+import { CreateInput } from '@/lib/CreateInput';
 import { HelperElement } from "@/components/HelperElement";
 import { FieldElement } from "@/components/FieldElement";
 import { ListComponent } from '@/types';

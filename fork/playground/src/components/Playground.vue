@@ -294,9 +294,6 @@
     margin-left: 20px;
   }
 
-  .playground__input__rendering__viewport__options label input {
-  }
-
   .playground__input__rendering__viewport__options label span {
     flex: 1;
   }

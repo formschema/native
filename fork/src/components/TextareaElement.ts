@@ -1,4 +1,4 @@
-import { CreateInput } from '@/lib/NativeElementsLib';
+import { CreateInput } from '@/lib/CreateInput';
 import { FieldElement } from "@/components/FieldElement";
 import { TextareaComponent, InputField } from '@/types';
 

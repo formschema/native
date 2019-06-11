@@ -16,15 +16,11 @@
           },
           "middle_name": {
             "type": "string",
-            "title": "Middle Name",
-            "minLength": 8,
-            "maxLength": 80
+            "title": "Middle Name"
           },
           "last_name": {
             "type": "string",
-            "title": "Last Name",
-            "minLength": 8,
-            "maxLength": 80
+            "title": "Last Name"
           }
         },
         "required": ["first_name"]
@@ -90,5 +86,5 @@
       }
     },
     "additionalProperties": false,
-    "required": ["name", "email", "lists", "aList"]
+    "required": ["name", "email", "lists", "aList", "int"]
   }
