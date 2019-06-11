@@ -98,6 +98,6 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
   }
 
   parseValue(data: any): string {
-    return typeof data !== 'undefined' ? data : '';
+    return data !== void(0) ? data : '';
   }
 }

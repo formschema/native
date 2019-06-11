@@ -5,14 +5,15 @@ import {
   Field,
   AbstractUISchemaDescriptor,
   AbstractParserOptions,
-  FieldKind
+  FieldKind,
+  UnknowField
 } from '@/types';
 
-export type Parent = AbstractParser<any, AbstractUISchemaDescriptor, Field<any>>;
+export type Parent = AbstractParser<any, AbstractUISchemaDescriptor, UnknowField>;
 
 export abstract class AbstractParser<T_Model, T_Descriptor extends AbstractUISchemaDescriptor, T_Field extends Field<any>> {
   readonly isRoot: boolean;
-  readonly isEnum: boolean;
+  readonly isEnumItem: boolean;
   readonly isArrayItem: boolean;
   readonly name?: string;
   readonly parent?: Parent;
@@ -27,9 +28,9 @@ export abstract class AbstractParser<T_Model, T_Descriptor extends AbstractUISch
     this.options = options;
     this.root = parent ? parent.root || this : this;
     this.isRoot = !parent;
-    this.isEnum = !!parent && parent.schema.enum instanceof Array;
+    this.isEnumItem = !!parent && parent.schema.enum instanceof Array;
     this.isArrayItem = !!parent && parent.schema.type === 'array'
-    this.name = parent && !this.isEnum
+    this.name = parent && !this.isEnumItem
       ? options.name
         ? parent.isRoot || this.isArrayItem
           ? options.name
@@ -59,7 +60,12 @@ export abstract class AbstractParser<T_Model, T_Descriptor extends AbstractUISch
       required: isRequired,
       default: this.parseValue(options.schema.default),
       set: (value: T_Model) => {
-        this.setValue(value);
+        if (this.isEnumItem) {
+          this.setEnumValue(value);
+        } else {
+          this.setValue(value);
+        }
+
         options.$vue.$emit('input', this.root.model);
       },
       get model() {
@@ -82,7 +88,7 @@ export abstract class AbstractParser<T_Model, T_Descriptor extends AbstractUISch
       },
       attrs: {
         input: {
-          type: undefined,
+          type: void(0),
           name: this.isArrayItem && this.name ? `${this.name}[]` : this.name,
           ...attrs
         }
@@ -90,7 +96,7 @@ export abstract class AbstractParser<T_Model, T_Descriptor extends AbstractUISch
       props: Objects.clone(props),
       descriptor: this.descriptor,
       component: this.descriptor.component || this.defaultComponent || defaultDescriptor.component,
-      parent: parent ? parent.field : undefined
+      parent: parent ? parent.field : void(0)
     } as any;
   }
 
@@ -103,23 +109,23 @@ export abstract class AbstractParser<T_Model, T_Descriptor extends AbstractUISch
   }
 
   get type(): string | undefined {
-    return undefined;
+    return void(0);
   }
 
   get initialValue() {
-    if (this.options.model !== undefined) {
+    if (this.options.model !== void(0)) {
       return this.options.model;
     } else if (this.schema.hasOwnProperty('default')) {
       return this.schema.default;
     }
 
-    return undefined;
+    return void(0);
   }
 
   get defaultComponent() {
     return this.descriptor.kind
       ? this.options.descriptorConstructor<T_Descriptor>(this.schema, this.descriptor.kind).component
-      : undefined;
+      : void(0);
   }
 
   get parsedSchema() {
@@ -131,6 +137,12 @@ export abstract class AbstractParser<T_Model, T_Descriptor extends AbstractUISch
 
   setValue(value: T_Model) {
     this.field.model = this.parseValue(value);
+  }
+
+  setEnumValue(value: T_Model) {
+    if (this.parent) {
+      this.parent.field.model = value;
+    }
   }
 
   protected parseDescriptor() {
@@ -149,8 +161,8 @@ export abstract class AbstractParser<T_Model, T_Descriptor extends AbstractUISch
 
   protected parseField() {
     const id = this.field.attrs.input.id || UniqueId.get(this.name);
-    const labelId = this.field.descriptor.label ? `${id}-label` : undefined;
-    const descId = this.field.descriptor.description ? `${id}-desc` : undefined;
+    const labelId = this.field.descriptor.label ? `${id}-label` : void(0);
+    const descId = this.field.descriptor.description ? `${id}-desc` : void(0);
     const ariaLabels = [ labelId, descId ].filter((item) => item);
     const type = this.type;
 

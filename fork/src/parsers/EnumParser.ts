@@ -70,6 +70,6 @@ export class EnumParser extends AbstractParser<any, ScalarDescriptor, EnumField>
   }
 
   parseValue(data: any): string {
-    return typeof data !== 'undefined' ? data : '';
+    return data !== void(0) ? data : '';
   }
 }

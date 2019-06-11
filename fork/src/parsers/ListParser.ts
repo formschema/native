@@ -34,7 +34,7 @@ export class ListParser extends AbstractParser<any, ScalarDescriptor, ListField>
     this.parseField();
   }
 
-  parseValue(data: any): string {
-    return typeof data !== 'undefined' ? data : '';
+  parseValue(data: any): any[] {
+    return data instanceof Array ? data : [];
   }
 }

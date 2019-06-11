@@ -3,11 +3,11 @@ import { NumberField, ScalarDescriptor, FieldKind } from '@/types';
 
 export class NumberParser extends AbstractParser<number, ScalarDescriptor, NumberField> {
   get kind(): FieldKind {
-    return this.isEnum ? 'radio' : 'number';
+    return this.isEnumItem ? 'radio' : 'number';
   }
 
   get type() {
-    return this.isEnum ? 'radio' : 'number';
+    return this.isEnumItem ? 'radio' : 'number';
   }
 
   parse() {

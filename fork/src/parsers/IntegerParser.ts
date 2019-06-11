@@ -3,7 +3,7 @@ import { FieldKind } from '@/types';
 
 export class IntegerParser extends NumberParser {
   get kind(): FieldKind {
-    return this.isEnum ? 'radio' : 'integer';
+    return this.isEnumItem ? 'radio' : 'integer';
   }
 
   parseExclusiveKeywords() {

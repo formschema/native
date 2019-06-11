@@ -369,27 +369,31 @@ See [json-schema-ref-parser documentation page](https://www.npmjs.com/package/js
 
 ## Custom Form Elements
 
-To define custom element for rendering, you need to use the `Components` class and the `components` prop:
+To define custom elements for rendering, you need to use the `Components` class and the `components` prop:
 
 ```js
-// CustomUIComponents.js
+// MyCustomElements.js
 
-export default (Components, options = defaultOptions) => {
-  // Create a Components instance
-  const components = new Components()
+import { Components } from '@formschela/native';
+import { InputElement } from '@/components/InputElement';
+import { ArrayElement } from '@/components/ArrayElement';
+import { FieldsetElement } from '@/components/FieldsetElement';
+import { ListElement } from '@/components/ListElement';
+import { TextareaElement } from '@/components/TextareaElement';
+import { BooleanElement } from '@/components/BooleanElement';
 
-  // Then use the `Components.set()` method to set your custom element
-  components.set('text', Text)
-  components.set('checkbox', Checkbox)
-  components.set('radio', Radio)
-  components.set('file', File)
-  components.set('select', Select)
-  components.set('option', Option)
-  components.set('hidden', 'input') // use the HTML native element
-  components.set('textarea', Textarea)
+export const MyCustomElements = new Components();
 
-  return components // return the Components instance reference
-}
+MyCustomElements.set('array', ArrayElement);
+MyCustomElements.set('boolean', BooleanElement);
+MyCustomElements.set('string', InputElement);
+MyCustomElements.set('radio', InputElement);
+MyCustomElements.set('enum', FieldsetElement);
+MyCustomElements.set('number', InputElement);
+MyCustomElements.set('integer', InputElement);
+MyCustomElements.set('object', FieldsetElement);
+MyCustomElements.set('list', ListElement);
+MyCustomElements.set('textarea', TextareaElement);
 ```
 
 ```html
@@ -399,12 +403,12 @@ export default (Components, options = defaultOptions) => {
 
 <script>
   import FormSchema, { Components } from '@formschema/native'
-  import CustomUIComponents from './CustomUIComponents'
+  import { MyCustomElements } from './MyCustomElements'
 
   export default {
     data: () => ({
       schema: { /* ... */ },
-      components: CustomUIComponents(Components),
+      components: MyCustomElements,
       model: {}
     }),
     components: { FormSchema }

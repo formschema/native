@@ -3,7 +3,7 @@ import { StringField, ScalarDescriptor, FieldKind } from '@/types';
 
 export class StringParser extends AbstractParser<string, ScalarDescriptor, StringField> {
   get kind(): FieldKind {
-    return this.isEnum ? 'radio' : 'string';
+    return this.isEnumItem ? 'radio' : 'string';
   }
 
   get type() {
@@ -11,7 +11,7 @@ export class StringParser extends AbstractParser<string, ScalarDescriptor, Strin
       return this.field.attrs.input.type;
     }
 
-    if (this.isEnum) {
+    if (this.isEnumItem) {
       return 'radio';
     }
 
@@ -37,14 +37,6 @@ export class StringParser extends AbstractParser<string, ScalarDescriptor, Strin
     }
   }
 
-  setValue(value: any) {
-    if (this.isEnum && this.parent) {
-      this.parent.field.model = this.field.model;
-    } else {
-      this.field.model = this.parseValue(value);
-    }
-  }
-
   parse() {
     this.parseField();
 
@@ -55,6 +47,6 @@ export class StringParser extends AbstractParser<string, ScalarDescriptor, Strin
   }
 
   parseValue(data: any): string {
-    return typeof data !== 'undefined' ? `${data}` : '';
+    return data !== void(0) ? `${data}` : '';
   }
 }
