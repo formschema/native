@@ -54,7 +54,8 @@ export class ObjectParser<
         $vue: this.options.$vue
       }))
       .map((options) => Parser.get(options, this))
-      .map((parser) => parser.field);
+      .filter((parser) => parser instanceof AbstractParser)
+      .map((parser: any) => parser.field as ObjectFieldChild);
   }
 
   protected getChildDescriptor(key: string) {

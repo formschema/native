@@ -29,26 +29,25 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
   }
 
   protected getFields(items: JsonSchema[]): ArrayItemField[] {
-    return items.map((itemSchema, i) => {
-      const defaultDescriptor = this.options.descriptorConstructor(itemSchema);
-      const itemDescriptor = this.field.descriptor.items
-        ? this.field.descriptor.items[i] || defaultDescriptor
-        : defaultDescriptor;
+    return items
+      .map((itemSchema, i): AbstractParserOptions<unknown, AbstractUISchemaDescriptor> => {
+        const defaultDescriptor = this.options.descriptorConstructor(itemSchema);
+        const itemDescriptor = this.field.descriptor.items
+          ? this.field.descriptor.items[i] || defaultDescriptor
+          : defaultDescriptor;
 
-      const options: AbstractParserOptions<unknown, AbstractUISchemaDescriptor> = {
-        schema: itemSchema,
-        model: typeof this.model[i] !== 'undefined' ? this.model[i] : itemSchema.default,
-        descriptor: itemDescriptor,
-        descriptorConstructor: this.options.descriptorConstructor,
-        name: this.name,
-        $vue: this.options.$vue
-      };
-
-      const parser = Parser.get(options, this);
-      const field: ArrayItemField = parser.field;
-
-      return field;
-    });
+        return {
+          schema: itemSchema,
+          model: typeof this.model[i] !== 'undefined' ? this.model[i] : itemSchema.default,
+          descriptor: itemDescriptor,
+          descriptorConstructor: this.options.descriptorConstructor,
+          name: this.name,
+          $vue: this.options.$vue
+        };
+      })
+      .map((options) => Parser.get(options, this))
+      .filter((parser) => parser instanceof AbstractParser)
+      .map((parser: any) => parser.field as ArrayItemField);
   }
 
   public parse() {

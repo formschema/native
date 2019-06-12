@@ -200,8 +200,7 @@ export interface FormSchemaVue extends Vue {
 
   // data
   ref: string;
-  default: any;
-  data: any;
+  data: unknown;
 
   // computed
   descriptorConstructor: DescriptorConstructor;

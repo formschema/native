@@ -1,4 +1,4 @@
-import { FormSchemaComponent, DescriptorConstructor, DescriptorInstance } from '@/types';
+import { FormSchemaComponent } from '@/types';
 import { UniqueId as UniqueIdLib } from '@/lib/UniqueId';
 import { Parser } from '@/parsers/Parser';
 import { Objects as ObjectsLib } from '@/lib/Objects';
@@ -87,16 +87,15 @@ const FormSchema: FormSchemaComponent = {
   },
   data: () => ({
     ref: UniqueId.get('form-schema'),
-    default: undefined,
     data: {}
   }),
   computed: {
-    descriptorConstructor(): DescriptorConstructor {
+    descriptorConstructor() {
       return this.descriptor instanceof Function
         ? this.descriptor
         : GLOBAL.Descriptor.get;
     },
-    schemaDescriptor(): DescriptorInstance {
+    schemaDescriptor() {
       return this.descriptor instanceof Function
         ? this.descriptor(this.schema)
         : this.descriptor || GLOBAL.Descriptor.get(this.schema);

@@ -11,8 +11,19 @@ import { ObjectParser } from '@/parsers/ObjectParser';
 import { EnumParser } from '@/parsers/EnumParser';
 import { ListParser } from '@/parsers/ListParser';
 
+export type Parsers = ArrayParser
+| BooleanParser
+| IntegerParser
+| NullParser
+| NumberParser
+| StringParser
+| ObjectParser
+| EnumParser
+| ListParser
+| null;
+
 export const Parser = Object.freeze({
-  get(options: AbstractParserOptions<any, any>, parent?: Parent) {
+  get(options: AbstractParserOptions<any, any>, parent?: Parent): Parsers {
     let parser = null;
 
     if (options.schema.enum instanceof Array) {
@@ -50,7 +61,7 @@ export const Parser = Object.freeze({
           break;
 
         default:
-          return {};
+          return null;
       }
     }
 
