@@ -160,9 +160,7 @@ const FormSchema: FormSchemaComponent = {
         components: this.components
       },
       on: {
-        reset: this.reset,
-        submit: this.submit,
-        invalid: this.invalid
+        submit: this.submit
       }
     }, nodes);
   },
@@ -191,61 +189,14 @@ const FormSchema: FormSchemaComponent = {
     },
 
     /**
-     * Returns true if the element's child controls satisfy their
-     * validation constraints. When false is returned, cancelable invalid
-     * events are fired for each invalid child and validation problems
-     * are reported to the user.
-     */
-    reportValidity () {
-      const controls: HTMLInputElement[] = this.form().elements as any;
-      let validity = true;
-
-      for (let i = 0; i < controls.length; i++) {
-        if ('checkValidity' in controls[i]) {
-          validity = validity && controls[i].checkValidity();
-        }
-      }
-
-      return validity;
-    },
-
-    /**
-     * @private
-     */
-    invalid (e) {
-      /**
-       * Fired when a submittable element has been checked and doesn't
-       * satisfy its constraints. The validity of submittable elements is
-       * checked before submitting their owner form, or after the
-       * `checkValidity()` of the element or its owner form is called.
-       */
-      this.$emit('invalid', e);
-    },
-
-    /**
-     * Reset the value of all elements of the parent form.
-     */
-    reset () {
-      const form = this.form();
-
-      if (form && 'reset' in form) {
-        form.reset();
-      }
-    },
-
-    /**
      * Send the content of the form to the server.
      * @private
      */
     submit (event) {
-      if (this.reportValidity()) {
-        /**
-         * Fired when a form is submitted
-         */
-        this.$emit('submit', event);
-      } else {
-        this.invalid();
-      }
+      /**
+       * Fired when a form is submitted
+       */
+      this.$emit('submit', event);
     }
   }
 };
