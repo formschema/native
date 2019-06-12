@@ -7,7 +7,9 @@ import {
   FunctionalComponentOptions,
   ComponentOptions,
   RenderContext,
-  AsyncComponent
+  AsyncComponent,
+  WatchOptions,
+  ComputedOptions
 } from 'vue/types/options';
 
 export type Scalar = boolean | number | null | string;
@@ -198,9 +200,14 @@ export interface FormSchemaVue extends Vue {
 
   // data
   ref: string;
-  field: UnknowField | null;
   default: any;
   data: any;
+
+  // computed
+  descriptorConstructor: DescriptorConstructor;
+  schemaDescriptor: DescriptorInstance;
+  parser: any;
+  field: UnknowField | null;
 
   // methods
   load(schema: JsonSchema, model: any, reset: boolean): void;
@@ -212,16 +219,8 @@ export interface FormSchemaVue extends Vue {
   submit(e?: any): void;
 }
 
-export interface FormSchemaMethods {
-  load(this: Vue, schema: JsonSchema, model: any, reset: boolean): void;
-  form(this: Vue): HTMLFormElement;
-  emitInputEvent(this: Vue): void;
-  reset(this: Vue): void;
-  reportValidity(this: Vue): boolean;
-  invalid(this: Vue, e?: any): void;
-}
-
 export interface FormSchemaComponent<V extends FormSchemaVue = FormSchemaVue> extends ComponentOptions<V> {
+  computed: Accessors<Dictionary, V>;
   watch?: Record<string, WatchOptionsWithHandler<V, any> | WatchHandler<V, any> | string>;
 
   render?(this: V, createElement: CreateElement, hack: RenderContext<Props>): VNode;
@@ -242,13 +241,12 @@ export interface FormSchemaComponent<V extends FormSchemaVue = FormSchemaVue> ex
   serverPrefetch?(this: V): Promise<void>;
 }
 
+export type Accessors<T, V> = {
+  [K in keyof T]: ((this: V) => T[K]) | ComputedOptions<T[K]>
+}
+
 export type Props = Record<string, unknown>;
 export type WatchHandler<V extends Vue, T> = (this: V, val: T, oldVal: T) => void;
-
-export interface WatchOptions {
-  deep?: boolean;
-  immediate?: boolean;
-}
 
 export interface WatchOptionsWithHandler<V extends Vue, T> extends WatchOptions {
   handler: WatchHandler<V, T>;

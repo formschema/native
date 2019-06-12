@@ -1,11 +1,11 @@
-import { FormSchemaComponent } from '@/types';
+import { FormSchemaComponent, DescriptorConstructor, DescriptorInstance } from '@/types';
 import { UniqueId as UniqueIdLib } from '@/lib/UniqueId';
 import { Parser } from '@/parsers/Parser';
-import { JsonSchema } from '@/types/jsonschema';
 import { Objects as ObjectsLib } from '@/lib/Objects';
 import { Components as ComponentsLib } from '@/lib/Components';
 import { NativeElements } from '@/lib/NativeElements';
 import { NativeDescriptor } from '@/descriptors/NativeDescriptor';
+import { AbstractParser } from '@/parsers/AbstractParser';
 
 export const GLOBAL = {
   Elements: NativeElements,
@@ -87,17 +87,43 @@ const FormSchema: FormSchemaComponent = {
   },
   data: () => ({
     ref: UniqueId.get('form-schema'),
-    field: null,
     default: undefined,
     data: {}
   }),
-  watch: {
-    schema(value: JsonSchema) {
-      this.load(value, this.value, false);
+  computed: {
+    descriptorConstructor(): DescriptorConstructor {
+      return this.descriptor instanceof Function
+        ? this.descriptor
+        : GLOBAL.Descriptor.get;
+    },
+    schemaDescriptor(): DescriptorInstance {
+      return this.descriptor instanceof Function
+        ? this.descriptor(this.schema)
+        : this.descriptor || GLOBAL.Descriptor.get(this.schema);
+    },
+    parser() {
+      return Parser.get({
+        schema: this.schema,
+        model: this.value,
+        name: this.name,
+        descriptor: this.schemaDescriptor,
+        descriptorConstructor: this.descriptorConstructor,
+        $vue: this
+      });
+    },
+    field() {
+      return this.parser instanceof AbstractParser
+        ? this.parser.field
+        : null;
     }
   },
-  created() {
-    this.load(this.schema, this.value, false);
+  watch: {
+    parser() {
+      if (this.field) {
+        this.$nextTick(() => this.$emit('ready'));
+        this.emitInputEvent();
+      }
+    }
   },
   render(createElement) {
     if (this.field === null) {
@@ -142,51 +168,6 @@ const FormSchema: FormSchemaComponent = {
     }, nodes);
   },
   methods: {
-    /**
-     * Load the given `schema` with initial filled `value`.
-     * Use this to load async schema.
-     *
-     * @param {object} schema - The JSON Schema object to load
-     * @param {Number|String|Array|Object|Boolean} model - The initial data for the schema.
-     *
-     * @note `model` is not a two-way data bindings.
-     * To get the form data, use the `v-model` directive.
-     *
-     * @note The default value of `model` is the initial model defined with the
-     * `v-model` directive.
-     */
-    load (schema: JsonSchema, model: unknown = undefined, reset = true) {
-      if (Objects.isEmpty<JsonSchema>(schema)) {
-        this.field = null;
-      } else {
-        const descriptorConstructor = this.descriptor instanceof Function
-          ? this.descriptor
-          : GLOBAL.Descriptor.get;
-
-        const descriptor = this.descriptor instanceof Function
-          ? this.descriptor(schema)
-          : this.descriptor || GLOBAL.Descriptor.get(schema);
-
-        const parser = Parser.get({
-          schema: this.schema,
-          model: typeof model === 'undefined' ? this.value : model,
-          name: this.name,
-          descriptor: descriptor,
-          descriptorConstructor: descriptorConstructor,
-          $vue: this
-        });
-
-        this.field = parser.field;
-      }
-
-      this.$nextTick(() => this.$emit('ready'));
-      this.emitInputEvent();
-
-      if (reset) {
-        this.$nextTick(() => this.reset());
-      }
-    },
-
     /**
      * @private
      */

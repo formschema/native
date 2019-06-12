@@ -50,7 +50,7 @@ export const Parser = Object.freeze({
           break;
 
         default:
-          throw new TypeError(`Unknow schema type '${options.schema.type}'`);
+          return {};
       }
     }
 
