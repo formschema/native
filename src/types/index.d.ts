@@ -212,9 +212,6 @@ export interface FormSchemaVue extends Vue {
   load(schema: JsonSchema, model: any, reset: boolean): void;
   form(): HTMLFormElement;
   emitInputEvent(): void;
-  reset(): void;
-  reportValidity(): boolean;
-  invalid(e?: any): void;
   submit(e?: any): void;
 }
 
