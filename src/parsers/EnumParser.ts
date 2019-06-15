@@ -69,7 +69,7 @@ export class EnumParser extends AbstractParser<unknown, ScalarDescriptor, EnumFi
 
     this.field.children = this.children;
 
-    this.parseField();
+    super.parse();
   }
 
   protected parseValue(data: unknown): unknown {

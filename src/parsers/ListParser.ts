@@ -31,7 +31,7 @@ export class ListParser extends AbstractParser<unknown, ScalarDescriptor, ListFi
 
     this.field.items = this.items;
 
-    this.parseField();
+    super.parse();
   }
 
   protected parseValue(data: any): unknown {

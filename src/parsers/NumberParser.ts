@@ -10,10 +10,6 @@ export class NumberParser extends AbstractParser<number, ScalarDescriptor, Numbe
     return this.isEnumItem ? 'radio' : 'number';
   }
 
-  public parse() {
-    this.parseField();
-  }
-
   protected parseExclusiveKeywords() {
     if (this.schema.hasOwnProperty('exclusiveMinimum')) {
       const exclusiveMinimum = this.schema.exclusiveMinimum as number;
@@ -28,8 +24,8 @@ export class NumberParser extends AbstractParser<number, ScalarDescriptor, Numbe
     }
   }
 
-  protected parseField() {
-    super.parseField();
+  public parse() {
+    super.parse();
 
     this.field.attrs.input.min = this.schema.minimum;
     this.field.attrs.input.max = this.schema.maximum;

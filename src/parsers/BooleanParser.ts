@@ -3,7 +3,7 @@ import { BooleanField, ScalarDescriptor } from '@/types';
 
 export class BooleanParser extends AbstractParser<boolean, ScalarDescriptor, BooleanField> {
   public parse(): void {
-    this.parseField();
+    super.parse();
 
     this.field.attrs.input.type = 'checkbox';
     this.field.attrs.input.checked = this.field.model === true;

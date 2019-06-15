@@ -51,6 +51,8 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
   }
 
   public parse() {
+    super.parse();
+
     if (this.schema.items) {
       if (this.schema.items instanceof Array) {
         this.items.push(...this.schema.items);
@@ -68,12 +70,6 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
         this.additionalItems.push(this.additionalItems);
       }
     }
-
-    this.parseField();
-  }
-
-  protected parseField() {
-    super.parseField();
 
     this.field.definedAsObject = !Array.isArray(this.schema.items);
     this.field.items = this.fields;

@@ -140,8 +140,6 @@ export abstract class AbstractParser<
     return this.options.schema;
   }
 
-  public abstract parse(): void;
-
   protected abstract parseValue(data: any): TModel;
 
   protected setValue(value: TModel) {
@@ -168,7 +166,7 @@ export abstract class AbstractParser<
     }
   }
 
-  protected parseField() {
+  public parse() {
     const id = this.field.attrs.input.id || UniqueId.get(this.name);
     const labelId = this.field.descriptor.label ? `${id}-label` : undefined;
     const descId = this.field.descriptor.description ? `${id}-desc` : undefined;

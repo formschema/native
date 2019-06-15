@@ -38,7 +38,7 @@ export class StringParser extends AbstractParser<string, ScalarDescriptor, Strin
   }
 
   public parse() {
-    this.parseField();
+    super.parse();
 
     this.field.attrs.input.value = this.field.model;
     this.field.attrs.input.minlength = this.schema.minLength;

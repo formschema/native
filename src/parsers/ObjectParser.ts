@@ -83,18 +83,14 @@ export class ObjectParser<
 
     this.field.children = this.children;
 
-    this.parseField();
+    super.parse();
+
+    delete this.field.attrs.input.required;
+    delete this.field.attrs.input['aria-required'];
 
     if (this.isRoot) {
       delete this.field.attrs.input.name;
     }
-  }
-
-  protected parseField() {
-    super.parseField();
-
-    delete this.field.attrs.input.required;
-    delete this.field.attrs.input['aria-required'];
   }
 
   protected parseValue(data: TModel): TModel {
