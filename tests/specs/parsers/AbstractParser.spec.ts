@@ -175,5 +175,127 @@ describe('parsers/AbstractParser', () => {
         });
       });
     });
+
+    describe('schema with title', () => {
+      const options: AbstractParserOptions<string, ScalarDescriptor> = {
+        schema: {
+          type: 'string',
+          title: 'Name'
+        },
+        model: '',
+        descriptorConstructor: NativeDescriptor.get,
+        $vue: new Vue()
+      };
+
+      const parser = new FakeParser(options);
+
+      describe('parser properties', () => {
+        it('should have provided schema', () => {
+          expect(parser.schema).toEqual({
+            type: 'string',
+            title: 'Name'
+          });
+        });
+      });
+
+      describe('parser.parse()', () => {
+        const parser = new FakeParser(options);
+
+        parser.parse();
+
+        it('field.attrs.label should have properties { id, tabindex }', () => {
+          expect(Object.keys(parser.field.attrs.label).sort()).toEqual([
+            'for', 'id'
+          ].sort());
+        });
+
+        it('field.attrs.label.id should be defined', () => {
+          expect(parser.field.attrs.label.id).toBeDefined();
+        });
+
+        it('field.attrs.label.for should be equal to parser.field.attrs.input.id', () => {
+          expect(parser.field.attrs.label.for).toBe(parser.field.attrs.input.id);
+        });
+
+        it('field.attrs.description should have properties { id }', () => {
+          expect(Object.keys(parser.field.attrs.description).sort()).toEqual([
+            'id'
+          ].sort());
+        });
+
+        it('field.attrs.description.id should be undefined', () => {
+          expect(parser.field.attrs.description.id).toBeUndefined();
+        });
+      });
+    });
+
+    describe('schema with title and description', () => {
+      const options: AbstractParserOptions<string, ScalarDescriptor> = {
+        schema: {
+          type: 'string',
+          title: 'Name',
+          description: 'Your First Name'
+        },
+        model: '',
+        descriptorConstructor: NativeDescriptor.get,
+        $vue: new Vue()
+      };
+
+      const parser = new FakeParser(options);
+
+      describe('parser properties', () => {
+        it('should have provided schema', () => {
+          expect(parser.schema).toEqual({
+            type: 'string',
+            title: 'Name',
+            description: 'Your First Name'
+          });
+        });
+      });
+
+      describe('parser.parse()', () => {
+        const parser = new FakeParser(options);
+
+        parser.parse();
+
+        it('field.attrs.input should have extended properties', () => {
+          expect(Object.keys(parser.field.attrs.input).sort()).toEqual([
+            'id', 'type', 'name', 'readonly', 'required', 'aria-required', 'aria-labelledby'
+          ].sort());
+        });
+
+        it('field.attrs.label should have properties { id, tabindex }', () => {
+          expect(Object.keys(parser.field.attrs.label).sort()).toEqual([
+            'for', 'id', 'tabindex'
+          ].sort());
+        });
+
+        it('field.attrs.label.id should be defined', () => {
+          expect(parser.field.attrs.label.id).toBeDefined();
+        });
+
+        it('field.attrs.label.for should be equal to parser.field.attrs.input.id', () => {
+          expect(parser.field.attrs.label.for).toBe(parser.field.attrs.input.id);
+        });
+
+        it('field.attrs.label.tabindex should be equal to -1', () => {
+          expect(parser.field.attrs.label.tabindex).toBe('-1');
+        });
+
+        it('field.attrs.description should have properties { id, tabindex }', () => {
+          expect(Object.keys(parser.field.attrs.description).sort()).toEqual([
+            'id', 'tabindex'
+          ].sort());
+        });
+
+        it('field.attrs.description.id should be defined', () => {
+          expect(parser.field.attrs.description.id).toBeDefined();
+        });
+
+        it('field.attrs.description.tabindex should be equal to -1', () => {
+          expect(parser.field.attrs.description.tabindex).toBe('-1');
+        });
+      });
+    });
   });
 });
