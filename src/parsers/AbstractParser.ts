@@ -136,10 +136,6 @@ export abstract class AbstractParser<
       : undefined;
   }
 
-  protected get parsedSchema() {
-    return this.options.schema;
-  }
-
   protected abstract parseValue(data: any): TModel;
 
   protected setValue(value: TModel) {
