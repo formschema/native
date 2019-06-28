@@ -1,6 +1,5 @@
 import { VNode } from 'vue/types/vnode';
 import { Vue, CreateElement } from 'vue/types/vue';
-import { JsonSchema } from '@/types/jsonschema';
 
 import {
   Component as VueComponent,
@@ -11,6 +10,8 @@ import {
   WatchOptions,
   ComputedOptions
 } from 'vue/types/options';
+
+import { JsonSchema } from '@/types/jsonschema';
 
 export type Scalar = boolean | number | null | string;
 export interface Dictionary<T = unknown> { [key: string]: T }
