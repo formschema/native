@@ -30,7 +30,7 @@ export abstract class AbstractParser<
   public constructor(options: AbstractParserOptions<TModel, TDescriptor>, parent?: Parent) {
     this.parent = parent;
     this.options = options;
-    this.root = parent ? parent.root || this : this;
+    this.root = parent ? parent.root : this;
     this.isRoot = !parent;
     this.isEnumItem = !!parent && parent.schema.enum instanceof Array;
     this.isArrayItem = !!parent && parent.schema.type === 'array';
@@ -53,7 +53,7 @@ export abstract class AbstractParser<
     const props = this.descriptor.props || {};
     const isRequired = parent && (parent as any).required instanceof Array
       ? (parent as any).required.includes(this.options.name)
-      : true;
+      : this.isRoot;
 
     delete attrs.name;
 
