@@ -94,7 +94,6 @@ export interface Field<
   descriptor: TDescriptor;
   component: Component;
   parent?: Field<any>;
-  set(value: TModel): void;
 }
 
 export type BooleanField = Field<'boolean', BooleanAttributes, ScalarDescriptor, boolean>;
@@ -136,7 +135,7 @@ export interface ListField extends Field<'enum', Attributes, ScalarDescriptor> {
 
 export type ObjectFieldChild = Field<any, Attributes, DescriptorInstance>;
 
-export interface ObjectField extends Field<'object', Attributes, ObjectDescriptor> {
+export interface ObjectField extends Field<'object', Attributes, ObjectDescriptor, Dictionary> {
   children: ObjectFieldChild[];
   isArrayField?: boolean;
   minItems?: number;
@@ -150,7 +149,7 @@ export interface AbstractParserOptions<TModel, TDescriptor extends AbstractUISch
   readonly descriptor?: TDescriptor;
   readonly descriptorConstructor: DescriptorConstructor;
   readonly name?: string;
-  readonly $vue: Vue;
+  readonly onChange?: (value: TModel) => void;
 }
 
 export interface AbstractUISchemaDescriptor {

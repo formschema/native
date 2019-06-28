@@ -6,7 +6,8 @@ import {
   AbstractUISchemaDescriptor,
   AbstractParserOptions,
   FieldKind,
-  UnknowField
+  UnknowField,
+  ObjectField
 } from '@/types';
 
 export type Parent = AbstractParser<any, AbstractUISchemaDescriptor, UnknowField>;
@@ -63,34 +64,11 @@ export abstract class AbstractParser<
       isRoot: this.isRoot,
       required: isRequired,
       default: this.parseValue(options.schema.default),
-      set: (value: TModel) => {
-        if (this.isEnumItem) {
-          this.setEnumValue(value);
-        } else {
-          this.setValue(value);
-        }
-
-        options.$vue.$emit('input', this.root.model);
-      },
       get model() {
-        return self.model;
+        return self.getModelValue();
       },
       set model(value: TModel) {
-        self.model = value;
-
-        if (parent) {
-          if (parent.schema.type === 'object') {
-            const parentModel = parent.field.model as any;
-
-            parentModel[options.name as string] = self.model;
-
-            // options.$vue.$set(parent.field.model, options.name as string, self.model);
-          } else {
-            // console.log('unset:>', { value, parent });
-          }
-        } else {
-          // console.log('unset:>', { value, parent });
-        }
+        self.setModelValue(value);
       },
       attrs: {
         input: {
@@ -104,6 +82,8 @@ export abstract class AbstractParser<
       component: this.descriptor.component || this.defaultComponent || defaultDescriptor.component,
       parent: parent ? parent.field : undefined
     } as any;
+
+    this.setModelValue(this.model);
   }
 
   public get schema() {
@@ -136,17 +116,62 @@ export abstract class AbstractParser<
       : undefined;
   }
 
-  protected abstract parseValue(data: any): TModel;
+  private getModelValue(): TModel {
+    if (this.parent) {
+      switch (this.parent.schema.type) {
+        case 'object': {
+          const name = this.options.name as string;
+          const parentField: ObjectField = this.parent.field as any;
 
-  protected setValue(value: TModel) {
-    this.field.model = this.parseValue(value);
+          return parentField.model[name] as TModel;
+        }
+
+        case 'array':
+          return this.model;
+
+        default:
+          return this.parent.field.model as TModel;
+      }
+    }
+
+    return this.model;
   }
 
-  protected setEnumValue(value: TModel) {
+  private setModelValue(value: TModel) {
     if (this.parent) {
-      this.parent.field.model = value;
+      switch (this.parent.schema.type) {
+        case 'object': {
+          const name = this.options.name as string;
+          const parentField: ObjectField = this.parent.field as any;
+
+          parentField.model[name] = this.parseValue(value);
+
+          this.parent.field.model = parentField.model;
+          break;
+        }
+
+        case 'array':
+          //
+          break;
+
+        default:
+          if (this.isEnumItem) {
+            this.parent.field.model = this.model;
+          } else {
+            this.parent.field.model = this.parseValue(value);
+          }
+          break;
+      }
+    } else {
+      this.model = this.parseValue(value);
+    }
+
+    if (this.isRoot && this.options.onChange) {
+      this.options.onChange(this.model);
     }
   }
+
+  protected abstract parseValue(data: any): TModel;
 
   protected parseDescriptor() {
     if (!this.descriptor.kind) {

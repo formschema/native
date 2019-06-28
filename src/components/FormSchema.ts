@@ -86,8 +86,7 @@ const FormSchema: FormSchemaComponent = {
     }
   },
   data: () => ({
-    ref: UniqueId.get('form-schema'),
-    data: {}
+    ref: UniqueId.get('form-schema')
   }),
   computed: {
     descriptorConstructor() {
@@ -107,21 +106,18 @@ const FormSchema: FormSchemaComponent = {
         name: this.name,
         descriptor: this.schemaDescriptor,
         descriptorConstructor: this.descriptorConstructor,
-        $vue: this
+        onChange: (value) => {
+          /**
+           * Fired synchronously when the value of an element is changed.
+           */
+          this.$emit('input', value);
+        }
       });
     },
     field() {
       return this.parser instanceof AbstractParser
         ? this.parser.field
         : null;
-    }
-  },
-  watch: {
-    parser() {
-      if (this.field) {
-        this.$nextTick(() => this.$emit('ready'));
-        this.emitInputEvent();
-      }
     }
   },
   render(createElement) {
@@ -133,7 +129,7 @@ const FormSchema: FormSchemaComponent = {
       attrs: this.field.attrs.input,
       props: {
         field: this.field,
-        value: this.data,
+        value: this.value,
         disabled: this.disabled,
         components: this.components
       }
@@ -154,7 +150,7 @@ const FormSchema: FormSchemaComponent = {
         'aria-label': this.schema.title
       },
       props: {
-        value: this.data,
+        value: this.value,
         search: this.search,
         disabled: this.disabled,
         components: this.components
@@ -166,25 +162,11 @@ const FormSchema: FormSchemaComponent = {
   },
   methods: {
     /**
-     * @private
-     */
-    emitInputEvent () {
-      if (this.field === null) {
-        return;
-      }
-
-      /**
-       * Fired synchronously when the value of an element is changed.
-       */
-      this.$emit('input', this.field.model);
-    },
-
-    /**
      * Get the HTML form reference.
      *
      * @returns {HTMLFormElement|VNode|undefined} - Returns the HTML form element or `undefined` for empty object
      */
-    form () {
+    form() {
       return this.$refs[this.ref];
     },
 
@@ -192,7 +174,7 @@ const FormSchema: FormSchemaComponent = {
      * Send the content of the form to the server.
      * @private
      */
-    submit (event) {
+    submit(event) {
       /**
        * Fired when a form is submitted
        */

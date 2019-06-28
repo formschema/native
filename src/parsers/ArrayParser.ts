@@ -41,8 +41,7 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
           model: typeof this.model[i] !== 'undefined' ? this.model[i] : itemSchema.default,
           descriptor: itemDescriptor,
           descriptorConstructor: this.options.descriptorConstructor,
-          name: this.name,
-          $vue: this.options.$vue
+          name: this.name
         };
       })
       .map((options) => Parser.get(options, this))

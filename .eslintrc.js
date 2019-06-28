@@ -81,7 +81,16 @@ module.exports = {
     'padding-line-between-statements': [
       'error',
       { 'blankLine': 'always', 'prev': 'block-like', 'next': '*' },
-      { 'blankLine': 'always', 'prev': '*', 'next': 'block-like' }
+      { 'blankLine': 'always', 'prev': '*', 'next': 'block-like' },
+      { 'blankLine': 'any', 'prev': 'block-like', 'next': ['block-like', 'break'] },
+      // require blank lines before all return statements
+      { 'blankLine': 'always', 'prev': '*', 'next': 'return' },
+      // require blank lines after every sequence of variable declarations
+      { 'blankLine': 'always', 'prev': ['const', 'let', 'var'], 'next': '*'},
+      { 'blankLine': 'any',    'prev': ['const', 'let', 'var'], 'next': ['const', 'let', 'var']},
+      // require blank lines after all directive prologues
+      { 'blankLine': 'always', 'prev': 'directive', 'next': '*' },
+      { 'blankLine': 'any',    'prev': 'directive', 'next': 'directive' }
     ]
   }
 }

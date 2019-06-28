@@ -10,7 +10,7 @@ export const CreateInput = <T extends Field<any>>(
   const props = data.props as ElementProps<T>;
   const on = {
     input({ target }: InputEvent) {
-      props.field.set(target.value);
+      props.field.model = target.value;
     }
   };
 

@@ -9,10 +9,6 @@ export class BooleanParser extends AbstractParser<boolean, ScalarDescriptor, Boo
     this.field.attrs.input.checked = this.field.model === true;
   }
 
-  protected setValue(checked: boolean): void {
-    this.field.model = checked;
-  }
-
   protected parseValue(checked: boolean): boolean {
     return checked || false;
   }

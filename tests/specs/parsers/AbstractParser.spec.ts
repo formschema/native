@@ -1,5 +1,4 @@
-import Vue, { Component } from 'vue';
-
+import { Component } from 'vue';
 import { AbstractParser } from '@/parsers/AbstractParser';
 import { ScalarDescriptor, StringField, AbstractParserOptions, ObjectDescriptor } from '@/types';
 import { NativeDescriptor } from '@/descriptors/NativeDescriptor';
@@ -17,9 +16,7 @@ class ObjectFakeParser extends AbstractParser<string, ScalarDescriptor, StringFi
   }
 
   protected parseValue(data: any): any {
-    return {
-      name: data
-    };
+    return data || {};
   }
 }
 
@@ -38,8 +35,7 @@ describe('parsers/AbstractParser', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string' },
       model: '',
-      descriptorConstructor: NativeDescriptor.get,
-      $vue: new Vue()
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new FakeParser(options);
@@ -87,8 +83,7 @@ describe('parsers/AbstractParser', () => {
         const options: AbstractParserOptions<any, ScalarDescriptor> = {
           schema: { type: 'string', default: 'Hello' },
           model: undefined,
-          descriptorConstructor: NativeDescriptor.get,
-          $vue: new Vue()
+          descriptorConstructor: NativeDescriptor.get
         };
 
         const parser = new FakeParser(options);
@@ -104,8 +99,7 @@ describe('parsers/AbstractParser', () => {
         const options: AbstractParserOptions<any, ScalarDescriptor> = {
           schema: { type: 'string', default: 'Hello' },
           model: undefined,
-          descriptorConstructor: NativeDescriptor.get,
-          $vue: new Vue()
+          descriptorConstructor: NativeDescriptor.get
         };
 
         const parser = new FakeParser(options);
@@ -117,8 +111,7 @@ describe('parsers/AbstractParser', () => {
         const options: AbstractParserOptions<any, ScalarDescriptor> = {
           schema: { type: 'string' },
           model: undefined,
-          descriptorConstructor: NativeDescriptor.get,
-          $vue: new Vue()
+          descriptorConstructor: NativeDescriptor.get
         };
 
         const parser = new FakeParser(options);
@@ -130,12 +123,6 @@ describe('parsers/AbstractParser', () => {
         parser.field.model = 'hello';
 
         expect(parser.field.model).toBe('hello');
-      });
-
-      it('field.model should have a worked method set(value)', () => {
-        parser.field.set('world');
-
-        expect(parser.field.model).toBe('world');
       });
 
       it('field.attrs should be defined', () => {
@@ -182,8 +169,7 @@ describe('parsers/AbstractParser', () => {
       const options: AbstractParserOptions<any, ScalarDescriptor> = {
         schema: { type: 'string' },
         model: '',
-        descriptorConstructor: NativeDescriptor.get,
-        $vue: new Vue()
+        descriptorConstructor: NativeDescriptor.get
       };
 
       const parser = new FakeParser(options);
@@ -251,8 +237,7 @@ describe('parsers/AbstractParser', () => {
         title: 'Name'
       },
       model: '',
-      descriptorConstructor: NativeDescriptor.get,
-      $vue: new Vue()
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new FakeParser(options);
@@ -305,8 +290,7 @@ describe('parsers/AbstractParser', () => {
         description: 'Your First Name'
       },
       model: '',
-      descriptorConstructor: NativeDescriptor.get,
-      $vue: new Vue()
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new FakeParser(options);
@@ -377,16 +361,14 @@ describe('parsers/AbstractParser', () => {
     const parentOptions: AbstractParserOptions<string, ObjectDescriptor> = {
       schema: schema as JsonSchema,
       model: '',
-      descriptorConstructor: NativeDescriptor.get,
-      $vue: new Vue()
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const childOptions: AbstractParserOptions<string, ScalarDescriptor> = {
       schema: schema.properties.name as JsonSchema,
       name: 'name',
       model: 'Jon Snow',
-      descriptorConstructor: NativeDescriptor.get,
-      $vue: new Vue()
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parent = new ObjectFakeParser(parentOptions);
@@ -430,20 +412,6 @@ describe('parsers/AbstractParser', () => {
 
         expect(parent.field.model).toEqual({
           name: 'Arya Stark'
-        });
-      });
-
-      it('field.model should have a worked method set(value)', () => {
-        parser.field.set('Theon Greyjoy');
-
-        expect(parser.field.model).toBe('Theon Greyjoy');
-      });
-
-      it('parent.field.model should update with child.field.set(value)', () => {
-        parser.field.set('Sansa Stark');
-
-        expect(parent.field.model).toEqual({
-          name: 'Sansa Stark'
         });
       });
 
