@@ -145,7 +145,6 @@ export abstract class AbstractParser<
           const parentField: ObjectField = this.parent.field as any;
 
           parentField.model[name] = this.parseValue(value);
-
           this.parent.field.model = parentField.model;
           break;
         }
@@ -166,7 +165,7 @@ export abstract class AbstractParser<
       this.model = this.parseValue(value);
     }
 
-    if (this.isRoot && this.options.onChange) {
+    if (this.options.onChange) {
       this.options.onChange(this.model);
     }
   }

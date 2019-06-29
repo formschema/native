@@ -1,3 +1,4 @@
+import { VNode } from 'vue';
 import { FormSchemaComponent } from '@/types';
 import { UniqueId as UniqueIdLib } from '@/lib/UniqueId';
 import { Parser } from '@/parsers/Parser';
@@ -78,7 +79,7 @@ const FormSchema: FormSchemaComponent = {
     /**
      * UI Schema Descriptor to use for rendering.
      *
-     * @type {ScalarDescriptor | ObjectDescriptor | ArrayDescriptor | DescriptorConstructor}
+     * @type {ScalarDescriptor|ObjectDescriptor|ArrayDescriptor|DescriptorConstructor}
      */
     descriptor: {
       type: [ Object, Function ],
@@ -86,7 +87,9 @@ const FormSchema: FormSchemaComponent = {
     }
   },
   data: () => ({
-    ref: UniqueId.get('form-schema')
+    ref: UniqueId.get('formschema'),
+    initialModel: undefined,
+    ready: false
   }),
   computed: {
     descriptorConstructor() {
@@ -102,26 +105,25 @@ const FormSchema: FormSchemaComponent = {
     parser() {
       return Parser.get({
         schema: this.schema,
-        model: this.value,
+        model: this.initialModel,
         name: this.name,
         descriptor: this.schemaDescriptor,
         descriptorConstructor: this.descriptorConstructor,
-        onChange: (value) => {
-          /**
-           * Fired synchronously when the value of an element is changed.
-           */
-          this.$emit('input', value);
-        }
+        onChange: this.emitInputEvent
       });
     },
     field() {
-      return this.parser instanceof AbstractParser
-        ? this.parser.field
-        : null;
+      return this.parser instanceof AbstractParser ? this.parser.field : null;
+    }
+  },
+  watch: {
+    schema() {
+      this.ready = false;
+      this.initialModel = this.clone(this.value);
     }
   },
   render(createElement) {
-    if (this.field === null) {
+    if (this.field === null || this.ready === false) {
       return null as any; // nothing to render
     }
 
@@ -129,7 +131,6 @@ const FormSchema: FormSchemaComponent = {
       attrs: this.field.attrs.input,
       props: {
         field: this.field,
-        value: this.value,
         disabled: this.disabled,
         components: this.components
       }
@@ -141,40 +142,66 @@ const FormSchema: FormSchemaComponent = {
       nodes.push(...this.$slots.default);
     }
 
+    // FIXME Updating props `search` and `disabled` fires compute of `parser -> field`.
+    // This is not the expected behaviour.
+
     return createElement(this.components.get('form'), {
       ref: this.ref,
       attrs: {
         id: this.id,
         name: this.name,
         role: this.search ? 'search' : undefined,
-        'aria-label': this.schema.title
+        'aria-label': this.field.descriptor.label
       },
       props: {
-        value: this.value,
+        field: this.field,
         search: this.search,
         disabled: this.disabled,
         components: this.components
       },
       on: {
-        submit: this.submit
+        submit: this.emitSubmitEvent
       }
     }, nodes);
   },
   methods: {
+    clone(value) {
+      if (Objects.isScalar(value)) {
+        return value;
+      }
+
+      const object = value instanceof Array ? [] : {};
+
+      return Objects.assign(object, value as any);
+    },
+
     /**
      * Get the HTML form reference.
      *
      * @returns {HTMLFormElement|VNode|undefined} - Returns the HTML form element or `undefined` for empty object
      */
-    form() {
-      return this.$refs[this.ref];
+    form(): HTMLFormElement | VNode | undefined {
+      return this.$refs[this.ref] as any;
     },
 
     /**
-     * Send the content of the form to the server.
      * @private
      */
-    submit(event) {
+    emitInputEvent(value: unknown) {
+      /**
+       * Fired synchronously when the value of an element is changed.
+       */
+      this.$emit('input', value);
+
+      this.$nextTick(() => {
+        this.ready = true;
+      });
+    },
+
+    /**
+     * @private
+     */
+    emitSubmitEvent(event: Event) {
       /**
        * Fired when a form is submitted
        */

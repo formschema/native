@@ -24,7 +24,7 @@
             </label>
           </div>
           <div ref="form" class="playground__input__rendering__viewport__card" :key="renderKey">
-            <FormSchema v-bind="{ schema, descriptor, disabled, search }" v-model="model" @ready="generateCode" @submit.prevent>
+            <FormSchema v-bind="{ schema, descriptor, disabled, search }" v-model="model" @input="generateCode" @submit.prevent>
               <div class="playground__input__rendering__viewport__card__buttons">
                 <button type="submit">Submit</button>
                 <button type="reset">Reset</button>
@@ -71,6 +71,7 @@
       disabled: false,
       search: false,
       renderKey: UniqueId.get('code'),
+      modelKey: UniqueId.get('model'),
       descriptor: {
         properties: {
           name: {
@@ -171,11 +172,13 @@
           .catch((err) => console.error(err));
       },
       generateCode() {
-        const code = this.$refs.form.innerHTML.replace(/\s*<!---->/g, '');
+        setTimeout(() => {
+          const code = this.$refs.form.innerHTML.replace(/\s*<!---->/g, '');
 
-        this.code = html(code, {
-          indent_size: 2
-        });
+          this.code = html(code, {
+            indent_size: 2
+          });
+        }, 300);
       },
       updateRenderKey() {
         this.renderKey = UniqueId.get('code');
@@ -361,7 +364,7 @@
   .playground__input__model {
     flex: 0;
     margin: 0;
-    min-width: 180px;
+    min-width: 280px;
   }
 
   .playground__output {

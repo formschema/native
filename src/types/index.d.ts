@@ -195,12 +195,13 @@ export interface FormSchemaVue extends Vue {
   name?: string;
   search: boolean;
   disabled: boolean;
-  components: any;
+  components: ComponentsDeclaration;
   descriptor: DescriptorInstance | DescriptorConstructor;
 
   // data
   ref: string;
-  data: unknown;
+  initialModel: unknown;
+  ready: boolean;
 
   // computed
   descriptorConstructor: DescriptorConstructor;
@@ -209,10 +210,10 @@ export interface FormSchemaVue extends Vue {
   field: UnknowField | null;
 
   // methods
-  load(schema: JsonSchema, model: any, reset: boolean): void;
-  form(): HTMLFormElement;
-  emitInputEvent(): void;
-  submit(e?: any): void;
+  clone(value: unknown): unknown;
+  form(): HTMLFormElement | VNode | undefined;
+  emitInputEvent(value: unknown): void;
+  emitSubmitEvent(e: Event): void;
 }
 
 export interface FormSchemaComponent<V extends FormSchemaVue = FormSchemaVue> extends ComponentOptions<V> {
