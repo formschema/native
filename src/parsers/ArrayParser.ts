@@ -30,24 +30,39 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
 
   protected getFields(items: JsonSchema[]): ArrayItemField[] {
     return items
-      .map((itemSchema, i): AbstractParserOptions<unknown, AbstractUISchemaDescriptor> => {
-        const defaultDescriptor = this.options.descriptorConstructor(itemSchema);
-        const itemDescriptor = this.field.descriptor.items
-          ? this.field.descriptor.items[i] || defaultDescriptor
-          : defaultDescriptor;
+      .map((itemSchema, i) => this.getFieldItem(itemSchema, i))
+      .filter((field) => field !== null) as ArrayItemField[];
+  }
 
-        return {
-          schema: itemSchema,
-          model: typeof this.model[i] !== 'undefined' ? this.model[i] : itemSchema.default,
-          descriptor: itemDescriptor,
-          descriptorConstructor: this.options.descriptorConstructor,
-          name: this.name,
-          $forceUpdate: this.options.$forceUpdate
-        };
-      })
-      .map((options) => Parser.get(options, this))
-      .filter((parser) => parser instanceof AbstractParser)
-      .map((parser: any) => parser.field as ArrayItemField);
+  protected getFieldItem(itemSchema: JsonSchema, index: number): ArrayItemField | null {
+    const defaultDescriptor = this.options.descriptorConstructor(itemSchema);
+
+    const itemDescriptor = this.field.descriptor.items
+      ? this.field.descriptor.items[index] || defaultDescriptor
+      : defaultDescriptor;
+
+    const itemModel = typeof this.model[index] !== 'undefined'
+      ? this.model[index]
+      : itemSchema.default;
+
+    const options: AbstractParserOptions<unknown, AbstractUISchemaDescriptor> = {
+      schema: itemSchema,
+      model: itemModel,
+      descriptor: itemDescriptor,
+      descriptorConstructor: this.options.descriptorConstructor,
+      name: this.name,
+      $forceUpdate: this.options.$forceUpdate
+    };
+
+    const parser: any | null = Parser.get(options, this);
+
+    if (parser) {
+      parser.field.index = index;
+
+      return parser.field;
+    }
+
+    return null;
   }
 
   public parse() {
@@ -71,25 +86,40 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
       }
     }
 
-    this.field.definedAsObject = !Array.isArray(this.schema.items);
-    this.field.items = this.fields;
-    this.field.additionalItems = this.additionalFields;
-    this.field.additionalLabels = this.field.additionalItems.map(({ descriptor }, i) => descriptor.label || `Item ${i}`);
+    const total = this.items.length + this.additionalFields.length;
+
     this.field.uniqueItems = this.schema.uniqueItems === true;
     this.field.maxItems = this.schema.maxItems;
     this.field.minItems = this.field.required
       ? this.schema.minItems || 1
       : this.schema.minItems || 0;
 
-    let count = this.field.minItems || this.field.model.length;
-
-    this.field.total = this.field.items.length + this.field.additionalItems.length;
-    this.field.max = this.field.maxItems ? this.field.maxItems : this.field.total;
+    this.field.max = this.field.maxItems ? this.field.maxItems : total;
 
     if (this.field.max < this.field.minItems) {
       this.field.max = -1;
-      this.field.total = -1;
     }
+
+    this.field.getFieldItem = (index) => {
+      const itemSchema = this.schema.items instanceof Array
+        ? this.items[index]
+        : this.items[0];
+
+      return this.getFieldItem(itemSchema, index);
+    };
+
+    this.field.getAdditionalFieldItem = () => {
+      if (this.additionalItems.length === 0) {
+        return null;
+      }
+
+      const itemSchema = this.additionalItems[0];
+      const index = this.field.count;
+
+      return this.getFieldItem(itemSchema, index);
+    };
+
+    let count = this.field.minItems || this.field.model.length;
 
     Object.defineProperty(this.field, 'count', {
       enumerable: true,
@@ -99,9 +129,15 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
       set: (value: number) => {
         count = value;
 
+        this.model.push(undefined);
+
         this.options.$forceUpdate();
       }
     });
+  }
+
+  protected getModelValue(): unknown[] {
+    return this.model.filter((item: unknown) => typeof item !== 'undefined');
   }
 
   protected parseValue(data: unknown[]): unknown[] {

@@ -124,8 +124,7 @@ describe('parsers/AbstractParser', () => {
       });
 
       it('field.model should have a worked setter', () => {
-        parser.field.model = 'hello';
-
+        parser.field.setModel('hello');
         expect(parser.field.model).toBe('hello');
       });
 
@@ -411,14 +410,12 @@ describe('parsers/AbstractParser', () => {
       });
 
       it('field.model should have a worked setter', () => {
-        parser.field.model = 'Tyrion Lannister';
-
+        parser.field.setModel('Tyrion Lannister');
         expect(parser.field.model).toBe('Tyrion Lannister');
       });
 
       it('parent.field.model should update with child\'s setter', () => {
-        parser.field.model = 'Arya Stark';
-
+        parser.field.setModel('Arya Stark');
         expect(parent.field.model).toEqual({
           name: 'Arya Stark'
         });

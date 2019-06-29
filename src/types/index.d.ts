@@ -76,7 +76,7 @@ export interface Field<
   isRoot: boolean;
   required: boolean;
   default?: TModel;
-  model: TModel;
+  readonly model: TModel;
   attrs: {
     input: TAttributes;
     label: {
@@ -95,6 +95,7 @@ export interface Field<
   descriptor: TDescriptor;
   component: Component;
   parent?: Field<any>;
+  setModel(value: TModel): void;
 }
 
 export type BooleanField = Field<'boolean', BooleanAttributes, ScalarDescriptor, boolean>;
@@ -109,19 +110,18 @@ export interface EnumField extends Field<'enum', Attributes, ScalarDescriptor> {
   children: RadioField[];
 }
 
-export type ArrayItemField = Field<any, Attributes, DescriptorInstance>;
+export interface ArrayItemField extends Field<any, Attributes, ArrayDescriptor> {
+  readonly index: number;
+}
 
 export interface ArrayField extends Field<'array', Attributes, ArrayDescriptor, any[]> {
-  definedAsObject: boolean;
-  items: ArrayItemField[];
-  additionalItems: ArrayItemField[];
-  additionalLabels: string[];
   minItems: number;
   maxItems?: number;
   uniqueItems: boolean;
   count: number;
-  total: number;
   max: number;
+  getFieldItem: (index: number) => ArrayItemField | null;
+  getAdditionalFieldItem: () => ArrayItemField | null;
 }
 
 export interface ListItem {

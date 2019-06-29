@@ -7,7 +7,9 @@ import {
   AbstractParserOptions,
   FieldKind,
   UnknowField,
-  ObjectField
+  ObjectField,
+  ArrayField,
+  ArrayItemField
 } from '@/types';
 
 export type Parent = AbstractParser<any, AbstractUISchemaDescriptor, UnknowField>;
@@ -67,7 +69,7 @@ export abstract class AbstractParser<
       get model() {
         return self.getModelValue();
       },
-      set model(value: TModel) {
+      setModel(value: TModel) {
         self.setModelValue(value);
       },
       attrs: {
@@ -117,22 +119,12 @@ export abstract class AbstractParser<
       : undefined;
   }
 
-  private getModelValue(): TModel {
-    if (this.parent) {
-      switch (this.parent.schema.type) {
-        case 'object': {
-          const name = this.options.name as string;
-          const parentField: ObjectField = this.parent.field as any;
+  protected getModelValue(): TModel {
+    if (this.parent && this.parent.schema.type === 'object') {
+      const name = this.options.name as string;
+      const parentField: ObjectField = this.parent.field as any;
 
-          return parentField.model[name] as TModel;
-        }
-
-        case 'array':
-          return this.model;
-
-        default:
-          return this.parent.field.model as TModel;
-      }
+      return parentField.model[name] as TModel;
     }
 
     return this.model;
@@ -146,19 +138,33 @@ export abstract class AbstractParser<
           const parentField: ObjectField = this.parent.field as any;
 
           parentField.model[name] = this.parseValue(value);
-          this.parent.field.model = parentField.model;
+
+          this.parent.field.setModel(parentField.model);
+
           break;
         }
 
-        case 'array':
-          //
+        case 'array': {
+          if (!this.field.hasOwnProperty('index')) {
+            break;
+          }
+
+          const parentField: ArrayField = this.parent.field as any;
+          const itemField: ArrayItemField = this.field as any;
+
+          this.model = this.parseValue(value);
+          this.parent.model[itemField.index] = this.model;
+
+          parentField.setModel(parentField.model);
+
           break;
+        }
 
         default:
           if (this.isEnumItem) {
-            this.parent.field.model = this.model;
+            this.parent.field.setModel(this.model);
           } else {
-            this.parent.field.model = this.parseValue(value);
+            this.parent.field.setModel(this.parseValue(value));
           }
           break;
       }

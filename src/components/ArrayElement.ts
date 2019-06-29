@@ -23,22 +23,20 @@ export const ArrayElement: ArrayComponent = {
   render(h, { data, props }) {
     const limit = props.field.count < props.field.max || props.field.max === -1
       ? props.field.count
-      : props.field.maxItems || props.field.items.length;
+      : props.field.maxItems || props.field.minItems;
 
-    const nodes = Array(...Array(limit)).map((x, i) => {
-      const field = props.field.definedAsObject
-        ? props.field.items[0]
-        : props.field.items[i];
+    const nodes = Array(...Array(limit)).map((x, index) => {
+      const field = props.field.getFieldItem(index);
 
-      const model = props.field.model[i] || field.default;
-
-      return renderField(h, { ...field, model }, props);
+      return field ? renderField(h, field, props) : null;
     });
 
     if (limit < props.field.count) {
-      props.field.additionalItems.forEach((field) => {
+      const field = props.field.getAdditionalFieldItem();
+
+      if (field) {
         nodes.push(renderField(h, field, props));
-      });
+      }
     }
 
     nodes.push(h(ArrayButton, data));
