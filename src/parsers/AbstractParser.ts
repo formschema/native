@@ -80,7 +80,8 @@ export abstract class AbstractParser<
       props: Objects.clone(props),
       descriptor: this.descriptor,
       component: this.descriptor.component || this.defaultComponent || defaultDescriptor.component,
-      parent: parent ? parent.field : undefined
+      parent: parent ? parent.field : undefined,
+      $forceUpdate: options.$forceUpdate
     } as any;
 
     this.setModelValue(this.model);

@@ -41,7 +41,8 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
           model: typeof this.model[i] !== 'undefined' ? this.model[i] : itemSchema.default,
           descriptor: itemDescriptor,
           descriptorConstructor: this.options.descriptorConstructor,
-          name: this.name
+          name: this.name,
+          $forceUpdate: this.options.$forceUpdate
         };
       })
       .map((options) => Parser.get(options, this))
@@ -80,7 +81,8 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
       ? this.schema.minItems || 1
       : this.schema.minItems || 0;
 
-    this.field.count = this.field.minItems || this.field.model.length;
+    let count = this.field.minItems || this.field.model.length;
+
     this.field.total = this.field.items.length + this.field.additionalItems.length;
     this.field.max = this.field.maxItems ? this.field.maxItems : this.field.total;
 
@@ -88,6 +90,18 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
       this.field.max = -1;
       this.field.total = -1;
     }
+
+    Object.defineProperty(this.field, 'count', {
+      enumerable: true,
+      get: () => {
+        return count;
+      },
+      set: (value: number) => {
+        count = value;
+
+        this.options.$forceUpdate();
+      }
+    });
   }
 
   protected parseValue(data: unknown[]): unknown[] {
