@@ -35,7 +35,8 @@ describe('parsers/AbstractParser', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string' },
       model: '',
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: NativeDescriptor.get,
+      $forceUpdate: () => {}
     };
 
     const parser = new FakeParser(options);
@@ -83,7 +84,8 @@ describe('parsers/AbstractParser', () => {
         const options: AbstractParserOptions<any, ScalarDescriptor> = {
           schema: { type: 'string', default: 'Hello' },
           model: undefined,
-          descriptorConstructor: NativeDescriptor.get
+          descriptorConstructor: NativeDescriptor.get,
+          $forceUpdate: () => {}
         };
 
         const parser = new FakeParser(options);
@@ -99,7 +101,8 @@ describe('parsers/AbstractParser', () => {
         const options: AbstractParserOptions<any, ScalarDescriptor> = {
           schema: { type: 'string', default: 'Hello' },
           model: undefined,
-          descriptorConstructor: NativeDescriptor.get
+          descriptorConstructor: NativeDescriptor.get,
+          $forceUpdate: () => {}
         };
 
         const parser = new FakeParser(options);
@@ -111,7 +114,8 @@ describe('parsers/AbstractParser', () => {
         const options: AbstractParserOptions<any, ScalarDescriptor> = {
           schema: { type: 'string' },
           model: undefined,
-          descriptorConstructor: NativeDescriptor.get
+          descriptorConstructor: NativeDescriptor.get,
+          $forceUpdate: () => {}
         };
 
         const parser = new FakeParser(options);
@@ -169,7 +173,8 @@ describe('parsers/AbstractParser', () => {
       const options: AbstractParserOptions<any, ScalarDescriptor> = {
         schema: { type: 'string' },
         model: '',
-        descriptorConstructor: NativeDescriptor.get
+        descriptorConstructor: NativeDescriptor.get,
+        $forceUpdate: () => {}
       };
 
       const parser = new FakeParser(options);
@@ -237,7 +242,8 @@ describe('parsers/AbstractParser', () => {
         title: 'Name'
       },
       model: '',
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: NativeDescriptor.get,
+      $forceUpdate: () => {}
     };
 
     const parser = new FakeParser(options);
@@ -290,7 +296,8 @@ describe('parsers/AbstractParser', () => {
         description: 'Your First Name'
       },
       model: '',
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: NativeDescriptor.get,
+      $forceUpdate: () => {}
     };
 
     const parser = new FakeParser(options);
@@ -361,14 +368,16 @@ describe('parsers/AbstractParser', () => {
     const parentOptions: AbstractParserOptions<string, ObjectDescriptor> = {
       schema: schema as JsonSchema,
       model: '',
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: NativeDescriptor.get,
+      $forceUpdate: () => {}
     };
 
     const childOptions: AbstractParserOptions<string, ScalarDescriptor> = {
       schema: schema.properties.name as JsonSchema,
       name: 'name',
       model: 'Jon Snow',
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: NativeDescriptor.get,
+      $forceUpdate: () => {}
     };
 
     const parent = new ObjectFakeParser(parentOptions);
