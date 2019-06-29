@@ -46,7 +46,7 @@ export class StringParser extends AbstractParser<string, ScalarDescriptor, Strin
     this.field.attrs.input.pattern = this.schema.pattern;
   }
 
-  public parseValue(data: unknown): string {
+  protected parseValue(data: unknown): string {
     return typeof data !== 'undefined' ? `${data}` : '';
   }
 }
