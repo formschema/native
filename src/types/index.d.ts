@@ -120,8 +120,7 @@ export interface ArrayField extends Field<'array', Attributes, ArrayDescriptor, 
   uniqueItems: boolean;
   count: number;
   max: number;
-  getFieldItem: (index: number) => ArrayItemField | null;
-  getAdditionalFieldItem: () => ArrayItemField | null;
+  getFields: () => ArrayItemField[];
 }
 
 export interface ListItem {
