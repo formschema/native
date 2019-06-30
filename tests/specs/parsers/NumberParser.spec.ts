@@ -78,6 +78,10 @@ describe('parsers/NumberParser', () => {
     expect(parser.field.attrs.input.max).toBe(options.schema.maximum);
   });
 
+  it('field.attrs.input.step should be equal to schema.multipleOf', () => {
+    expect(parser.field.attrs.input.step).toBe(options.schema.multipleOf);
+  });
+
   it('field.model should be equal to the default value', () => {
     expect(parser.field.model).toBe(2.0);
   });
