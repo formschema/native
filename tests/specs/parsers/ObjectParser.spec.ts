@@ -26,12 +26,16 @@ describe('parsers/ObjectParser', () => {
     expect(parser).toBeInstanceOf(AbstractParser);
   });
 
-  it('parser.kind should have equal to `object` for object schema', () => {
+  it('parser.kind should have equal to `object`', () => {
     expect(parser.kind).toBe('object');
   });
 
   it('parser.required should have equal to schema.required', () => {
     expect(parser.required).toEqual(options.schema.required);
+  });
+
+  it('parser.children should be defined', () => {
+    expect(parser.children.length).toBe(1);
   });
 
   it('field.attrs.input.required should be undefined', () => {
