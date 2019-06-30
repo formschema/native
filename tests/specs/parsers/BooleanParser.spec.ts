@@ -33,45 +33,45 @@ describe('parsers/BooleanParser', () => {
 
   it('should successfully parse default truthy boolean value', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
-        schema: { type: 'boolean' },
-        model: true,
-        descriptorConstructor: NativeDescriptor.get,
-        $forceUpdate: () => {}
-      };
+      schema: { type: 'boolean' },
+      model: true,
+      descriptorConstructor: NativeDescriptor.get,
+      $forceUpdate: () => {}
+    };
 
-      const parser = new BooleanParser(options);
+    const parser = new BooleanParser(options);
 
-      parser.parse();
+    parser.parse();
 
     expect(parser.field.model).toBeTruthy();
   });
 
-  it('should successfully parse default falsy boolean value', () => {
+  it('field.model should successfully parse default falsy boolean value', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
-        schema: { type: 'boolean' },
-        model: false,
-        descriptorConstructor: NativeDescriptor.get,
-        $forceUpdate: () => {}
-      };
+      schema: { type: 'boolean' },
+      model: false,
+      descriptorConstructor: NativeDescriptor.get,
+      $forceUpdate: () => {}
+    };
 
-      const parser = new BooleanParser(options);
+    const parser = new BooleanParser(options);
 
-      parser.parse();
+    parser.parse();
 
     expect(parser.field.model).toBeFalsy();
   });
 
-  it('should parse default non boolean value as an undefined model', () => {
+  it('field.model should parse default non boolean value as an undefined model', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
-        schema: { type: 'boolean' },
-        model: 12,
-        descriptorConstructor: NativeDescriptor.get,
-        $forceUpdate: () => {}
-      };
+      schema: { type: 'boolean' },
+      model: 12,
+      descriptorConstructor: NativeDescriptor.get,
+      $forceUpdate: () => {}
+    };
 
-      const parser = new BooleanParser(options);
+    const parser = new BooleanParser(options);
 
-      parser.parse();
+    parser.parse();
 
     expect(parser.field.model).toBeUndefined();
   });

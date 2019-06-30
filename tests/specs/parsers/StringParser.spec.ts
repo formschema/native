@@ -33,17 +33,17 @@ describe('parsers/StringParser', () => {
 
   it('field.attrs.input.type should be equal to `radio` for enum field', () => {
     const options: AbstractParserOptions<string, ScalarDescriptor> = {
-        schema: { type: 'string' },
-        model: '',
-        descriptorConstructor: NativeDescriptor.get,
-        $forceUpdate: () => {}
-      };
+      schema: { type: 'string' },
+      model: '',
+      descriptorConstructor: NativeDescriptor.get,
+      $forceUpdate: () => {}
+    };
 
-      const parser: any = new StringParser(options);
+    const parser: any = new StringParser(options);
 
-      parser.isEnumItem = true;
+    parser.isEnumItem = true;
 
-      parser.parse();
+    parser.parse();
 
     expect(parser.field.attrs.input.type).toBe('radio');
   });
@@ -98,30 +98,30 @@ describe('parsers/StringParser', () => {
 
   it('should parse default undefined value as an empty string', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
-        schema: { type: 'string' },
-        model: undefined,
-        descriptorConstructor: NativeDescriptor.get,
-        $forceUpdate: () => {}
-      };
+      schema: { type: 'string' },
+      model: undefined,
+      descriptorConstructor: NativeDescriptor.get,
+      $forceUpdate: () => {}
+    };
 
-      const parser = new StringParser(options);
+    const parser = new StringParser(options);
 
-      parser.parse();
+    parser.parse();
 
     expect(parser.field.model).toBe('');
   });
 
   it('should parse default non string value as a string', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
-        schema: { type: 'string' },
-        model: 12,
-        descriptorConstructor: NativeDescriptor.get,
-        $forceUpdate: () => {}
-      };
+      schema: { type: 'string' },
+      model: 12,
+      descriptorConstructor: NativeDescriptor.get,
+      $forceUpdate: () => {}
+    };
 
-      const parser = new StringParser(options);
+    const parser = new StringParser(options);
 
-      parser.parse();
+    parser.parse();
 
     expect(parser.field.model).toBe('12');
   });
