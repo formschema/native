@@ -86,7 +86,9 @@ export abstract class AbstractParser<
       $forceUpdate: options.$forceUpdate
     } as any;
 
-    this.setModelValue(this.model);
+    if (!this.isEnumItem) {
+      this.setModelValue(this.model);
+    }
   }
 
   public get schema() {
@@ -161,11 +163,11 @@ export abstract class AbstractParser<
         }
 
         default:
-          if (this.isEnumItem) {
-            this.parent.field.setModel(this.model);
-          } else {
-            this.parent.field.setModel(this.parseValue(value));
+          if (!this.isEnumItem) {
+            this.model = this.parseValue(value);
           }
+
+          this.parent.field.setModel(this.model);
           break;
       }
     } else {

@@ -18,8 +18,8 @@ export class ListParser extends AbstractParser<unknown, ScalarDescriptor, ListFi
     return this.enums.map((item) => ({
       value: item,
       selected: this.model === item,
-      label: this.descriptor.labels
-        ? this.descriptor.labels[item] || item
+      label: this.descriptor.labels && this.descriptor.labels.hasOwnProperty(item)
+        ? this.descriptor.labels[item]
         : item
     }));
   }

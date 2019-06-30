@@ -1,20 +1,20 @@
 import { AbstractParser } from '@/parsers/AbstractParser';
-import { ListParser } from '@/parsers/ListParser';
+import { EnumParser } from '@/parsers/EnumParser';
 import { ScalarDescriptor, AbstractParserOptions } from '@/types';
 import { NativeDescriptor } from '@/descriptors/NativeDescriptor';
 
-describe('parsers/ListParser', () => {
+describe('parsers/EnumParser', () => {
   const options: AbstractParserOptions<unknown, ScalarDescriptor> = {
     schema: {
       type: 'string',
       enum: ['jon', 'arya']
     },
-    model:'arya',
+    model: 'jon',
     descriptorConstructor: NativeDescriptor.get,
     $forceUpdate: () => {}
   };
 
-  const parser = new ListParser(options);
+  const parser = new EnumParser(options);
 
   parser.parse();
 
@@ -22,50 +22,43 @@ describe('parsers/ListParser', () => {
     expect(parser).toBeInstanceOf(AbstractParser);
   });
 
-  it('parser.kind should have equal to `list`', () => {
-    expect(parser.kind).toBe('list');
+  it('parser.kind should have equal to `enum`', () => {
+    expect(parser.kind).toBe('enum');
   });
 
-  it('parser.items should be defined', () => {
-    expect(parser.items).toEqual([
-      {
-        value: 'jon',
-        selected: false,
-        label: 'jon'
-      },
-      {
-        value: 'arya',
-        selected: true,
-        label: 'arya'
-      }
-    ]);
-  });
+  it('field.children should be defined', () => {
+    const models = parser.field.children.map(({ model }) => model);
 
-  it('field.items should be equal to parser.items', () => {
-    expect(parser.field.items).toEqual(parser.items);
+    expect(models).toEqual(['jon', 'arya']);
   });
 
   it('field.model should be equal to the default value', () => {
-    expect(parser.field.model).toEqual('arya');
+    expect(parser.field.model).toBe('jon');
+  });
+
+  it('field.attrs.input.checked should be defined', () => {
+    const checkStates = parser.field.children.map(({ attrs }) => attrs.input.checked);
+
+    expect(checkStates).toEqual([true, false]);
   });
 
   it('should successfully parse default value', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
       schema: {
         type: 'string',
-        enum: ['jon', 'arya'],
-        default: 'jon'
+        enum: ['jon', 'arya', 'tyrion'],
+        default: 'arya'
       },
       model: undefined,
       descriptorConstructor: NativeDescriptor.get,
       $forceUpdate: () => {}
     };
 
-    const parser = new ListParser(options);
+    const parser: any = new EnumParser(options);
 
     parser.parse();
 
-    expect(parser.field.model).toBe('jon');
+    expect(parser.field.model).toBe('arya');
   });
 
   it('field.model should parse default undefined as an undefined model', () => {
@@ -76,14 +69,14 @@ describe('parsers/ListParser', () => {
       $forceUpdate: () => {}
     };
 
-    const parser = new ListParser(options);
+    const parser = new EnumParser(options);
 
     parser.parse();
 
     expect(parser.field.model).toBeUndefined();
   });
 
-  it('field.items should be equal to an empty array with missing schema.enum', () => {
+  it('field.children should be equal to an empty array with missing schema.enum', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string' },
       model: undefined,
@@ -91,14 +84,14 @@ describe('parsers/ListParser', () => {
       $forceUpdate: () => {}
     };
 
-    const parser = new ListParser(options);
+    const parser = new EnumParser(options);
 
     parser.parse();
 
-    expect(parser.field.items).toEqual([]);
+    expect(parser.field.children).toEqual([]);
   });
 
-  it('field.items should be defined with provided field.descriptor.labels', () => {
+  it('field.children should be defined with provided field.descriptor.labels', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
       schema: {
         type: 'string',
@@ -109,7 +102,7 @@ describe('parsers/ListParser', () => {
       $forceUpdate: () => {}
     };
 
-    const parser = new ListParser(options);
+    const parser = new EnumParser(options);
 
     parser.field.descriptor.labels = {
       jon: 'Jon Snow',
@@ -118,18 +111,9 @@ describe('parsers/ListParser', () => {
 
     parser.parse();
 
-    expect(parser.field.items).toEqual([
-      {
-        value: 'jon',
-        selected: false,
-        label: 'Jon Snow'
-      },
-      {
-        value: 'arya',
-        selected: false,
-        label: 'Arya Stark'
-      }
-    ]);
+    const models = parser.field.children.map(({ descriptor }) => descriptor.label);
+
+    expect(models).toEqual(['Jon Snow', 'Arya Stark']);
   });
 
   it('with missing options.descriptor.component', () => {
@@ -137,7 +121,7 @@ describe('parsers/ListParser', () => {
       schema: { type: 'string' },
       model: undefined,
       descriptor: {
-        kind: 'enum',
+        kind: 'list',
         attrs: {},
         props: {},
         labels: {}
@@ -146,9 +130,9 @@ describe('parsers/ListParser', () => {
       $forceUpdate: () => {}
     };
 
-    const parser: any = new ListParser(options);
+    const parser: any = new EnumParser(options);
 
-    expect(parser.field.component.name).toBe('FieldsetElement');
+    expect(parser.field.component.name).toBe('ListElement');
   });
 
   it('with missing options.descriptor.component and options.descriptor.kind', () => {
@@ -164,10 +148,10 @@ describe('parsers/ListParser', () => {
       $forceUpdate: () => {}
     };
 
-    const parser: any = new ListParser(options);
+    const parser: any = new EnumParser(options);
 
     delete parser.descriptor.kind;
 
-    expect(parser.defaultComponent.name).toBe('ListElement');
+    expect(parser.defaultComponent.name).toBe('FieldsetElement');
   });
 });
