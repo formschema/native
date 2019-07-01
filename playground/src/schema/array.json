@@ -64,6 +64,21 @@
       "title": "Unique items",
       "uniqueItems": true,
       "maxItems": 3
+    },
+    "multipleChoicesList": {
+      "type": "array",
+      "title": "A multiple choices list",
+      "items": {
+        "type": "string",
+        "enum": [
+          "foo",
+          "bar",
+          "fuzz",
+          "qux"
+        ]
+      },
+      "default": ["fuzz"],
+      "uniqueItems": true
     }
   }
 }

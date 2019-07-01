@@ -17,6 +17,10 @@ function ShouldLabelDescription(schema: JsonSchema) {
 function ShouldHaveCommonProperties(schema: JsonSchema, descriptor: DescriptorInstance) {
   ShouldLabelDescription(schema);
 
+  it('descriptor.kind should be equal to schema.type', () => {
+    expect(descriptor.kind).toEqual(schema.type);
+  });
+
   it('should have component', () => {
     expect(descriptor.component).toBeDefined();
   });
@@ -38,7 +42,7 @@ describe('descriptors/NativeDescriptor', () => {
 
       it('should have common properties', () => {
         expect(Object.keys(descriptor)).toEqual([
-          'label', 'description', 'component',
+          'kind', 'label', 'description', 'component',
           'attrs', 'props', 'labels'
         ]);
       });
@@ -57,7 +61,7 @@ describe('descriptors/NativeDescriptor', () => {
 
       it('should have common properties', () => {
         expect(Object.keys(descriptor)).toEqual([
-          'label', 'description', 'component',
+          'kind', 'label', 'description', 'component',
           'attrs', 'props', 'items', 'addButtonLabel'
         ]);
       });
@@ -76,7 +80,7 @@ describe('descriptors/NativeDescriptor', () => {
 
       it('should have common properties', () => {
         expect(Object.keys(descriptor)).toEqual([
-          'label', 'description', 'component',
+          'kind', 'label', 'description', 'component',
           'attrs', 'props', 'order'
         ]);
       });

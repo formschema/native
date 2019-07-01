@@ -6,7 +6,7 @@ export const ArrayElement: ArrayComponent = {
   name: 'ArrayElement',
   functional: true,
   render(h, { data, props }) {
-    const nodes = props.field.getFields().map((field) => h(field.component, {
+    const nodes = props.field.children.map((field) => h(field.component, {
       attrs: {
         ...field.attrs.input,
         value: field.model
@@ -18,7 +18,9 @@ export const ArrayElement: ArrayComponent = {
       }
     }));
 
-    nodes.push(h(ArrayButton, data));
+    if (!props.field.uniqueItems) {
+      nodes.push(h(ArrayButton, data));
+    }
 
     return h(FieldsetElement, data, nodes);
   }

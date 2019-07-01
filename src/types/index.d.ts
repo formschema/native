@@ -62,7 +62,7 @@ export interface RadioAttributes extends InputAttributes {
 }
 
 export type SchemaType = 'object' | 'array' | 'string' | 'number' | 'integer' | 'boolean' | 'null';
-export type FieldKind = SchemaType | 'enum' | 'radio' | 'list' | 'textarea';
+export type FieldKind = SchemaType | 'enum' | 'radio' | 'list' | 'textarea' | 'checkbox';
 export type Component = string | VueComponent | AsyncComponent;
 
 export interface Field<
@@ -120,7 +120,7 @@ export interface ArrayField extends Field<'array', Attributes, ArrayDescriptor, 
   uniqueItems: boolean;
   count: number;
   max: number;
-  getFields: () => ArrayItemField[];
+  children: ArrayItemField[];
 }
 
 export interface ListItem {
@@ -266,6 +266,7 @@ export type ArrayButtonComponent = FunctionalComponentOptions<ElementProps<Array
 export type ArrayComponent = FunctionalComponentOptions<ElementProps<ArrayField>>;
 export type BooleanComponent = FunctionalComponentOptions<ElementProps<BooleanField>>;
 export type InputComponent = FunctionalComponentOptions<ElementProps<InputField>>;
+export type CheckboxComponent = FunctionalComponentOptions<ElementProps<UnknowField>>;
 export type FieldComponent = FunctionalComponentOptions<ElementProps<UnknowField>>;
 export type FieldsetComponent = FunctionalComponentOptions<ElementProps<ObjectField>>;
 export type HelperComponent = FunctionalComponentOptions<ElementProps<UnknowField>>;

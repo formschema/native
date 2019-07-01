@@ -13,16 +13,16 @@ import {
 } from '@/types';
 
 export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField> {
-  protected readonly items: any[] = [];
-  protected readonly additionalItems: any[] = [];
-  protected fields: ArrayItemField[] = [];
+  protected readonly items: JsonSchema[] = [];
+  protected readonly additionalItems: JsonSchema[] = [];
 
   public get kind(): FieldKind {
     return 'array';
   }
 
   protected getFieldItem(itemSchema: JsonSchema, index: number): ArrayItemField | null {
-    const defaultDescriptor = this.options.descriptorConstructor(itemSchema);
+    const kind: FieldKind | undefined = this.field.uniqueItems ? 'checkbox' : undefined;
+    const defaultDescriptor = this.options.descriptorConstructor(itemSchema, kind);
 
     const itemDescriptor = this.field.descriptor.items
       ? this.field.descriptor.items[index] || defaultDescriptor
@@ -46,6 +46,13 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
     if (parser) {
       parser.field.index = index;
 
+      if (itemDescriptor.kind === 'checkbox') {
+        parser.field.attrs.input.name = `${this.field.attrs.input.name}[]`;
+        parser.field.attrs.input.type = 'checkbox';
+        parser.field.attrs.input.checked = typeof this.model[index] !== 'undefined'
+          && itemSchema.default === this.model[index];
+      }
+
       return parser.field;
     }
 
@@ -53,7 +60,7 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
   }
 
   protected getFieldIndex(index: number) {
-    const itemSchema = this.schema.items instanceof Array
+    const itemSchema = this.schema.items instanceof Array || this.field.uniqueItems
       ? this.items[index]
       : this.items[0];
 
@@ -81,18 +88,35 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
       }
     }
 
-    this.field.uniqueItems = this.schema.uniqueItems === true;
     this.field.maxItems = this.schema.maxItems;
     this.field.minItems = this.field.required
       ? this.schema.minItems || 1
       : this.schema.minItems || 0;
 
-    const total = this.items.length + this.additionalItems.length;
-    let count = this.field.minItems || this.model.length;
+    let count = this.model.length || this.field.minItems;
 
-    this.field.max = this.field.maxItems ? this.field.maxItems : total;
+    if (this.schema.uniqueItems === true && this.items.length === 1) {
+      const itemSchema = this.items[0];
 
-    if (this.field.max < this.field.minItems) {
+      if (itemSchema.enum instanceof Array) {
+        this.field.uniqueItems = true;
+        this.field.maxItems = itemSchema.enum.length;
+        count = this.field.maxItems;
+
+        this.items.splice(0);
+        itemSchema.enum.forEach((value) => this.items.push({
+          ...itemSchema,
+          default: value,
+          title: `${value}`
+        }));
+      }
+    }
+
+    if (typeof this.schema.maxItems === 'number') {
+      this.field.max = this.field.maxItems as any;
+    } else if (this.schema.items instanceof Array) {
+      this.field.max = this.items.length + this.additionalItems.length;
+    } else {
       this.field.max = -1;
     }
 
@@ -118,11 +142,30 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
       return fields;
     };
 
-    this.field.getFields = () => {
-      return this.fields;
-    };
+    if (this.field.uniqueItems) {
+      const values: unknown[] = [];
 
-    this.fields = generateFields();
+      this.items.forEach((itemSchema) => {
+        if (this.model.includes(itemSchema.default)) {
+          values.push(itemSchema.default);
+        } else {
+          values.push(undefined);
+        }
+      });
+
+      this.model.splice(0);
+      this.model.push(...values);
+    }
+
+    this.field.children = generateFields();
+
+    if (!this.field.uniqueItems) {
+      this.field.children.forEach(({ model }, index) => {
+        if (index > this.model.length - 1) {
+          this.model.push(model);
+        }
+      });
+    }
 
     Object.defineProperty(this.field, 'count', {
       enumerable: true,
@@ -134,7 +177,7 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
 
         this.model.push(undefined);
 
-        this.fields = generateFields();
+        this.field.children = generateFields();
 
         this.options.$forceUpdate();
       }
