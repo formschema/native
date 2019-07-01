@@ -5,7 +5,12 @@ import { NativeDescriptor } from '@/descriptors/NativeDescriptor';
 
 describe('parsers/StringParser', () => {
   const options: AbstractParserOptions<string, ScalarDescriptor> = {
-    schema: { type: 'string' },
+    schema: {
+      type: 'string',
+      pattern: 'arya|jon',
+      minLength: 5,
+      maxLength: 15
+    },
     model: 'Goku',
     descriptorConstructor: NativeDescriptor.get,
     $forceUpdate: () => {}
@@ -94,6 +99,51 @@ describe('parsers/StringParser', () => {
 
   it('field.attrs.input.pattern should be equal to schema.pattern', () => {
     expect(parser.field.attrs.input.pattern).toBe(options.schema.pattern);
+  });
+
+  it('field.attrs.input.pattern should be equal to schema.pattern with provided schema.const', () => {
+    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+      schema: { type: 'string', pattern: 'arya|jon', const: 'arya' },
+      model: undefined,
+      descriptorConstructor: NativeDescriptor.get,
+      $forceUpdate: () => {}
+    };
+
+    const parser = new StringParser(options);
+
+    parser.parse();
+
+    expect(parser.field.attrs.input.pattern).toBe(options.schema.pattern);
+  });
+
+  it('field.attrs.input.pattern should be equal to schema.const', () => {
+    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+      schema: { type: 'string', const: 'arya' },
+      model: undefined,
+      descriptorConstructor: NativeDescriptor.get,
+      $forceUpdate: () => {}
+    };
+
+    const parser = new StringParser(options);
+
+    parser.parse();
+
+    expect(parser.field.attrs.input.pattern).toBe(options.schema.const);
+  });
+
+  it('field.attrs.input.pattern should be equal to escaped schema.const', () => {
+    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+      schema: { type: 'string', const: 'f(x) = ax + b; a = { 1, 2 }' },
+      model: undefined,
+      descriptorConstructor: NativeDescriptor.get,
+      $forceUpdate: () => {}
+    };
+
+    const parser = new StringParser(options);
+
+    parser.parse();
+
+    expect(parser.field.attrs.input.pattern).toBe('f\\(x\\) = ax \\+ b; a = \\{ 1, 2 \\}');
   });
 
   it('should parse default undefined value as an empty string', () => {

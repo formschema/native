@@ -52,6 +52,15 @@ export interface JsonSchema {
    */
   'default'?: unknown;
 
+  /**
+   * The value of this keyword MAY be of any type,
+   * including null.
+   * An instance validates successfully against this
+   * keyword if its value is equal to the value of
+   * the keyword.
+   */
+  const?: unknown;
+
   // ///////////////////////////////////////////////
   // Number Validation
   // ///////////////////////////////////////////////
