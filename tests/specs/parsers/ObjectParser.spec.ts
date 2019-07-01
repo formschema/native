@@ -137,7 +137,7 @@ describe('parsers/ObjectParser', () => {
     parser.parse();
 
     it('field.model should be equal to an empty object', () => {
-      expect(parser.field.model).toEqual({ name: '' });
+      expect(parser.field.model).toEqual({ name: undefined });
     });
   });
 
@@ -246,10 +246,10 @@ describe('parsers/ObjectParser', () => {
     it('field.model should be defined as an empty object with nested properties', () => {
       expect(parser.field.model).toEqual({
         name: {
-          firstName: '',
-          lastName: ''
+          firstName: undefined,
+          lastName: undefined
         },
-        dateBirth: ''
+        dateBirth: undefined
       });
     });
 
@@ -258,8 +258,8 @@ describe('parsers/ObjectParser', () => {
 
       expect(parser.field.model).toEqual({
         name: {
-          firstName: '',
-          lastName: ''
+          firstName: undefined,
+          lastName: undefined
         },
         dateBirth: '-8600/01/02'
       });

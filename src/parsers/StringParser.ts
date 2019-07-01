@@ -44,7 +44,7 @@ export class StringParser extends AbstractParser<string, ScalarDescriptor, Strin
     }
   }
 
-  protected parseValue(data: unknown): string {
-    return typeof data !== 'undefined' ? `${data}` : '';
+  protected parseValue(data: unknown): any {
+    return typeof data !== 'undefined' ? `${data}` : undefined;
   }
 }

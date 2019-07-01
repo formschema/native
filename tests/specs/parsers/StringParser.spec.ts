@@ -146,7 +146,7 @@ describe('parsers/StringParser', () => {
     expect(parser.field.attrs.input.pattern).toBe('f\\(x\\) = ax \\+ b; a = \\{ 1, 2 \\}');
   });
 
-  it('should parse default undefined value as an empty string', () => {
+  it('should parse default undefined value as an undefined string', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string' },
       model: undefined,
@@ -158,7 +158,7 @@ describe('parsers/StringParser', () => {
 
     parser.parse();
 
-    expect(parser.field.model).toBe('');
+    expect(parser.field.model).toBeUndefined();
   });
 
   it('should parse default non string value as a string', () => {
