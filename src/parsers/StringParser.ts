@@ -1,13 +1,22 @@
 import { AbstractParser } from '@/parsers/AbstractParser';
-import { StringField, ScalarDescriptor, FieldKind } from '@/types';
+import { StringField, ScalarDescriptor, FieldKind, Dictionary } from '@/types';
 import { Pattern } from '@/lib/Pattern';
+
+const TypeFormat: Dictionary<string> = {
+  date: 'date',
+  'date-time': 'datetime-local',
+  email: 'email',
+  'idn-email': 'email',
+  time: 'time',
+  uri: 'url'
+};
 
 export class StringParser extends AbstractParser<string, ScalarDescriptor, StringField> {
   public get kind(): FieldKind {
     return this.isEnumItem ? 'radio' : 'string';
   }
 
-  public get type() {
+  public get type(): string {
     if (this.field.attrs.input.type) {
       return this.field.attrs.input.type;
     }
@@ -16,26 +25,9 @@ export class StringParser extends AbstractParser<string, ScalarDescriptor, Strin
       return 'radio';
     }
 
-    switch (this.schema.format) {
-      case 'date':
-        return 'date';
-
-      case 'date-time':
-        return 'datetime-local';
-
-      case 'email':
-      case 'idn-email':
-        return 'email';
-
-      case 'time':
-        return 'time';
-
-      case 'uri':
-        return 'url';
-
-      default:
-        return 'text';
-    }
+    return this.schema.format
+      ? TypeFormat[this.schema.format]
+      : 'text';
   }
 
   public parse() {
