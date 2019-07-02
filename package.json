@@ -6,6 +6,7 @@
   "browser": "dist/FormSchema.umd.min.js",
   "scripts": {
     "playground": "cd playground && npm run serve",
+    "playground:install": "cd playground && npm i",
     "test": "vue-cli-service test:unit",
     "testdebug": "node --inspect-brk ./node_modules/@vue/cli-service/bin/vue-cli-service.js test:unit --runInBand",
     "lint": "eslint src/**/*",
