@@ -45,7 +45,7 @@ describe('parsers/ArrayParser', () => {
     expect(parser.field.max).toBe(options.schema.maxItems);
   });
 
-  it('field.max should be equal to `parser.items.length + parser.additionalItems.length` when schema.maxItems is missing and schema.items is an array', () => {
+  it('field.max should be equal to `-1` when schema.maxItems is missing and schema.items is an array with empty schema.additionalItems', () => {
     const options: AbstractParserOptions<any, ArrayDescriptor> = {
       schema: {
         type: 'array',
@@ -61,10 +61,10 @@ describe('parsers/ArrayParser', () => {
 
     parser.parse();
 
-    expect(parser.field.max).toBe(2);
+    expect(parser.field.max).toBe(-1);
   });
 
-  it('field.max should be equal to `-1` when schema.maxItems is missing and schema.items is an object', () => {
+  it('field.max should be equal to `-2` when schema.maxItems is missing and schema.items is an object', () => {
     const options: AbstractParserOptions<any, ArrayDescriptor> = {
       schema: {
         type: 'array',
@@ -80,7 +80,7 @@ describe('parsers/ArrayParser', () => {
 
     parser.parse();
 
-    expect(parser.field.max).toBe(-1);
+    expect(parser.field.max).toBe(-2);
   });
 
   it('field.count should be equal to options.model.length', () => {

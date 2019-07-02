@@ -15,6 +15,7 @@ import {
 export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField> {
   protected readonly items: JsonSchema[] = [];
   protected readonly additionalItems: JsonSchema[] = [];
+  protected count: number = 0;
 
   public get kind(): FieldKind {
     return 'array';
@@ -93,7 +94,7 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
       ? this.schema.minItems || 1
       : this.schema.minItems || 0;
 
-    let count = this.model.length || this.field.minItems;
+    this.count = this.model.length || this.field.minItems;
 
     if (this.schema.uniqueItems === true && this.items.length === 1) {
       const itemSchema = this.items[0];
@@ -101,7 +102,7 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
       if (itemSchema.enum instanceof Array) {
         this.field.uniqueItems = true;
         this.field.maxItems = itemSchema.enum.length;
-        count = this.field.maxItems;
+        this.count = this.field.maxItems;
 
         this.items.splice(0);
         itemSchema.enum.forEach((value) => this.items.push({
@@ -109,35 +110,48 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
           default: value,
           title: `${value}`
         }));
-      }
-    }
 
-    if (typeof this.schema.maxItems === 'number') {
-      this.field.max = this.field.maxItems as any;
+        this.field.max = this.items.length;
+      } else {
+        this.field.max = this.field.maxItems || this.items.length;
+      }
+    } else if (typeof this.schema.maxItems === 'number') {
+      this.field.max = this.field.maxItems as number;
     } else if (this.schema.items instanceof Array) {
-      this.field.max = this.items.length + this.additionalItems.length;
+      this.field.max = this.additionalItems.length === 0
+        ? this.items.length
+        : -1;
     } else {
-      this.field.max = -1;
+      this.field.max = -2;
     }
 
     const generateFields = () => {
-      const limit = count < this.field.max || this.field.max === -1
-        ? count
+      const limit = this.count < this.field.max || this.field.max === -2
+        ? this.count
         : this.field.maxItems || this.items.length;
 
       const fields = Array(...Array(limit))
         .map((x, index) => this.getFieldIndex(index))
         .filter((field) => field !== null) as ArrayItemField[];
 
-      if (limit < count) {
-        const index = count;
-        const itemSchema = this.additionalItems[0];
-        const additionalField = this.getFieldItem(itemSchema, index);
+      if (limit < this.count) {
+        let index = limit;
 
-        if (additionalField) {
-          fields.push(additionalField);
-        }
+        do {
+          const itemSchema = this.additionalItems[0];
+          const additionalField = this.getFieldItem(itemSchema, index);
+
+          if (additionalField) {
+            fields.push(additionalField);
+          }
+        } while (++index < this.count);
       }
+
+      fields.forEach(({ model }, index) => {
+        if (index > this.model.length - 1) {
+          this.model.push(model);
+        }
+      });
 
       return fields;
     };
@@ -159,23 +173,13 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
 
     this.field.children = generateFields();
 
-    if (!this.field.uniqueItems) {
-      this.field.children.forEach(({ model }, index) => {
-        if (index > this.model.length - 1) {
-          this.model.push(model);
-        }
-      });
-    }
-
     Object.defineProperty(this.field, 'count', {
       enumerable: true,
       get: () => {
-        return count;
+        return this.count;
       },
       set: (value: number) => {
-        count = value;
-
-        this.model.push(undefined);
+        this.count = value;
 
         this.field.children = generateFields();
 
