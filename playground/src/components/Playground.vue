@@ -252,7 +252,7 @@
 
   .playground__input__rendering {
     width: 100%;
-    border-left: 1px solid rgba(255, 255, 255, .1);
+    border-left: 1px solid rgba(116, 81, 81, 0.1);
     border-right: 1px solid rgba(255, 255, 255, .1);
   }
 
@@ -327,6 +327,10 @@
     text-align: center;
     margin-top: 0;
     margin-bottom: .2em
+  }
+
+  .playground__input__model__value {
+    overflow: auto
   }
 
   .playground__input__rendering form > fieldset > legend {
