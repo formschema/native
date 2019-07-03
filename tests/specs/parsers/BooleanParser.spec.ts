@@ -7,8 +7,7 @@ describe('parsers/BooleanParser', () => {
   const options: AbstractParserOptions<any, ScalarDescriptor> = {
     schema: { type: 'boolean' },
     model: undefined,
-    descriptorConstructor: NativeDescriptor.get,
-    $forceUpdate: () => {}
+    descriptorConstructor: NativeDescriptor.get
   };
 
   const parser = new BooleanParser(options);
@@ -35,8 +34,7 @@ describe('parsers/BooleanParser', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'boolean' },
       model: true,
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new BooleanParser(options);
@@ -50,8 +48,7 @@ describe('parsers/BooleanParser', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'boolean' },
       model: false,
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new BooleanParser(options);
@@ -65,8 +62,7 @@ describe('parsers/BooleanParser', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'boolean' },
       model: 12,
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new BooleanParser(options);

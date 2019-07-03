@@ -10,8 +10,7 @@ describe('parsers/ListParser', () => {
       enum: ['jon', 'arya']
     },
     model:'arya',
-    descriptorConstructor: NativeDescriptor.get,
-    $forceUpdate: () => {}
+    descriptorConstructor: NativeDescriptor.get
   };
 
   const parser = new ListParser(options);
@@ -57,8 +56,7 @@ describe('parsers/ListParser', () => {
         default: 'jon'
       },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new ListParser(options);
@@ -72,8 +70,7 @@ describe('parsers/ListParser', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string', enum: ['jon', 'arya'] },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new ListParser(options);
@@ -87,8 +84,7 @@ describe('parsers/ListParser', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string' },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new ListParser(options);
@@ -105,8 +101,7 @@ describe('parsers/ListParser', () => {
         enum: ['jon', 'arya']
       },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new ListParser(options);
@@ -142,8 +137,7 @@ describe('parsers/ListParser', () => {
         props: {},
         labels: {}
       },
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser: any = new ListParser(options);
@@ -160,8 +154,7 @@ describe('parsers/ListParser', () => {
         props: {},
         labels: {}
       },
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser: any = new ListParser(options);

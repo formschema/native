@@ -52,8 +52,7 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
       model: itemModel,
       descriptor: itemDescriptor,
       descriptorConstructor: this.options.descriptorConstructor,
-      name: this.name,
-      $forceUpdate: this.options.$forceUpdate
+      name: this.name
     };
 
     const parser: any | null = Parser.get(options, this);
@@ -82,6 +81,16 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
     return this.getFieldItem(itemSchema, index);
   }
 
+  protected setCount(value: number) {
+    if (this.field.maxItems && value > this.field.maxItems) {
+      return;
+    }
+
+    this.count = value;
+
+    this.generateFields();
+  }
+
   protected generateFields() {
     const limit = this.limit;
     const fields = Array(...Array(limit))
@@ -100,7 +109,7 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
         }
 
         fields.push(additionalField);
-      } while (++index < this.count)
+      } while (++index < this.count);
     }
 
     if (this.field.maxItems) {
@@ -113,7 +122,7 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
       }
     });
 
-    return fields;
+    this.field.children = fields;
   }
 
   public parse() {
@@ -147,24 +156,12 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
       : this.model.length;
 
     this.parseUniqueItems();
-
-    this.field.children = this.generateFields();
+    this.generateFields();
 
     Object.defineProperty(this.field, 'count', {
       enumerable: true,
-      get: () => {
-        return this.count;
-      },
-      set: (value: number) => {
-        if (this.field.maxItems && value > this.field.maxItems) {
-          return;
-        }
-
-        this.count = value;
-        this.field.children = this.generateFields();
-
-        this.options.$forceUpdate();
-      }
+      get: () => this.count,
+      set: (value: number) => this.setCount(value)
     });
   }
 

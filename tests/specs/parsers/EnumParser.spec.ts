@@ -10,8 +10,7 @@ describe('parsers/EnumParser', () => {
       enum: ['jon', 'arya']
     },
     model: 'jon',
-    descriptorConstructor: NativeDescriptor.get,
-    $forceUpdate: () => {}
+    descriptorConstructor: NativeDescriptor.get
   };
 
   const parser = new EnumParser(options);
@@ -50,8 +49,7 @@ describe('parsers/EnumParser', () => {
         default: 'arya'
       },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser: any = new EnumParser(options);
@@ -65,8 +63,7 @@ describe('parsers/EnumParser', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string', enum: ['jon', 'arya'] },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new EnumParser(options);
@@ -80,8 +77,7 @@ describe('parsers/EnumParser', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string' },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new EnumParser(options);
@@ -98,8 +94,7 @@ describe('parsers/EnumParser', () => {
         enum: ['jon', 'arya']
       },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new EnumParser(options);
@@ -126,8 +121,7 @@ describe('parsers/EnumParser', () => {
         props: {},
         labels: {}
       },
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser: any = new EnumParser(options);
@@ -144,8 +138,7 @@ describe('parsers/EnumParser', () => {
         props: {},
         labels: {}
       },
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser: any = new EnumParser(options);

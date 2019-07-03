@@ -13,8 +13,7 @@ describe('parsers/ArrayParser', () => {
       uniqueItems: true
     },
     model: ['jon'],
-    descriptorConstructor: NativeDescriptor.get,
-    $forceUpdate: () => {}
+    descriptorConstructor: NativeDescriptor.get
   };
 
   const parser = new ArrayParser(options);
@@ -53,8 +52,7 @@ describe('parsers/ArrayParser', () => {
         additionalItems: { type: 'string' }
       },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new ArrayParser(options);
@@ -72,8 +70,7 @@ describe('parsers/ArrayParser', () => {
         additionalItems: { type: 'string' }
       },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new ArrayParser(options);
@@ -105,8 +102,7 @@ describe('parsers/ArrayParser', () => {
         default: ['arya']
       },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new ArrayParser(options);
@@ -124,8 +120,7 @@ describe('parsers/ArrayParser', () => {
         minItems: 1
       },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser: any = new ArrayParser(options);
@@ -142,8 +137,7 @@ describe('parsers/ArrayParser', () => {
         items: { type: 'string' }
       },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new ArrayParser(options);
@@ -160,8 +154,7 @@ describe('parsers/ArrayParser', () => {
         items: { type: 'string' }
       },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new ArrayParser(options);
@@ -175,8 +168,7 @@ describe('parsers/ArrayParser', () => {
     const options: AbstractParserOptions<any, ArrayDescriptor> = {
       schema: { type: 'string' },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new ArrayParser(options);

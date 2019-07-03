@@ -46,8 +46,7 @@ export class EnumParser extends AbstractParser<unknown, ScalarDescriptor, EnumFi
         model: itemSchema.const,
         descriptor: this.options.descriptorConstructor(itemSchema),
         descriptorConstructor: this.options.descriptorConstructor,
-        name: radioName,
-        $forceUpdate: this.options.$forceUpdate
+        name: radioName
       }))
       .map((options) => Parser.get(options, this))
       .filter((parser) => parser instanceof AbstractParser)

@@ -12,8 +12,7 @@ describe('parsers/StringParser', () => {
       maxLength: 15
     },
     model: 'Goku',
-    descriptorConstructor: NativeDescriptor.get,
-    $forceUpdate: () => {}
+    descriptorConstructor: NativeDescriptor.get
   };
 
   const parser = new StringParser(options);
@@ -40,8 +39,7 @@ describe('parsers/StringParser', () => {
     const options: AbstractParserOptions<string, ScalarDescriptor> = {
       schema: { type: 'string' },
       model: '',
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser: any = new StringParser(options);
@@ -69,8 +67,7 @@ describe('parsers/StringParser', () => {
       const options: AbstractParserOptions<string, ScalarDescriptor> = {
         schema: { type: 'string', format },
         model: '',
-        descriptorConstructor: NativeDescriptor.get,
-        $forceUpdate: () => {}
+        descriptorConstructor: NativeDescriptor.get
       };
 
       const parser = new StringParser(options);
@@ -105,8 +102,7 @@ describe('parsers/StringParser', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string', pattern: 'arya|jon', const: 'arya' },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new StringParser(options);
@@ -120,8 +116,7 @@ describe('parsers/StringParser', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string', const: 'arya' },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new StringParser(options);
@@ -135,8 +130,7 @@ describe('parsers/StringParser', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string', const: 'f(x) = ax + b; a = { 1, 2 }' },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new StringParser(options);
@@ -150,8 +144,7 @@ describe('parsers/StringParser', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string' },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new StringParser(options);
@@ -165,8 +158,7 @@ describe('parsers/StringParser', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string' },
       model: 12,
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new StringParser(options);

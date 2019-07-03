@@ -109,10 +109,7 @@ const FormSchema: FormSchemaComponent = {
         name: this.name,
         descriptor: this.schemaDescriptor,
         descriptorConstructor: this.descriptorConstructor,
-        onChange: this.emitInputEvent,
-        $forceUpdate: () => {
-          this.ref = UniqueId.get('formschema');
-        }
+        onChange: this.emitInputEvent
       });
     },
     field() {

@@ -14,8 +14,7 @@ describe('parsers/ObjectParser', () => {
     },
     model: { name: 'Jon Snow' },
     name: 'profile',
-    descriptorConstructor: NativeDescriptor.get,
-    $forceUpdate: () => {}
+    descriptorConstructor: NativeDescriptor.get
   };
 
   const parser = new ObjectParser(options);
@@ -66,8 +65,7 @@ describe('parsers/ObjectParser', () => {
         }
       },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new ObjectParser(options);
@@ -83,8 +81,7 @@ describe('parsers/ObjectParser', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'object' },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new ObjectParser(options);
@@ -101,8 +98,7 @@ describe('parsers/ObjectParser', () => {
         properties: {}
       },
       model: {},
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new ObjectParser(options);
@@ -128,8 +124,7 @@ describe('parsers/ObjectParser', () => {
         required: ['name']
       },
       model: {},
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new ObjectParser(options);
@@ -151,8 +146,7 @@ describe('parsers/ObjectParser', () => {
         required: ['name']
       },
       model: {},
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new ObjectParser(options);
@@ -175,8 +169,7 @@ describe('parsers/ObjectParser', () => {
         }
       },
       model: {},
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new ObjectParser(options);
@@ -200,8 +193,7 @@ describe('parsers/ObjectParser', () => {
         }
       },
       model: {},
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new ObjectParser(options);
@@ -231,8 +223,7 @@ describe('parsers/ObjectParser', () => {
         }
       },
       model: {},
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new ObjectParser(options);

@@ -82,8 +82,7 @@ export abstract class AbstractParser<
       props: Objects.clone(props),
       descriptor: this.descriptor,
       component: this.descriptor.component || this.defaultComponent || defaultDescriptor.component,
-      parent: parent ? parent.field : undefined,
-      $forceUpdate: options.$forceUpdate
+      parent: parent ? parent.field : undefined
     } as any;
 
     if (!this.isEnumItem) {

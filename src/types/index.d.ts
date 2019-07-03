@@ -150,7 +150,6 @@ export interface AbstractParserOptions<TModel, TDescriptor extends AbstractUISch
   readonly descriptorConstructor: DescriptorConstructor;
   readonly name?: string;
   readonly onChange?: (value: TModel) => void;
-  readonly $forceUpdate: () => void;
 }
 
 export interface AbstractUISchemaDescriptor {

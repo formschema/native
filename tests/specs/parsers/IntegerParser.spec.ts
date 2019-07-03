@@ -12,8 +12,7 @@ describe('parsers/IntegerParser', () => {
       multipleOf: 2
     },
     model: 2,
-    descriptorConstructor: NativeDescriptor.get,
-    $forceUpdate: () => {}
+    descriptorConstructor: NativeDescriptor.get
   };
 
   const parser = new IntegerParser(options);
@@ -32,8 +31,7 @@ describe('parsers/IntegerParser', () => {
     const options: AbstractParserOptions<number, ScalarDescriptor> = {
         schema: { type: 'integer' },
         model: 1,
-        descriptorConstructor: NativeDescriptor.get,
-        $forceUpdate: () => {}
+        descriptorConstructor: NativeDescriptor.get
       };
 
       const parser: any = new IntegerParser(options);
@@ -73,8 +71,7 @@ describe('parsers/IntegerParser', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'integer' },
       model: 3,
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new IntegerParser(options);
@@ -88,8 +85,7 @@ describe('parsers/IntegerParser', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'integer' },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new IntegerParser(options);
@@ -107,8 +103,7 @@ describe('parsers/IntegerParser', () => {
         exclusiveMaximum: 10
       },
       model: 0,
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new IntegerParser(options);

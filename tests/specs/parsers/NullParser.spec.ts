@@ -7,8 +7,7 @@ describe('parsers/NullParser', () => {
   const options: AbstractParserOptions<any, ScalarDescriptor> = {
     schema: { type: 'null' },
     model: undefined,
-    descriptorConstructor: NativeDescriptor.get,
-    $forceUpdate: () => {}
+    descriptorConstructor: NativeDescriptor.get
   };
 
   const parser = new NullParser(options);

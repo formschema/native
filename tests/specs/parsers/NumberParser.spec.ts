@@ -12,8 +12,7 @@ describe('parsers/NumberParser', () => {
       multipleOf: 2
     },
     model: 2.0,
-    descriptorConstructor: NativeDescriptor.get,
-    $forceUpdate: () => {}
+    descriptorConstructor: NativeDescriptor.get
   };
 
   const parser = new NumberParser(options);
@@ -32,8 +31,7 @@ describe('parsers/NumberParser', () => {
     const options: AbstractParserOptions<number, ScalarDescriptor> = {
         schema: { type: 'number' },
         model: 1,
-        descriptorConstructor: NativeDescriptor.get,
-        $forceUpdate: () => {}
+        descriptorConstructor: NativeDescriptor.get
       };
 
       const parser: any = new NumberParser(options);
@@ -53,8 +51,7 @@ describe('parsers/NumberParser', () => {
     const options: AbstractParserOptions<number, ScalarDescriptor> = {
         schema: { type: 'number' },
         model: 1,
-        descriptorConstructor: NativeDescriptor.get,
-        $forceUpdate: () => {}
+        descriptorConstructor: NativeDescriptor.get
       };
 
       const parser: any = new NumberParser(options);
@@ -94,8 +91,7 @@ describe('parsers/NumberParser', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'number' },
       model: 3.1,
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new NumberParser(options);
@@ -109,8 +105,7 @@ describe('parsers/NumberParser', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'number' },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new NumberParser(options);
@@ -128,8 +123,7 @@ describe('parsers/NumberParser', () => {
         exclusiveMaximum: 10
       },
       model: 0,
-      descriptorConstructor: NativeDescriptor.get,
-      $forceUpdate: () => {}
+      descriptorConstructor: NativeDescriptor.get
     };
 
     const parser = new NumberParser(options);

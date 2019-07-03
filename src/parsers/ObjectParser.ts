@@ -50,8 +50,7 @@ export class ObjectParser<
         model: this.model.hasOwnProperty(key) ? this.model[key] : this.properties[key].default,
         descriptor: this.getChildDescriptor(key),
         descriptorConstructor: this.getChildDescriptorConstructor(key),
-        name: key,
-        $forceUpdate: this.options.$forceUpdate
+        name: key
       }))
       .map((options) => Parser.get(options, this))
       .filter((parser) => parser instanceof AbstractParser)
