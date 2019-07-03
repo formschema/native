@@ -21,6 +21,20 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
     return 'array';
   }
 
+  protected get limit(): number {
+    if (this.field.uniqueItems) {
+      return this.items.length;
+    }
+
+    if (this.count < this.field.minItems || !Array.isArray(this.schema.items)) {
+      return this.count;
+    }
+
+    return this.count < this.items.length
+      ? this.count
+      : this.items.length;
+  }
+
   protected getFieldItem(itemSchema: JsonSchema, index: number): ArrayItemField | null {
     const kind: FieldKind | undefined = this.field.uniqueItems ? 'checkbox' : undefined;
     const defaultDescriptor = this.options.descriptorConstructor(itemSchema, kind);
@@ -68,6 +82,40 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
     return this.getFieldItem(itemSchema, index);
   }
 
+  protected generateFields() {
+    const limit = this.limit;
+    const fields = Array(...Array(limit))
+      .map((x, index) => this.getFieldIndex(index))
+      .filter((field) => field !== null) as ArrayItemField[];
+
+    if (limit < this.count && this.additionalItems.length) {
+      let index = limit;
+
+      do {
+        const itemSchema = this.additionalItems[0];
+        const additionalField = this.getFieldItem(itemSchema, index);
+
+        if (!additionalField) {
+          break;
+        }
+
+        fields.push(additionalField);
+      } while (++index < this.count)
+    }
+
+    if (this.field.maxItems) {
+      fields.splice(this.field.maxItems);
+    }
+
+    fields.forEach(({ model }, index) => {
+      if (index > this.model.length - 1) {
+        this.model.push(model);
+      }
+    });
+
+    return fields;
+  }
+
   public parse() {
     super.parse();
 
@@ -94,8 +142,33 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
       ? this.schema.minItems || 1
       : this.schema.minItems || 0;
 
-    this.count = this.model.length || this.field.minItems;
+    this.count = this.field.minItems > this.model.length
+      ? this.field.minItems
+      : this.model.length;
 
+    this.parseUniqueItems();
+
+    this.field.children = this.generateFields();
+
+    Object.defineProperty(this.field, 'count', {
+      enumerable: true,
+      get: () => {
+        return this.count;
+      },
+      set: (value: number) => {
+        if (this.field.maxItems && value > this.field.maxItems) {
+          return;
+        }
+
+        this.count = value;
+        this.field.children = this.generateFields();
+
+        this.options.$forceUpdate();
+      }
+    });
+  }
+
+  protected parseUniqueItems(): void {
     if (this.schema.uniqueItems === true && this.items.length === 1) {
       const itemSchema = this.items[0];
 
@@ -125,37 +198,6 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
       this.field.max = -2;
     }
 
-    const generateFields = () => {
-      const limit = this.count < this.field.max || this.field.max === -2
-        ? this.count
-        : this.field.maxItems || this.items.length;
-
-      const fields = Array(...Array(limit))
-        .map((x, index) => this.getFieldIndex(index))
-        .filter((field) => field !== null) as ArrayItemField[];
-
-      if (limit < this.count) {
-        let index = limit;
-
-        do {
-          const itemSchema = this.additionalItems[0];
-          const additionalField = this.getFieldItem(itemSchema, index);
-
-          if (additionalField) {
-            fields.push(additionalField);
-          }
-        } while (++index < this.count);
-      }
-
-      fields.forEach(({ model }, index) => {
-        if (index > this.model.length - 1) {
-          this.model.push(model);
-        }
-      });
-
-      return fields;
-    };
-
     if (this.field.uniqueItems) {
       const values: unknown[] = [];
 
@@ -170,22 +212,6 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
       this.model.splice(0);
       this.model.push(...values);
     }
-
-    this.field.children = generateFields();
-
-    Object.defineProperty(this.field, 'count', {
-      enumerable: true,
-      get: () => {
-        return this.count;
-      },
-      set: (value: number) => {
-        this.count = value;
-
-        this.field.children = generateFields();
-
-        this.options.$forceUpdate();
-      }
-    });
   }
 
   protected getModelValue(): unknown[] {
