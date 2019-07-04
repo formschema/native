@@ -67,7 +67,7 @@ export interface Field<
   TKind extends FieldKind,
   TAttributes = Attributes,
   TDescriptor = DescriptorInstance,
-  TModel = unknown
+  TModel = any
 > {
   kind: TKind;
   name?: string;
