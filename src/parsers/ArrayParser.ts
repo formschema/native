@@ -55,19 +55,29 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
       name: this.name
     };
 
-    const parser: any | null = Parser.get(options, this);
+    if (this.rawValue.length <= index) {
+      this.rawValue.push(undefined);
+    }
+
+    const parser = Parser.get(options, this);
+
+    // set the onChange option after the parser initialization
+    // to prevent first field value emit
+    options.onChange = (value) => {
+      this.rawValue[index] = value;
+
+      this.model.splice(0);
+      this.model.push(...this.parseValue(this.rawValue) as any);
+
+      this.emit();
+    };
 
     if (parser) {
-      parser.field.index = index;
-
       if (itemDescriptor.kind === 'checkbox') {
-        parser.field.attrs.input.name = `${this.field.attrs.input.name}[]`;
-        parser.field.attrs.input.type = 'checkbox';
-        parser.field.attrs.input.checked = typeof this.model[index] !== 'undefined'
-          && itemSchema.default === this.model[index];
+        this.parseCheckboxField(parser, itemModel);
       }
 
-      return parser.field;
+      return parser.field as any;
     }
 
     return null;
@@ -112,15 +122,7 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
       } while (++index < this.count);
     }
 
-    if (this.field.maxItems) {
-      fields.splice(this.field.maxItems);
-    }
-
-    fields.forEach(({ model }, index) => {
-      if (index > this.model.length - 1) {
-        this.model.push(model);
-      }
-    });
+    fields.forEach((field) => field.setValue(field.value));
 
     this.field.children = fields;
   }
@@ -163,6 +165,23 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
       get: () => this.count,
       set: (value: number) => this.setCount(value)
     });
+
+    this.emit();
+  }
+
+  protected parseCheckboxField(parser: any, itemModel: unknown) {
+    const checked = typeof itemModel !== 'undefined' && this.rawValue.includes(itemModel);
+
+    parser.field.attrs.input.name = `${this.field.attrs.input.name}[]`;
+    parser.field.attrs.input.type = 'checkbox';
+
+    parser.setValue = (checked: boolean) => {
+      parser.rawValue = checked;
+      parser.model = checked ? itemModel : undefined;
+      parser.field.attrs.input.checked = checked;
+    };
+
+    parser.setValue(checked);
   }
 
   protected parseUniqueItems(): void {
@@ -211,11 +230,9 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
     }
   }
 
-  protected getModelValue(): unknown[] {
-    return this.model.filter((item: unknown) => typeof item !== 'undefined');
-  }
-
   protected parseValue(data: unknown[]): unknown[] {
-    return data instanceof Array ? data : [];
+    return data instanceof Array
+      ? data.filter((item) => typeof item !== 'undefined')
+      : [];
   }
 }

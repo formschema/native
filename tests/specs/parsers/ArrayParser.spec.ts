@@ -85,13 +85,13 @@ describe('parsers/ArrayParser', () => {
   });
 
   it('field.children should be defined', () => {
-    const models = parser.field.children.map(({ model }) => model);
+    const models = parser.field.children.map(({ value: model }) => model);
 
     expect(models).toEqual(['jon']);
   });
 
-  it('field.model should be equal to the default value', () => {
-    expect(parser.field.model).toEqual(['jon']);
+  it('field.value should be equal to the default value', () => {
+    expect(parser.field.value).toEqual(['jon']);
   });
 
   it('should successfully parse default value', () => {
@@ -109,7 +109,7 @@ describe('parsers/ArrayParser', () => {
 
     parser.parse();
 
-    expect(parser.field.model).toEqual(['arya']);
+    expect(parser.field.value).toEqual(['arya']);
   });
 
   it('should successfully parse default schema value', () => {
@@ -127,10 +127,10 @@ describe('parsers/ArrayParser', () => {
 
     parser.parse();
 
-    expect(parser.field.model).toEqual(['tyrion']);
+    expect(parser.field.value).toEqual(['tyrion']);
   });
 
-  it('field.model should parse default undefined as an empty array', () => {
+  it('field.value should parse default undefined as an empty array', () => {
     const options: AbstractParserOptions<any, ArrayDescriptor> = {
       schema: {
         type: 'array',
@@ -144,10 +144,10 @@ describe('parsers/ArrayParser', () => {
 
     parser.parse();
 
-    expect(parser.field.model).toEqual([]);
+    expect(parser.field.value).toEqual([]);
   });
 
-  it('field.model should parse default undefined as an empty array', () => {
+  it('field.value should parse default undefined as an empty array', () => {
     const options: AbstractParserOptions<any, ArrayDescriptor> = {
       schema: {
         type: 'array',
@@ -161,12 +161,12 @@ describe('parsers/ArrayParser', () => {
 
     parser.parse();
 
-    expect(parser.field.model).toEqual([]);
+    expect(parser.field.value).toEqual([]);
   });
 
   it('field.children should be equal to an empty array with missing schema.items', () => {
     const options: AbstractParserOptions<any, ArrayDescriptor> = {
-      schema: { type: 'string' },
+      schema: { type: 'array' },
       model: undefined,
       descriptorConstructor: NativeDescriptor.get
     };
@@ -175,6 +175,6 @@ describe('parsers/ArrayParser', () => {
 
     parser.parse();
 
-    expect(parser.field.model).toEqual([]);
+    expect(parser.field.value.length).toBe(0);
   });
 });

@@ -13,9 +13,7 @@ import {
   FieldKind
 } from '@/types';
 
-export class ObjectParser<
-  TModel extends Dictionary = Dictionary
-> extends AbstractParser<TModel, ObjectDescriptor, ObjectField> {
+export class ObjectParser extends AbstractParser<Dictionary, ObjectDescriptor, ObjectField> {
   protected properties: Dictionary<JsonSchema> = {};
 
   public get kind(): FieldKind {
@@ -50,7 +48,12 @@ export class ObjectParser<
         model: this.model.hasOwnProperty(key) ? this.model[key] : this.properties[key].default,
         descriptor: this.getChildDescriptor(key),
         descriptorConstructor: this.getChildDescriptorConstructor(key),
-        name: key
+        name: key,
+        onChange: (value) => {
+          this.model[key] = value;
+
+          this.emit();
+        }
       }))
       .map((options) => Parser.get(options, this))
       .filter((parser) => parser instanceof AbstractParser)
@@ -90,9 +93,11 @@ export class ObjectParser<
     if (this.isRoot) {
       delete this.field.attrs.input.name;
     }
+
+    this.emit();
   }
 
-  protected parseValue(data: TModel): TModel {
+  protected parseValue(data: Dictionary): Dictionary {
     return data || {};
   }
 }

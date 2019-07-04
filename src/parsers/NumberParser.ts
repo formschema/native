@@ -30,8 +30,8 @@ export class NumberParser extends AbstractParser<number, ScalarDescriptor, Numbe
     this.field.attrs.input.min = this.schema.minimum;
     this.field.attrs.input.max = this.schema.maximum;
 
-    if (!Number.isNaN(this.field.model) && typeof this.field.model !== 'undefined') {
-      this.field.attrs.input.value = `${this.field.model}`;
+    if (!Number.isNaN(this.field.value) && typeof this.field.value !== 'undefined') {
+      this.field.attrs.input.value = `${this.field.value}`;
     }
 
     if (this.schema.hasOwnProperty('multipleOf')) {
@@ -39,11 +39,12 @@ export class NumberParser extends AbstractParser<number, ScalarDescriptor, Numbe
     }
 
     this.parseExclusiveKeywords();
+    this.emit();
   }
 
-  protected parseValue(data: number): number {
-    const value = typeof data !== 'undefined' ? Number(data) : data;
+  protected parseValue(data: number): number | undefined {
+    const value = Number(data);
 
-    return Number.isNaN(value) ? undefined as any : Number.parseFloat(`${value}`);
+    return Number.isNaN(value) ? undefined : Number.parseFloat(`${data}`);
   }
 }

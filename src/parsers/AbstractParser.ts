@@ -7,9 +7,8 @@ import {
   AbstractParserOptions,
   FieldKind,
   UnknowField,
-  ObjectField,
-  ArrayField,
-  ArrayItemField
+  DescriptorInstance,
+  Attributes
 } from '@/types';
 
 export type Parent = AbstractParser<any, AbstractUISchemaDescriptor, UnknowField>;
@@ -17,7 +16,7 @@ export type Parent = AbstractParser<any, AbstractUISchemaDescriptor, UnknowField
 export abstract class AbstractParser<
   TModel,
   TDescriptor extends AbstractUISchemaDescriptor,
-  TField extends Field<any>
+  TField extends Field<any, Attributes, DescriptorInstance, any>
 > {
   protected readonly isRoot: boolean;
   protected readonly isEnumItem: boolean;
@@ -26,6 +25,7 @@ export abstract class AbstractParser<
   protected readonly parent?: Parent;
   protected readonly root: Parent;
   protected model: TModel;
+  protected rawValue: TModel;
   protected readonly options: AbstractParserOptions<TModel, TDescriptor>;
   public readonly field: TField;
   protected readonly descriptor: TDescriptor;
@@ -47,7 +47,8 @@ export abstract class AbstractParser<
     const defaultDescriptor = options.descriptorConstructor<TDescriptor>(this.schema);
 
     this.descriptor = options.descriptor || defaultDescriptor;
-    this.model = this.parseValue(this.initialValue);
+    this.rawValue = this.parseValue(this.initialValue) as any;
+    this.model = this.parseValue(this.initialValue) as any;
 
     this.parseDescriptor();
 
@@ -61,33 +62,35 @@ export abstract class AbstractParser<
     delete attrs.name;
 
     this.field = {
-      name: this.name,
       kind: this.kind,
+      name: this.name,
       isRoot: this.isRoot,
       required: isRequired,
-      default: this.parseValue(options.schema.default),
-      get model() {
-        return self.getModelValue();
+      defaultValue: this.parseValue(options.schema.default),
+      get value() {
+        return self.model;
       },
-      setModel(value: TModel) {
-        self.setModelValue(value);
+      get rawValue() {
+        return self.rawValue;
+      },
+      setValue: (value: TModel) => {
+        this.setValue(value);
+        this.emit();
       },
       attrs: {
         input: {
           type: undefined,
           name: this.isArrayItem && this.name ? `${this.name}[]` : this.name,
           ...attrs
-        }
+        },
+        label: {},
+        description: {}
       },
       props: Objects.clone(props),
       descriptor: this.descriptor,
       component: this.descriptor.component || this.defaultComponent || defaultDescriptor.component,
       parent: parent ? parent.field : undefined
-    } as any;
-
-    if (!this.isEnumItem) {
-      this.setModelValue(this.model);
-    }
+    } as unknown as TField;
   }
 
   public get schema() {
@@ -120,65 +123,18 @@ export abstract class AbstractParser<
       : undefined;
   }
 
-  protected getModelValue(): TModel {
-    if (this.parent && this.parent.schema.type === 'object') {
-      const name = this.options.name as string;
-      const parentField: ObjectField = this.parent.field as any;
+  protected abstract parseValue(data: any): TModel | undefined;
 
-      return parentField.model[name] as TModel;
-    }
-
-    return this.model;
+  protected setValue(value: unknown) {
+    this.rawValue = value as any;
+    this.model = this.parseValue(value) as any;
   }
 
-  private setModelValue(value: TModel) {
-    if (this.parent) {
-      switch (this.parent.schema.type) {
-        case 'object': {
-          const name = this.options.name as string;
-          const parentField: ObjectField = this.parent.field as any;
-
-          parentField.model[name] = this.parseValue(value);
-
-          this.parent.field.setModel(parentField.model);
-
-          break;
-        }
-
-        case 'array': {
-          if (!this.field.hasOwnProperty('index')) {
-            break;
-          }
-
-          const parentField: ArrayField = this.parent.field as any;
-          const itemField: ArrayItemField = this.field as any;
-
-          this.model = this.parseValue(value);
-          this.parent.model[itemField.index] = this.model;
-
-          parentField.setModel(parentField.model);
-
-          break;
-        }
-
-        default:
-          if (!this.isEnumItem) {
-            this.model = this.parseValue(value);
-          }
-
-          this.parent.field.setModel(this.model);
-          break;
-      }
-    } else {
-      this.model = this.parseValue(value);
-    }
-
-    if (this.options.onChange) {
-      this.options.onChange(this.model);
+  protected emit() {
+    if (this.options.onChange instanceof Function) {
+      this.options.onChange(this.model, this.field);
     }
   }
-
-  protected abstract parseValue(data: any): TModel;
 
   protected parseDescriptor() {
     if (!this.descriptor.kind) {
@@ -212,14 +168,10 @@ export abstract class AbstractParser<
     this.field.attrs.input.readonly = this.schema.readOnly || false;
     this.field.attrs.input.required = this.field.required;
 
-    this.field.attrs.label = {
-      id: labelId,
-      for: id
-    };
+    this.field.attrs.label.id = labelId;
+    this.field.attrs.label.for = id;
 
-    this.field.attrs.description = {
-      id: descId
-    };
+    this.field.attrs.description.id = descId;
 
     if (this.field.required) {
       /**

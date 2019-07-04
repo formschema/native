@@ -9,12 +9,12 @@ export const ArrayElement: ArrayComponent = {
     const nodes = props.field.children.map((field) => h(field.component, {
       attrs: {
         ...field.attrs.input,
-        value: field.model
+        value: field.value
       },
       props: {
         ...props,
         field: field,
-        value: field.model
+        value: field.value
       }
     }));
 

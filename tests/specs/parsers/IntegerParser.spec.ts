@@ -59,11 +59,11 @@ describe('parsers/IntegerParser', () => {
     expect(parser.field.attrs.input.max).toBe(options.schema.maximum);
   });
 
-  it('field.model should be equal to the default value', () => {
-    expect(parser.field.model).toBe(2);
+  it('field.value should be equal to the default value', () => {
+    expect(parser.field.value).toBe(2);
   });
 
-  it('this.field.attrs.input.value should be equal to field.model', () => {
+  it('this.field.attrs.input.value should be equal to field.value', () => {
     expect(parser.field.attrs.input.value).toBe('2');
   });
 
@@ -78,10 +78,10 @@ describe('parsers/IntegerParser', () => {
 
     parser.parse();
 
-    expect(parser.field.model).toBe(3);
+    expect(parser.field.value).toBe(3);
   });
 
-  it('field.model should parse default non integer value as an undefined model', () => {
+  it('field.value should parse default non integer value as an undefined model', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'integer' },
       model: undefined,
@@ -92,7 +92,7 @@ describe('parsers/IntegerParser', () => {
 
     parser.parse();
 
-    expect(parser.field.model).toBeUndefined();
+    expect(parser.field.value).toBeUndefined();
   });
 
   describe('exclusiveMinimum/exclusiveMaximum', () => {

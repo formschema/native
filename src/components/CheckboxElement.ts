@@ -7,7 +7,7 @@ export const CheckboxElement: CheckboxComponent = {
   render(h, { data, props }) {
     const on = {
       change({ target }: InputEvent) {
-        props.field.setModel(target.checked ? target.value : undefined);
+        props.field.setValue(target.checked);
       }
     };
 

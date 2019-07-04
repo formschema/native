@@ -26,7 +26,7 @@ describe('parsers/NullParser', () => {
     expect(parser.field.attrs.input.value).toBe('\u0000');
   });
 
-  it('field.model should be equal to null', () => {
-    expect(parser.field.model).toBe(null);
+  it('field.value should be equal to null', () => {
+    expect(parser.field.value).toBe(null);
   });
 });

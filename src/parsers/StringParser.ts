@@ -33,7 +33,7 @@ export class StringParser extends AbstractParser<string, ScalarDescriptor, Strin
   public parse() {
     super.parse();
 
-    this.field.attrs.input.value = this.field.model;
+    this.field.attrs.input.value = this.field.value;
     this.field.attrs.input.minlength = this.schema.minLength;
     this.field.attrs.input.maxlength = this.schema.maxLength;
 
@@ -42,9 +42,11 @@ export class StringParser extends AbstractParser<string, ScalarDescriptor, Strin
     } else if (this.schema.hasOwnProperty('const')) {
       this.field.attrs.input.pattern = Pattern.escape(`${this.schema.const}`);
     }
+
+    this.emit();
   }
 
-  protected parseValue(data: unknown): any {
+  protected parseValue(data: unknown): string | undefined {
     return typeof data !== 'undefined' ? `${data}` : undefined;
   }
 }

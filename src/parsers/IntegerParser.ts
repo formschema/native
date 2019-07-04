@@ -20,9 +20,9 @@ export class IntegerParser extends NumberParser {
     }
   }
 
-  protected parseValue(data: number): number {
-    const value = typeof data !== 'undefined' ? Number(data) : data;
+  protected parseValue(data: number): number | undefined {
+    const value = Number(data);
 
-    return Number.isNaN(value) ? undefined as any : Number.parseInt(`${value}`, 10);
+    return Number.isNaN(value) ? undefined : Number.parseInt(`${data}`, 10);
   }
 }

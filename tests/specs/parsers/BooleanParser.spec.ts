@@ -26,8 +26,8 @@ describe('parsers/BooleanParser', () => {
     expect(parser.field.attrs.input.checked).toBeFalsy;
   });
 
-  it('field.model should be falsy', () => {
-    expect(parser.field.model).toBeFalsy();
+  it('field.value should be falsy', () => {
+    expect(parser.field.value).toBeFalsy();
   });
 
   it('should successfully parse default truthy boolean value', () => {
@@ -41,10 +41,10 @@ describe('parsers/BooleanParser', () => {
 
     parser.parse();
 
-    expect(parser.field.model).toBeTruthy();
+    expect(parser.field.value).toBeTruthy();
   });
 
-  it('field.model should successfully parse default falsy boolean value', () => {
+  it('field.value should successfully parse default falsy boolean value', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'boolean' },
       model: false,
@@ -55,10 +55,10 @@ describe('parsers/BooleanParser', () => {
 
     parser.parse();
 
-    expect(parser.field.model).toBeFalsy();
+    expect(parser.field.value).toBeFalsy();
   });
 
-  it('field.model should parse default non boolean value as an undefined model', () => {
+  it('field.value should parse default non boolean value as an undefined model', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'boolean' },
       model: 12,
@@ -69,6 +69,6 @@ describe('parsers/BooleanParser', () => {
 
     parser.parse();
 
-    expect(parser.field.model).toBeUndefined();
+    expect(parser.field.value).toBeUndefined();
   });
 });

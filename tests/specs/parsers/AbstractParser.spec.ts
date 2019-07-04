@@ -75,11 +75,11 @@ describe('parsers/AbstractParser', () => {
         expect(parser.field.required).toBeTruthy();
       });
 
-      it('field.default should be undefined with undefined schema.default', () => {
-        expect(parser.field.default).toBeUndefined();
+      it('field.defaultValue should be undefined with undefined schema.default', () => {
+        expect(parser.field.defaultValue).toBeUndefined();
       });
 
-      it('field.default should be set to the default schema value', () => {
+      it('field.defaultValue should be set to the default schema value', () => {
         const options: AbstractParserOptions<any, ScalarDescriptor> = {
           schema: { type: 'string', default: 'Hello' },
           model: undefined,
@@ -88,14 +88,14 @@ describe('parsers/AbstractParser', () => {
 
         const parser = new FakeParser(options);
 
-        expect(parser.field.default).toBe('Hello');
+        expect(parser.field.defaultValue).toBe('Hello');
       });
 
-      it('field.model should be empty', () => {
-        expect(parser.field.model).toBe('');
+      it('field.value should be empty', () => {
+        expect(parser.field.value).toBe('');
       });
 
-      it('field.model should be set to the default schema value', () => {
+      it('field.value should be set to the default schema value', () => {
         const options: AbstractParserOptions<any, ScalarDescriptor> = {
           schema: { type: 'string', default: 'Hello' },
           model: undefined,
@@ -104,10 +104,10 @@ describe('parsers/AbstractParser', () => {
 
         const parser = new FakeParser(options);
 
-        expect(parser.field.model).toBe('Hello');
+        expect(parser.field.value).toBe('Hello');
       });
 
-      it('field.model should be undefined', () => {
+      it('field.value should be undefined', () => {
         const options: AbstractParserOptions<any, ScalarDescriptor> = {
           schema: { type: 'string' },
           model: undefined,
@@ -116,12 +116,12 @@ describe('parsers/AbstractParser', () => {
 
         const parser = new FakeParser(options);
 
-        expect(parser.field.model).toBeUndefined();
+        expect(parser.field.value).toBeUndefined();
       });
 
-      it('field.model should have a worked setter', () => {
-        parser.field.setModel('hello');
-        expect(parser.field.model).toBe('hello');
+      it('field.value should have a worked setter', () => {
+        parser.field.setValue('hello');
+        expect(parser.field.value).toBe('hello');
       });
 
       it('field.attrs should be defined', () => {
@@ -129,7 +129,7 @@ describe('parsers/AbstractParser', () => {
       });
 
       it('field.attrs should be have an initial input property', () => {
-        expect(Object.keys(parser.field.attrs)).toEqual(['input']);
+        expect(Object.keys(parser.field.attrs)).toEqual(['input', 'label', 'description']);
       });
 
       it('field.attrs.input should be defined with initial properties', () => {
@@ -137,6 +137,14 @@ describe('parsers/AbstractParser', () => {
           type: undefined,
           name: undefined
         });
+      });
+
+      it('field.attrs.label should be an empty object', () => {
+        expect(parser.field.attrs.label).toEqual({});
+      });
+
+      it('field.attrs.description should be an empty object', () => {
+        expect(parser.field.attrs.description).toEqual({});
       });
 
       it('field.props should be defined with an empty object', () => {
@@ -396,20 +404,18 @@ describe('parsers/AbstractParser', () => {
         expect(parser.field.required).toBeFalsy();
       });
 
-      it('field.model should have the default value', () => {
-        expect(parser.field.model).toBe('Jon Snow');
+      it('field.value should have the default value', () => {
+        expect(parser.field.value).toBe('Jon Snow');
       });
 
-      it('field.model should have a worked setter', () => {
-        parser.field.setModel('Tyrion Lannister');
-        expect(parser.field.model).toBe('Tyrion Lannister');
+      it('field.value should have a worked setter', () => {
+        parser.field.setValue('Tyrion Lannister');
+        expect(parser.field.value).toBe('Tyrion Lannister');
       });
 
-      it('parent.field.model should update with child\'s setter', () => {
-        parser.field.setModel('Arya Stark');
-        expect(parent.field.model).toEqual({
-          name: 'Arya Stark'
-        });
+      it('parent.field.value should update with child\'s setter', () => {
+        parser.field.setValue('Arya Stark');
+        expect(parent.field.value).toEqual({});
       });
 
       it('field.attrs.input should be defined with initial properties', () => {

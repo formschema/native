@@ -41,14 +41,21 @@ export class EnumParser extends AbstractParser<unknown, ScalarDescriptor, EnumFi
           ? this.descriptor.labels[item]
           : `${item}`
       }))
-      .map((itemSchema): AbstractParserOptions<unknown, AbstractUISchemaDescriptor> => ({
+      .map((itemSchema): AbstractParserOptions<unknown, AbstractUISchemaDescriptor, RadioField> => ({
         schema: itemSchema,
         model: itemSchema.const,
         descriptor: this.options.descriptorConstructor(itemSchema),
         descriptorConstructor: this.options.descriptorConstructor,
-        name: radioName
+        name: radioName,
+        onChange: (value, field) => {
+          if (field.attrs.input.checked) {
+            this.model = value;
+          }
+
+          this.emit();
+        }
       }))
-      .map((options) => Parser.get(options, this))
+      .map((options) => Parser.get(options as any, this))
       .filter((parser) => parser instanceof AbstractParser)
       .map((parser: any) => parser.field as RadioField);
   }
@@ -58,12 +65,14 @@ export class EnumParser extends AbstractParser<unknown, ScalarDescriptor, EnumFi
 
     this.field.children = this.children;
 
-    this.field.children.forEach(({ attrs, model }) => {
+    this.field.children.forEach(({ attrs, value: model }) => {
       attrs.input.checked = model === this.model;
     });
+
+    this.emit();
   }
 
-  protected parseValue(data: unknown): unknown {
+  protected parseValue(data: unknown): unknown | undefined {
     return typeof data !== 'undefined' ? data : undefined;
   }
 }

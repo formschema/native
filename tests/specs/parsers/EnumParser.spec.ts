@@ -26,13 +26,13 @@ describe('parsers/EnumParser', () => {
   });
 
   it('field.children should be defined', () => {
-    const models = parser.field.children.map(({ model }) => model);
+    const models = parser.field.children.map(({ value: model }) => model);
 
     expect(models).toEqual(['jon', 'arya']);
   });
 
-  it('field.model should be equal to the default value', () => {
-    expect(parser.field.model).toBe('jon');
+  it('field.value should be equal to the default value', () => {
+    expect(parser.field.value).toBe('jon');
   });
 
   it('field.attrs.input.checked should be defined', () => {
@@ -56,10 +56,10 @@ describe('parsers/EnumParser', () => {
 
     parser.parse();
 
-    expect(parser.field.model).toBe('arya');
+    expect(parser.field.value).toBe('arya');
   });
 
-  it('field.model should parse default undefined as an undefined model', () => {
+  it('field.value should parse default undefined as an undefined model', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string', enum: ['jon', 'arya'] },
       model: undefined,
@@ -70,7 +70,7 @@ describe('parsers/EnumParser', () => {
 
     parser.parse();
 
-    expect(parser.field.model).toBeUndefined();
+    expect(parser.field.value).toBeUndefined();
   });
 
   it('field.children should be equal to an empty array with missing schema.enum', () => {

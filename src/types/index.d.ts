@@ -32,10 +32,13 @@ export interface InputAttributes extends Attributes {
   value: string;
 }
 
-export interface BooleanAttributes extends InputAttributes {
-  type: 'checkbox';
+export interface StateAttributes<Type extends string> extends InputAttributes {
+  type: Type;
   checked: boolean;
 }
+
+export type RadioAttributes = StateAttributes<'radio'>;
+export type CheckboxAttributes = StateAttributes<'checkbox'>;
 
 export interface NumberAttributes extends InputAttributes {
   type: 'number' | 'radio';
@@ -56,11 +59,6 @@ export interface StringAttributes extends InputAttributes {
   pattern?: string;
 }
 
-export interface RadioAttributes extends InputAttributes {
-  type: 'radio';
-  checked: boolean;
-}
-
 export type SchemaType = 'object' | 'array' | 'string' | 'number' | 'integer' | 'boolean' | 'null';
 export type FieldKind = SchemaType | 'enum' | 'radio' | 'list' | 'textarea' | 'checkbox';
 export type Component = string | VueComponent | AsyncComponent;
@@ -75,8 +73,9 @@ export interface Field<
   name?: string;
   isRoot: boolean;
   required: boolean;
-  default?: TModel;
-  readonly model: TModel;
+  defaultValue?: TModel;
+  readonly value: TModel;
+  readonly rawValue: TModel;
   attrs: {
     input: TAttributes;
     label: {
@@ -89,30 +88,27 @@ export interface Field<
       tabindex?: '-1';
     };
   };
-  props: {
-    [prop: string]: unknown;
-  };
+  props: Dictionary;
   descriptor: TDescriptor;
   component: Component;
   parent?: Field<any>;
-  setModel(value: TModel): void;
+  readonly setValue: (value: TModel) => void;
 }
 
-export type BooleanField = Field<'boolean', BooleanAttributes, ScalarDescriptor, boolean>;
+export type BooleanField = Field<'boolean', CheckboxAttributes, ScalarDescriptor, boolean>;
+export type CheckboxField = Field<'checkbox', CheckboxAttributes, ScalarDescriptor, unknown>;
 export type NumberField = Field<'number', NumberAttributes, ScalarDescriptor, number>;
 export type NullField = Field<'null', NullAttributes, ScalarDescriptor, null>;
 export type StringField = Field<'string', StringAttributes, ScalarDescriptor, string>;
 export type RadioField = Field<'radio', RadioAttributes, ScalarDescriptor, string>;
 export type InputField = BooleanField | NumberField | NullField | StringField | RadioField;
-export type UnknowField = Field<any, Attributes, DescriptorInstance>;
+export type UnknowField = Field<any, Attributes, DescriptorInstance, any>;
 
 export interface EnumField extends Field<'enum', Attributes, ScalarDescriptor> {
   children: RadioField[];
 }
 
-export interface ArrayItemField extends Field<any, Attributes, ArrayDescriptor> {
-  readonly index: number;
-}
+export type ArrayItemField = Field<any, Attributes, ScalarDescriptor>;
 
 export interface ArrayField extends Field<'array', Attributes, ArrayDescriptor, any[]> {
   minItems: number;
@@ -143,13 +139,17 @@ export interface ObjectField extends Field<'object', Attributes, ObjectDescripto
   order: string[];
 }
 
-export interface AbstractParserOptions<TModel, TDescriptor extends AbstractUISchemaDescriptor> {
+export interface AbstractParserOptions<
+  TModel,
+  TDescriptor extends AbstractUISchemaDescriptor,
+  TField extends Field<any, any, DescriptorInstance, any> = UnknowField
+> {
   readonly schema: JsonSchema;
   readonly model: TModel;
   readonly descriptor?: TDescriptor;
   readonly descriptorConstructor: DescriptorConstructor;
   readonly name?: string;
-  readonly onChange?: (value: TModel) => void;
+  onChange?: (value: TModel, field: TField) => void;
 }
 
 export interface AbstractUISchemaDescriptor {
@@ -265,7 +265,7 @@ export type ArrayButtonComponent = FunctionalComponentOptions<ElementProps<Array
 export type ArrayComponent = FunctionalComponentOptions<ElementProps<ArrayField>>;
 export type BooleanComponent = FunctionalComponentOptions<ElementProps<BooleanField>>;
 export type InputComponent = FunctionalComponentOptions<ElementProps<InputField>>;
-export type CheckboxComponent = FunctionalComponentOptions<ElementProps<UnknowField>>;
+export type CheckboxComponent = FunctionalComponentOptions<ElementProps<CheckboxField>>;
 export type FieldComponent = FunctionalComponentOptions<ElementProps<UnknowField>>;
 export type FieldsetComponent = FunctionalComponentOptions<ElementProps<ObjectField>>;
 export type HelperComponent = FunctionalComponentOptions<ElementProps<UnknowField>>;

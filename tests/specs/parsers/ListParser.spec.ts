@@ -44,8 +44,8 @@ describe('parsers/ListParser', () => {
     expect(parser.field.items).toEqual(parser.items);
   });
 
-  it('field.model should be equal to the default value', () => {
-    expect(parser.field.model).toEqual('arya');
+  it('field.value should be equal to the default value', () => {
+    expect(parser.field.value).toEqual('arya');
   });
 
   it('should successfully parse default value', () => {
@@ -63,10 +63,10 @@ describe('parsers/ListParser', () => {
 
     parser.parse();
 
-    expect(parser.field.model).toBe('jon');
+    expect(parser.field.value).toBe('jon');
   });
 
-  it('field.model should parse default undefined as an undefined model', () => {
+  it('field.value should parse default undefined as an undefined model', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string', enum: ['jon', 'arya'] },
       model: undefined,
@@ -77,7 +77,7 @@ describe('parsers/ListParser', () => {
 
     parser.parse();
 
-    expect(parser.field.model).toBeUndefined();
+    expect(parser.field.value).toBeUndefined();
   });
 
   it('field.items should be equal to an empty array with missing schema.enum', () => {

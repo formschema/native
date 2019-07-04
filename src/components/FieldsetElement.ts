@@ -19,7 +19,7 @@ export const FieldsetElement: FieldsetComponent = {
         props: {
           ...props,
           field: field,
-          value: field.model,
+          value: field.value,
           disabled: false
         }
       });

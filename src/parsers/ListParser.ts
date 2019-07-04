@@ -32,9 +32,10 @@ export class ListParser extends AbstractParser<unknown, ScalarDescriptor, ListFi
     this.field.items = this.items;
 
     super.parse();
+    this.emit();
   }
 
-  protected parseValue(data: any): unknown {
+  protected parseValue(data: any): unknown | undefined {
     return typeof data !== 'undefined' ? data : undefined;
   }
 }

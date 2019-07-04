@@ -7,7 +7,7 @@ export const BooleanElement: BooleanComponent = {
   render(h, { data, props }) {
     const on = {
       change({ target }: InputEvent) {
-        props.field.setModel(target.checked);
+        props.field.setValue(target.checked);
       }
     };
 

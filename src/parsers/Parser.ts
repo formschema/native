@@ -19,11 +19,10 @@ export type Parsers = ArrayParser
 | StringParser
 | ObjectParser
 | EnumParser
-| ListParser
-| null;
+| ListParser;
 
 export const Parser = Object.freeze({
-  get(options: AbstractParserOptions<any, any>, parent?: Parent): Parsers {
+  get(options: AbstractParserOptions<any, any>, parent?: Parent): Parsers | null {
     let parser = null;
 
     if (options.schema.enum instanceof Array) {
@@ -61,7 +60,11 @@ export const Parser = Object.freeze({
           break;
 
         default:
-          return null;
+          if (typeof options.schema.type === 'undefined') {
+            return null;
+          }
+
+          throw TypeError(`Unsupported schema type: ${JSON.stringify(options.schema.type)}`);
       }
     }
 

@@ -78,12 +78,12 @@ describe('parsers/StringParser', () => {
     });
   });
 
-  it('field.model should be equal to the default value', () => {
-    expect(parser.field.model).toBe('Goku');
+  it('field.value should be equal to the default value', () => {
+    expect(parser.field.value).toBe('Goku');
   });
 
-  it('field.attrs.input.value should be equal to field.model', () => {
-    expect(parser.field.attrs.input.value).toBe(parser.field.model);
+  it('field.attrs.input.value should be equal to field.value', () => {
+    expect(parser.field.attrs.input.value).toBe(parser.field.value);
   });
 
   it('field.attrs.input.minlength should be equal to schema.minLength', () => {
@@ -151,7 +151,7 @@ describe('parsers/StringParser', () => {
 
     parser.parse();
 
-    expect(parser.field.model).toBeUndefined();
+    expect(parser.field.value).toBeUndefined();
   });
 
   it('should parse default non string value as a string', () => {
@@ -165,6 +165,6 @@ describe('parsers/StringParser', () => {
 
     parser.parse();
 
-    expect(parser.field.model).toBe('12');
+    expect(parser.field.value).toBe('12');
   });
 });

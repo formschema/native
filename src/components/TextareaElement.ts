@@ -7,7 +7,7 @@ export const TextareaElement: TextareaComponent = {
   functional: true,
   render(h, { data, props }) {
     return h(FieldElement, data, [
-      CreateInput<InputField>(h, 'textarea', data, props.field.model)
+      CreateInput<InputField>(h, 'textarea', data, props.field.value)
     ]);
   }
 };

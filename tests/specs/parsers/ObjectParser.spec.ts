@@ -49,8 +49,8 @@ describe('parsers/ObjectParser', () => {
     expect(parser.field.attrs.input.name).toBeUndefined();
   });
 
-  it('field.model should be equal to the default value', () => {
-    expect(parser.field.model).toEqual({ name: 'Jon Snow' });
+  it('field.value should be equal to the default value', () => {
+    expect(parser.field.value).toEqual({ name: 'Jon Snow' });
   });
 
   it('should successfully parse default object value', () => {
@@ -72,12 +72,12 @@ describe('parsers/ObjectParser', () => {
 
     parser.parse();
 
-    expect(parser.field.model).toEqual({
+    expect(parser.field.value).toEqual({
       name: 'Arya Stark'
     });
   });
 
-  it('field.model should parse default non object value as an empty model', () => {
+  it('field.value should parse default non object value as an empty model', () => {
     const options: AbstractParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'object' },
       model: undefined,
@@ -88,7 +88,7 @@ describe('parsers/ObjectParser', () => {
 
     parser.parse();
 
-    expect(parser.field.model).toEqual({});
+    expect(parser.field.value).toEqual({});
   });
 
   describe('schema with empty schema.properties', () => {
@@ -131,8 +131,8 @@ describe('parsers/ObjectParser', () => {
 
     parser.parse();
 
-    it('field.model should be equal to an empty object', () => {
-      expect(parser.field.model).toEqual({ name: undefined });
+    it('field.value should be equal to an empty object', () => {
+      expect(parser.field.value).toEqual({ name: undefined });
     });
   });
 
@@ -153,8 +153,8 @@ describe('parsers/ObjectParser', () => {
 
     parser.parse();
 
-    it('field.model should be equal to the default defined object', () => {
-      expect(parser.field.model).toEqual({ name: 'Goku' });
+    it('field.value should be equal to the default defined object', () => {
+      expect(parser.field.value).toEqual({ name: 'Goku' });
     });
   });
 
@@ -234,8 +234,8 @@ describe('parsers/ObjectParser', () => {
       expect(parser.field.children[0].attrs.input.name).toBe('name');
     });
 
-    it('field.model should be defined as an empty object with nested properties', () => {
-      expect(parser.field.model).toEqual({
+    it('field.value should be defined as an empty object with nested properties', () => {
+      expect(parser.field.value).toEqual({
         name: {
           firstName: undefined,
           lastName: undefined
@@ -244,10 +244,10 @@ describe('parsers/ObjectParser', () => {
       });
     });
 
-    it('field.model should be updated when setting a child model', () => {
-      parser.field.children[1].setModel('-8600/01/02');
+    it('field.value should be updated when setting a child model', () => {
+      parser.field.children[1].setValue('-8600/01/02');
 
-      expect(parser.field.model).toEqual({
+      expect(parser.field.value).toEqual({
         name: {
           firstName: undefined,
           lastName: undefined
@@ -256,8 +256,8 @@ describe('parsers/ObjectParser', () => {
       });
     });
 
-    it('field.model should be equal to the defined model using field.setModel()', () => {
-      parser.field.setModel({
+    it('field.value should be equal to the defined model using field.setValue()', () => {
+      parser.field.setValue({
         name: {
           firstName: 'Tyrion',
           lastName: 'Lannister'
@@ -265,7 +265,7 @@ describe('parsers/ObjectParser', () => {
         dateBirth: '-8600/01/01'
       });
 
-      expect(parser.field.model).toEqual({
+      expect(parser.field.value).toEqual({
         name: {
           firstName: 'Tyrion',
           lastName: 'Lannister'
