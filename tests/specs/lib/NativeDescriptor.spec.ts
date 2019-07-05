@@ -35,6 +35,36 @@ function ShouldHaveCommonProperties(schema: JsonSchema, descriptor: DescriptorIn
 }
 
 describe('lib/NativeDescriptor', () => {
+  describe('NativeDescriptor.kind(schema)', () => {
+    it('should return `list` with schema.enum.length > 4', () => {
+      const schema: JsonSchema = { type: 'integer', enum: [1, 2, 3, 4, 5] };
+      const kind = NativeDescriptor.kind(schema);
+
+      expect(kind).toBe('list');
+    });
+
+    it('should return `enum` with schema.enum.length === 4', () => {
+      const schema: JsonSchema = { type: 'integer', enum: [1, 2, 3, 4] };
+      const kind = NativeDescriptor.kind(schema);
+
+      expect(kind).toBe('enum');
+    });
+
+    it('should return `enum` with schema.enum.length < 4', () => {
+      const schema: JsonSchema = { type: 'integer', enum: [1, 2, 3] };
+      const kind = NativeDescriptor.kind(schema);
+
+      expect(kind).toBe('enum');
+    });
+
+    it('should equal to `schema.type` with missing schema.enum', () => {
+      const schema: JsonSchema = { type: 'integer' };
+      const kind = NativeDescriptor.kind(schema);
+
+      expect(kind).toBe(schema.type);
+    });
+  });
+
   describe('NativeDescriptor.get(schema, kind?)', () => {
     describe('ScalarDescriptor', () => {
       const schema = { type: 'string' } as any;
