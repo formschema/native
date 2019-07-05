@@ -30,7 +30,7 @@ npm outdated:
 security scan:
   stage: dependencies
   script:
-    - npm audit --only=prod
+    - npm audit --production
   allow_failure: true
 
 rollup build:
