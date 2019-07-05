@@ -68,7 +68,7 @@ export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> {
       this.model.splice(0);
       this.model.push(...this.parseValue(this.rawValue) as any);
 
-      this.emit();
+      this.commit();
     };
 
     if (parser) {
@@ -165,7 +165,7 @@ export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> {
       set: (value: number) => this.setCount(value)
     });
 
-    this.emit();
+    this.commit();
   }
 
   protected parseCheckboxField(parser: any, itemModel: unknown) {

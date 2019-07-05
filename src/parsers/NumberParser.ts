@@ -39,7 +39,7 @@ export class NumberParser extends Parser<number, ScalarDescriptor, NumberField> 
     }
 
     this.parseExclusiveKeywords();
-    this.emit();
+    this.commit();
   }
 
   protected parseValue(data: number): number | undefined {

@@ -107,7 +107,7 @@ export abstract class Parser<
       },
       setValue: (value: TModel) => {
         this.setValue(value);
-        this.emit();
+        this.commit();
       },
       attrs: {
         input: {
@@ -162,7 +162,7 @@ export abstract class Parser<
     this.model = this.parseValue(value) as any;
   }
 
-  protected emit() {
+  protected commit() {
     if (this.options.onChange instanceof Function) {
       this.options.onChange(this.model, this.field);
     }

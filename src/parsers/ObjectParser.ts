@@ -51,7 +51,7 @@ export class ObjectParser extends Parser<Dictionary, ObjectDescriptor, ObjectFie
         onChange: (value) => {
           this.model[key] = value;
 
-          this.emit();
+          this.commit();
         }
       }))
       .map((options) => Parser.get(options, this))
@@ -93,7 +93,7 @@ export class ObjectParser extends Parser<Dictionary, ObjectDescriptor, ObjectFie
       delete this.field.attrs.input.name;
     }
 
-    this.emit();
+    this.commit();
   }
 
   protected parseValue(data: Dictionary): Dictionary {

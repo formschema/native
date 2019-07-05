@@ -7,7 +7,7 @@ export class NullParser extends Parser<null, ScalarDescriptor, NullField> {
     this.field.attrs.input.value = '\u0000';
 
     super.parse();
-    this.emit();
+    this.commit();
   }
 
   protected parseValue(): null {

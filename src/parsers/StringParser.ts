@@ -43,7 +43,7 @@ export class StringParser extends Parser<string, ScalarDescriptor, StringField> 
       this.field.attrs.input.pattern = Pattern.escape(`${this.schema.const}`);
     }
 
-    this.emit();
+    this.commit();
   }
 
   protected parseValue(data: unknown): string | undefined {

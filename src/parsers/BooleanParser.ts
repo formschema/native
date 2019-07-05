@@ -8,7 +8,7 @@ export class BooleanParser extends Parser<boolean, ScalarDescriptor, BooleanFiel
     this.field.attrs.input.type = 'checkbox';
     this.field.attrs.input.checked = this.model === true;
 
-    this.emit();
+    this.commit();
   }
 
   protected parseValue(checked: boolean): boolean | undefined {

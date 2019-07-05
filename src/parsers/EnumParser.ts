@@ -70,7 +70,7 @@ export class EnumParser extends Parser<unknown, ScalarDescriptor, EnumField> {
           // So call the parent function super.setValue() instead of
           // the overrided one this.setValue()
           super.setValue(value);
-          this.emit();
+          this.commit();
         };
 
         return parser;
@@ -85,7 +85,7 @@ export class EnumParser extends Parser<unknown, ScalarDescriptor, EnumField> {
     this.field.children = this.children;
 
     this.updateInputsState();
-    this.emit();
+    this.commit();
   }
 
   protected parseValue(data: unknown): unknown {

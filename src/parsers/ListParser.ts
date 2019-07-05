@@ -32,7 +32,7 @@ export class ListParser extends Parser<unknown, ScalarDescriptor, ListField> {
     this.field.items = this.items;
 
     super.parse();
-    this.emit();
+    this.commit();
   }
 
   protected parseValue(data: any): unknown {
