@@ -11,7 +11,7 @@ export class ListParser extends Parser<unknown, ScalarDescriptor, ListField> {
   public get defaultComponent() {
     return this.descriptor.kind
       ? this.options.descriptorConstructor<ScalarDescriptor>(this.schema, this.descriptor.kind).component
-      : this.options.descriptorConstructor(this.schema, 'list').component;
+      : this.options.descriptorConstructor(this.schema, this.kind).component;
   }
 
   public get items(): ListItem[] {
@@ -35,8 +35,8 @@ export class ListParser extends Parser<unknown, ScalarDescriptor, ListField> {
     this.emit();
   }
 
-  protected parseValue(data: any): unknown | undefined {
-    return typeof data !== 'undefined' ? data : undefined;
+  protected parseValue(data: any): unknown {
+    return data;
   }
 }
 

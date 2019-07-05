@@ -39,7 +39,7 @@ export abstract class Parser<
     PARSERS[type] = parserClass;
   }
 
-  public static get(options: ParserOptions<any, any>, parent?: Parent): Parent | null {
+  public static get(options: ParserOptions<any, any, any>, parent?: Parent): Parent | null {
     if (typeof options.schema.type === 'undefined') {
       return null;
     }

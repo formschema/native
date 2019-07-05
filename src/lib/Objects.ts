@@ -8,6 +8,7 @@ export const Objects = Object.freeze({
 
     return /string|number|boolean|undefined/.test(typeof value);
   },
+
   equals(o1: any, o2: any) {
     if (Objects.isScalar(o1)) {
       return o1 === o2;
@@ -22,7 +23,7 @@ export const Objects = Object.freeze({
     return !keys1.some((key) => !o2.hasOwnProperty(key) || o1[key] !== o2[key]);
   },
 
-  assign<T extends Dictionary = Dictionary<any>>(dest: any, src: T) {
+  assign<T extends Dictionary = Dictionary<any>>(dest: any, src: T): T {
     Object.keys(src).forEach((key) => {
       const value = src[key];
 
@@ -44,7 +45,7 @@ export const Objects = Object.freeze({
     return dest;
   },
 
-  clone<T extends Dictionary = Dictionary<any>>(object: T) {
+  clone<T extends Dictionary = Dictionary<any>>(object: T): T {
     return Objects.assign<T>({} as any, object);
   },
 

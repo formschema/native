@@ -9,7 +9,7 @@ describe('parsers/EnumParser', () => {
   const options: ParserOptions<unknown, ScalarDescriptor> = {
     schema: {
       type: 'string',
-      enum: ['jon', 'arya']
+      enum: ['jon', 'arya', 'bran', 'ned']
     },
     model: 'jon',
     descriptorConstructor: NativeDescriptor.get
@@ -30,7 +30,7 @@ describe('parsers/EnumParser', () => {
   it('field.children should be defined', () => {
     const models = parser.field.children.map(({ value: model }) => model);
 
-    expect(models).toEqual(['jon', 'arya']);
+    expect(models).toEqual(['jon', 'arya', 'bran', 'ned']);
   });
 
   it('field.value should be equal to the default value', () => {
@@ -40,7 +40,27 @@ describe('parsers/EnumParser', () => {
   it('field.attrs.input.checked should be defined', () => {
     const checkStates = parser.field.children.map(({ attrs }) => attrs.input.checked);
 
-    expect(checkStates).toEqual([true, false]);
+    expect(checkStates).toEqual([true, false, false, false]);
+  });
+
+  it('field.value should be equal to the updated value using field.setValue()', () => {
+    parser.field.setValue('arya');
+    expect(parser.field.value).toBe('arya');
+  });
+
+  it('field.attrs.input.checked should be updated when using field.setValue()', () => {
+    parser.field.setValue('bran');
+
+    const checkStates = parser.field.children.map(({ attrs }) => attrs.input.checked);
+
+    expect(checkStates).toEqual([false, false, true, false]);
+  });
+
+  it('field.value should be updated when a child is checked', () => {
+    const childField: any = parser.field.children.slice(-1).pop();
+
+    childField.setValue(childField.value);
+    expect(parser.field.value).toBe('ned');
   });
 
   it('should successfully parse default value', () => {
@@ -54,7 +74,7 @@ describe('parsers/EnumParser', () => {
       descriptorConstructor: NativeDescriptor.get
     };
 
-    const parser: any = new EnumParser(options);
+    const parser = new EnumParser(options);
 
     parser.parse();
 
