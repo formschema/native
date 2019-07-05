@@ -1,10 +1,12 @@
-import { AbstractParser } from '@/parsers/AbstractParser';
+import { Parser } from '@/parsers/Parser';
 import { ArrayParser } from '@/parsers/ArrayParser';
-import { ArrayDescriptor, AbstractParserOptions } from '@/types';
-import { NativeDescriptor } from '@/descriptors/NativeDescriptor';
+import { ArrayDescriptor, ParserOptions } from '@/types';
+import { NativeDescriptor } from '@/lib/NativeDescriptor';
+
+import '@/parsers';
 
 describe('parsers/ArrayParser', () => {
-  const options: AbstractParserOptions<unknown[], ArrayDescriptor> = {
+  const options: ParserOptions<unknown[], ArrayDescriptor> = {
     schema: {
       type: 'array',
       items: { type: 'string' },
@@ -20,8 +22,8 @@ describe('parsers/ArrayParser', () => {
 
   parser.parse();
 
-  it('parser should be an instance of AbstractParser', () => {
-    expect(parser).toBeInstanceOf(AbstractParser);
+  it('parser should be an instance of Parser', () => {
+    expect(parser).toBeInstanceOf(Parser);
   });
 
   it('parser.kind should have equal to `array`', () => {
@@ -45,7 +47,7 @@ describe('parsers/ArrayParser', () => {
   });
 
   it('field.max should be equal to `-1` when schema.maxItems is missing and schema.items is an array with empty schema.additionalItems', () => {
-    const options: AbstractParserOptions<any, ArrayDescriptor> = {
+    const options: ParserOptions<any, ArrayDescriptor> = {
       schema: {
         type: 'array',
         items: [{ type: 'string' }],
@@ -63,7 +65,7 @@ describe('parsers/ArrayParser', () => {
   });
 
   it('field.max should be equal to `-2` when schema.maxItems is missing and schema.items is an object', () => {
-    const options: AbstractParserOptions<any, ArrayDescriptor> = {
+    const options: ParserOptions<any, ArrayDescriptor> = {
       schema: {
         type: 'array',
         items: { type: 'string' },
@@ -95,7 +97,7 @@ describe('parsers/ArrayParser', () => {
   });
 
   it('should successfully parse default value', () => {
-    const options: AbstractParserOptions<any, ArrayDescriptor> = {
+    const options: ParserOptions<any, ArrayDescriptor> = {
       schema: {
         type: 'array',
         items: { type: 'string' },
@@ -113,7 +115,7 @@ describe('parsers/ArrayParser', () => {
   });
 
   it('should successfully parse default schema value', () => {
-    const options: AbstractParserOptions<any, ArrayDescriptor> = {
+    const options: ParserOptions<any, ArrayDescriptor> = {
       schema: {
         type: 'array',
         items: { type: 'string', default: 'tyrion' },
@@ -131,7 +133,7 @@ describe('parsers/ArrayParser', () => {
   });
 
   it('field.value should parse default undefined as an empty array', () => {
-    const options: AbstractParserOptions<any, ArrayDescriptor> = {
+    const options: ParserOptions<any, ArrayDescriptor> = {
       schema: {
         type: 'array',
         items: { type: 'string' }
@@ -148,7 +150,7 @@ describe('parsers/ArrayParser', () => {
   });
 
   it('field.value should parse default undefined as an empty array', () => {
-    const options: AbstractParserOptions<any, ArrayDescriptor> = {
+    const options: ParserOptions<any, ArrayDescriptor> = {
       schema: {
         type: 'array',
         items: { type: 'string' }
@@ -165,7 +167,7 @@ describe('parsers/ArrayParser', () => {
   });
 
   it('field.children should be equal to an empty array with missing schema.items', () => {
-    const options: AbstractParserOptions<any, ArrayDescriptor> = {
+    const options: ParserOptions<any, ArrayDescriptor> = {
       schema: { type: 'array' },
       model: undefined,
       descriptorConstructor: NativeDescriptor.get

@@ -1,5 +1,4 @@
 import { Parser } from '@/parsers/Parser';
-import { AbstractParser } from '@/parsers/AbstractParser';
 
 import { Objects } from '@/lib/Objects';
 import { UniqueId } from '@/lib/UniqueId';
@@ -8,13 +7,13 @@ import { JsonSchema } from '@/types/jsonschema';
 import {
   EnumField,
   ScalarDescriptor,
-  AbstractParserOptions,
+  ParserOptions,
   AbstractUISchemaDescriptor,
   FieldKind,
   RadioField
 } from '@/types';
 
-export class EnumParser extends AbstractParser<unknown, ScalarDescriptor, EnumField> {
+export class EnumParser extends Parser<unknown, ScalarDescriptor, EnumField> {
   public get kind(): FieldKind {
     return 'enum';
   }
@@ -41,7 +40,7 @@ export class EnumParser extends AbstractParser<unknown, ScalarDescriptor, EnumFi
           ? this.descriptor.labels[item]
           : `${item}`
       }))
-      .map((itemSchema): AbstractParserOptions<unknown, AbstractUISchemaDescriptor, RadioField> => ({
+      .map((itemSchema): ParserOptions<unknown, AbstractUISchemaDescriptor, RadioField> => ({
         schema: itemSchema,
         model: itemSchema.const,
         descriptor: this.options.descriptorConstructor(itemSchema),
@@ -56,7 +55,7 @@ export class EnumParser extends AbstractParser<unknown, ScalarDescriptor, EnumFi
         }
       }))
       .map((options) => Parser.get(options as any, this))
-      .filter((parser) => parser instanceof AbstractParser)
+      .filter((parser) => parser instanceof Parser)
       .map((parser: any) => parser.field as RadioField);
   }
 
@@ -76,3 +75,5 @@ export class EnumParser extends AbstractParser<unknown, ScalarDescriptor, EnumFi
     return typeof data !== 'undefined' ? data : undefined;
   }
 }
+
+Parser.register('enum', EnumParser);

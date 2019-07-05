@@ -1,10 +1,10 @@
-import { AbstractParser } from '@/parsers/AbstractParser';
+import { Parser } from '@/parsers/Parser';
 import { NumberParser } from '@/parsers/NumberParser';
-import { ScalarDescriptor, AbstractParserOptions } from '@/types';
-import { NativeDescriptor } from '@/descriptors/NativeDescriptor';
+import { ScalarDescriptor, ParserOptions } from '@/types';
+import { NativeDescriptor } from '@/lib/NativeDescriptor';
 
 describe('parsers/NumberParser', () => {
-  const options: AbstractParserOptions<any, ScalarDescriptor> = {
+  const options: ParserOptions<any, ScalarDescriptor> = {
     schema: {
       type: 'number',
       minimum: 0,
@@ -19,8 +19,8 @@ describe('parsers/NumberParser', () => {
 
   parser.parse();
 
-  it('parser should be an instance of AbstractParser', () => {
-    expect(parser).toBeInstanceOf(AbstractParser);
+  it('parser should be an instance of Parser', () => {
+    expect(parser).toBeInstanceOf(Parser);
   });
 
   it('parser.kind should have equal to `number` for number schema', () => {
@@ -28,7 +28,7 @@ describe('parsers/NumberParser', () => {
   });
 
   it('parser.kind should be equal to `radio` for enum field', () => {
-    const options: AbstractParserOptions<number, ScalarDescriptor> = {
+    const options: ParserOptions<number, ScalarDescriptor> = {
         schema: { type: 'number' },
         model: 1,
         descriptorConstructor: NativeDescriptor.get
@@ -48,7 +48,7 @@ describe('parsers/NumberParser', () => {
   });
 
   it('parser.type should be equal to `radio` for enum field', () => {
-    const options: AbstractParserOptions<number, ScalarDescriptor> = {
+    const options: ParserOptions<number, ScalarDescriptor> = {
         schema: { type: 'number' },
         model: 1,
         descriptorConstructor: NativeDescriptor.get
@@ -88,7 +88,7 @@ describe('parsers/NumberParser', () => {
   });
 
   it('should successfully parse default number value', () => {
-    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'number' },
       model: 3.1,
       descriptorConstructor: NativeDescriptor.get
@@ -102,7 +102,7 @@ describe('parsers/NumberParser', () => {
   });
 
   it('field.value should parse default non number value as an undefined model', () => {
-    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'number' },
       model: undefined,
       descriptorConstructor: NativeDescriptor.get
@@ -116,7 +116,7 @@ describe('parsers/NumberParser', () => {
   });
 
   describe('exclusiveMinimum/exclusiveMaximum', () => {
-    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, ScalarDescriptor> = {
       schema: {
         type: 'number',
         exclusiveMinimum: 0,

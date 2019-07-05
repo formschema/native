@@ -1,18 +1,17 @@
 import { Parser } from '@/parsers/Parser';
-import { AbstractParser } from '@/parsers/AbstractParser';
 import { JsonSchema } from '@/types/jsonschema';
 import { Objects } from '@/lib/Objects';
 
 import {
   ArrayField,
   ArrayDescriptor,
-  AbstractParserOptions,
+  ParserOptions,
   AbstractUISchemaDescriptor,
   FieldKind,
   ArrayItemField
 } from '@/types';
 
-export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField> {
+export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> {
   protected readonly items: JsonSchema[] = [];
   protected readonly additionalItems: JsonSchema[] = [];
   protected count: number = 0;
@@ -47,7 +46,7 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
       ? this.model[index]
       : itemSchema.default;
 
-    const options: AbstractParserOptions<unknown, AbstractUISchemaDescriptor> = {
+    const options: ParserOptions<unknown, AbstractUISchemaDescriptor> = {
       schema: itemSchema,
       model: itemModel,
       descriptor: itemDescriptor,
@@ -236,3 +235,5 @@ export class ArrayParser extends AbstractParser<any, ArrayDescriptor, ArrayField
       : [];
   }
 }
+
+Parser.register('array', ArrayParser);

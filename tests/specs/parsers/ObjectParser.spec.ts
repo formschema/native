@@ -1,10 +1,12 @@
-import { AbstractParser } from '@/parsers/AbstractParser';
+import { Parser } from '@/parsers/Parser';
 import { ObjectParser } from '@/parsers/ObjectParser';
-import { ScalarDescriptor, AbstractParserOptions } from '@/types';
-import { NativeDescriptor } from '@/descriptors/NativeDescriptor';
+import { ScalarDescriptor, ParserOptions } from '@/types';
+import { NativeDescriptor } from '@/lib/NativeDescriptor';
+
+import '@/parsers';
 
 describe('parsers/ObjectParser', () => {
-  const options: AbstractParserOptions<any, ScalarDescriptor> = {
+  const options: ParserOptions<any, ScalarDescriptor> = {
     schema: {
       type: 'object',
       properties: {
@@ -21,8 +23,8 @@ describe('parsers/ObjectParser', () => {
 
   parser.parse();
 
-  it('parser should be an instance of AbstractParser', () => {
-    expect(parser).toBeInstanceOf(AbstractParser);
+  it('parser should be an instance of Parser', () => {
+    expect(parser).toBeInstanceOf(Parser);
   });
 
   it('parser.kind should have equal to `object`', () => {
@@ -54,7 +56,7 @@ describe('parsers/ObjectParser', () => {
   });
 
   it('should successfully parse default object value', () => {
-    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, ScalarDescriptor> = {
       schema: {
         type: 'object',
         properties: {
@@ -78,7 +80,7 @@ describe('parsers/ObjectParser', () => {
   });
 
   it('field.value should parse default non object value as an empty model', () => {
-    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'object' },
       model: undefined,
       descriptorConstructor: NativeDescriptor.get
@@ -92,7 +94,7 @@ describe('parsers/ObjectParser', () => {
   });
 
   describe('schema with empty schema.properties', () => {
-    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, ScalarDescriptor> = {
       schema: {
         type: 'object',
         properties: {}
@@ -115,7 +117,7 @@ describe('parsers/ObjectParser', () => {
   });
 
   describe('schema with empty model', () => {
-    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, ScalarDescriptor> = {
       schema: {
         type: 'object',
         properties: {
@@ -137,7 +139,7 @@ describe('parsers/ObjectParser', () => {
   });
 
   describe('schema with a defined schema.default', () => {
-    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, ScalarDescriptor> = {
       schema: {
         type: 'object',
         properties: {
@@ -159,7 +161,7 @@ describe('parsers/ObjectParser', () => {
   });
 
   describe('with field.descriptor.order', () => {
-    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, ScalarDescriptor> = {
       schema: {
         type: 'object',
         properties: {
@@ -184,7 +186,7 @@ describe('parsers/ObjectParser', () => {
   });
 
   describe('with missing field.descriptor.order', () => {
-    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, ScalarDescriptor> = {
       schema: {
         type: 'object',
         properties: {
@@ -208,7 +210,7 @@ describe('parsers/ObjectParser', () => {
   });
 
   describe('with nested object', () => {
-    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, ScalarDescriptor> = {
       schema: {
         type: 'object',
         properties: {

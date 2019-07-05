@@ -1,4 +1,4 @@
-import { NativeDescriptor } from '@/descriptors/NativeDescriptor';
+import { NativeDescriptor } from '@/lib/NativeDescriptor';
 import { DescriptorInstance } from '@/types';
 import { JsonSchema } from '@/types/jsonschema';
 
@@ -34,7 +34,7 @@ function ShouldHaveCommonProperties(schema: JsonSchema, descriptor: DescriptorIn
   });
 }
 
-describe('descriptors/NativeDescriptor', () => {
+describe('lib/NativeDescriptor', () => {
   describe('NativeDescriptor.get(schema, kind?)', () => {
     describe('ScalarDescriptor', () => {
       const schema = { type: 'string' } as any;

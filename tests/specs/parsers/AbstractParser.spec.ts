@@ -1,16 +1,16 @@
 import { Component } from 'vue';
-import { AbstractParser } from '@/parsers/AbstractParser';
-import { ScalarDescriptor, StringField, AbstractParserOptions, ObjectDescriptor } from '@/types';
-import { NativeDescriptor } from '@/descriptors/NativeDescriptor';
+import { Parser } from '@/parsers/Parser';
+import { ScalarDescriptor, StringField, ParserOptions, ObjectDescriptor } from '@/types';
+import { NativeDescriptor } from '@/lib/NativeDescriptor';
 import { JsonSchema } from '@/types/jsonschema';
 
-class FakeParser extends AbstractParser<string, ScalarDescriptor, StringField> {
+class FakeParser extends Parser<string, ScalarDescriptor, StringField> {
   protected parseValue(data: any): string {
     return data;
   }
 }
 
-class ObjectFakeParser extends AbstractParser<string, ScalarDescriptor, StringField> {
+class ObjectFakeParser extends Parser<string, ScalarDescriptor, StringField> {
   public get type(): string {
     return 'object';
   }
@@ -20,7 +20,7 @@ class ObjectFakeParser extends AbstractParser<string, ScalarDescriptor, StringFi
   }
 }
 
-class InputFakeParser extends AbstractParser<string, ScalarDescriptor, StringField> {
+class InputFakeParser extends Parser<string, ScalarDescriptor, StringField> {
   public get type(): string {
     return 'text';
   }
@@ -30,9 +30,9 @@ class InputFakeParser extends AbstractParser<string, ScalarDescriptor, StringFie
   }
 }
 
-describe('parsers/AbstractParser', () => {
+describe('parsers/Parser', () => {
   describe('instance with required options', () => {
-    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string' },
       model: '',
       descriptorConstructor: NativeDescriptor.get
@@ -80,7 +80,7 @@ describe('parsers/AbstractParser', () => {
       });
 
       it('field.defaultValue should be set to the default schema value', () => {
-        const options: AbstractParserOptions<any, ScalarDescriptor> = {
+        const options: ParserOptions<any, ScalarDescriptor> = {
           schema: { type: 'string', default: 'Hello' },
           model: undefined,
           descriptorConstructor: NativeDescriptor.get
@@ -96,7 +96,7 @@ describe('parsers/AbstractParser', () => {
       });
 
       it('field.value should be set to the default schema value', () => {
-        const options: AbstractParserOptions<any, ScalarDescriptor> = {
+        const options: ParserOptions<any, ScalarDescriptor> = {
           schema: { type: 'string', default: 'Hello' },
           model: undefined,
           descriptorConstructor: NativeDescriptor.get
@@ -108,7 +108,7 @@ describe('parsers/AbstractParser', () => {
       });
 
       it('field.value should be undefined', () => {
-        const options: AbstractParserOptions<any, ScalarDescriptor> = {
+        const options: ParserOptions<any, ScalarDescriptor> = {
           schema: { type: 'string' },
           model: undefined,
           descriptorConstructor: NativeDescriptor.get
@@ -173,7 +173,7 @@ describe('parsers/AbstractParser', () => {
     });
 
     describe('parser.parse()', () => {
-      const options: AbstractParserOptions<any, ScalarDescriptor> = {
+      const options: ParserOptions<any, ScalarDescriptor> = {
         schema: { type: 'string' },
         model: '',
         descriptorConstructor: NativeDescriptor.get
@@ -238,7 +238,7 @@ describe('parsers/AbstractParser', () => {
   });
 
   describe('schema with title', () => {
-    const options: AbstractParserOptions<string, ScalarDescriptor> = {
+    const options: ParserOptions<string, ScalarDescriptor> = {
       schema: {
         type: 'string',
         title: 'Name'
@@ -290,7 +290,7 @@ describe('parsers/AbstractParser', () => {
   });
 
   describe('schema with title and description', () => {
-    const options: AbstractParserOptions<string, ScalarDescriptor> = {
+    const options: ParserOptions<string, ScalarDescriptor> = {
       schema: {
         type: 'string',
         title: 'Name',
@@ -365,13 +365,13 @@ describe('parsers/AbstractParser', () => {
       }
     };
 
-    const parentOptions: AbstractParserOptions<string, ObjectDescriptor> = {
+    const parentOptions: ParserOptions<string, ObjectDescriptor> = {
       schema: schema as JsonSchema,
       model: '',
       descriptorConstructor: NativeDescriptor.get
     };
 
-    const childOptions: AbstractParserOptions<string, ScalarDescriptor> = {
+    const childOptions: ParserOptions<string, ScalarDescriptor> = {
       schema: schema.properties.name as JsonSchema,
       name: 'name',
       model: 'Jon Snow',

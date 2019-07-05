@@ -1,10 +1,10 @@
-import { AbstractParser } from '@/parsers/AbstractParser';
+import { Parser } from '@/parsers/Parser';
 import { StringParser } from '@/parsers/StringParser';
-import { Dictionary, ScalarDescriptor, AbstractParserOptions } from '@/types';
-import { NativeDescriptor } from '@/descriptors/NativeDescriptor';
+import { Dictionary, ScalarDescriptor, ParserOptions } from '@/types';
+import { NativeDescriptor } from '@/lib/NativeDescriptor';
 
 describe('parsers/StringParser', () => {
-  const options: AbstractParserOptions<string, ScalarDescriptor> = {
+  const options: ParserOptions<string, ScalarDescriptor> = {
     schema: {
       type: 'string',
       pattern: 'arya|jon',
@@ -19,8 +19,8 @@ describe('parsers/StringParser', () => {
 
   parser.parse();
 
-  it('parser should be an instance of AbstractParser', () => {
-    expect(parser).toBeInstanceOf(AbstractParser);
+  it('parser should be an instance of Parser', () => {
+    expect(parser).toBeInstanceOf(Parser);
   });
 
   it('parser.kind should have equal to `string` for non enum field', () => {
@@ -36,7 +36,7 @@ describe('parsers/StringParser', () => {
   });
 
   it('field.attrs.input.type should be equal to `radio` for enum field', () => {
-    const options: AbstractParserOptions<string, ScalarDescriptor> = {
+    const options: ParserOptions<string, ScalarDescriptor> = {
       schema: { type: 'string' },
       model: '',
       descriptorConstructor: NativeDescriptor.get
@@ -64,7 +64,7 @@ describe('parsers/StringParser', () => {
     const type = formatTypes[format];
 
     it(`field.attrs.input.type should be equal to '${type}' with schema.format === '${format}'`, () => {
-      const options: AbstractParserOptions<string, ScalarDescriptor> = {
+      const options: ParserOptions<string, ScalarDescriptor> = {
         schema: { type: 'string', format },
         model: '',
         descriptorConstructor: NativeDescriptor.get
@@ -99,7 +99,7 @@ describe('parsers/StringParser', () => {
   });
 
   it('field.attrs.input.pattern should be equal to schema.pattern with provided schema.const', () => {
-    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string', pattern: 'arya|jon', const: 'arya' },
       model: undefined,
       descriptorConstructor: NativeDescriptor.get
@@ -113,7 +113,7 @@ describe('parsers/StringParser', () => {
   });
 
   it('field.attrs.input.pattern should be equal to schema.const', () => {
-    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string', const: 'arya' },
       model: undefined,
       descriptorConstructor: NativeDescriptor.get
@@ -127,7 +127,7 @@ describe('parsers/StringParser', () => {
   });
 
   it('field.attrs.input.pattern should be equal to escaped schema.const', () => {
-    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string', const: 'f(x) = ax + b; a = { 1, 2 }' },
       model: undefined,
       descriptorConstructor: NativeDescriptor.get
@@ -141,7 +141,7 @@ describe('parsers/StringParser', () => {
   });
 
   it('should parse default undefined value as an undefined string', () => {
-    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string' },
       model: undefined,
       descriptorConstructor: NativeDescriptor.get
@@ -155,7 +155,7 @@ describe('parsers/StringParser', () => {
   });
 
   it('should parse default non string value as a string', () => {
-    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string' },
       model: 12,
       descriptorConstructor: NativeDescriptor.get

@@ -1,4 +1,4 @@
-import { AbstractParser } from '@/parsers/AbstractParser';
+import { Parser } from '@/parsers/Parser';
 import { StringField, ScalarDescriptor, FieldKind, Dictionary } from '@/types';
 import { Pattern } from '@/lib/Pattern';
 
@@ -11,7 +11,7 @@ const TypeFormat: Dictionary<string> = {
   uri: 'url'
 };
 
-export class StringParser extends AbstractParser<string, ScalarDescriptor, StringField> {
+export class StringParser extends Parser<string, ScalarDescriptor, StringField> {
   public get kind(): FieldKind {
     return this.isEnumItem ? 'radio' : 'string';
   }
@@ -50,3 +50,5 @@ export class StringParser extends AbstractParser<string, ScalarDescriptor, Strin
     return typeof data !== 'undefined' ? `${data}` : undefined;
   }
 }
+
+Parser.register('string', StringParser);

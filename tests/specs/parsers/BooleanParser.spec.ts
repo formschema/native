@@ -1,10 +1,10 @@
-import { AbstractParser } from '@/parsers/AbstractParser';
+import { Parser } from '@/parsers/Parser';
 import { BooleanParser } from '@/parsers/BooleanParser';
-import { ScalarDescriptor, AbstractParserOptions } from '@/types';
-import { NativeDescriptor } from '@/descriptors/NativeDescriptor';
+import { ScalarDescriptor, ParserOptions } from '@/types';
+import { NativeDescriptor } from '@/lib/NativeDescriptor';
 
 describe('parsers/BooleanParser', () => {
-  const options: AbstractParserOptions<any, ScalarDescriptor> = {
+  const options: ParserOptions<any, ScalarDescriptor> = {
     schema: { type: 'boolean' },
     model: undefined,
     descriptorConstructor: NativeDescriptor.get
@@ -14,8 +14,8 @@ describe('parsers/BooleanParser', () => {
 
   parser.parse();
 
-  it('parser should be an instance of AbstractParser', () => {
-    expect(parser).toBeInstanceOf(AbstractParser);
+  it('parser should be an instance of Parser', () => {
+    expect(parser).toBeInstanceOf(Parser);
   });
 
   it('parser.field.attrs.input.type should equal to checkbox', () => {
@@ -31,7 +31,7 @@ describe('parsers/BooleanParser', () => {
   });
 
   it('should successfully parse default truthy boolean value', () => {
-    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'boolean' },
       model: true,
       descriptorConstructor: NativeDescriptor.get
@@ -45,7 +45,7 @@ describe('parsers/BooleanParser', () => {
   });
 
   it('field.value should successfully parse default falsy boolean value', () => {
-    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'boolean' },
       model: false,
       descriptorConstructor: NativeDescriptor.get
@@ -59,7 +59,7 @@ describe('parsers/BooleanParser', () => {
   });
 
   it('field.value should parse default non boolean value as an undefined model', () => {
-    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'boolean' },
       model: 12,
       descriptorConstructor: NativeDescriptor.get

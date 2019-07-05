@@ -1,10 +1,10 @@
-import { AbstractParser } from '@/parsers/AbstractParser';
+import { Parser } from '@/parsers/Parser';
 import { ListParser } from '@/parsers/ListParser';
-import { ScalarDescriptor, AbstractParserOptions } from '@/types';
-import { NativeDescriptor } from '@/descriptors/NativeDescriptor';
+import { ScalarDescriptor, ParserOptions } from '@/types';
+import { NativeDescriptor } from '@/lib/NativeDescriptor';
 
 describe('parsers/ListParser', () => {
-  const options: AbstractParserOptions<unknown, ScalarDescriptor> = {
+  const options: ParserOptions<unknown, ScalarDescriptor> = {
     schema: {
       type: 'string',
       enum: ['jon', 'arya']
@@ -17,8 +17,8 @@ describe('parsers/ListParser', () => {
 
   parser.parse();
 
-  it('parser should be an instance of AbstractParser', () => {
-    expect(parser).toBeInstanceOf(AbstractParser);
+  it('parser should be an instance of Parser', () => {
+    expect(parser).toBeInstanceOf(Parser);
   });
 
   it('parser.kind should have equal to `list`', () => {
@@ -49,7 +49,7 @@ describe('parsers/ListParser', () => {
   });
 
   it('should successfully parse default value', () => {
-    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, ScalarDescriptor> = {
       schema: {
         type: 'string',
         enum: ['jon', 'arya'],
@@ -67,7 +67,7 @@ describe('parsers/ListParser', () => {
   });
 
   it('field.value should parse default undefined as an undefined model', () => {
-    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string', enum: ['jon', 'arya'] },
       model: undefined,
       descriptorConstructor: NativeDescriptor.get
@@ -81,7 +81,7 @@ describe('parsers/ListParser', () => {
   });
 
   it('field.items should be equal to an empty array with missing schema.enum', () => {
-    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string' },
       model: undefined,
       descriptorConstructor: NativeDescriptor.get
@@ -95,7 +95,7 @@ describe('parsers/ListParser', () => {
   });
 
   it('field.items should be defined with provided field.descriptor.labels', () => {
-    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, ScalarDescriptor> = {
       schema: {
         type: 'string',
         enum: ['jon', 'arya']
@@ -128,7 +128,7 @@ describe('parsers/ListParser', () => {
   });
 
   it('with missing options.descriptor.component', () => {
-    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string' },
       model: undefined,
       descriptor: {
@@ -146,7 +146,7 @@ describe('parsers/ListParser', () => {
   });
 
   it('with missing options.descriptor.component and options.descriptor.kind', () => {
-    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string' },
       model: undefined,
       descriptor: {

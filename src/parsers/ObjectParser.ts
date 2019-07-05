@@ -1,19 +1,18 @@
 import { Parser } from '@/parsers/Parser';
-import { AbstractParser } from '@/parsers/AbstractParser';
 import { JsonSchema } from '@/types/jsonschema';
 
 import {
   Dictionary,
   ObjectField,
   ObjectDescriptor,
-  AbstractParserOptions,
+  ParserOptions,
   AbstractUISchemaDescriptor,
   ObjectFieldChild,
   DescriptorConstructor,
   FieldKind
 } from '@/types';
 
-export class ObjectParser extends AbstractParser<Dictionary, ObjectDescriptor, ObjectField> {
+export class ObjectParser extends Parser<Dictionary, ObjectDescriptor, ObjectField> {
   protected properties: Dictionary<JsonSchema> = {};
 
   public get kind(): FieldKind {
@@ -43,7 +42,7 @@ export class ObjectParser extends AbstractParser<Dictionary, ObjectDescriptor, O
 
   public get children(): ObjectFieldChild[] {
     return this.propertiesList
-      .map((key): AbstractParserOptions<unknown, AbstractUISchemaDescriptor> => ({
+      .map((key): ParserOptions<unknown, AbstractUISchemaDescriptor> => ({
         schema: this.properties[key],
         model: this.model.hasOwnProperty(key) ? this.model[key] : this.properties[key].default,
         descriptor: this.getChildDescriptor(key),
@@ -56,7 +55,7 @@ export class ObjectParser extends AbstractParser<Dictionary, ObjectDescriptor, O
         }
       }))
       .map((options) => Parser.get(options, this))
-      .filter((parser) => parser instanceof AbstractParser)
+      .filter((parser) => parser instanceof Parser)
       .map((parser: any) => parser.field as ObjectFieldChild);
   }
 
@@ -101,3 +100,5 @@ export class ObjectParser extends AbstractParser<Dictionary, ObjectDescriptor, O
     return data || {};
   }
 }
+
+Parser.register('object', ObjectParser);

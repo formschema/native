@@ -1,7 +1,7 @@
-import { AbstractParser } from '@/parsers/AbstractParser';
+import { Parser } from '@/parsers/Parser';
 import { NumberField, ScalarDescriptor, FieldKind } from '@/types';
 
-export class NumberParser extends AbstractParser<number, ScalarDescriptor, NumberField> {
+export class NumberParser extends Parser<number, ScalarDescriptor, NumberField> {
   public get kind(): FieldKind {
     return this.isEnumItem ? 'radio' : 'number';
   }
@@ -48,3 +48,5 @@ export class NumberParser extends AbstractParser<number, ScalarDescriptor, Numbe
     return Number.isNaN(value) ? undefined : Number.parseFloat(`${data}`);
   }
 }
+
+Parser.register('number', NumberParser);

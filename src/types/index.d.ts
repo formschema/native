@@ -60,6 +60,7 @@ export interface StringAttributes extends InputAttributes {
 }
 
 export type SchemaType = 'object' | 'array' | 'string' | 'number' | 'integer' | 'boolean' | 'null';
+export type ParserKind = SchemaType | 'enum' | 'list';
 export type FieldKind = SchemaType | 'enum' | 'radio' | 'list' | 'textarea' | 'checkbox';
 export type Component = string | VueComponent | AsyncComponent;
 
@@ -139,7 +140,7 @@ export interface ObjectField extends Field<'object', Attributes, ObjectDescripto
   order: string[];
 }
 
-export interface AbstractParserOptions<
+export interface ParserOptions<
   TModel,
   TDescriptor extends AbstractUISchemaDescriptor,
   TField extends Field<any, any, DescriptorInstance, any> = UnknowField

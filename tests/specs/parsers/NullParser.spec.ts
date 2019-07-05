@@ -1,10 +1,10 @@
-import { AbstractParser } from '@/parsers/AbstractParser';
+import { Parser } from '@/parsers/Parser';
 import { NullParser } from '@/parsers/NullParser';
-import { ScalarDescriptor, AbstractParserOptions } from '@/types';
-import { NativeDescriptor } from '@/descriptors/NativeDescriptor';
+import { ScalarDescriptor, ParserOptions } from '@/types';
+import { NativeDescriptor } from '@/lib/NativeDescriptor';
 
 describe('parsers/NullParser', () => {
-  const options: AbstractParserOptions<any, ScalarDescriptor> = {
+  const options: ParserOptions<any, ScalarDescriptor> = {
     schema: { type: 'null' },
     model: undefined,
     descriptorConstructor: NativeDescriptor.get
@@ -14,8 +14,8 @@ describe('parsers/NullParser', () => {
 
   parser.parse();
 
-  it('parser should be an instance of AbstractParser', () => {
-    expect(parser).toBeInstanceOf(AbstractParser);
+  it('parser should be an instance of Parser', () => {
+    expect(parser).toBeInstanceOf(Parser);
   });
 
   it('should have type === hidden', () => {

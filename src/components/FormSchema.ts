@@ -1,12 +1,13 @@
 import { VNode } from 'vue';
 import { FormSchemaComponent } from '@/types';
 import { UniqueId as UniqueIdLib } from '@/lib/UniqueId';
-import { Parser } from '@/parsers/Parser';
 import { Objects as ObjectsLib } from '@/lib/Objects';
 import { Components as ComponentsLib } from '@/lib/Components';
 import { NativeElements } from '@/lib/NativeElements';
-import { NativeDescriptor } from '@/descriptors/NativeDescriptor';
-import { AbstractParser } from '@/parsers/AbstractParser';
+import { NativeDescriptor } from '@/lib/NativeDescriptor';
+import { Parser } from '@/parsers/Parser';
+
+import '@/parsers';
 
 export const GLOBAL = {
   Elements: NativeElements,
@@ -113,7 +114,7 @@ const FormSchema: FormSchemaComponent = {
       });
     },
     field() {
-      return this.parser instanceof AbstractParser ? this.parser.field : null;
+      return this.parser instanceof Parser ? this.parser.field : null;
     }
   },
   watch: {

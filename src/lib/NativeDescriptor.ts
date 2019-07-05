@@ -11,12 +11,21 @@ import {
 } from '@/types';
 
 export const NativeDescriptor = {
-  get<T = DescriptorInstance>(schema: JsonSchema, kind: FieldKind = schema.type): T {
-    const element = NativeElements.get(kind);
+  kind(schema: JsonSchema) {
+    return schema.enum
+      ? schema.enum.length > 4 ? 'list' : 'enum'
+      : schema.type;
+  },
+  get<T = DescriptorInstance>(schema: JsonSchema, kind?: FieldKind): T {
+    const kindUsed = typeof kind === 'undefined'
+      ? NativeDescriptor.kind(schema)
+      : kind;
+
+    const element = NativeElements.get(kindUsed);
 
     if (Schema.isScalar(schema)) {
       const descriptor: ScalarDescriptor = {
-        kind: kind,
+        kind: kindUsed,
         label: schema.title,
         description: schema.description,
         component: element,
@@ -30,7 +39,7 @@ export const NativeDescriptor = {
 
     if (schema.type === 'array') {
       const descriptor: ArrayDescriptor = {
-        kind: kind,
+        kind: kindUsed,
         label: schema.title,
         description: schema.description,
         component: element,
@@ -44,7 +53,7 @@ export const NativeDescriptor = {
     }
 
     const descriptor: ObjectDescriptor = {
-      kind: kind,
+      kind: kindUsed,
       label: schema.title,
       description: schema.description,
       component: element,

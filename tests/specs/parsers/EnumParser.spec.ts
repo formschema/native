@@ -1,10 +1,12 @@
-import { AbstractParser } from '@/parsers/AbstractParser';
+import { Parser } from '@/parsers/Parser';
 import { EnumParser } from '@/parsers/EnumParser';
-import { ScalarDescriptor, AbstractParserOptions } from '@/types';
-import { NativeDescriptor } from '@/descriptors/NativeDescriptor';
+import { ScalarDescriptor, ParserOptions } from '@/types';
+import { NativeDescriptor } from '@/lib/NativeDescriptor';
+
+import '@/parsers';
 
 describe('parsers/EnumParser', () => {
-  const options: AbstractParserOptions<unknown, ScalarDescriptor> = {
+  const options: ParserOptions<unknown, ScalarDescriptor> = {
     schema: {
       type: 'string',
       enum: ['jon', 'arya']
@@ -17,8 +19,8 @@ describe('parsers/EnumParser', () => {
 
   parser.parse();
 
-  it('parser should be an instance of AbstractParser', () => {
-    expect(parser).toBeInstanceOf(AbstractParser);
+  it('parser should be an instance of Parser', () => {
+    expect(parser).toBeInstanceOf(Parser);
   });
 
   it('parser.kind should have equal to `enum`', () => {
@@ -42,7 +44,7 @@ describe('parsers/EnumParser', () => {
   });
 
   it('should successfully parse default value', () => {
-    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, ScalarDescriptor> = {
       schema: {
         type: 'string',
         enum: ['jon', 'arya', 'tyrion'],
@@ -60,7 +62,7 @@ describe('parsers/EnumParser', () => {
   });
 
   it('field.value should parse default undefined as an undefined model', () => {
-    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string', enum: ['jon', 'arya'] },
       model: undefined,
       descriptorConstructor: NativeDescriptor.get
@@ -74,7 +76,7 @@ describe('parsers/EnumParser', () => {
   });
 
   it('field.children should be equal to an empty array with missing schema.enum', () => {
-    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string' },
       model: undefined,
       descriptorConstructor: NativeDescriptor.get
@@ -88,7 +90,7 @@ describe('parsers/EnumParser', () => {
   });
 
   it('field.children should be defined with provided field.descriptor.labels', () => {
-    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, ScalarDescriptor> = {
       schema: {
         type: 'string',
         enum: ['jon', 'arya']
@@ -112,7 +114,7 @@ describe('parsers/EnumParser', () => {
   });
 
   it('with missing options.descriptor.component', () => {
-    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string' },
       model: undefined,
       descriptor: {
@@ -130,7 +132,7 @@ describe('parsers/EnumParser', () => {
   });
 
   it('with missing options.descriptor.component and options.descriptor.kind', () => {
-    const options: AbstractParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string' },
       model: undefined,
       descriptor: {

@@ -1,7 +1,7 @@
-import { AbstractParser } from '@/parsers/AbstractParser';
+import { Parser } from '@/parsers/Parser';
 import { BooleanField, ScalarDescriptor } from '@/types';
 
-export class BooleanParser extends AbstractParser<unknown, ScalarDescriptor, BooleanField> {
+export class BooleanParser extends Parser<unknown, ScalarDescriptor, BooleanField> {
   public parse(): void {
     super.parse();
 
@@ -21,3 +21,5 @@ export class BooleanParser extends AbstractParser<unknown, ScalarDescriptor, Boo
     this.field.attrs.input.checked = this.model === true;
   }
 }
+
+Parser.register('boolean', BooleanParser);

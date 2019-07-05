@@ -1,3 +1,4 @@
+import { Parser } from '@/parsers/Parser';
 import { NumberParser } from '@/parsers/NumberParser';
 import { FieldKind } from '@/types';
 
@@ -26,3 +27,5 @@ export class IntegerParser extends NumberParser {
     return Number.isNaN(value) ? undefined : Number.parseInt(`${data}`, 10);
   }
 }
+
+Parser.register('integer', IntegerParser);
