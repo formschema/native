@@ -30,7 +30,74 @@ class InputFakeParser extends Parser<string, ScalarDescriptor, StringField> {
   }
 }
 
+function descriptorConstructorFaker({ type }: JsonSchema) {
+  return type === 'object' ? {} : { kind: type };
+}
+
 describe('parsers/Parser', () => {
+  describe('register and get', () => {
+    it('Parser.get() should return `null` for undefined schema.type', () => {
+      const options: any = {
+        schema: { type: undefined } as any
+      };
+
+      const parser = Parser.get(options);
+
+      expect(parser).toBe(null);
+    });
+
+    it('Parser.get() should throw an exception for unregister type', () => {
+      const options: any = {
+        schema: { type: 'unknow' } as any
+      };
+
+      expect(() => Parser.get(options)).toThrowError(TypeError);
+    });
+
+    it('Parser.get() should successfully return the registered parser', () => {
+      const options: any = {
+        schema: { type: 'string' },
+        descriptorConstructor: descriptorConstructorFaker
+      };
+
+      Parser.register('string', InputFakeParser);
+      expect(Parser.get(options)).toBeInstanceOf(InputFakeParser);
+    });
+
+    it('Parser.get() should successfully return the registered parser with its parent', () => {
+      Parser.register('object', ObjectFakeParser);
+      Parser.register('string', InputFakeParser);
+
+      const schema: JsonSchema = {
+        type: 'object',
+        properties: {
+          name: { type: 'string' }
+        }
+      };
+
+      const options: any = {
+        schema: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' }
+          }
+        },
+        descriptorConstructor: descriptorConstructorFaker
+      };
+
+      const childOptions: any = {
+        schema: options.schema.properties.name,
+        descriptorConstructor: descriptorConstructorFaker
+      };
+
+      const parent: any = Parser.get(options);
+      const child: any = Parser.get(childOptions, parent);
+
+      expect(child).toBeInstanceOf(InputFakeParser);
+      expect(child.parent).toBeInstanceOf(ObjectFakeParser);
+    });
+  });
+
   describe('instance with required options', () => {
     const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string' },
@@ -402,6 +469,10 @@ describe('parsers/Parser', () => {
 
       it('field.required should be falsy with missing object parent schema.required', () => {
         expect(parser.field.required).toBeFalsy();
+      });
+
+      it('field.rawValue should have the default value', () => {
+        expect(parser.field.rawValue).toBe('Jon Snow');
       });
 
       it('field.value should have the default value', () => {
