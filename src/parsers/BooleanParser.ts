@@ -1,7 +1,7 @@
 import { Parser } from '@/parsers/Parser';
 import { BooleanField, ScalarDescriptor } from '@/types';
 
-export class BooleanParser extends Parser<unknown, ScalarDescriptor, BooleanField> {
+export class BooleanParser extends Parser<boolean, ScalarDescriptor, BooleanField> {
   public parse(): void {
     super.parse();
 
@@ -13,12 +13,6 @@ export class BooleanParser extends Parser<unknown, ScalarDescriptor, BooleanFiel
 
   protected parseValue(checked: boolean): boolean | undefined {
     return typeof checked !== 'boolean' ? undefined : checked || false;
-  }
-
-  protected setValue(checked: boolean) {
-    super.setValue(checked);
-
-    this.field.attrs.input.checked = this.model === true;
   }
 }
 
