@@ -1,4 +1,4 @@
-image: node:11.10.1
+image: node:current-alpine
 
 stages:
   - test
