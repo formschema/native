@@ -5,27 +5,27 @@ import { NativeDescriptor } from '@/lib/NativeDescriptor';
 import { JsonSchema } from '@/types/jsonschema';
 
 class FakeParser extends Parser<string, ScalarDescriptor, StringField> {
-  protected parseValue(data: any): string {
+  parseValue(data: any): string {
     return data;
   }
 }
 
 class ObjectFakeParser extends Parser<string, ScalarDescriptor, StringField> {
-  public get type(): string {
+  get type(): string {
     return 'object';
   }
 
-  protected parseValue(data: any): any {
+  parseValue(data: any): any {
     return data || {};
   }
 }
 
 class InputFakeParser extends Parser<string, ScalarDescriptor, StringField> {
-  public get type(): string {
+  get type(): string {
     return 'text';
   }
 
-  protected parseValue(data: any): string {
+  parseValue(data: any): string {
     return data;
   }
 }

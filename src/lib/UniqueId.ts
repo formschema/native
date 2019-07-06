@@ -4,10 +4,10 @@ function s4 () {
     .substring(1);
 }
 
-export const UniqueId = Object.freeze({
+export const UniqueId = {
   get (prefix = '', delimiter = '-') {
     const suffix = s4() + s4();
 
     return prefix ? prefix + delimiter + suffix : suffix;
   }
-});
+};

@@ -1,6 +1,6 @@
 import { Dictionary } from '@/types';
 
-export const Objects = Object.freeze({
+export const Objects = {
   isScalar(value: any) {
     if (value === null) {
       return true;
@@ -62,4 +62,4 @@ export const Objects = Object.freeze({
 
     return true;
   }
-});
+};

@@ -5,11 +5,6 @@ describe('lib/Components', () => {
     const components = new Components();
     const expected = {
       form: 'form',
-      boolean: 'input',
-      integer: 'input',
-      null: 'input',
-      number: 'input',
-      string: 'input',
       default: 'input'
     };
 

@@ -1,5 +1,5 @@
 import { Parser } from '@/parsers/Parser';
-import { StringField, ScalarDescriptor, FieldKind, Dictionary } from '@/types';
+import { StringField, ScalarDescriptor, FieldKind, Dictionary, IStringParser } from '@/types';
 import { Pattern } from '@/lib/Pattern';
 
 const TypeFormat: Dictionary<string> = {
@@ -11,12 +11,12 @@ const TypeFormat: Dictionary<string> = {
   uri: 'url'
 };
 
-export class StringParser extends Parser<string, ScalarDescriptor, StringField> {
-  public get kind(): FieldKind {
+export class StringParser extends Parser<string, ScalarDescriptor, StringField> implements IStringParser {
+  get kind(): FieldKind {
     return this.isEnumItem ? 'radio' : 'string';
   }
 
-  public get type(): string {
+  get type(): string {
     if (this.field.attrs.input.type) {
       return this.field.attrs.input.type;
     }
@@ -30,7 +30,7 @@ export class StringParser extends Parser<string, ScalarDescriptor, StringField> 
       : 'text';
   }
 
-  public parse() {
+  parse() {
     super.parse();
 
     this.field.attrs.input.value = this.field.value;
@@ -46,7 +46,7 @@ export class StringParser extends Parser<string, ScalarDescriptor, StringField> 
     this.commit();
   }
 
-  protected parseValue(data: unknown): string | undefined {
+  parseValue(data: unknown): string | undefined {
     return typeof data !== 'undefined' ? `${data}` : undefined;
   }
 }

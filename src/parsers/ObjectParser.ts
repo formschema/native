@@ -9,21 +9,18 @@ import {
   AbstractUISchemaDescriptor,
   ObjectFieldChild,
   DescriptorConstructor,
-  FieldKind
+  FieldKind,
+  IObjectParser
 } from '@/types';
 
-export class ObjectParser extends Parser<Dictionary, ObjectDescriptor, ObjectField> {
-  protected properties: Dictionary<JsonSchema> = {};
+export class ObjectParser extends Parser<Dictionary, ObjectDescriptor, ObjectField> implements IObjectParser {
+  properties: Dictionary<JsonSchema> = {};
 
-  public get kind(): FieldKind {
+  get kind(): FieldKind {
     return 'object';
   }
 
-  public get required() {
-    return this.schema.required instanceof Array ? this.schema.required : [];
-  }
-
-  public get propertiesList() {
+  get propertiesList() {
     const keys = Object.keys(this.properties);
     const items = this.field.descriptor.order instanceof Array
       ? this.field.descriptor.order
@@ -40,7 +37,9 @@ export class ObjectParser extends Parser<Dictionary, ObjectDescriptor, ObjectFie
     return items;
   }
 
-  public get children(): ObjectFieldChild[] {
+  get children(): ObjectFieldChild[] {
+    const requiredFields = this.schema.required instanceof Array ? this.schema.required : [];
+
     return this.propertiesList
       .map((key): ParserOptions<unknown, AbstractUISchemaDescriptor> => ({
         schema: this.properties[key],
@@ -48,6 +47,7 @@ export class ObjectParser extends Parser<Dictionary, ObjectDescriptor, ObjectFie
         descriptor: this.getChildDescriptor(key),
         descriptorConstructor: this.getChildDescriptorConstructor(key),
         name: key,
+        required: requiredFields.includes(key),
         onChange: (value) => {
           this.model[key] = value;
 
@@ -59,7 +59,7 @@ export class ObjectParser extends Parser<Dictionary, ObjectDescriptor, ObjectFie
       .map((parser: any) => parser.field as ObjectFieldChild);
   }
 
-  protected getChildDescriptor(key: string) {
+  getChildDescriptor(key: string) {
     const properties = this.field.descriptor.properties;
 
     return properties
@@ -69,7 +69,7 @@ export class ObjectParser extends Parser<Dictionary, ObjectDescriptor, ObjectFie
       : this.options.descriptorConstructor(this.properties[key]);
   }
 
-  protected getChildDescriptorConstructor(key: string): DescriptorConstructor {
+  getChildDescriptorConstructor(key: string): DescriptorConstructor {
     const properties = this.field.descriptor.properties;
 
     return properties && properties[key] instanceof Function
@@ -77,7 +77,7 @@ export class ObjectParser extends Parser<Dictionary, ObjectDescriptor, ObjectFie
       : this.options.descriptorConstructor;
   }
 
-  public parse() {
+  parse() {
     if (this.schema.properties) {
       this.properties = this.schema.properties;
     }
@@ -96,7 +96,7 @@ export class ObjectParser extends Parser<Dictionary, ObjectDescriptor, ObjectFie
     this.commit();
   }
 
-  protected parseValue(data: Dictionary): Dictionary {
+  parseValue(data: Dictionary): Dictionary {
     return data || {};
   }
 }

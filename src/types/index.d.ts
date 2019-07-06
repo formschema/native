@@ -20,6 +20,7 @@ export type ComponentsType = 'form' | FieldKind;
 export interface Attributes {
   id: string;
   name?: string;
+  type?: string;
   readonly: boolean;
   required: boolean;
   disabled?: boolean;
@@ -112,11 +113,7 @@ export interface EnumField extends Field<'enum', Attributes, ScalarDescriptor> {
 export type ArrayItemField = Field<any, Attributes, ScalarDescriptor>;
 
 export interface ArrayField extends Field<'array', Attributes, ArrayDescriptor, any[]> {
-  minItems: number;
-  maxItems?: number;
   uniqueItems: boolean;
-  readonly count: number;
-  max: number;
   children: ArrayItemField[];
   buttons: {
     add: {
@@ -156,8 +153,42 @@ export interface ParserOptions<
   readonly descriptor?: TDescriptor;
   readonly descriptorConstructor: DescriptorConstructor;
   readonly name?: string;
+  readonly required?: boolean;
   onChange?: (value: TModel, field: TField) => void;
 }
+
+export type UnknowParser = IParser<any, AbstractUISchemaDescriptor, UnknowField>;
+
+export interface IParser<
+  TModel,
+  TDescriptor extends AbstractUISchemaDescriptor,
+  TField extends Field<any, Attributes, DescriptorInstance, any>
+> {
+  readonly isRoot: boolean;
+  readonly isEnumItem: boolean;
+  readonly isArrayItem: boolean;
+  readonly parent?: UnknowParser;
+  readonly root: UnknowParser;
+  model: TModel;
+  rawValue: TModel;
+  readonly kind: string;
+  readonly type?: string;
+  readonly name?: string;
+  readonly field: TField;
+  readonly descriptor: TDescriptor;
+  readonly schema: JsonSchema;
+  parse: () => void;
+}
+
+export interface IArrayParser extends IParser<any, ArrayDescriptor, ArrayField> {}
+export interface IBooleanParser extends IParser<any, ScalarDescriptor, BooleanField> {}
+export interface IEnumParser extends IParser<unknown, ScalarDescriptor, EnumField> {}
+export interface INumberParser extends IParser<unknown, ScalarDescriptor, NumberField> {}
+export interface IIntegerParser extends INumberParser {}
+export interface IListParser extends IParser<unknown, ScalarDescriptor, ListField> {}
+export interface INullParser extends IParser<unknown, ScalarDescriptor, NullField> {}
+export interface IObjectParser extends IParser<Dictionary, ObjectDescriptor, ObjectField> {}
+export interface IStringParser extends IParser<string, ScalarDescriptor, StringField> {}
 
 export interface AbstractUISchemaDescriptor {
   kind?: FieldKind;

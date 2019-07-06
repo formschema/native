@@ -8,24 +8,28 @@ import {
   ParserOptions,
   AbstractUISchemaDescriptor,
   FieldKind,
-  ArrayItemField
+  ArrayItemField,
+  IArrayParser
 } from '@/types';
 
-export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> {
-  protected readonly items: JsonSchema[] = [];
-  protected additionalItems?: JsonSchema;
-  protected count: number = 0;
+export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> implements IArrayParser {
+  readonly items: JsonSchema[] = [];
+  additionalItems?: JsonSchema;
+  minItems: number = 0;
+  maxItems?: number;
+  max: number = -1;
+  count: number = 0;
 
-  public get kind(): FieldKind {
+  get kind(): FieldKind {
     return 'array';
   }
 
-  protected get limit(): number {
+  get limit(): number {
     if (this.field.uniqueItems || this.items.length === 0) {
       return this.items.length;
     }
 
-    if (this.count < this.field.minItems || !Array.isArray(this.schema.items)) {
+    if (this.count < this.minItems || !Array.isArray(this.schema.items)) {
       return this.count;
     }
 
@@ -34,7 +38,7 @@ export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> {
       : this.items.length;
   }
 
-  protected get children(): ArrayItemField[] {
+  get children(): ArrayItemField[] {
     const limit = this.limit;
     const fields = Array(...Array(limit))
       .map((x, index) => this.getFieldIndex(index))
@@ -57,7 +61,7 @@ export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> {
     return fields;
   }
 
-  protected getFieldItem(itemSchema: JsonSchema, index: number): ArrayItemField | null {
+  getFieldItem(itemSchema: JsonSchema, index: number): ArrayItemField | null {
     const kind: FieldKind | undefined = this.field.uniqueItems ? 'checkbox' : undefined;
     const defaultDescriptor = this.options.descriptorConstructor(itemSchema, kind);
 
@@ -105,7 +109,7 @@ export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> {
     return null;
   }
 
-  protected getFieldIndex(index: number) {
+  getFieldIndex(index: number) {
     const itemSchema = this.schema.items instanceof Array || this.field.uniqueItems
       ? this.items[index]
       : this.items[0];
@@ -113,8 +117,8 @@ export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> {
     return this.getFieldItem(itemSchema, index);
   }
 
-  protected setCount(value: number) {
-    if (this.field.maxItems && value > this.field.maxItems) {
+  setCount(value: number) {
+    if (this.maxItems && value > this.maxItems) {
       return;
     }
 
@@ -123,11 +127,9 @@ export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> {
 
     // initialize the array model
     this.field.children.forEach((field) => field.setValue(field.value));
-
-    this.commit();
   }
 
-  public parse() {
+  parse() {
     super.parse();
 
     if (this.schema.items) {
@@ -142,8 +144,8 @@ export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> {
       }
     }
 
-    this.field.maxItems = this.schema.maxItems;
-    this.field.minItems = this.field.required
+    this.maxItems = this.schema.maxItems;
+    this.minItems = this.field.required
       ? this.schema.minItems || 1
       : this.schema.minItems || 0;
 
@@ -152,26 +154,22 @@ export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> {
     this.field.buttons = {
       add: {
         get disabled() {
-          return self.field.count === self.field.max;
+          return self.count === self.max;
         },
-        push: () => this.setCount(this.field.count + 1)
+        push: () => this.setCount(this.count + 1)
       }
     };
 
-    this.count = this.field.minItems > this.model.length
-      ? this.field.minItems
+    this.count = this.minItems > this.model.length
+      ? this.minItems
       : this.model.length;
-
-    Object.defineProperty(this.field, 'count', {
-      enumerable: true,
-      get: () => this.count
-    });
 
     this.parseUniqueItems();
     this.setCount(this.count);
+    this.commit();
   }
 
-  protected parseCheckboxField(parser: any, itemModel: unknown) {
+  parseCheckboxField(parser: any, itemModel: unknown) {
     const checked = typeof itemModel !== 'undefined' && this.rawValue.includes(itemModel);
 
     parser.field.attrs.input.name = `${this.field.attrs.input.name}[]`;
@@ -186,14 +184,14 @@ export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> {
     parser.setValue(checked);
   }
 
-  protected parseUniqueItems() {
+  parseUniqueItems() {
     if (this.schema.uniqueItems === true && this.items.length === 1) {
       const itemSchema = this.items[0];
 
       if (itemSchema.enum instanceof Array) {
         this.field.uniqueItems = true;
-        this.field.maxItems = itemSchema.enum.length;
-        this.count = this.field.maxItems;
+        this.maxItems = itemSchema.enum.length;
+        this.count = this.maxItems;
 
         this.items.splice(0);
         itemSchema.enum.forEach((value) => this.items.push({
@@ -202,16 +200,16 @@ export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> {
           title: `${value}`
         }));
 
-        this.field.max = this.items.length;
+        this.max = this.items.length;
       } else {
-        this.field.max = this.field.maxItems || this.items.length;
+        this.max = this.maxItems || this.items.length;
       }
-    } else if (this.field.maxItems) {
-      this.field.max = this.field.maxItems;
+    } else if (this.maxItems) {
+      this.max = this.maxItems;
     } else if (this.schema.items instanceof Array) {
-      this.field.max = this.additionalItems ? -1 : this.items.length;
+      this.max = this.additionalItems ? -1 : this.items.length;
     } else {
-      this.field.max = -2;
+      this.max = -2;
     }
 
     if (this.field.uniqueItems) {
@@ -230,7 +228,7 @@ export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> {
     }
   }
 
-  protected parseValue(data: unknown[]): unknown[] {
+  parseValue(data: unknown[]): unknown[] {
     return data instanceof Array
       ? data.filter((item) => typeof item !== 'undefined')
       : [];

@@ -1,20 +1,20 @@
 import { Objects } from '@/lib/Objects';
 import { UniqueId } from '@/lib/UniqueId';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
+import { JsonSchema } from '@/types/jsonschema';
 
 import {
   Field,
   AbstractUISchemaDescriptor,
   ParserOptions,
-  UnknowField,
   DescriptorInstance,
   Attributes,
   Dictionary,
   ParserKind,
-  FieldKind
+  FieldKind,
+  IParser,
+  UnknowParser
 } from '@/types';
-
-export type Parent = Parser<any, AbstractUISchemaDescriptor, UnknowField>;
 
 const PARSERS: Dictionary<any> = {};
 
@@ -22,24 +22,25 @@ export abstract class Parser<
   TModel,
   TDescriptor extends AbstractUISchemaDescriptor,
   TField extends Field<any, Attributes, DescriptorInstance, any>
-> {
-  protected readonly isRoot: boolean;
-  protected readonly isEnumItem: boolean;
-  protected readonly isArrayItem: boolean;
-  protected readonly name?: string;
-  protected readonly parent?: Parent;
-  protected readonly root: Parent;
-  protected model: TModel;
-  protected rawValue: TModel;
-  protected readonly options: ParserOptions<TModel, TDescriptor>;
-  public readonly field: TField;
-  protected readonly descriptor: TDescriptor;
+> implements IParser<TModel, TDescriptor, TField> {
+  readonly isRoot: boolean;
+  readonly isEnumItem: boolean;
+  readonly isArrayItem: boolean;
+  readonly name?: string;
+  readonly parent?: UnknowParser;
+  readonly root: UnknowParser;
+  model: TModel;
+  rawValue: TModel;
+  readonly options: ParserOptions<TModel, TDescriptor>;
+  readonly field: TField;
+  readonly descriptor: TDescriptor;
+  readonly schema: JsonSchema;
 
-  public static register(type: ParserKind, parserClass: any) {
+  static register(type: ParserKind, parserClass: any) {
     PARSERS[type] = parserClass;
   }
 
-  public static get(options: ParserOptions<any, any, any>, parent?: Parent): Parent | null {
+  static get(options: ParserOptions<any, any, any>, parent?: UnknowParser): UnknowParser | null {
     if (typeof options.schema.type === 'undefined') {
       return null;
     }
@@ -62,34 +63,33 @@ export abstract class Parser<
     return parser;
   }
 
-  public constructor(options: ParserOptions<TModel, TDescriptor>, parent?: Parent) {
+  constructor(options: ParserOptions<TModel, TDescriptor>, parent?: UnknowParser) {
     this.parent = parent;
     this.options = options;
     this.root = parent ? parent.root : this;
     this.isRoot = !parent;
     this.isEnumItem = !!parent && parent.schema.enum instanceof Array;
     this.isArrayItem = !!parent && parent.schema.type === 'array';
+    this.schema = options.schema;
     this.name = parent && !this.isEnumItem
       ? options.name
         ? parent.isRoot || this.isArrayItem
           ? options.name
-          : `${parent.name}.${options.name}` : options.name
+          : `${parent.name}[${options.name}]`
+        : options.name
       : options.name;
 
     const defaultDescriptor = options.descriptorConstructor<TDescriptor>(this.schema);
 
     this.descriptor = options.descriptor || defaultDescriptor;
-    this.rawValue = this.parseValue(this.initialValue) as any;
-    this.model = this.parseValue(this.initialValue) as any;
+    this.rawValue = this.parseValue(this.initialValue) as TModel;
+    this.model = this.parseValue(this.initialValue) as TModel;
 
     this.parseDescriptor();
 
     const self = this;
     const attrs = this.descriptor.attrs || {};
     const props = this.descriptor.props || {};
-    const isRequired = parent && (parent as any).required instanceof Array
-      ? (parent as any).required.includes(this.options.name)
-      : this.isRoot;
 
     delete attrs.name;
 
@@ -97,7 +97,7 @@ export abstract class Parser<
       kind: this.kind,
       name: this.name,
       isRoot: this.isRoot,
-      required: isRequired,
+      required: options.hasOwnProperty('required') ? options.required : this.isRoot,
       defaultValue: this.parseValue(options.schema.default),
       get value() {
         return self.model;
@@ -125,19 +125,15 @@ export abstract class Parser<
     } as unknown as TField;
   }
 
-  public get schema() {
-    return this.options.schema;
-  }
-
-  public get kind(): FieldKind {
+  get kind(): FieldKind {
     return this.options.schema.type;
   }
 
-  public get type(): string | undefined {
+  get type(): string | undefined {
     return undefined;
   }
 
-  protected get initialValue() {
+  get initialValue() {
     if (typeof this.options.model !== 'undefined') {
       return this.options.model;
     }
@@ -149,26 +145,28 @@ export abstract class Parser<
     return undefined;
   }
 
-  protected get defaultComponent() {
+  get defaultComponent() {
     return this.descriptor.kind
       ? this.options.descriptorConstructor<TDescriptor>(this.schema, this.descriptor.kind).component
       : undefined;
   }
 
-  protected abstract parseValue(data: any): TModel | undefined;
-
-  protected setValue(value: unknown) {
-    this.rawValue = value as any;
-    this.model = this.parseValue(value) as any;
+  parseValue(data: unknown): TModel | undefined {
+    return data as any;
   }
 
-  protected commit() {
+  setValue(value: unknown) {
+    this.rawValue = value as any;
+    this.model = this.parseValue(value) as TModel;
+  }
+
+  commit() {
     if (this.options.onChange instanceof Function) {
       this.options.onChange(this.model, this.field);
     }
   }
 
-  protected parseDescriptor() {
+  parseDescriptor() {
     if (!this.descriptor.kind) {
       this.descriptor.kind = this.kind;
     }
@@ -182,21 +180,17 @@ export abstract class Parser<
     }
   }
 
-  public parse() {
+  parse() {
     const id = this.field.attrs.input.id || UniqueId.get(this.name);
     const labelId = this.field.descriptor.label ? `${id}-label` : undefined;
     const descId = this.field.descriptor.description ? `${id}-desc` : undefined;
     const ariaLabels = [ labelId, descId ].filter((item) => item);
-    const type = this.type;
-
-    if (type) {
-      (this.field.attrs.input as any).type = type;
-    }
 
     if (!this.field.attrs.input.id) {
       this.field.attrs.input.id = id;
     }
 
+    this.field.attrs.input.type = this.type;
     this.field.attrs.input.readonly = this.schema.readOnly || false;
     this.field.attrs.input.required = this.field.required;
 

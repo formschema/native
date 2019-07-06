@@ -10,21 +10,22 @@ import {
   ParserOptions,
   AbstractUISchemaDescriptor,
   FieldKind,
-  RadioField
+  RadioField,
+  IEnumParser
 } from '@/types';
 
-export class EnumParser extends Parser<unknown, ScalarDescriptor, EnumField> {
-  public get kind(): FieldKind {
+export class EnumParser extends Parser<unknown, ScalarDescriptor, EnumField> implements IEnumParser {
+  get kind(): FieldKind {
     return 'enum';
   }
 
-  protected get defaultComponent() {
+  get defaultComponent() {
     return this.descriptor.kind
       ? this.options.descriptorConstructor<ScalarDescriptor>(this.schema, this.descriptor.kind).component
       : this.options.descriptorConstructor(this.schema, this.kind).component;
   }
 
-  protected get children(): RadioField[] {
+  get children(): RadioField[] {
     if (!Array.isArray(this.schema.enum)) {
       return [];
     }
@@ -68,28 +69,24 @@ export class EnumParser extends Parser<unknown, ScalarDescriptor, EnumField> {
       .map((parser: any) => parser.field as RadioField);
   }
 
-  protected setValue(value: unknown) {
+  setValue(value: unknown) {
     super.setValue(value);
     this.updateInputsState();
   }
 
-  protected updateInputsState() {
+  updateInputsState() {
     this.field.children.forEach(({ attrs, value: model }) => {
       attrs.input.checked = model === this.model;
     });
   }
 
-  public parse() {
+  parse() {
     super.parse();
 
     this.field.children = this.children;
 
     this.updateInputsState();
     this.commit();
-  }
-
-  protected parseValue(data: unknown): unknown {
-    return data;
   }
 }
 

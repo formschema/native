@@ -1,13 +1,13 @@
 import { Parser } from '@/parsers/Parser';
 import { NumberParser } from '@/parsers/NumberParser';
-import { FieldKind } from '@/types';
+import { FieldKind, IIntegerParser } from '@/types';
 
-export class IntegerParser extends NumberParser {
-  public get kind(): FieldKind {
+export class IntegerParser extends NumberParser implements IIntegerParser {
+  get kind(): FieldKind {
     return this.isEnumItem ? 'radio' : 'integer';
   }
 
-  protected parseExclusiveKeywords() {
+  parseExclusiveKeywords() {
     if (this.schema.hasOwnProperty('exclusiveMinimum')) {
       const exclusiveMinimum = this.schema.exclusiveMinimum as number;
 
@@ -21,7 +21,7 @@ export class IntegerParser extends NumberParser {
     }
   }
 
-  protected parseValue(data: number): number | undefined {
+  parseValue(data: number): number | undefined {
     const value = Number(data);
 
     return Number.isNaN(value) ? undefined : Number.parseInt(`${data}`, 10);

@@ -34,19 +34,19 @@ describe('parsers/ArrayParser', () => {
     expect(parser.field.uniqueItems).toBeUndefined();
   });
 
-  it('field.minItems should be equal to schema.minItems', () => {
-    expect(parser.field.minItems).toBe(options.schema.minItems);
+  it('parser.minItems should be equal to schema.minItems', () => {
+    expect(parser.minItems).toBe(options.schema.minItems);
   });
 
-  it('field.maxItems should be equal to schema.maxItems', () => {
-    expect(parser.field.maxItems).toBe(options.schema.maxItems);
+  it('parser.maxItems should be equal to schema.maxItems', () => {
+    expect(parser.maxItems).toBe(options.schema.maxItems);
   });
 
-  it('field.max should be equal to schema.maxItems', () => {
-    expect(parser.field.max).toBe(options.schema.maxItems);
+  it('parser.max should be equal to schema.maxItems', () => {
+    expect(parser.max).toBe(options.schema.maxItems);
   });
 
-  it('field.max should be equal to `-1` when schema.maxItems is missing and schema.items is an array with empty schema.additionalItems', () => {
+  it('parser.max should be equal to `-1` when schema.maxItems is missing and schema.items is an array with empty schema.additionalItems', () => {
     const options: ParserOptions<any, ArrayDescriptor> = {
       schema: {
         type: 'array',
@@ -61,10 +61,10 @@ describe('parsers/ArrayParser', () => {
 
     parser.parse();
 
-    expect(parser.field.max).toBe(-1);
+    expect(parser.max).toBe(-1);
   });
 
-  it('field.max should be equal to `-2` when schema.maxItems is missing and schema.items is an object', () => {
+  it('parser.max should be equal to `-2` when schema.maxItems is missing and schema.items is an object', () => {
     const options: ParserOptions<any, ArrayDescriptor> = {
       schema: {
         type: 'array',
@@ -79,11 +79,11 @@ describe('parsers/ArrayParser', () => {
 
     parser.parse();
 
-    expect(parser.field.max).toBe(-2);
+    expect(parser.max).toBe(-2);
   });
 
-  it('field.count should be equal to options.model.length', () => {
-    expect(parser.field.count).toBe(options.model.length);
+  it('field.children.length should be equal to options.model.length', () => {
+    expect(parser.field.children.length).toBe(options.model.length);
   });
 
   it('field.children should be defined', () => {

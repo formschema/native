@@ -1,4 +1,4 @@
-export const Pattern = Object.freeze({
+export const Pattern = {
   /**
    * Escape a pattern for a Regex
    * @param str String to escape
@@ -8,4 +8,4 @@ export const Pattern = Object.freeze({
   escape(str: string): string {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }
-});
+};

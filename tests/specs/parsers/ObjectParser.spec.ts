@@ -31,10 +31,6 @@ describe('parsers/ObjectParser', () => {
     expect(parser.kind).toBe('object');
   });
 
-  it('parser.required should have equal to schema.required', () => {
-    expect(parser.required).toEqual(options.schema.required);
-  });
-
   it('parser.children should be defined', () => {
     expect(parser.children.length).toBe(1);
   });
@@ -106,10 +102,6 @@ describe('parsers/ObjectParser', () => {
     const parser = new ObjectParser(options);
 
     parser.parse();
-
-    it('parser.required should have equal to an empty array for missing schema.required', () => {
-      expect(parser.required).toEqual([]);
-    });
 
     it('parser.propertiesList should have equal to an empty array', () => {
       expect(parser.propertiesList).toEqual([]);

@@ -1,16 +1,16 @@
 import { Parser } from '@/parsers/Parser';
-import { NumberField, ScalarDescriptor, FieldKind } from '@/types';
+import { NumberField, ScalarDescriptor, FieldKind, INumberParser } from '@/types';
 
-export class NumberParser extends Parser<number, ScalarDescriptor, NumberField> {
-  public get kind(): FieldKind {
+export class NumberParser extends Parser<number, ScalarDescriptor, NumberField> implements INumberParser {
+  get kind(): FieldKind {
     return this.isEnumItem ? 'radio' : 'number';
   }
 
-  public get type() {
+  get type() {
     return this.isEnumItem ? 'radio' : 'number';
   }
 
-  protected parseExclusiveKeywords() {
+  parseExclusiveKeywords() {
     if (this.schema.hasOwnProperty('exclusiveMinimum')) {
       const exclusiveMinimum = this.schema.exclusiveMinimum as number;
 
@@ -24,25 +24,22 @@ export class NumberParser extends Parser<number, ScalarDescriptor, NumberField> 
     }
   }
 
-  public parse() {
+  parse() {
     super.parse();
 
     this.field.attrs.input.min = this.schema.minimum;
     this.field.attrs.input.max = this.schema.maximum;
+    this.field.attrs.input.step = this.schema.multipleOf;
 
-    if (!Number.isNaN(this.field.value) && typeof this.field.value !== 'undefined') {
+    if (typeof this.field.value !== 'undefined') {
       this.field.attrs.input.value = `${this.field.value}`;
-    }
-
-    if (this.schema.hasOwnProperty('multipleOf')) {
-      this.field.attrs.input.step = this.schema.multipleOf;
     }
 
     this.parseExclusiveKeywords();
     this.commit();
   }
 
-  protected parseValue(data: number): number | undefined {
+  parseValue(data: number): number | undefined {
     const value = Number(data);
 
     return Number.isNaN(value) ? undefined : Number.parseFloat(`${data}`);
