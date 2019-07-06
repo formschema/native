@@ -34,5 +34,30 @@ describe('lib/CreateInput', () => {
 
       expect(children).toEqual('hello');
     });
+
+    it('should set the field value on on.input() call', () => {
+      const h = sinon.stub();
+      const data = {
+        props: {
+          field: {
+            setValue: sinon.stub()
+          }
+        }
+      };
+
+      CreateInput(h, 'input', data);
+
+      const [ [ tag, definition ] ] = h.args;
+
+      definition.on.input({
+        target: {
+          value: 'Hello, World!'
+        }
+      });
+
+      const [ [ value ] ] = data.props.field.setValue.args;
+
+      expect(value).toEqual('Hello, World!');
+    });
   });
 });
