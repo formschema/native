@@ -30,7 +30,7 @@ export class EnumParser extends Parser<unknown, ScalarDescriptor, EnumField> imp
       return [];
     }
 
-    const radioName = this.name || UniqueId.get();
+    const radioName = this.options.name || UniqueId.get();
 
     return this.schema.enum
       .map((item: any): JsonSchema => ({

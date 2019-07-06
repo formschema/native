@@ -166,14 +166,12 @@ export interface IParser<
 > {
   readonly isRoot: boolean;
   readonly isEnumItem: boolean;
-  readonly isArrayItem: boolean;
   readonly parent?: UnknowParser;
   readonly root: UnknowParser;
   model: TModel;
   rawValue: TModel;
   readonly kind: string;
   readonly type?: string;
-  readonly name?: string;
   readonly field: TField;
   readonly descriptor: TDescriptor;
   readonly schema: JsonSchema;

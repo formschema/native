@@ -78,7 +78,7 @@ export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> implem
       model: itemModel,
       descriptor: itemDescriptor,
       descriptorConstructor: this.options.descriptorConstructor,
-      name: this.name
+      name: !this.isRoot && this.options.name ? `${this.options.name}[]` : this.options.name
     };
 
     if (this.rawValue.length <= index) {

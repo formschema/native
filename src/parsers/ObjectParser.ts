@@ -46,7 +46,7 @@ export class ObjectParser extends Parser<Dictionary, ObjectDescriptor, ObjectFie
         model: this.model.hasOwnProperty(key) ? this.model[key] : this.properties[key].default,
         descriptor: this.getChildDescriptor(key),
         descriptorConstructor: this.getChildDescriptorConstructor(key),
-        name: key,
+        name: !this.isRoot && this.options.name ? `${this.options.name}[${key}]` : key,
         required: requiredFields.includes(key),
         onChange: (value) => {
           this.model[key] = value;

@@ -25,8 +25,6 @@ export abstract class Parser<
 > implements IParser<TModel, TDescriptor, TField> {
   readonly isRoot: boolean;
   readonly isEnumItem: boolean;
-  readonly isArrayItem: boolean;
-  readonly name?: string;
   readonly parent?: UnknowParser;
   readonly root: UnknowParser;
   model: TModel;
@@ -69,15 +67,7 @@ export abstract class Parser<
     this.root = parent ? parent.root : this;
     this.isRoot = !parent;
     this.isEnumItem = !!parent && parent.schema.enum instanceof Array;
-    this.isArrayItem = !!parent && parent.schema.type === 'array';
     this.schema = options.schema;
-    this.name = parent && !this.isEnumItem
-      ? options.name
-        ? parent.isRoot || this.isArrayItem
-          ? options.name
-          : `${parent.name}[${options.name}]`
-        : options.name
-      : options.name;
 
     const defaultDescriptor = options.descriptorConstructor<TDescriptor>(this.schema);
 
@@ -95,9 +85,9 @@ export abstract class Parser<
 
     this.field = {
       kind: this.kind,
-      name: this.name,
+      name: options.name,
       isRoot: this.isRoot,
-      required: options.hasOwnProperty('required') ? options.required : this.isRoot,
+      required: this.isRoot || options.required || false,
       defaultValue: this.parseValue(options.schema.default),
       get value() {
         return self.model;
@@ -112,7 +102,7 @@ export abstract class Parser<
       attrs: {
         input: {
           type: undefined,
-          name: this.isArrayItem && this.name ? `${this.name}[]` : this.name,
+          name: options.name,
           ...attrs
         },
         label: {},
@@ -126,23 +116,19 @@ export abstract class Parser<
   }
 
   get kind(): FieldKind {
-    return this.options.schema.type;
+    return this.schema.type;
   }
 
   get type(): string | undefined {
     return undefined;
   }
 
-  get initialValue() {
+  get initialValue(): TModel | unknown {
     if (typeof this.options.model !== 'undefined') {
       return this.options.model;
     }
 
-    if (this.schema.hasOwnProperty('default')) {
-      return this.schema.default;
-    }
-
-    return undefined;
+    return this.schema.default;
   }
 
   get defaultComponent() {
@@ -181,7 +167,7 @@ export abstract class Parser<
   }
 
   parse() {
-    const id = this.field.attrs.input.id || UniqueId.get(this.name);
+    const id = this.field.attrs.input.id || UniqueId.get(this.options.name);
     const labelId = this.field.descriptor.label ? `${id}-label` : undefined;
     const descId = this.field.descriptor.description ? `${id}-desc` : undefined;
     const ariaLabels = [ labelId, descId ].filter((item) => item);
