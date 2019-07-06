@@ -94,7 +94,7 @@ export interface JsonSchema {
   // ///////////////////////////////////////////////
   // Array Validation
   // ///////////////////////////////////////////////
-  additionalItems?: boolean | JsonSchema;
+  additionalItems?: JsonSchema;
   items?: JsonSchema | JsonSchema[];
   maxItems?: number;
   minItems?: number;

@@ -7,13 +7,11 @@ export const ArrayButton: ArrayButtonComponent = {
     return h('button', {
       attrs: {
         type: 'button',
-        disabled: props.field.count === props.field.max
+        disabled: props.field.buttons.add.disabled
       },
       props: props,
       on: {
-        click() {
-          props.field.count++;
-        }
+        click: () => props.field.buttons.add.push()
       }
     }, props.field.descriptor.addButtonLabel);
   }

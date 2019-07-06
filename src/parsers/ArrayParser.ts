@@ -13,7 +13,7 @@ import {
 
 export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> {
   protected readonly items: JsonSchema[] = [];
-  protected readonly additionalItems: JsonSchema[] = [];
+  protected additionalItems?: JsonSchema;
   protected count: number = 0;
 
   public get kind(): FieldKind {
@@ -21,7 +21,7 @@ export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> {
   }
 
   protected get limit(): number {
-    if (this.field.uniqueItems) {
+    if (this.field.uniqueItems || this.items.length === 0) {
       return this.items.length;
     }
 
@@ -32,6 +32,29 @@ export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> {
     return this.count < this.items.length
       ? this.count
       : this.items.length;
+  }
+
+  protected get children(): ArrayItemField[] {
+    const limit = this.limit;
+    const fields = Array(...Array(limit))
+      .map((x, index) => this.getFieldIndex(index))
+      .filter((field) => field !== null) as ArrayItemField[];
+
+    if (limit < this.count && this.additionalItems) {
+      let index = limit;
+
+      do {
+        const additionalField = this.getFieldItem(this.additionalItems, index);
+
+        if (!additionalField) {
+          break;
+        }
+
+        fields.push(additionalField);
+      } while (++index < this.count);
+    }
+
+    return fields;
   }
 
   protected getFieldItem(itemSchema: JsonSchema, index: number): ArrayItemField | null {
@@ -96,34 +119,12 @@ export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> {
     }
 
     this.count = value;
+    this.field.children = this.children;
 
-    this.generateFields();
-  }
+    // initialize the array model
+    this.field.children.forEach((field) => field.setValue(field.value));
 
-  protected generateFields() {
-    const limit = this.limit;
-    const fields = Array(...Array(limit))
-      .map((x, index) => this.getFieldIndex(index))
-      .filter((field) => field !== null) as ArrayItemField[];
-
-    if (limit < this.count && this.additionalItems.length) {
-      let index = limit;
-
-      do {
-        const itemSchema = this.additionalItems[0];
-        const additionalField = this.getFieldItem(itemSchema, index);
-
-        if (!additionalField) {
-          break;
-        }
-
-        fields.push(additionalField);
-      } while (++index < this.count);
-    }
-
-    fields.forEach((field) => field.setValue(field.value));
-
-    this.field.children = fields;
+    this.commit();
   }
 
   public parse() {
@@ -132,18 +133,12 @@ export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> {
     if (this.schema.items) {
       if (this.schema.items instanceof Array) {
         this.items.push(...this.schema.items);
+
+        if (this.schema.additionalItems && !Objects.isEmpty(this.schema.additionalItems)) {
+          this.additionalItems = this.schema.additionalItems;
+        }
       } else {
         this.items.push(this.schema.items);
-      }
-    } else {
-      this.items.push({ type: 'string' });
-    }
-
-    if (this.schema.additionalItems) {
-      const additionalItems = this.schema.additionalItems as JsonSchema;
-
-      if (!Objects.isEmpty(additionalItems)) {
-        this.additionalItems.push(additionalItems);
       }
     }
 
@@ -152,20 +147,28 @@ export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> {
       ? this.schema.minItems || 1
       : this.schema.minItems || 0;
 
+    const self = this;
+
+    this.field.buttons = {
+      add: {
+        get disabled() {
+          return self.field.count === self.field.max;
+        },
+        push: () => this.setCount(this.field.count + 1)
+      }
+    };
+
     this.count = this.field.minItems > this.model.length
       ? this.field.minItems
       : this.model.length;
 
-    this.parseUniqueItems();
-    this.generateFields();
-
     Object.defineProperty(this.field, 'count', {
       enumerable: true,
-      get: () => this.count,
-      set: (value: number) => this.setCount(value)
+      get: () => this.count
     });
 
-    this.commit();
+    this.parseUniqueItems();
+    this.setCount(this.count);
   }
 
   protected parseCheckboxField(parser: any, itemModel: unknown) {
@@ -183,7 +186,7 @@ export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> {
     parser.setValue(checked);
   }
 
-  protected parseUniqueItems(): void {
+  protected parseUniqueItems() {
     if (this.schema.uniqueItems === true && this.items.length === 1) {
       const itemSchema = this.items[0];
 
@@ -203,12 +206,10 @@ export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> {
       } else {
         this.field.max = this.field.maxItems || this.items.length;
       }
-    } else if (typeof this.schema.maxItems === 'number') {
-      this.field.max = this.field.maxItems as number;
+    } else if (this.field.maxItems) {
+      this.field.max = this.field.maxItems;
     } else if (this.schema.items instanceof Array) {
-      this.field.max = this.additionalItems.length === 0
-        ? this.items.length
-        : -1;
+      this.field.max = this.additionalItems ? -1 : this.items.length;
     } else {
       this.field.max = -2;
     }

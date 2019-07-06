@@ -24,17 +24,6 @@ export class EnumParser extends Parser<unknown, ScalarDescriptor, EnumField> {
       : this.options.descriptorConstructor(this.schema, this.kind).component;
   }
 
-  protected setValue(value: unknown) {
-    super.setValue(value);
-    this.updateInputsState();
-  }
-
-  protected updateInputsState() {
-    this.field.children.forEach(({ attrs, value: model }) => {
-      attrs.input.checked = model === this.model;
-    });
-  }
-
   protected get children(): RadioField[] {
     if (!Array.isArray(this.schema.enum)) {
       return [];
@@ -77,6 +66,17 @@ export class EnumParser extends Parser<unknown, ScalarDescriptor, EnumField> {
       })
       .filter((parser) => parser instanceof Parser)
       .map((parser: any) => parser.field as RadioField);
+  }
+
+  protected setValue(value: unknown) {
+    super.setValue(value);
+    this.updateInputsState();
+  }
+
+  protected updateInputsState() {
+    this.field.children.forEach(({ attrs, value: model }) => {
+      attrs.input.checked = model === this.model;
+    });
   }
 
   public parse() {

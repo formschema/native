@@ -115,9 +115,15 @@ export interface ArrayField extends Field<'array', Attributes, ArrayDescriptor, 
   minItems: number;
   maxItems?: number;
   uniqueItems: boolean;
-  count: number;
+  readonly count: number;
   max: number;
   children: ArrayItemField[];
+  buttons: {
+    add: {
+      readonly disabled: boolean;
+      push: () => void;
+    };
+  };
 }
 
 export interface ListItem {
