@@ -78,10 +78,6 @@ export abstract class Parser<
     this.parseDescriptor();
 
     const self = this;
-    const attrs = this.descriptor.attrs || {};
-    const props = this.descriptor.props || {};
-
-    delete attrs.name;
 
     this.field = {
       kind: this.kind,
@@ -101,14 +97,15 @@ export abstract class Parser<
       },
       attrs: {
         input: {
-          type: undefined,
+          id: this.id,
+          type: this.type,
           name: options.name,
-          ...attrs
+          ...this.descriptor.attrs
         },
         label: {},
         description: {}
       },
-      props: Objects.clone(props),
+      props: Objects.clone(this.descriptor.props as Dictionary),
       descriptor: this.descriptor,
       component: this.descriptor.component || this.defaultComponent || defaultDescriptor.component,
       parent: parent ? parent.field : undefined
@@ -123,12 +120,14 @@ export abstract class Parser<
     return undefined;
   }
 
-  get initialValue(): TModel | unknown {
-    if (typeof this.options.model !== 'undefined') {
-      return this.options.model;
-    }
+  get id() {
+    return this.options.id || UniqueId.get(this.options.name);
+  }
 
-    return this.schema.default;
+  get initialValue(): TModel | unknown {
+    return typeof this.options.model === 'undefined'
+      ? this.schema.default
+      : this.options.model;
   }
 
   get defaultComponent() {
@@ -164,26 +163,37 @@ export abstract class Parser<
     if (!this.descriptor.hasOwnProperty('description')) {
       this.descriptor.description = this.schema.description;
     }
+
+    if (!this.descriptor.attrs) {
+      this.descriptor.attrs = {};
+    }
+
+    if (!this.descriptor.props) {
+      this.descriptor.props = {};
+    }
   }
 
   parse() {
-    const id = this.field.attrs.input.id || UniqueId.get(this.options.name);
+    const attrs = this.field.attrs;
+    const id = attrs.input.id;
     const labelId = this.field.descriptor.label ? `${id}-label` : undefined;
     const descId = this.field.descriptor.description ? `${id}-desc` : undefined;
-    const ariaLabels = [ labelId, descId ].filter((item) => item);
 
-    if (!this.field.attrs.input.id) {
-      this.field.attrs.input.id = id;
-    }
+    attrs.input.readonly = this.schema.readOnly;
+    attrs.input.required = this.field.required;
 
-    this.field.attrs.input.type = this.type;
-    this.field.attrs.input.readonly = this.schema.readOnly || false;
-    this.field.attrs.input.required = this.field.required;
+    /**
+     * Use the WAI-ARIA aria-labelledby and aria-describedby attributes to
+     * associate instructions with form controls
+     * @see https://www.w3.org/WAI/tutorials/forms/instructions/#providing-instructions-outside-labels
+     */
+    attrs.input['aria-labelledby'] = labelId;
+    attrs.input['aria-describedby'] = descId;
 
-    this.field.attrs.label.id = labelId;
-    this.field.attrs.label.for = id;
+    attrs.label.id = labelId;
+    attrs.label.for = id;
 
-    this.field.attrs.description.id = descId;
+    attrs.description.id = descId;
 
     if (this.field.required) {
       /**
@@ -191,26 +201,7 @@ export abstract class Parser<
        * attribute to assistive technology
        * @see https://www.w3.org/WAI/tutorials/forms/validation/#validating-required-input
        */
-      this.field.attrs.input['aria-required'] = 'true';
-    }
-
-    if (ariaLabels.length && !this.field.attrs.hasOwnProperty('aria-labelledby')) {
-      /**
-       * Use the WAI-ARIA aria-labelledby attribute to associate instructions
-       * with form controls
-       * @see https://www.w3.org/WAI/tutorials/forms/instructions/#using-aria-labelledby
-       */
-      this.field.attrs.input['aria-labelledby'] = ariaLabels.join(' ');
-
-      if (ariaLabels.length >= 2) {
-        /**
-         * Add `tabindex="-1"` to elements that are referenced by aria-labelledby
-         * if it point to two or more elements for Internet Explorer
-         * compatibility
-         */
-        this.field.attrs.label.tabindex = '-1';
-        this.field.attrs.description.tabindex = '-1';
-      }
+      attrs.input['aria-required'] = 'true';
     }
   }
 }

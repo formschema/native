@@ -35,7 +35,7 @@ describe('parsers/StringParser', () => {
     expect(parser.field.attrs.input.type).toBe('text');
   });
 
-  it('field.attrs.input.type should be equal to `radio` for enum field', () => {
+  it('parser.type should be equal to `radio` for enum field', () => {
     const options: ParserOptions<string, ScalarDescriptor> = {
       schema: { type: 'string' },
       model: '',
@@ -46,9 +46,7 @@ describe('parsers/StringParser', () => {
 
     parser.isEnumItem = true;
 
-    parser.parse();
-
-    expect(parser.field.attrs.input.type).toBe('radio');
+    expect(parser.type).toBe('radio');
   });
 
   const formatTypes: Dictionary = {

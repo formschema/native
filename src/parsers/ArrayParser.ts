@@ -172,7 +172,6 @@ export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> implem
   parseCheckboxField(parser: any, itemModel: unknown) {
     const checked = typeof itemModel !== 'undefined' && this.rawValue.includes(itemModel);
 
-    parser.field.attrs.input.name = `${this.field.attrs.input.name}[]`;
     parser.field.attrs.input.type = 'checkbox';
 
     parser.setValue = (checked: boolean) => {

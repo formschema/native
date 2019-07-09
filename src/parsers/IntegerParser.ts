@@ -21,7 +21,7 @@ export class IntegerParser extends NumberParser implements IIntegerParser {
     }
   }
 
-  parseValue(data: number): number | undefined {
+  parseValue(data: unknown): number | undefined {
     const value = Number(data);
 
     return Number.isNaN(value) ? undefined : Number.parseInt(`${data}`, 10);

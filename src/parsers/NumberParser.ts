@@ -39,7 +39,7 @@ export class NumberParser extends Parser<number, ScalarDescriptor, NumberField> 
     this.commit();
   }
 
-  parseValue(data: number): number | undefined {
+  parseValue(data: unknown): number | undefined {
     const value = Number(data);
 
     return Number.isNaN(value) ? undefined : Number.parseFloat(`${data}`);

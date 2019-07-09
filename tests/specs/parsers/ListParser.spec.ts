@@ -127,6 +127,36 @@ describe('parsers/ListParser', () => {
     ]);
   });
 
+  it('field.items should be defined with missing field.descriptor.labels', () => {
+    const options: ParserOptions<any, ScalarDescriptor> = {
+      schema: {
+        type: 'string',
+        enum: ['jon', 'arya']
+      },
+      model: undefined,
+      descriptorConstructor: NativeDescriptor.get
+    };
+
+    const parser = new ListParser(options);
+
+    delete parser.field.descriptor.labels;
+
+    parser.parse();
+
+    expect(parser.field.items).toEqual([
+      {
+        value: 'jon',
+        selected: false,
+        label: 'jon'
+      },
+      {
+        value: 'arya',
+        selected: false,
+        label: 'arya'
+      }
+    ]);
+  });
+
   it('with missing options.descriptor.component', () => {
     const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string' },

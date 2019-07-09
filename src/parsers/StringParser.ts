@@ -17,10 +17,6 @@ export class StringParser extends Parser<string, ScalarDescriptor, StringField> 
   }
 
   get type(): string {
-    if (this.field.attrs.input.type) {
-      return this.field.attrs.input.type;
-    }
-
     if (this.isEnumItem) {
       return 'radio';
     }

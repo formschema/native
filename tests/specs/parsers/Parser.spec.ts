@@ -108,19 +108,63 @@ describe('parsers/Parser', () => {
     const parser = new FakeParser(options);
 
     describe('parser properties', () => {
-      it('should have right kind', () => {
-        expect(parser.kind).toBe('string');
+      it('parser.isRoot should thruthy', () => {
+        expect(parser.isRoot).toBeTruthy();
       });
 
-      it('should have an undefined type', () => {
+      it('parser.isEnumItem should falsy', () => {
+        expect(parser.isEnumItem).toBeFalsy();
+      });
+
+      it('parser.parent should be undefined', () => {
+        expect(parser.parent).toBeUndefined();
+      });
+
+      it('parser.root should be defined', () => {
+        expect(parser.root).toBeDefined();
+      });
+
+      it('parser.root should be equal to parser', () => {
+        expect(parser.root).toEqual(parser);
+      });
+
+      it('parser.model should be equal to options.model', () => {
+        expect(parser.model).toBe(options.model);
+      });
+
+      it('parser.rawValue should be equal to options.model', () => {
+        expect(parser.rawValue).toBe(options.model);
+      });
+
+      it('parser.options should be equal to options', () => {
+        expect(parser.options).toEqual(options);
+      });
+
+      it('parser.schema should be equal to options.schema', () => {
+        expect(parser.schema).toEqual(options.schema);
+      });
+
+      it('parser.descriptor should be defined', () => {
+        expect(parser.descriptor).toBeDefined();
+      });
+
+      it('parser.kind should be equal to options.schema.type', () => {
+        expect(parser.kind).toBe(options.schema.type);
+      });
+
+      it('parser.type should be undefined', () => {
         expect(parser.type).toBeUndefined();
       });
 
-      it('should have provided schema', () => {
-        expect(parser.schema).toEqual({ type: 'string' });
+      it('parser.id should defined', () => {
+        expect(parser.id).toBeDefined();
       });
 
-      it('should have field property', () => {
+      it('parser.initialValue should be equal to options.model', () => {
+        expect(parser.initialValue).toBe(options.model);
+      });
+
+      it('parser.field should be defined', () => {
         expect(parser.field).toBeDefined();
       });
     });
@@ -199,11 +243,20 @@ describe('parsers/Parser', () => {
         expect(Object.keys(parser.field.attrs)).toEqual(['input', 'label', 'description']);
       });
 
-      it('field.attrs.input should be defined with initial properties', () => {
-        expect(parser.field.attrs.input).toEqual({
-          type: undefined,
-          name: undefined
-        });
+      it('field.attrs.input should have minimal defined properties { id, type, name }', () => {
+        expect(Object.keys(parser.field.attrs.input)).toEqual(['id', 'type', 'name']);
+      });
+
+      it('field.attrs.input.id should be defined', () => {
+        expect(parser.field.attrs.input.id).toBeDefined();
+      });
+
+      it('field.attrs.input.type should be equal to parser.type', () => {
+        expect(parser.field.attrs.input.type).toBe(parser.type);
+      });
+
+      it('field.attrs.input.name should be equal to options.name', () => {
+        expect(parser.field.attrs.input.name).toBe(options.name);
       });
 
       it('field.attrs.label should be an empty object', () => {
@@ -258,7 +311,8 @@ describe('parsers/Parser', () => {
 
       it('field.attrs.input should have extended properties', () => {
         expect(Object.keys(parser.field.attrs.input).sort()).toEqual([
-          'id', 'type', 'name', 'readonly', 'required', 'aria-required'
+          'id', 'type', 'name', 'readonly', 'required',
+          'aria-required', 'aria-describedby', 'aria-labelledby'
         ].sort());
       });
 
@@ -304,6 +358,47 @@ describe('parsers/Parser', () => {
     });
   });
 
+  describe('instance with all defined options', () => {
+    const options: ParserOptions<any, ScalarDescriptor> = {
+      schema: { type: 'string' },
+      model: undefined,
+      id: 'input-id',
+      descriptor: {
+        kind: 'string',
+        attrs: {},
+        props: {},
+        component: {
+          name: 'TextInput'
+        }
+      },
+      descriptorConstructor: NativeDescriptor.get
+    };
+
+    const parser = new FakeParser(options);
+
+    describe('parser properties', () => {
+      it('parser.initialValue should be equal to options.schema.default with undefined options.model', () => {
+        expect(parser.initialValue).toBe(options.schema.default);
+      });
+
+      it('parser.model should be equal to parser.initialValue', () => {
+        expect(parser.model).toBe(parser.initialValue);
+      });
+
+      it('parser.rawValue should be equal to parser.initialValue', () => {
+        expect(parser.rawValue).toBe(parser.initialValue);
+      });
+
+      it('parser.descriptor should be equal to options.descriptor', () => {
+        expect(parser.descriptor).toEqual(parser.descriptor);
+      });
+
+      it('parser.id should be equal to options.id', () => {
+        expect(parser.id).toBe(options.id);
+      });
+    });
+  });
+
   describe('schema with title', () => {
     const options: ParserOptions<string, ScalarDescriptor> = {
       schema: {
@@ -330,7 +425,7 @@ describe('parsers/Parser', () => {
 
       parser.parse();
 
-      it('field.attrs.label should have properties { id, tabindex }', () => {
+      it('field.attrs.label should have properties { id, for }', () => {
         expect(Object.keys(parser.field.attrs.label).sort()).toEqual([
           'for', 'id'
         ].sort());
@@ -386,13 +481,14 @@ describe('parsers/Parser', () => {
 
       it('field.attrs.input should have extended properties', () => {
         expect(Object.keys(parser.field.attrs.input).sort()).toEqual([
-          'id', 'type', 'name', 'readonly', 'required', 'aria-required', 'aria-labelledby'
+          'id', 'type', 'name', 'readonly', 'required',
+          'aria-required', 'aria-describedby', 'aria-labelledby'
         ].sort());
       });
 
-      it('field.attrs.label should have properties { id, tabindex }', () => {
+      it('field.attrs.label should have properties { id, for }', () => {
         expect(Object.keys(parser.field.attrs.label).sort()).toEqual([
-          'for', 'id', 'tabindex'
+          'for', 'id'
         ].sort());
       });
 
@@ -404,22 +500,14 @@ describe('parsers/Parser', () => {
         expect(parser.field.attrs.label.for).toBe(parser.field.attrs.input.id);
       });
 
-      it('field.attrs.label.tabindex should be equal to -1', () => {
-        expect(parser.field.attrs.label.tabindex).toBe('-1');
-      });
-
-      it('field.attrs.description should have properties { id, tabindex }', () => {
+      it('field.attrs.description should have properties { id }', () => {
         expect(Object.keys(parser.field.attrs.description).sort()).toEqual([
-          'id', 'tabindex'
+          'id'
         ].sort());
       });
 
       it('field.attrs.description.id should be defined', () => {
         expect(parser.field.attrs.description.id).toBeDefined();
-      });
-
-      it('field.attrs.description.tabindex should be equal to -1', () => {
-        expect(parser.field.attrs.description.tabindex).toBe('-1');
       });
     });
   });
@@ -489,11 +577,20 @@ describe('parsers/Parser', () => {
         expect(parent.field.value).toEqual({});
       });
 
-      it('field.attrs.input should be defined with initial properties', () => {
-        expect(parser.field.attrs.input).toEqual({
-          type: undefined,
-          name: 'name'
-        });
+      it('field.attrs.input should have minimal defined properties { id, type, name }', () => {
+        expect(Object.keys(parser.field.attrs.input)).toEqual(['id', 'type', 'name']);
+      });
+
+      it('field.attrs.input.id should be defined', () => {
+        expect(parser.field.attrs.input.id).toBeDefined();
+      });
+
+      it('field.attrs.input.type should be equal to parser.type', () => {
+        expect(parser.field.attrs.input.type).toBe(parser.type);
+      });
+
+      it('field.attrs.input.name should be equal to options.name', () => {
+        expect(parser.field.attrs.input.name).toBe(childOptions.name);
       });
 
       it('field.parent should be defined', () => {
@@ -516,7 +613,8 @@ describe('parsers/Parser', () => {
 
       it('field.attrs.input should have extended properties', () => {
         expect(Object.keys(parser.field.attrs.input).sort()).toEqual([
-          'id', 'type', 'name', 'readonly', 'required'
+          'id', 'type', 'name', 'readonly', 'required',
+          'aria-describedby', 'aria-labelledby'
         ].sort());
       });
 
@@ -536,5 +634,24 @@ describe('parsers/Parser', () => {
         expect(parser.field.attrs.input.required).toBeFalsy();
       });
     });
+  });
+
+  it('parser.defaultComponent with missing descriptor.component should be undefined', () => {
+    const options: ParserOptions<any, ScalarDescriptor> = {
+      schema: { type: 'string' },
+      model: undefined,
+      descriptor: {
+        attrs: {},
+        props: {},
+        labels: {}
+      },
+      descriptorConstructor: NativeDescriptor.get
+    };
+
+    const parser: any = new InputFakeParser(options);
+
+    delete parser.field.descriptor.kind;
+
+    expect(parser.defaultComponent).toBeUndefined();
   });
 });

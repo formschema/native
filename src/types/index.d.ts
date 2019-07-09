@@ -21,11 +21,12 @@ export interface Attributes {
   id: string;
   name?: string;
   type?: string;
-  readonly: boolean;
+  readonly?: boolean;
   required: boolean;
   disabled?: boolean;
   'aria-required'?: 'true';
   'aria-labelledby'?: string;
+  'aria-describedby'?: string;
 }
 
 export interface InputAttributes extends Attributes {
@@ -83,11 +84,9 @@ export interface Field<
     label: {
       id?: string;
       for: string;
-      tabindex?: '-1';
     };
     description: {
       id?: string;
-      tabindex?: '-1';
     };
   };
   props: Dictionary;
@@ -153,6 +152,7 @@ export interface ParserOptions<
   readonly descriptor?: TDescriptor;
   readonly descriptorConstructor: DescriptorConstructor;
   readonly name?: string;
+  readonly id?: string;
   readonly required?: boolean;
   onChange?: (value: TModel, field: TField) => void;
 }
@@ -166,6 +166,7 @@ export interface IParser<
 > {
   readonly isRoot: boolean;
   readonly isEnumItem: boolean;
+  readonly options: ParserOptions<TModel, TDescriptor>;
   readonly parent?: UnknowParser;
   readonly root: UnknowParser;
   model: TModel;
@@ -181,10 +182,10 @@ export interface IParser<
 export interface IArrayParser extends IParser<any, ArrayDescriptor, ArrayField> {}
 export interface IBooleanParser extends IParser<any, ScalarDescriptor, BooleanField> {}
 export interface IEnumParser extends IParser<unknown, ScalarDescriptor, EnumField> {}
-export interface INumberParser extends IParser<unknown, ScalarDescriptor, NumberField> {}
+export interface INumberParser extends IParser<number, ScalarDescriptor, NumberField> {}
 export interface IIntegerParser extends INumberParser {}
 export interface IListParser extends IParser<unknown, ScalarDescriptor, ListField> {}
-export interface INullParser extends IParser<unknown, ScalarDescriptor, NullField> {}
+export interface INullParser extends IParser<null, ScalarDescriptor, NullField> {}
 export interface IObjectParser extends IParser<Dictionary, ObjectDescriptor, ObjectField> {}
 export interface IStringParser extends IParser<string, ScalarDescriptor, StringField> {}
 
