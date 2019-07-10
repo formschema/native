@@ -1,4 +1,5 @@
 import { ArrayParser } from '@/parsers/ArrayParser';
+import { NativeDescriptor } from '@/lib/NativeDescriptor';
 import { TestCaseParser } from '../../lib/TestCaseParser';
 
 import '@/parsers';
@@ -8,10 +9,11 @@ const Test = new TestCaseParser(ArrayParser);
 describe('parsers/ArrayParser', () => {
   Test.Case({
     case: '0',
-    options: {
+    parser: new ArrayParser({
       schema: { type: 'array' },
-      model: []
-    },
+      model: [],
+      descriptorConstructor: NativeDescriptor.get
+    }),
     expected: {
       kind: 'array',
       items: [],
@@ -36,10 +38,11 @@ describe('parsers/ArrayParser', () => {
 
   Test.Case({
     case: '1.0',
-    options: {
+    parser: new ArrayParser({
       schema: { type: 'array' },
       model: undefined,
-    },
+      descriptorConstructor: NativeDescriptor.get
+    }),
     expected: {
       initialValue: undefined,
       model: [],
@@ -49,14 +52,15 @@ describe('parsers/ArrayParser', () => {
 
   Test.Case({
     case: '1.1',
-    options: {
+    parser: new ArrayParser({
       schema: {
         type: 'array',
         items: { type: 'string' },
         default: ['arya']
       },
       model: undefined,
-    },
+      descriptorConstructor: NativeDescriptor.get
+    }),
     expected: {
       initialValue: ['arya'],
       model: ['arya'],
@@ -66,14 +70,15 @@ describe('parsers/ArrayParser', () => {
 
   Test.Case({
     case: '1.2',
-    options: {
+    parser: new ArrayParser({
       schema: {
         type: 'array',
         items: { type: 'string', default: 'tyrion' },
         minItems: 1
       },
       model: undefined,
-    },
+      descriptorConstructor: NativeDescriptor.get
+    }),
     expected: {
       initialValue: undefined,
       model: ['tyrion'],
@@ -83,13 +88,14 @@ describe('parsers/ArrayParser', () => {
 
   Test.Case({
     case: '1.3',
-    options: {
+    parser: new ArrayParser({
       schema: {
         type: 'array',
         items: { type: 'string' }
       },
       model: undefined,
-    },
+      descriptorConstructor: NativeDescriptor.get
+    }),
     expected: {
       initialValue: undefined,
       model: [],
@@ -99,10 +105,11 @@ describe('parsers/ArrayParser', () => {
 
   Test.Case({
     case: '2',
-    options: {
+    parser: new ArrayParser({
       schema: { type: 'array' },
       model: [12],
-    },
+      descriptorConstructor: NativeDescriptor.get
+    }),
     expected: {
       items: [],
       additionalItems: undefined,
@@ -127,7 +134,7 @@ describe('parsers/ArrayParser', () => {
 
   Test.Case({
     case: '3',
-    options: {
+    parser: new ArrayParser({
       schema: {
         type: 'array',
         items: [
@@ -135,7 +142,8 @@ describe('parsers/ArrayParser', () => {
         ]
       },
       model: [],
-    },
+      descriptorConstructor: NativeDescriptor.get
+    }),
     expected: {
       items: [{ type: 'string' }],
       additionalItems: undefined,
@@ -161,7 +169,7 @@ describe('parsers/ArrayParser', () => {
 
   Test.Case({
     case: '4',
-    options: {
+    parser: new ArrayParser({
       schema: {
         type: 'array',
         items: { type: 'string' },
@@ -170,7 +178,8 @@ describe('parsers/ArrayParser', () => {
         uniqueItems: true
       },
       model: [],
-    },
+      descriptorConstructor: NativeDescriptor.get
+    }),
     expected: {
       items: [
         { type: 'string' }
@@ -201,14 +210,15 @@ describe('parsers/ArrayParser', () => {
 
   Test.Case({
     case: '5',
-    options: {
+    parser: new ArrayParser({
       schema: {
         type: 'array',
         items: { type: 'string', enum: ['a', 'b', 'c', 'd'] },
         uniqueItems: true
       },
       model: ['a', 'd'],
-    },
+      descriptorConstructor: NativeDescriptor.get
+    }),
     expected: {
       items: [
         { type: 'string', default: 'a', title: 'a' },
@@ -243,7 +253,7 @@ describe('parsers/ArrayParser', () => {
 
   Test.Case({
     case: '6',
-    options: {
+    parser: new ArrayParser({
       schema: {
         type: 'array',
         items: { type: 'string' },
@@ -251,7 +261,8 @@ describe('parsers/ArrayParser', () => {
         maxItems: 4
       },
       model: ['a', 'd'],
-    },
+      descriptorConstructor: NativeDescriptor.get
+    }),
     expected: {
       items: [
         { type: 'string' }
@@ -280,7 +291,7 @@ describe('parsers/ArrayParser', () => {
 
   Test.Case({
     case: '7',
-    options: {
+    parser: new ArrayParser({
       schema: {
         type: 'array',
         items: [
@@ -289,7 +300,8 @@ describe('parsers/ArrayParser', () => {
         additionalItems: { type: 'number' }
       },
       model: ['a', 12],
-    },
+      descriptorConstructor: NativeDescriptor.get
+    }),
     expected: {
       items: [
         { type: 'string' }

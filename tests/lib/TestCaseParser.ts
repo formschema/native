@@ -1,9 +1,8 @@
-import { Dictionary } from '@/types';
-import { NativeDescriptor } from '@/lib/NativeDescriptor';
+import { Dictionary, IParser } from '@/types';
 
 type TestCaseOptions = {
   case: string;
-  options: Dictionary<any>;
+  parser: IParser<any, any, any>;
   expected: Dictionary<any>;
 };
 
@@ -28,18 +27,13 @@ export class TestCaseParser {
     this.ref = classRef;
   }
 
-  Case({ options, expected, ...args }: TestCaseOptions) {
-    const schema = JSON.stringify(options.schema);
-    const model = options.model === undefined
-      ? options.model
-      : JSON.stringify(options.model);
+  Case({ parser, expected, ...args }: TestCaseOptions) {
+    const schema = JSON.stringify(parser.options.schema);
+    const model = parser.options.model === undefined
+      ? parser.options.model
+      : JSON.stringify(parser.options.model);
 
     describe(`Case ${args.case}: with schema = ${schema} and model = ${model}`, () => {
-      const parser: any = new this.ref({
-        descriptorConstructor: NativeDescriptor.get,
-        ...options
-      } as any);
-
       parser.parse();
       toEqual('parser', parser, expected);
     });
