@@ -30,6 +30,10 @@ npm outdated:
 security scan:
   stage: dependencies
   script:
+    # upgrade the NPM version to the latest
+    # to be sure the `npm audit` supports the
+    # --production flag
+    - npm i -g npm
     - npm audit --production
   allow_failure: true
 
