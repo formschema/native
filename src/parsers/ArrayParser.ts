@@ -154,7 +154,7 @@ export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> implem
     this.field.buttons = {
       add: {
         get disabled() {
-          return self.count === self.max;
+          return self.count === self.max || self.items.length === 0;
         },
         push: () => this.setCount(this.count + 1)
       }
@@ -195,6 +195,7 @@ export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> implem
         this.items.splice(0);
         itemSchema.enum.forEach((value) => this.items.push({
           ...itemSchema,
+          enum: undefined,
           default: value,
           title: `${value}`
         }));

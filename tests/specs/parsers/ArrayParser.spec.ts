@@ -1,182 +1,320 @@
-import { Parser } from '@/parsers/Parser';
 import { ArrayParser } from '@/parsers/ArrayParser';
-import { ArrayDescriptor, ParserOptions } from '@/types';
-import { NativeDescriptor } from '@/lib/NativeDescriptor';
+import { TestCaseParser } from '../../lib/TestCaseParser';
 
 import '@/parsers';
 
+const Test = new TestCaseParser(ArrayParser);
+
 describe('parsers/ArrayParser', () => {
-  const options: ParserOptions<unknown[], ArrayDescriptor> = {
-    schema: {
-      type: 'array',
-      items: { type: 'string' },
-      minItems: 1,
-      maxItems: 3,
-      uniqueItems: true
+  Test.Case({
+    case: '0',
+    options: {
+      schema: { type: 'array' },
+      model: []
     },
-    model: ['jon'],
-    descriptorConstructor: NativeDescriptor.get
-  };
-
-  const parser = new ArrayParser(options);
-
-  parser.parse();
-
-  it('parser should be an instance of Parser', () => {
-    expect(parser).toBeInstanceOf(Parser);
+    expected: {
+      kind: 'array',
+      items: [],
+      additionalItems: undefined,
+      minItems: 1,
+      maxItems: undefined,
+      max: -2,
+      count: 1,
+      model: [],
+      rawValue: [],
+      limit: 0,
+      children: [],
+      field: {
+        buttons: {
+          add: {
+            disabled: true
+          }
+        }
+      }
+    }
   });
 
-  it('parser.kind should have equal to `array`', () => {
-    expect(parser.kind).toBe('array');
-  });
-
-  it('field.uniqueItems should be undefined for non enum schema.items even if schema.uniqueItems is defined', () => {
-    expect(parser.field.uniqueItems).toBeUndefined();
-  });
-
-  it('parser.minItems should be equal to schema.minItems', () => {
-    expect(parser.minItems).toBe(options.schema.minItems);
-  });
-
-  it('parser.maxItems should be equal to schema.maxItems', () => {
-    expect(parser.maxItems).toBe(options.schema.maxItems);
-  });
-
-  it('parser.max should be equal to schema.maxItems', () => {
-    expect(parser.max).toBe(options.schema.maxItems);
-  });
-
-  it('parser.max should be equal to `-1` when schema.maxItems is missing and schema.items is an array with empty schema.additionalItems', () => {
-    const options: ParserOptions<any, ArrayDescriptor> = {
-      schema: {
-        type: 'array',
-        items: [{ type: 'string' }],
-        additionalItems: { type: 'string' }
-      },
+  Test.Case({
+    case: '1.0',
+    options: {
+      schema: { type: 'array' },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get
-    };
-
-    const parser = new ArrayParser(options);
-
-    parser.parse();
-
-    expect(parser.max).toBe(-1);
+    },
+    expected: {
+      initialValue: undefined,
+      model: [],
+      rawValue: []
+    }
   });
 
-  it('parser.max should be equal to `-2` when schema.maxItems is missing and schema.items is an object', () => {
-    const options: ParserOptions<any, ArrayDescriptor> = {
-      schema: {
-        type: 'array',
-        items: { type: 'string' },
-        additionalItems: { type: 'string' }
-      },
-      model: undefined,
-      descriptorConstructor: NativeDescriptor.get
-    };
-
-    const parser = new ArrayParser(options);
-
-    parser.parse();
-
-    expect(parser.max).toBe(-2);
-  });
-
-  it('field.children.length should be equal to options.model.length', () => {
-    expect(parser.field.children.length).toBe(options.model.length);
-  });
-
-  it('field.children should be defined', () => {
-    const models = parser.field.children.map(({ value: model }) => model);
-
-    expect(models).toEqual(['jon']);
-  });
-
-  it('field.value should be equal to the default value', () => {
-    expect(parser.field.value).toEqual(['jon']);
-  });
-
-  it('should successfully parse default value', () => {
-    const options: ParserOptions<any, ArrayDescriptor> = {
+  Test.Case({
+    case: '1.1',
+    options: {
       schema: {
         type: 'array',
         items: { type: 'string' },
         default: ['arya']
       },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get
-    };
-
-    const parser = new ArrayParser(options);
-
-    parser.parse();
-
-    expect(parser.field.value).toEqual(['arya']);
+    },
+    expected: {
+      initialValue: ['arya'],
+      model: ['arya'],
+      rawValue: ['arya']
+    }
   });
 
-  it('should successfully parse default schema value', () => {
-    const options: ParserOptions<any, ArrayDescriptor> = {
+  Test.Case({
+    case: '1.2',
+    options: {
       schema: {
         type: 'array',
         items: { type: 'string', default: 'tyrion' },
         minItems: 1
       },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get
-    };
-
-    const parser: any = new ArrayParser(options);
-
-    parser.parse();
-
-    expect(parser.field.value).toEqual(['tyrion']);
+    },
+    expected: {
+      initialValue: undefined,
+      model: ['tyrion'],
+      rawValue: ['tyrion']
+    }
   });
 
-  it('field.value should parse default undefined as an empty array', () => {
-    const options: ParserOptions<any, ArrayDescriptor> = {
+  Test.Case({
+    case: '1.3',
+    options: {
       schema: {
         type: 'array',
         items: { type: 'string' }
       },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get
-    };
-
-    const parser = new ArrayParser(options);
-
-    parser.parse();
-
-    expect(parser.field.value).toEqual([]);
+    },
+    expected: {
+      initialValue: undefined,
+      model: [],
+      rawValue: [undefined]
+    }
   });
 
-  it('field.value should parse default undefined as an empty array', () => {
-    const options: ParserOptions<any, ArrayDescriptor> = {
-      schema: {
-        type: 'array',
-        items: { type: 'string' }
-      },
-      model: undefined,
-      descriptorConstructor: NativeDescriptor.get
-    };
-
-    const parser = new ArrayParser(options);
-
-    parser.parse();
-
-    expect(parser.field.value).toEqual([]);
-  });
-
-  it('field.children should be equal to an empty array with missing schema.items', () => {
-    const options: ParserOptions<any, ArrayDescriptor> = {
+  Test.Case({
+    case: '2',
+    options: {
       schema: { type: 'array' },
-      model: undefined,
-      descriptorConstructor: NativeDescriptor.get
-    };
+      model: [12],
+    },
+    expected: {
+      items: [],
+      additionalItems: undefined,
+      minItems: 1,
+      maxItems: undefined,
+      max: -2,
+      count: 1,
+      model: [12],
+      rawValue: [12],
+      limit: 0,
+      children: [],
+      field: {
+        uniqueItems: undefined,
+        buttons: {
+          add: {
+            disabled: true
+          }
+        }
+      }
+    }
+  });
 
-    const parser = new ArrayParser(options);
+  Test.Case({
+    case: '3',
+    options: {
+      schema: {
+        type: 'array',
+        items: [
+          { type: 'string' }
+        ]
+      },
+      model: [],
+    },
+    expected: {
+      items: [{ type: 'string' }],
+      additionalItems: undefined,
+      minItems: 1,
+      maxItems: undefined,
+      max: 1,
+      count: 1,
+      model: [],
+      rawValue: [undefined],
+      limit: 1,
+      children: ({ length }: any) => length === 1,
+      field: {
+        required: true,
+        uniqueItems: undefined,
+        buttons: {
+          add: {
+            disabled: true
+          }
+        }
+      }
+    }
+  });
 
-    parser.parse();
+  Test.Case({
+    case: '4',
+    options: {
+      schema: {
+        type: 'array',
+        items: { type: 'string' },
+        minItems: 1,
+        maxItems: 3,
+        uniqueItems: true
+      },
+      model: [],
+    },
+    expected: {
+      items: [
+        { type: 'string' }
+      ],
+      additionalItems: undefined,
+      minItems: 1,
+      maxItems: 3,
+      get max() {
+        return this.maxItems;
+      },
+      count: 1,
+      model: [],
+      rawValue: [undefined],
+      get limit() {
+        return this.count;
+      },
+      children: ({ length }: any) => length === 1,
+      field: {
+        uniqueItems: undefined,
+        buttons: {
+          add: {
+            disabled: false
+          }
+        }
+      }
+    }
+  });
 
-    expect(parser.field.value.length).toBe(0);
+  Test.Case({
+    case: '5',
+    options: {
+      schema: {
+        type: 'array',
+        items: { type: 'string', enum: ['a', 'b', 'c', 'd'] },
+        uniqueItems: true
+      },
+      model: ['a', 'd'],
+    },
+    expected: {
+      items: [
+        { type: 'string', default: 'a', title: 'a' },
+        { type: 'string', default: 'b', title: 'b' },
+        { type: 'string', default: 'c', title: 'c' },
+        { type: 'string', default: 'd', title: 'd' }
+      ],
+      additionalItems: undefined,
+      minItems: 1,
+      maxItems: 4,
+      max: 4,
+      count: 4,
+      model: ['a', 'd'],
+      rawValue: ['a', undefined, undefined, 'd'],
+      limit: 4,
+      children: ({ length }: any) => length === 4,
+      field: {
+        uniqueItems: true,
+        // attrs: {
+        //   input: {
+        //     type: 'checkbox'
+        //   }
+        // },
+        buttons: {
+          add: {
+            disabled: true
+          }
+        }
+      }
+    }
+  });
+
+  Test.Case({
+    case: '6',
+    options: {
+      schema: {
+        type: 'array',
+        items: { type: 'string' },
+        minItems: 3,
+        maxItems: 4
+      },
+      model: ['a', 'd'],
+    },
+    expected: {
+      items: [
+        { type: 'string' }
+      ],
+      additionalItems: undefined,
+      minItems: 3,
+      maxItems: 4,
+      max: 4,
+      count: 3,
+      model: ['a', 'd'],
+      rawValue: ['a', 'd', undefined],
+      get limit() {
+        return this.count;
+      },
+      children: ({ length }: any) => length === 3,
+      field: {
+        uniqueItems: undefined,
+        buttons: {
+          add: {
+            disabled: false
+          }
+        }
+      }
+    }
+  });
+
+  Test.Case({
+    case: '7',
+    options: {
+      schema: {
+        type: 'array',
+        items: [
+          { type: 'string' }
+        ],
+        additionalItems: { type: 'number' }
+      },
+      model: ['a', 12],
+    },
+    expected: {
+      items: [
+        { type: 'string' }
+      ],
+      additionalItems: { type: 'number' },
+      minItems: 1,
+      maxItems: undefined,
+      max: -1,
+      count() {
+        return this.rawValue.length;
+      },
+      model: ['a', 12],
+      rawValue: ['a', 12],
+      get limit() {
+        return this.items.length;
+      },
+      children: ({ length }: any) => length === 2,
+      field: {
+        uniqueItems: undefined,
+        buttons: {
+          add: {
+            disabled: false
+          }
+        }
+      }
+    }
   });
 });
