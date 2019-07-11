@@ -151,7 +151,7 @@ export interface ParserOptions<
   readonly model: TModel;
   readonly descriptor?: TDescriptor;
   readonly descriptorConstructor: DescriptorConstructor;
-  readonly bracketedObjectInputName: boolean;
+  readonly bracketedObjectInputName?: boolean;
   readonly name?: string;
   readonly id?: string;
   readonly required?: boolean;

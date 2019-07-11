@@ -1,7 +1,8 @@
 import { Parser } from '@/parsers/Parser';
 import { ObjectParser } from '@/parsers/ObjectParser';
-import { ScalarDescriptor, ParserOptions } from '@/types';
+import { ListField, ScalarDescriptor, ParserOptions } from '@/types';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
+import { TestParser } from '../../lib/TestParser';
 
 import '@/parsers';
 
@@ -267,5 +268,66 @@ describe('parsers/ObjectParser', () => {
         dateBirth: '-8600/01/01'
       });
     });
+  });
+
+  const options8: any = (bracketedObjectInputNameValue: boolean) => ({
+    name: 'user',
+    schema: {
+      type: 'object',
+      properties: {
+        name: {
+          type: 'object',
+          properties: {
+            first: { type: 'string' },
+            last: { type: 'string' }
+          }
+        },
+        dateBirth: { type: 'string' }
+      }
+    },
+    model: {},
+    descriptorConstructor: NativeDescriptor.get,
+    bracketedObjectInputName: bracketedObjectInputNameValue
+  });
+
+  const names = ['name', 'dateBirth'];
+  const nestedNames = ['first', 'last'];
+
+  TestParser.Case({
+    case: '8.0',
+    description: 'nested object with name and bracketedObjectInputName === true',
+    parser: new ObjectParser(options8(true)),
+    expected: {
+      children(items: ListField[]) {
+        return items.every(({ kind, name, children }: any, i: number) => {
+          if (kind === 'object') {
+            return children.every(({ name: nestedName }: any, j: number) => {
+              return nestedName === `user[${names[i]}][${nestedNames[j]}]`
+            });
+          }
+
+          return name === `user[${names[i]}]`
+        });
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '8.1',
+    description: 'nested object with name and bracketedObjectInputName === false',
+    parser: new ObjectParser(options8(false)),
+    expected: {
+      children(items: ListField[]) {
+        return items.every(({ kind, name, children }: any, i: number) => {
+          if (kind === 'object') {
+            return children.every(({ name: nestedName }: any, j: number) => {
+              return nestedName === `user.${names[i]}.${nestedNames[j]}`
+            });
+          }
+
+          return name === `user.${names[i]}`
+        });
+      }
+    }
   });
 });

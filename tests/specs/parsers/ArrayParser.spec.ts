@@ -1,3 +1,4 @@
+import { ArrayField } from '@/types';
 import { ArrayParser } from '@/parsers/ArrayParser';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
 import { TestParser } from '../../lib/TestParser';
@@ -444,6 +445,39 @@ describe('parsers/ArrayParser', () => {
       additionalItems: { type: undefined },
       children({ length }: any) {
         return length === this.items.length;
+      }
+    }
+  });
+
+  const options8: any = (bracketedObjectInputNameValue: boolean) => ({
+    name: 'array',
+    schema: {
+      type: 'array',
+      items: { type: 'string' }
+    },
+    model: ['a', 12],
+    descriptorConstructor: NativeDescriptor.get,
+    bracketedObjectInputName: bracketedObjectInputNameValue
+  });
+
+  TestParser.Case({
+    case: '8.0',
+    description: 'with name and bracketedObjectInputName === true',
+    parser: new ArrayParser(options8(true)),
+    expected: {
+      children(items: ArrayField[]) {
+        return items.every(({ name }) => name === 'array[]');
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '8.1',
+    description: 'with name and bracketedObjectInputName === false',
+    parser: new ArrayParser(options8(false)),
+    expected: {
+      children(items: ArrayField[]) {
+        return items.every(({ name }) => name === 'array');
       }
     }
   });
