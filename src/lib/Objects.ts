@@ -31,7 +31,7 @@ export const Objects = {
         dest[key] = value;
       } else if (value instanceof Array) {
         dest[key] = [ ...value ];
-      } else if (value instanceof Function) {
+      } else if (typeof value === 'function') {
         dest[key] = value;
       } else {
         if (!dest[key]) {

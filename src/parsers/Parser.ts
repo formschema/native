@@ -23,6 +23,7 @@ export abstract class Parser<
   TDescriptor extends AbstractUISchemaDescriptor,
   TField extends Field<any, Attributes, DescriptorInstance, any>
 > implements IParser<TModel, TDescriptor, TField> {
+  readonly id: string;
   readonly isRoot: boolean;
   readonly isEnumItem: boolean;
   readonly parent?: UnknowParser;
@@ -62,6 +63,7 @@ export abstract class Parser<
   }
 
   constructor(options: ParserOptions<TModel, TDescriptor>, parent?: UnknowParser) {
+    this.id = options.id || UniqueId.get(options.name);
     this.parent = parent;
     this.options = options;
     this.root = parent ? parent.root : this;
@@ -83,8 +85,8 @@ export abstract class Parser<
       kind: this.kind,
       name: options.name,
       isRoot: this.isRoot,
-      required: this.isRoot || options.required || false,
-      defaultValue: this.parseValue(options.schema.default),
+      required: options.required || false,
+      defaultValue: options.schema.default,
       get value() {
         return self.model;
       },
@@ -100,6 +102,8 @@ export abstract class Parser<
           id: this.id,
           type: this.type,
           name: options.name,
+          readonly: this.schema.readOnly,
+          required: options.required,
           ...this.descriptor.attrs
         },
         label: {},
@@ -118,10 +122,6 @@ export abstract class Parser<
 
   get type(): string | undefined {
     return undefined;
-  }
-
-  get id() {
-    return this.options.id || UniqueId.get(this.options.name);
   }
 
   get initialValue(): TModel | unknown {
@@ -146,7 +146,7 @@ export abstract class Parser<
   }
 
   commit() {
-    if (this.options.onChange instanceof Function) {
+    if (typeof this.options.onChange === 'function') {
       this.options.onChange(this.model, this.field);
     }
   }
@@ -178,9 +178,6 @@ export abstract class Parser<
     const id = attrs.input.id;
     const labelId = this.field.descriptor.label ? `${id}-label` : undefined;
     const descId = this.field.descriptor.description ? `${id}-desc` : undefined;
-
-    attrs.input.readonly = this.schema.readOnly;
-    attrs.input.required = this.field.required;
 
     /**
      * Use the WAI-ARIA aria-labelledby and aria-describedby attributes to

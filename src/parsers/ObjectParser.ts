@@ -78,7 +78,7 @@ export class ObjectParser extends Parser<Dictionary, ObjectDescriptor, ObjectFie
     const properties = this.field.descriptor.properties;
 
     return properties
-      ? properties[key] instanceof Function
+      ? typeof properties[key] === 'function'
         ? (properties[key] as Function)(properties[key])
         : properties[key]
       : this.options.descriptorConstructor(this.properties[key]);
@@ -87,7 +87,7 @@ export class ObjectParser extends Parser<Dictionary, ObjectDescriptor, ObjectFie
   getChildDescriptorConstructor(key: string): DescriptorConstructor {
     const properties = this.field.descriptor.properties;
 
-    return properties && properties[key] instanceof Function
+    return properties && typeof properties[key] === 'function'
       ? properties[key] as DescriptorConstructor
       : this.options.descriptorConstructor;
   }

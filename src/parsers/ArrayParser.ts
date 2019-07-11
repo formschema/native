@@ -150,9 +150,7 @@ export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> implem
     }
 
     this.maxItems = this.schema.maxItems;
-    this.minItems = this.field.required
-      ? this.schema.minItems || 1
-      : this.schema.minItems || 0;
+    this.minItems = this.schema.minItems || (this.field.required ? 1 : 0);
 
     const self = this;
 

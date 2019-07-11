@@ -17,10 +17,10 @@ describe('parsers/ArrayParser', () => {
       kind: 'array',
       items: [],
       additionalItems: undefined,
-      minItems: 1,
+      minItems: 0,
       maxItems: undefined,
       max: -2,
-      count: 1,
+      count: 0,
       model: [],
       rawValue: [],
       limit: 0,
@@ -93,6 +93,7 @@ describe('parsers/ArrayParser', () => {
         items: { type: 'string' }
       },
       model: undefined,
+      required: true,
       descriptorConstructor: NativeDescriptor.get
     }),
     expected: {
@@ -112,11 +113,11 @@ describe('parsers/ArrayParser', () => {
     expected: {
       items: [],
       additionalItems: undefined,
-      minItems: 1,
+      minItems: 0,
       maxItems: undefined,
       max: -2,
       get count() {
-        return this.minItems;
+        return this.rawValue.length;
       },
       model: [12],
       rawValue: [12],
@@ -135,6 +136,7 @@ describe('parsers/ArrayParser', () => {
 
   TestParser.Case({
     case: '3',
+    description: 'with options.required === true',
     parser: new ArrayParser({
       schema: {
         type: 'array',
@@ -143,6 +145,7 @@ describe('parsers/ArrayParser', () => {
         ]
       },
       model: [],
+      required: true,
       descriptorConstructor: NativeDescriptor.get
     }),
     expected: {
@@ -301,7 +304,7 @@ describe('parsers/ArrayParser', () => {
         { type: 'string', default: 'd', title: 'd' }
       ],
       additionalItems: undefined,
-      minItems: 1,
+      minItems: 0,
       maxItems: 4,
       max: 4,
       count: 4,
@@ -310,6 +313,7 @@ describe('parsers/ArrayParser', () => {
       limit: 4,
       children: ({ length }: ArrayField[]) => length === 4,
       field: {
+        required: false,
         uniqueItems: true,
         // attrs: {
         //   input: {
@@ -438,7 +442,7 @@ describe('parsers/ArrayParser', () => {
         { type: 'string' }
       ],
       additionalItems: { type: 'number' },
-      minItems: 1,
+      minItems: 0,
       maxItems: undefined,
       max: -1,
       count() {
@@ -453,6 +457,7 @@ describe('parsers/ArrayParser', () => {
         return length === this.rawValue.length;
       },
       field: {
+        required: false,
         uniqueItems: undefined,
         buttons: {
           add: {

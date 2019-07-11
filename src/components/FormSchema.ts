@@ -105,12 +105,12 @@ const FormSchema: FormSchemaComponent = {
   }),
   computed: {
     descriptorConstructor() {
-      return this.descriptor instanceof Function
+      return typeof this.descriptor === 'function'
         ? this.descriptor
         : GLOBAL.Descriptor.get;
     },
     schemaDescriptor() {
-      return this.descriptor instanceof Function
+      return typeof this.descriptor === 'function'
         ? this.descriptor(this.schema)
         : this.descriptor || GLOBAL.Descriptor.get(this.schema);
     },
@@ -119,6 +119,7 @@ const FormSchema: FormSchemaComponent = {
         schema: this.schema,
         model: this.initialModel,
         name: this.name,
+        required: true,
         descriptor: this.schemaDescriptor,
         descriptorConstructor: this.descriptorConstructor,
         bracketedObjectInputName: this.bracketedArrayInputName,
