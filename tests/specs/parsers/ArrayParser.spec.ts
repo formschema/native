@@ -359,7 +359,7 @@ describe('parsers/ArrayParser', () => {
   });
 
   TestParser.Case({
-    case: '7',
+    case: '7.0',
     parser: new ArrayParser({
       schema: {
         type: 'array',
@@ -387,7 +387,9 @@ describe('parsers/ArrayParser', () => {
       get limit() {
         return this.items.length;
       },
-      children: ({ length }: any) => length === 2,
+      children({ length }: any) {
+        return length === this.rawValue.length;
+      },
       field: {
         uniqueItems: undefined,
         buttons: {
@@ -395,6 +397,30 @@ describe('parsers/ArrayParser', () => {
             disabled: false
           }
         }
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '7.1',
+    parser: new ArrayParser({
+      schema: {
+        type: 'array',
+        items: [
+          { type: 'string' }
+        ],
+        additionalItems: { type: undefined } as any
+      },
+      model: ['a', 12],
+      descriptorConstructor: NativeDescriptor.get
+    }),
+    expected: {
+      items: [
+        { type: 'string' }
+      ],
+      additionalItems: { type: undefined },
+      children({ length }: any) {
+        return length === this.items.length;
       }
     }
   });
