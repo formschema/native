@@ -155,7 +155,7 @@ describe('parsers/ArrayParser', () => {
       model: [],
       rawValue: [undefined],
       limit: 1,
-      children({ length }: any) {
+      children({ length }: ArrayField[]) {
         return length === this.limit;
       },
       field: {
@@ -201,7 +201,7 @@ describe('parsers/ArrayParser', () => {
       get limit() {
         return this.count;
       },
-      children({ length }: any) {
+      children({ length }: ArrayField[]) {
         return length === this.limit;
       },
       field: {
@@ -232,7 +232,7 @@ describe('parsers/ArrayParser', () => {
       get limit() {
         return this.count;
       },
-      children({ length }: any) {
+      children({ length }: ArrayField[]) {
         return length === this.limit;
       },
       field: {
@@ -247,6 +247,7 @@ describe('parsers/ArrayParser', () => {
 
   TestParser.Case({
     case: '4.2',
+    description: 'field.buttons.add.push()',
     parser() {
       const parser = new ArrayParser(options4);
 
@@ -265,7 +266,7 @@ describe('parsers/ArrayParser', () => {
       get limit() {
         return this.count;
       },
-      children({ length }: any) {
+      children({ length }: ArrayField[]) {
         return length === this.limit;
       },
       field: {
@@ -288,9 +289,9 @@ describe('parsers/ArrayParser', () => {
     descriptorConstructor: NativeDescriptor.get
   };
 
-  // with array enums (checkbox)
   TestParser.Case({
     case: '5.0',
+    description: 'with array enums (checkbox)',
     parser: new ArrayParser(options5),
     expected: {
       items: [
@@ -307,7 +308,7 @@ describe('parsers/ArrayParser', () => {
       model: ['b', 'd'],
       rawValue: [undefined, 'b', undefined, 'd'],
       limit: 4,
-      children: ({ length }: any) => length === 4,
+      children: ({ length }: ArrayField[]) => length === 4,
       field: {
         uniqueItems: true,
         // attrs: {
@@ -324,9 +325,47 @@ describe('parsers/ArrayParser', () => {
     }
   });
 
-  // with updated checkbox input
   TestParser.Case({
     case: '5.1',
+    description: 'with custom descriptor',
+    parser: new ArrayParser({
+      ...options5,
+      descriptor: {
+        items: [
+          {
+            label: 'label-a',
+            description: 'description-a'
+          },
+          {
+            label: 'label-b',
+            description: 'description-b'
+          },
+          {
+            label: 'label-c',
+            description: 'description-c'
+          },
+          {
+            label: 'label-d',
+            description: 'description-d'
+          }
+        ]
+      }
+    }),
+    expected: {
+      children(fields: ArrayField[]) {
+        return fields.every(({ descriptor }: ArrayField, i) => {
+          const label = `label-${options5.schema.items.enum[i]}`;
+          const description = `description-${options5.schema.items.enum[i]}`;
+
+          return descriptor.label === label && descriptor.description === description;
+        });
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '5.2',
+    description: 'with updated checkbox input',
     parser: () => {
       const parser = new ArrayParser(options5);
 
@@ -341,9 +380,9 @@ describe('parsers/ArrayParser', () => {
     }
   });
 
-  // with min/max and default model
   TestParser.Case({
     case: '6',
+    description: 'with min/max and default model',
     parser: new ArrayParser({
       schema: {
         type: 'array',
@@ -368,7 +407,7 @@ describe('parsers/ArrayParser', () => {
       get limit() {
         return this.count;
       },
-      children: ({ length }: any) => length === 3,
+      children: ({ length }: ArrayField[]) => length === 3,
       field: {
         uniqueItems: undefined,
         buttons: {
@@ -380,9 +419,9 @@ describe('parsers/ArrayParser', () => {
     }
   });
 
-  // with additional items
   TestParser.Case({
     case: '7.0',
+    description: 'with additional items',
     parser: new ArrayParser({
       schema: {
         type: 'array',
@@ -410,7 +449,7 @@ describe('parsers/ArrayParser', () => {
       get limit() {
         return this.items.length;
       },
-      children({ length }: any) {
+      children({ length }: ArrayField[]) {
         return length === this.rawValue.length;
       },
       field: {
@@ -424,9 +463,9 @@ describe('parsers/ArrayParser', () => {
     }
   });
 
-  // with an undefined schema type
   TestParser.Case({
     case: '7.1',
+    description: 'with an undefined schema type',
     parser: new ArrayParser({
       schema: {
         type: 'array',
@@ -443,7 +482,7 @@ describe('parsers/ArrayParser', () => {
         { type: 'string' }
       ],
       additionalItems: { type: undefined },
-      children({ length }: any) {
+      children({ length }: ArrayField[]) {
         return length === this.items.length;
       }
     }
