@@ -1,14 +1,13 @@
-import sinon from 'sinon';
 import { CreateInput } from '@/lib/CreateInput';
 
 describe('lib/CreateInput', () => {
   describe('CreateInput(h, tag, data, children = [])', () => {
     it('should create an input with required args', () => {
-      const h = sinon.stub();
+      const h: any = jest.fn((...args) => args);
 
       CreateInput(h, 'input', {});
 
-      const [ [ tag, data, children ] ] = h.args;
+      const [ [ tag, data, children ] ] = h.mock.calls;
 
       expect(tag).toBe('input');
 
@@ -20,11 +19,11 @@ describe('lib/CreateInput', () => {
     });
 
     it('should create an input with children', () => {
-      const h = sinon.stub();
+      const h: any = jest.fn((...args) => args);
 
       CreateInput(h, 'input', {}, 'hello');
 
-      const [ [ tag, data, children ] ] = h.args;
+      const [ [ tag, data, children ] ] = h.mock.calls;
 
       expect(tag).toBe('input');
 
@@ -36,18 +35,18 @@ describe('lib/CreateInput', () => {
     });
 
     it('should set the field value on on.input() call', () => {
-      const h = sinon.stub();
+      const h: any = jest.fn((...args) => args);
       const data = {
         props: {
           field: {
-            setValue: sinon.stub()
+            setValue: jest.fn((...args) => args)
           }
         }
       };
 
       CreateInput(h, 'input', data);
 
-      const [ [ tag, definition ] ] = h.args;
+      const [ [ tag, definition ] ] = h.mock.calls;
 
       definition.on.input({
         target: {
@@ -55,7 +54,7 @@ describe('lib/CreateInput', () => {
         }
       });
 
-      const [ [ value ] ] = data.props.field.setValue.args;
+      const [ [ value ] ] = data.props.field.setValue.mock.calls;
 
       expect(value).toEqual('Hello, World!');
     });
