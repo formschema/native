@@ -63,22 +63,27 @@ export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> implem
 
   getFieldItem(itemSchema: JsonSchema, index: number): ArrayItemField | null {
     const kind: FieldKind | undefined = this.field.uniqueItems ? 'checkbox' : undefined;
-    const defaultDescriptor = this.options.descriptorConstructor(itemSchema, kind);
+    const items = this.field.descriptor.items;
 
-    const itemDescriptor = this.field.descriptor.items
-      ? this.field.descriptor.items[index] || defaultDescriptor
-      : defaultDescriptor;
+    const itemDescriptor = items && items[index]
+      ? items[index]
+      : this.options.descriptorConstructor(itemSchema, kind);
 
     const itemModel = typeof this.model[index] !== 'undefined'
       ? this.model[index]
       : itemSchema.default;
+
+    const itemName = this.options.bracketedObjectInputName
+      ? `${this.options.name}[]`
+      : this.options.name;
 
     const options: ParserOptions<unknown, AbstractUISchemaDescriptor> = {
       schema: itemSchema,
       model: itemModel,
       descriptor: itemDescriptor,
       descriptorConstructor: this.options.descriptorConstructor,
-      name: !this.isRoot && this.options.name ? `${this.options.name}[]` : this.options.name
+      bracketedObjectInputName: this.options.bracketedObjectInputName,
+      name: itemName
     };
 
     if (this.rawValue.length <= index) {

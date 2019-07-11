@@ -277,17 +277,20 @@ describe('parsers/ArrayParser', () => {
     }
   });
 
+  const options5: any = {
+    schema: {
+      type: 'array',
+      items: { type: 'string', enum: ['a', 'b', 'c', 'd'] },
+      uniqueItems: true
+    },
+    model: ['b', 'd'],
+    descriptorConstructor: NativeDescriptor.get
+  };
+
+  // with array enums (checkbox)
   TestParser.Case({
-    case: '5',
-    parser: new ArrayParser({
-      schema: {
-        type: 'array',
-        items: { type: 'string', enum: ['a', 'b', 'c', 'd'] },
-        uniqueItems: true
-      },
-      model: ['a', 'd'],
-      descriptorConstructor: NativeDescriptor.get
-    }),
+    case: '5.0',
+    parser: new ArrayParser(options5),
     expected: {
       items: [
         { type: 'string', default: 'a', title: 'a' },
@@ -300,8 +303,8 @@ describe('parsers/ArrayParser', () => {
       maxItems: 4,
       max: 4,
       count: 4,
-      model: ['a', 'd'],
-      rawValue: ['a', undefined, undefined, 'd'],
+      model: ['b', 'd'],
+      rawValue: [undefined, 'b', undefined, 'd'],
       limit: 4,
       children: ({ length }: any) => length === 4,
       field: {
@@ -320,6 +323,24 @@ describe('parsers/ArrayParser', () => {
     }
   });
 
+  // with updated checkbox input
+  TestParser.Case({
+    case: '5.1',
+    parser: () => {
+      const parser = new ArrayParser(options5);
+
+      parser.parse();
+      parser.field.children[0].setValue(true);
+
+      return parser;
+    },
+    expected: {
+      model: ['a', 'b', 'd'],
+      rawValue: ['a', 'b', undefined, 'd']
+    }
+  });
+
+  // with min/max and default model
   TestParser.Case({
     case: '6',
     parser: new ArrayParser({
@@ -358,6 +379,7 @@ describe('parsers/ArrayParser', () => {
     }
   });
 
+  // with additional items
   TestParser.Case({
     case: '7.0',
     parser: new ArrayParser({
@@ -401,6 +423,7 @@ describe('parsers/ArrayParser', () => {
     }
   });
 
+  // with an undefined schema type
   TestParser.Case({
     case: '7.1',
     parser: new ArrayParser({

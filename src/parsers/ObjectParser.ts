@@ -38,7 +38,10 @@ export class ObjectParser extends Parser<Dictionary, ObjectDescriptor, ObjectFie
   }
 
   get children(): ObjectFieldChild[] {
-    const requiredFields = this.schema.required instanceof Array ? this.schema.required : [];
+    const name = this.options.name;
+    const requiredFields = this.schema.required instanceof Array
+      ? this.schema.required
+      : [];
 
     return this.propertiesList
       .map((key): ParserOptions<unknown, AbstractUISchemaDescriptor> => ({
@@ -46,8 +49,9 @@ export class ObjectParser extends Parser<Dictionary, ObjectDescriptor, ObjectFie
         model: this.model.hasOwnProperty(key) ? this.model[key] : this.properties[key].default,
         descriptor: this.getChildDescriptor(key),
         descriptorConstructor: this.getChildDescriptorConstructor(key),
-        id: !this.isRoot && this.options.name ? `${this.options.name}-${key}` : undefined,
-        name: !this.isRoot && this.options.name ? `${this.options.name}[${key}]` : key,
+        bracketedObjectInputName: this.options.bracketedObjectInputName,
+        id: name ? `${name}-${key}` : undefined,
+        name: this.getChildName(key, name),
         required: requiredFields.includes(key),
         onChange: (value) => {
           this.model[key] = value;
@@ -58,6 +62,16 @@ export class ObjectParser extends Parser<Dictionary, ObjectDescriptor, ObjectFie
       .map((options) => Parser.get(options, this))
       .filter((parser) => parser instanceof Parser)
       .map((parser: any) => parser.field as ObjectFieldChild);
+  }
+
+  getChildName(key: string, name?: string) {
+    if (name) {
+      return this.options.bracketedObjectInputName
+        ? `${name}[${key}]`
+        : `${name}.${key}`;
+    }
+
+    return key;
   }
 
   getChildDescriptor(key: string) {

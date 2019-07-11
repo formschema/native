@@ -151,6 +151,7 @@ export interface ParserOptions<
   readonly model: TModel;
   readonly descriptor?: TDescriptor;
   readonly descriptorConstructor: DescriptorConstructor;
+  readonly bracketedObjectInputName: boolean;
   readonly name?: string;
   readonly id?: string;
   readonly required?: boolean;
@@ -229,6 +230,7 @@ export interface FormSchemaVue extends Vue {
   value?: unknown;
   id: string;
   name?: string;
+  bracketedArrayInputName: boolean;
   search: boolean;
   disabled: boolean;
   components: ComponentsDeclaration;

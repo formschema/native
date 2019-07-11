@@ -58,6 +58,17 @@ const FormSchema: FormSchemaComponent = {
     },
 
     /**
+     * When set to true (default), checkbox inputs and nested object inputs will
+     * automatically include brackets at the end of their names
+     * (e.g. name="Multicheckbox-Value1[]".
+     * Setting this property to false, disables this behaviour.
+     */
+    bracketedObjectInputName: {
+      type: Boolean,
+      default: true
+    },
+
+    /**
      * Use this prop to enable `search` landmark role to identify a section
      * of the page used to search the page, site, or collection of sites.
      */
@@ -110,6 +121,7 @@ const FormSchema: FormSchemaComponent = {
         name: this.name,
         descriptor: this.schemaDescriptor,
         descriptorConstructor: this.descriptorConstructor,
+        bracketedObjectInputName: this.bracketedArrayInputName,
         onChange: this.emitInputEvent
       });
     },

@@ -47,6 +47,7 @@ export class EnumParser extends Parser<unknown, ScalarDescriptor, EnumField> imp
           model: itemSchema.const,
           descriptor: this.options.descriptorConstructor(itemSchema),
           descriptorConstructor: this.options.descriptorConstructor,
+          bracketedObjectInputName: this.options.bracketedObjectInputName,
           name: radioName
         };
 
