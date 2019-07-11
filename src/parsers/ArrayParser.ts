@@ -50,7 +50,7 @@ export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> implem
       do {
         const additionalField = this.getFieldItem(this.additionalItems, index);
 
-        if (!additionalField) {
+        if (additionalField === null) {
           break;
         }
 

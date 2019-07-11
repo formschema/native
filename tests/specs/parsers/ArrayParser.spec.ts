@@ -1,13 +1,11 @@
 import { ArrayParser } from '@/parsers/ArrayParser';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
-import { TestCaseParser } from '../../lib/TestCaseParser';
+import { TestParser } from '../../lib/TestParser';
 
 import '@/parsers';
 
-const Test = new TestCaseParser(ArrayParser);
-
 describe('parsers/ArrayParser', () => {
-  Test.Case({
+  TestParser.Case({
     case: '0',
     parser: new ArrayParser({
       schema: { type: 'array' },
@@ -36,7 +34,7 @@ describe('parsers/ArrayParser', () => {
     }
   });
 
-  Test.Case({
+  TestParser.Case({
     case: '1.0',
     parser: new ArrayParser({
       schema: { type: 'array' },
@@ -50,7 +48,7 @@ describe('parsers/ArrayParser', () => {
     }
   });
 
-  Test.Case({
+  TestParser.Case({
     case: '1.1',
     parser: new ArrayParser({
       schema: {
@@ -68,7 +66,7 @@ describe('parsers/ArrayParser', () => {
     }
   });
 
-  Test.Case({
+  TestParser.Case({
     case: '1.2',
     parser: new ArrayParser({
       schema: {
@@ -86,7 +84,7 @@ describe('parsers/ArrayParser', () => {
     }
   });
 
-  Test.Case({
+  TestParser.Case({
     case: '1.3',
     parser: new ArrayParser({
       schema: {
@@ -103,7 +101,7 @@ describe('parsers/ArrayParser', () => {
     }
   });
 
-  Test.Case({
+  TestParser.Case({
     case: '2',
     parser: new ArrayParser({
       schema: { type: 'array' },
@@ -116,7 +114,9 @@ describe('parsers/ArrayParser', () => {
       minItems: 1,
       maxItems: undefined,
       max: -2,
-      count: 1,
+      get count() {
+        return this.minItems;
+      },
       model: [12],
       rawValue: [12],
       limit: 0,
@@ -132,7 +132,7 @@ describe('parsers/ArrayParser', () => {
     }
   });
 
-  Test.Case({
+  TestParser.Case({
     case: '3',
     parser: new ArrayParser({
       schema: {
@@ -154,7 +154,9 @@ describe('parsers/ArrayParser', () => {
       model: [],
       rawValue: [undefined],
       limit: 1,
-      children: ({ length }: any) => length === 1,
+      children({ length }: any) {
+        return length === this.limit;
+      },
       field: {
         required: true,
         uniqueItems: undefined,
@@ -167,26 +169,28 @@ describe('parsers/ArrayParser', () => {
     }
   });
 
-  Test.Case({
-    case: '4',
-    parser: new ArrayParser({
-      schema: {
-        type: 'array',
-        items: { type: 'string' },
-        minItems: 1,
-        maxItems: 3,
-        uniqueItems: true
-      },
-      model: [],
-      descriptorConstructor: NativeDescriptor.get
-    }),
+  const options4: any = {
+    schema: {
+      type: 'array',
+      items: { type: 'string' },
+      minItems: 1,
+      maxItems: 2,
+      uniqueItems: true
+    },
+    model: [],
+    descriptorConstructor: NativeDescriptor.get
+  };
+
+  TestParser.Case({
+    case: '4.0',
+    parser: new ArrayParser(options4),
     expected: {
       items: [
         { type: 'string' }
       ],
       additionalItems: undefined,
       minItems: 1,
-      maxItems: 3,
+      maxItems: 2,
       get max() {
         return this.maxItems;
       },
@@ -196,7 +200,9 @@ describe('parsers/ArrayParser', () => {
       get limit() {
         return this.count;
       },
-      children: ({ length }: any) => length === 1,
+      children({ length }: any) {
+        return length === this.limit;
+      },
       field: {
         uniqueItems: undefined,
         buttons: {
@@ -208,7 +214,70 @@ describe('parsers/ArrayParser', () => {
     }
   });
 
-  Test.Case({
+  TestParser.Case({
+    case: '4.1',
+    parser() {
+      const parser = new ArrayParser(options4);
+
+      parser.parse();
+      parser.field.buttons.add.push();
+
+      return parser;
+    },
+    expected: {
+      count: 2,
+      model: [],
+      rawValue: [undefined, undefined],
+      get limit() {
+        return this.count;
+      },
+      children({ length }: any) {
+        return length === this.limit;
+      },
+      field: {
+        buttons: {
+          add: {
+            disabled: true
+          }
+        }
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '4.2',
+    parser() {
+      const parser = new ArrayParser(options4);
+
+      parser.parse();
+
+      // call field.buttons.add.push() twice
+      parser.field.buttons.add.push();
+      parser.field.buttons.add.push();
+
+      return parser;
+    },
+    expected: {
+      count: 2,
+      model: [],
+      rawValue: [undefined, undefined],
+      get limit() {
+        return this.count;
+      },
+      children({ length }: any) {
+        return length === this.limit;
+      },
+      field: {
+        buttons: {
+          add: {
+            disabled: true
+          }
+        }
+      }
+    }
+  });
+
+  TestParser.Case({
     case: '5',
     parser: new ArrayParser({
       schema: {
@@ -251,7 +320,7 @@ describe('parsers/ArrayParser', () => {
     }
   });
 
-  Test.Case({
+  TestParser.Case({
     case: '6',
     parser: new ArrayParser({
       schema: {
@@ -289,7 +358,7 @@ describe('parsers/ArrayParser', () => {
     }
   });
 
-  Test.Case({
+  TestParser.Case({
     case: '7',
     parser: new ArrayParser({
       schema: {
