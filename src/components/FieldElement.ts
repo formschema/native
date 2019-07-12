@@ -1,10 +1,10 @@
 import { HelperElement } from '@/components/HelperElement';
-import { Dictionary, FieldComponent, StringAttributes } from '@/types';
+import { Dictionary, FieldComponent } from '@/types';
 
 export const FieldElement: FieldComponent = {
   name: 'FieldElement',
   functional: true,
-  render(h, { data, props, slots }) {
+  render(h, { data, props, children }) {
     const attrs: Dictionary = {
       'data-fs-kind': props.field.kind,
       'data-fs-field': props.field.name,
@@ -15,14 +15,10 @@ export const FieldElement: FieldComponent = {
       attrs: props.field.attrs.label
     }, props.field.descriptor.label);
 
-    const fieldNodes = [
-      ...slots().default,
-      h(HelperElement, data)
-    ];
-
+    const fieldNodes = [ ...children, h(HelperElement, data) ];
     const fieldElement = h('div', {
       attrs: {
-        'data-fs-input': (props.field.attrs.input as StringAttributes).type || props.field.kind
+        'data-fs-input': props.field.attrs.input.type || props.field.kind
       }
     }, fieldNodes);
 
