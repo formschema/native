@@ -5,11 +5,12 @@ export const CreateInput = <T extends Field<any>>(
   h: CreateElement,
   tag: string,
   data: VNodeData,
-  children: VNodeChildren = []
+  children: VNodeChildren = [],
+  event: string = 'input'
 ) => {
   const props = data.props as ElementProps<T>;
   const on = {
-    input({ target }: InputEvent) {
+    [event]({ target }: InputEvent) {
       props.field.setValue(target.value);
     }
   };
