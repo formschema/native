@@ -1,21 +1,21 @@
 import { mount } from '@vue/test-utils';
-import { InputElement } from '@/components/InputElement';
+import { TextareaElement } from '@/components/TextareaElement';
 import { StringParser } from '@/parsers/StringParser';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
 
 const options: any = {
   schema: {
     type: 'string',
-    pattern: 'arya|jon',
-    minLength: 5,
-    maxLength: 15,
-    title: 'Name',
-    description: 'Your full name'
+    title: 'Bio',
+    description: 'Tell us about yourself'
   },
   model: 'Goku',
-  id: 'id-name',
-  name: 'name',
+  id: 'id-bio',
+  name: 'bio',
   onChange: jest.fn((...args) => args),
+  descriptor: {
+    kind: 'textarea'
+  },
   descriptorConstructor: NativeDescriptor.get
 };
 
@@ -30,17 +30,17 @@ const context: any = {
   }
 };
 
-describe('components/InputElement', () => {
+describe('components/TextareaElement', () => {
   it('should successfully render component', () => {
-    const wrapper = mount(InputElement, { context });
-    const expected = '<div data-fs-kind="string" data-fs-field="name"><label id="id-name-label" for="id-name">Name</label><div data-fs-input="text"><input id="id-name" type="text" name="name" aria-labelledby="id-name-label" aria-describedby="id-name-desc" value="Goku" minlength="5" maxlength="15" pattern="arya|jon"><p id="id-name-desc">Your full name</p></div></div>';
+    const wrapper = mount(TextareaElement, { context });
+    const expected = '<div data-fs-kind="string" data-fs-field="bio"><label id="id-bio-label" for="id-bio">Bio</label><div data-fs-input="string"><textarea id="id-bio" name="bio" aria-labelledby="id-bio-label" aria-describedby="id-bio-desc">Goku</textarea><p id="id-bio-desc">Tell us about yourself</p></div></div>';
 
     expect(wrapper.html()).toBe(expected);
   });
 
   it('should successfully emit input event', () => {
-    const wrapper = mount(InputElement, { context });
-    const input: any = wrapper.find('input');
+    const wrapper = mount(TextareaElement, { context });
+    const input: any = wrapper.find('textarea');
 
     input.element.value = 'Gohan';
     input.trigger('input');
