@@ -15,9 +15,13 @@ const options: any = {
   name: 'character',
   onChange: jest.fn((...args) => args),
   descriptor: {
-    labels: {
-      goku: 'Goku',
-      freezer: 'Freezer'
+    items: {
+      goku: {
+        label: 'Goku'
+      },
+      freezer: {
+        label: 'Freezer'
+      }
     }
   },
   descriptorConstructor: NativeDescriptor.get

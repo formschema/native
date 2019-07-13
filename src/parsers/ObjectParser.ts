@@ -50,7 +50,7 @@ export class ObjectParser extends Parser<Dictionary, ObjectDescriptor, ObjectFie
         descriptor: this.getChildDescriptor(key),
         descriptorConstructor: this.getChildDescriptorConstructor(key),
         bracketedObjectInputName: this.options.bracketedObjectInputName,
-        id: name ? `${name}-${key}` : undefined,
+        id: `${this.id}-${key}`,
         name: this.getChildName(key, name),
         required: requiredFields.includes(key),
         onChange: (value) => {

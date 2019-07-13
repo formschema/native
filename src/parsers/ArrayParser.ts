@@ -83,6 +83,7 @@ export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> implem
       descriptor: itemDescriptor,
       descriptorConstructor: this.options.descriptorConstructor,
       bracketedObjectInputName: this.options.bracketedObjectInputName,
+      id: `${this.id}-${index}`,
       name: itemName
     };
 

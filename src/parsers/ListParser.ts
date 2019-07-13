@@ -14,12 +14,12 @@ export class ListParser extends Parser<unknown, ScalarDescriptor, ListField> imp
 
   get items(): ListItem[] {
     if (this.schema.enum instanceof Array) {
-      const labels = this.descriptor.labels || {};
+      const items = this.descriptor.items || {};
 
       return this.schema.enum.map((item: any): ListItem => ({
         value: item,
         selected: this.model === item,
-        label: labels.hasOwnProperty(item) ? labels[item] : item
+        label: items[item] ? items[item].label || item : item
       }));
     }
 

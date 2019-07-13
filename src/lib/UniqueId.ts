@@ -5,9 +5,12 @@ function s4 () {
 }
 
 export const UniqueId = {
-  get (prefix = '', delimiter = '-') {
+  get(prefix = '', delimiter = '-') {
     const suffix = s4() + s4();
 
     return prefix ? prefix + delimiter + suffix : suffix;
+  },
+  parse(str: string) {
+    return `${str}`.toLowerCase().replace(/\s+/g, '-');
   }
 };

@@ -73,7 +73,7 @@ describe('lib/NativeDescriptor', () => {
       it('should have common properties', () => {
         expect(Object.keys(descriptor)).toEqual([
           'kind', 'label', 'description', 'component',
-          'attrs', 'props', 'labels'
+          'attrs', 'props', 'items'
         ]);
       });
 

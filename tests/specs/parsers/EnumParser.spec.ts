@@ -109,7 +109,7 @@ describe('parsers/EnumParser', () => {
     expect(parser.field.children).toEqual([]);
   });
 
-  it('field.children should be defined with provided field.descriptor.labels', () => {
+  it('field.children should be defined with provided field.descriptor.items', () => {
     const options: ParserOptions<any, ScalarDescriptor> = {
       schema: {
         type: 'string',
@@ -121,9 +121,13 @@ describe('parsers/EnumParser', () => {
 
     const parser = new EnumParser(options);
 
-    parser.field.descriptor.labels = {
-      jon: 'Jon Snow',
-      arya: 'Arya Stark'
+    parser.field.descriptor.items = {
+      jon: {
+        label: 'Jon Snow'
+      },
+      arya: {
+        label: 'Arya Stark'
+      }
     }
 
     parser.parse();
@@ -141,7 +145,7 @@ describe('parsers/EnumParser', () => {
         kind: 'list',
         attrs: {},
         props: {},
-        labels: {}
+        items: {}
       },
       descriptorConstructor: NativeDescriptor.get
     };
@@ -158,7 +162,7 @@ describe('parsers/EnumParser', () => {
       descriptor: {
         attrs: {},
         props: {},
-        labels: {}
+        items: {}
       },
       descriptorConstructor: NativeDescriptor.get
     };

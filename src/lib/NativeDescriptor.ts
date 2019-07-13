@@ -31,7 +31,7 @@ export const NativeDescriptor = {
         component: element,
         attrs: {},
         props: {},
-        labels: {}
+        items: {}
       };
 
       return descriptor as T;

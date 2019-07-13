@@ -1,6 +1,5 @@
 import { Parser } from '@/parsers/Parser';
 
-import { Objects } from '@/lib/Objects';
 import { UniqueId } from '@/lib/UniqueId';
 import { JsonSchema } from '@/types/jsonschema';
 
@@ -31,23 +30,31 @@ export class EnumParser extends Parser<unknown, ScalarDescriptor, EnumField> imp
     }
 
     const radioName = this.options.name || UniqueId.get();
+    const items = this.descriptor.items || {};
 
     return this.schema.enum
       .map((item: any): JsonSchema => ({
-        ...Objects.clone<JsonSchema>(this.schema),
-        const: item,
+        ...this.schema,
+        default: item,
         enum: undefined,
-        title: this.descriptor.labels && this.descriptor.labels.hasOwnProperty(item)
-          ? this.descriptor.labels[item]
-          : `${item}`
+        description: undefined,
+        title: `${item}`
       }))
       .map((itemSchema) => {
+        const item: any = itemSchema.default;
+        const descriptor = items[item] || this.options.descriptorConstructor(itemSchema);
+
+        if (!descriptor.kind) {
+          descriptor.kind = 'radio';
+        }
+
         const options: ParserOptions<unknown, AbstractUISchemaDescriptor, RadioField> = {
           schema: itemSchema,
-          model: itemSchema.const,
-          descriptor: this.options.descriptorConstructor(itemSchema),
+          model: itemSchema.default,
+          descriptor: items[item] || this.options.descriptorConstructor(itemSchema),
           descriptorConstructor: this.options.descriptorConstructor,
           bracketedObjectInputName: this.options.bracketedObjectInputName,
+          id: `${radioName}-${UniqueId.parse(item)}`,
           name: radioName
         };
 
@@ -55,12 +62,12 @@ export class EnumParser extends Parser<unknown, ScalarDescriptor, EnumField> imp
 
         // set the onChange option after the parser initialization
         // to prevent first field value emit
-        options.onChange = (value: unknown) => {
+        options.onChange = () => {
           // In this step the input.checked property is already setted.
           // So no need to call updateInputsState().
           // So call the parent function super.setValue() instead of
           // the overrided one this.setValue()
-          super.setValue(value);
+          super.setValue(item);
           this.commit();
         };
 
@@ -76,8 +83,8 @@ export class EnumParser extends Parser<unknown, ScalarDescriptor, EnumField> imp
   }
 
   updateInputsState() {
-    this.field.children.forEach(({ attrs, value: model }) => {
-      attrs.input.checked = model === this.model;
+    this.field.children.forEach(({ attrs, value }) => {
+      attrs.input.checked = value === this.model;
     });
   }
 

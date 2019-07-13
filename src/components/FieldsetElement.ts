@@ -5,29 +5,20 @@ export const FieldsetElement: FieldsetComponent = {
   name: 'FieldsetElement',
   functional: true,
   render(h, { data, props, slots }) {
-    const attrs = {
-      ...props.field.attrs.input
-    };
+    const attrs = props.field.attrs.input;
 
-    if (props.disabled) {
-      attrs.disabled = true;
-    }
+    attrs.disabled = props.disabled;
 
     const nodes = slots().default || props.field.children.map((field) => {
       return h(field.component, {
         attrs: field.attrs.input,
-        props: {
-          ...props,
-          field: field,
-          value: field.value,
-          disabled: false
-        }
+        props: { field }
       });
     });
 
     const helper = h(HelperElement, data);
 
-    if (helper) {
+    if (helper.tag) {
       nodes.unshift(helper);
     }
 

@@ -1,8 +1,8 @@
 import { FieldElement } from '@/components/FieldElement';
 import { CheckboxComponent, InputEvent } from '@/types';
 
-export const CheckboxElement: CheckboxComponent = {
-  name: 'CheckboxElement',
+export const StateElement: CheckboxComponent = {
+  name: 'StateElement',
   functional: true,
   render(h, { data, props }) {
     const on = {

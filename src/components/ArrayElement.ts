@@ -7,15 +7,8 @@ export const ArrayElement: ArrayComponent = {
   functional: true,
   render(h, { data, props }) {
     const nodes = props.field.children.map((field) => h(field.component, {
-      attrs: {
-        ...field.attrs.input,
-        value: field.value
-      },
-      props: {
-        ...props,
-        field: field,
-        value: field.value
-      }
+      attrs: field.attrs.input,
+      props: { field }
     }));
 
     if (!props.field.uniqueItems) {

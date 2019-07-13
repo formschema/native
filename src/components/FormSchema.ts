@@ -145,8 +145,7 @@ const FormSchema: FormSchemaComponent = {
       attrs: this.field.attrs.input,
       props: {
         field: this.field,
-        disabled: this.disabled,
-        components: this.components
+        disabled: this.disabled
       }
     });
 

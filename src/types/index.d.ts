@@ -204,8 +204,8 @@ export interface AbstractUISchemaDescriptor {
 }
 
 export interface ScalarDescriptor extends AbstractUISchemaDescriptor {
-  labels?: {
-    [key: string]: string;
+  items?: {
+    [key: string]: DescriptorInstance;
   };
 }
 

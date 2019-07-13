@@ -14,4 +14,13 @@ describe('lib/UniqueId', () => {
       expect(UniqueId.get('id', '.').startsWith('id.')).toBeTruthy();
     });
   });
+  describe('UniqueId.parse(str)', () => {
+    it('should successfully parse input string', () => {
+      expect(UniqueId.parse('Hello World')).toBe('hello-world');
+    });
+
+    it('should successfully parse number input', () => {
+      expect(UniqueId.parse(12 as any)).toBe('12');
+    });
+  });
 });

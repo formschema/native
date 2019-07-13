@@ -246,7 +246,7 @@ describe('parsers/Parser', () => {
         descriptor: {
           attrs: {},
           props: {},
-          labels: {}
+          items: {}
         },
         descriptorConstructor: NativeDescriptor.get
       });

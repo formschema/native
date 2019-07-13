@@ -94,7 +94,7 @@ describe('parsers/ListParser', () => {
     expect(parser.field.items).toEqual([]);
   });
 
-  it('field.items should be defined with provided field.descriptor.labels', () => {
+  it('field.items should be defined with provided field.descriptor.items', () => {
     const options: ParserOptions<any, ScalarDescriptor> = {
       schema: {
         type: 'string',
@@ -106,9 +106,9 @@ describe('parsers/ListParser', () => {
 
     const parser = new ListParser(options);
 
-    parser.field.descriptor.labels = {
-      jon: 'Jon Snow',
-      arya: 'Arya Stark'
+    parser.field.descriptor.items = {
+      jon: { label: 'Jon Snow' },
+      arya: { label: 'Arya Stark' }
     }
 
     parser.parse();
@@ -127,7 +127,7 @@ describe('parsers/ListParser', () => {
     ]);
   });
 
-  it('field.items should be defined with missing field.descriptor.labels', () => {
+  it('field.items should be defined with missing field.descriptor.items', () => {
     const options: ParserOptions<any, ScalarDescriptor> = {
       schema: {
         type: 'string',
@@ -139,7 +139,7 @@ describe('parsers/ListParser', () => {
 
     const parser = new ListParser(options);
 
-    delete parser.field.descriptor.labels;
+    delete parser.field.descriptor.items;
 
     parser.parse();
 
@@ -165,7 +165,7 @@ describe('parsers/ListParser', () => {
         kind: 'enum',
         attrs: {},
         props: {},
-        labels: {}
+        items: {}
       },
       descriptorConstructor: NativeDescriptor.get
     };
@@ -182,7 +182,7 @@ describe('parsers/ListParser', () => {
       descriptor: {
         attrs: {},
         props: {},
-        labels: {}
+        items: {}
       },
       descriptorConstructor: NativeDescriptor.get
     };
