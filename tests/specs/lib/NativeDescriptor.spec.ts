@@ -128,7 +128,7 @@ describe('lib/NativeDescriptor', () => {
       const descriptor = NativeDescriptor.get(schema, 'boolean');
       const component = descriptor.component as any;
 
-      expect(component.name).toBe('BooleanElement');
+      expect(component.name).toBe('StateElement');
     });
   });
 });

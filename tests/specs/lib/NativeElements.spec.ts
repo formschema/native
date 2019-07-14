@@ -2,7 +2,7 @@ import { NativeElements } from '@/lib/NativeElements';
 
 const items = [
   { kind: 'array', name: 'ArrayElement' },
-  { kind: 'boolean', name: 'BooleanElement' },
+  { kind: 'boolean', name: 'StateElement' },
   { kind: 'string', name: 'InputElement' },
   { kind: 'radio', name: 'StateElement' },
   { kind: 'checkbox', name: 'StateElement' },

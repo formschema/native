@@ -5,12 +5,11 @@ import { ArrayElement } from '@/components/ArrayElement';
 import { FieldsetElement } from '@/components/FieldsetElement';
 import { ListElement } from '@/components/ListElement';
 import { TextareaElement } from '@/components/TextareaElement';
-import { BooleanElement } from '@/components/BooleanElement';
 
 export const NativeElements = new Components();
 
 NativeElements.set('array', ArrayElement);
-NativeElements.set('boolean', BooleanElement);
+NativeElements.set('boolean', StateElement);
 NativeElements.set('string', InputElement);
 NativeElements.set('radio', StateElement);
 NativeElements.set('checkbox', StateElement);

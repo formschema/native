@@ -380,14 +380,15 @@ import { ArrayElement } from '@/components/ArrayElement';
 import { FieldsetElement } from '@/components/FieldsetElement';
 import { ListElement } from '@/components/ListElement';
 import { TextareaElement } from '@/components/TextareaElement';
-import { BooleanElement } from '@/components/BooleanElement';
+import { StateElement } from '@/components/StateElement';
 
 export const MyCustomElements = new Components();
 
 MyCustomElements.set('array', ArrayElement);
-MyCustomElements.set('boolean', BooleanElement);
 MyCustomElements.set('string', InputElement);
-MyCustomElements.set('radio', InputElement);
+MyCustomElements.set('boolean', StateElement);
+MyCustomElements.set('radio', StateElement);
+MyCustomElements.set('checkbox', StateElement);
 MyCustomElements.set('enum', FieldsetElement);
 MyCustomElements.set('number', InputElement);
 MyCustomElements.set('integer', InputElement);
@@ -395,6 +396,8 @@ MyCustomElements.set('object', FieldsetElement);
 MyCustomElements.set('list', ListElement);
 MyCustomElements.set('textarea', TextareaElement);
 ```
+
+See the file [NativeElements.ts](https://gitlab.com/formschema/native/blob/master/src/lib/NativeElements.ts) for an example.
 
 ```html
 <template>
