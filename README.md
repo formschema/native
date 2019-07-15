@@ -98,6 +98,10 @@ Since FormSchema is just a form generator, some JSON Schema validation keywords
 are irrelevant:
 
 - [contains](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4.6)
+- [maxProperties](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.5.1)
+- [minProperties](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.5.2)
+- [patternProperties](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.5.5)
+- [additionalProperties](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.5.6)
 - [writeOnly](https://json-schema.org/latest/json-schema-validation.html#rfc.section.10.3)
 - [examples](https://json-schema.org/latest/json-schema-validation.html#rfc.section.10.4)
 
