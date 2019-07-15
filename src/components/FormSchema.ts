@@ -3,9 +3,9 @@ import { FormSchemaComponent } from '@/types';
 import { UniqueId as UniqueIdLib } from '@/lib/UniqueId';
 import { Objects as ObjectsLib } from '@/lib/Objects';
 import { Components as ComponentsLib } from '@/lib/Components';
+import { Parser as ParserLib } from '@/parsers/Parser';
 import { NativeElements } from '@/lib/NativeElements';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
-import { Parser } from '@/parsers/Parser';
 
 import '@/parsers';
 import { Schema } from '@/lib/Schema';
@@ -18,6 +18,7 @@ export const GLOBAL = {
 export const Objects = ObjectsLib;
 export const UniqueId = UniqueIdLib;
 export const Components = ComponentsLib;
+export const Parser = ParserLib;
 
 const FormSchema: FormSchemaComponent = {
   name: 'FormSchema',
@@ -106,7 +107,7 @@ const FormSchema: FormSchemaComponent = {
   }),
   computed: {
     fieldId() {
-      return `${this.id}-field`
+      return `${this.id}-field`;
     },
     descriptorConstructor() {
       return typeof this.descriptor === 'function'
@@ -170,7 +171,7 @@ const FormSchema: FormSchemaComponent = {
 
     const element = createElement(this.field.component, { attrs, props });
     const root = Schema.isScalar(this.schema)
-      ? createElement(this.components.get('field'), { props }, [element])
+      ? createElement(this.components.get('field'), { props }, [ element ])
       : element;
 
     const nodes = [ root ];

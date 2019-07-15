@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import FormSchema, { GLOBAL, UniqueId, Objects, Components } from '@/components/FormSchema';
+import FormSchema, { GLOBAL, UniqueId, Objects, Components, Parser } from '@/components/FormSchema';
 
 import { mount } from '@vue/test-utils';
 import { JsonSchema } from '@/types/jsonschema';
@@ -7,6 +7,7 @@ import { JsonSchema } from '@/types/jsonschema';
 import { UniqueId as UniqueIdLib } from '@/lib/UniqueId';
 import { Objects as ObjectsLib } from '@/lib/Objects';
 import { Components as ComponentsLib } from '@/lib/Components';
+import { Parser as ParserLib } from '@/parsers/Parser';
 
 import { NativeElements } from '@/lib/NativeElements';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
@@ -54,6 +55,10 @@ describe('components/FormSchema', () => {
 
     it('should successfully export the Components library', () => {
       expect(Components).toBe(ComponentsLib);
+    });
+
+    it('should successfully export the Parser library', () => {
+      expect(Parser).toBe(ParserLib);
     });
   });
 
