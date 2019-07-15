@@ -8,6 +8,7 @@ import { NativeDescriptor } from '@/lib/NativeDescriptor';
 import { Parser } from '@/parsers/Parser';
 
 import '@/parsers';
+import { Schema } from '@/lib/Schema';
 
 export const GLOBAL = {
   Elements: NativeElements,
@@ -104,6 +105,9 @@ const FormSchema: FormSchemaComponent = {
     ready: false
   }),
   computed: {
+    fieldId() {
+      return `${this.id}-field`
+    },
     descriptorConstructor() {
       return typeof this.descriptor === 'function'
         ? this.descriptor
@@ -119,6 +123,7 @@ const FormSchema: FormSchemaComponent = {
         schema: this.schema,
         model: this.initialModel,
         name: this.name,
+        id: this.fieldId,
         required: true,
         descriptor: this.schemaDescriptor,
         descriptorConstructor: this.descriptorConstructor,
@@ -128,12 +133,24 @@ const FormSchema: FormSchemaComponent = {
     },
     field() {
       return this.parser instanceof Parser ? this.parser.field : null;
+    },
+    listeners() {
+      const on = { ...this.$listeners };
+
+      // remove the injected vue's input event
+      // to prevent vue errors on the submit event
+      delete on.input;
+
+      return on;
     }
   },
   watch: {
-    schema() {
-      this.ready = false;
-      this.initialModel = this.clone(this.value);
+    schema: {
+      handler() {
+        this.ready = false;
+        this.initialModel = this.clone(this.value);
+      },
+      immediate: true
     }
   },
   render(createElement) {
@@ -141,13 +158,20 @@ const FormSchema: FormSchemaComponent = {
       return null as any; // nothing to render
     }
 
-    const root = createElement(this.field.component, {
-      attrs: this.field.attrs.input,
-      props: {
-        field: this.field,
-        disabled: this.disabled
-      }
-    });
+    const attrs = {
+      ...this.field.attrs.input,
+      disabled: this.disabled
+    };
+
+    const props = {
+      field: this.field,
+      disabled: this.disabled
+    };
+
+    const element = createElement(this.field.component, { attrs, props });
+    const root = Schema.isScalar(this.schema)
+      ? createElement(this.components.get('field'), { props }, [element])
+      : element;
 
     const nodes = [ root ];
 
@@ -164,7 +188,7 @@ const FormSchema: FormSchemaComponent = {
         id: this.id,
         name: this.name,
         role: this.search ? 'search' : undefined,
-        'aria-label': this.field.descriptor.label
+        'data-fs-disabled': this.disabled
       },
       props: {
         field: this.field,
@@ -172,9 +196,7 @@ const FormSchema: FormSchemaComponent = {
         disabled: this.disabled,
         components: this.components
       },
-      on: {
-        submit: this.emitSubmitEvent
-      }
+      on: this.listeners
     }, nodes);
   },
   methods: {
@@ -209,16 +231,6 @@ const FormSchema: FormSchemaComponent = {
       this.$nextTick(() => {
         this.ready = true;
       });
-    },
-
-    /**
-     * @private
-     */
-    emitSubmitEvent(event: Event) {
-      /**
-       * Fired when a form is submitted
-       */
-      this.$emit('submit', event);
     }
   }
 };

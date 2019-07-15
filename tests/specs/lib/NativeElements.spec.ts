@@ -11,7 +11,8 @@ const items = [
   { kind: 'integer', name: 'InputElement' },
   { kind: 'object', name: 'FieldsetElement' },
   { kind: 'list', name: 'ListElement' },
-  { kind: 'textarea', name: 'TextareaElement' }
+  { kind: 'textarea', name: 'TextareaElement' },
+  { kind: 'field', name: 'FieldElement' }
 ];
 
 describe('lib/NativeElements', () => {

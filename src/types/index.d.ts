@@ -15,7 +15,7 @@ import { JsonSchema } from '@/types/jsonschema';
 
 export type Scalar = boolean | number | null | string;
 export interface Dictionary<T = unknown> { [key: string]: T }
-export type ComponentsType = 'form' | FieldKind;
+export type ComponentsType = 'form' | FieldKind | 'field';
 
 export interface Attributes {
   id: string;
@@ -242,10 +242,12 @@ export interface FormSchemaVue extends Vue {
   ready: boolean;
 
   // computed
+  fieldId: string;
   descriptorConstructor: DescriptorConstructor;
   schemaDescriptor: DescriptorInstance;
   parser: any;
   field: UnknowField | null;
+  listeners: Record<string, Function | Function[]>;
 
   // methods
   clone(value: unknown): unknown;
