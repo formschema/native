@@ -98,8 +98,6 @@ export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescript
 
     this.field.children = this.children;
 
-    super.parse();
-
     delete this.attrs.required;
     delete this.attrs['aria-required'];
 

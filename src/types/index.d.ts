@@ -18,15 +18,15 @@ export interface Dictionary<T = unknown> { [key: string]: T }
 export type ComponentsType = 'form' | FieldKind | 'field';
 
 export interface Attributes {
-  id: string;
-  name?: string;
-  type?: string;
-  readonly?: boolean;
-  required?: boolean;
-  disabled?: boolean;
-  'aria-required'?: 'true';
-  'aria-labelledby'?: string;
-  'aria-describedby'?: string;
+  readonly id: string;
+  readonly name?: string;
+  readonly type?: string;
+  readonly readonly?: boolean;
+  readonly required?: boolean;
+  readonly disabled?: boolean;
+  readonly 'aria-required'?: 'true';
+  readonly 'aria-labelledby'?: string;
+  readonly 'aria-describedby'?: string;
 }
 
 export interface InputAttributes extends Attributes {
@@ -75,13 +75,12 @@ export interface Field<
   kind: TKind;
   name?: string;
   isRoot: boolean;
+  schema: JsonSchema;
   required: boolean;
   input: {
     attrs: TAttributes;
     props: Dictionary;
     readonly value: TModel;
-    readonly rawValue: TModel;
-    defaultValue?: TModel;
     readonly setValue: (value: TModel) => void;
     component: Component;
   };

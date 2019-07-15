@@ -180,9 +180,6 @@ const FormSchema: FormSchemaComponent = {
       nodes.push(...this.$slots.default);
     }
 
-    // FIXME Updating props `search` and `disabled` fires compute of `parser -> field`.
-    // This is not the expected behaviour.
-
     return createElement(this.components.get('form'), {
       ref: this.ref,
       attrs: {

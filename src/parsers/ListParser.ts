@@ -30,7 +30,6 @@ export class ListParser extends Parser<unknown, ListField, ScalarDescriptor> {
   parse() {
     this.field.items = this.items;
 
-    super.parse();
     this.commit();
   }
 }

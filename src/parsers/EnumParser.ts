@@ -89,8 +89,6 @@ export class EnumParser extends Parser<unknown, EnumField, ScalarDescriptor> {
   }
 
   parse() {
-    super.parse();
-
     this.field.children = this.children;
 
     this.updateInputsState();

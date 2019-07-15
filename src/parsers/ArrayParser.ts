@@ -141,8 +141,6 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
   }
 
   parse() {
-    super.parse();
-
     if (this.schema.items) {
       if (this.schema.items instanceof Array) {
         this.items.push(...this.schema.items);

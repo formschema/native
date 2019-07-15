@@ -19,7 +19,7 @@ const PARSERS: Dictionary<any> = {};
 
 export abstract class Parser<
   TModel,
-  TField extends Field<any, Attributes, TDescriptor, TModel>,
+  TField extends Field<any, TAttributes, TDescriptor, TModel>,
   TDescriptor extends AbstractUISchemaDescriptor,
   TAttributes extends Attributes = Attributes
 > implements IParser<TModel, TField, TDescriptor> {
@@ -80,31 +80,49 @@ export abstract class Parser<
 
     this.parseDescriptor();
 
+    const self = this;
+
+    // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
     this.attrs = {
       id: this.id,
       type: this.type,
       name: options.name,
       readonly: this.schema.readOnly,
       required: options.required,
+      /**
+       * Add support with web browsers that don’t communicate the required
+       * attribute to assistive technology
+       * @see https://www.w3.org/WAI/tutorials/forms/validation/#validating-required-input
+       */
+      get 'aria-required'() {
+        return this.required ? 'true' : undefined;
+      },
+      /**
+       * Use the WAI-ARIA aria-labelledby and aria-describedby attributes to
+       * associate instructions with form controls
+       * @see https://www.w3.org/WAI/tutorials/forms/instructions/#providing-instructions-outside-labels
+       */
+      get 'aria-labelledby'() {
+        return self.field.label.attrs.id;
+      },
+      get 'aria-describedby'() {
+        return self.field.helper.attrs.id;
+      },
       ...this.descriptor.attrs
-    } as unknown as TAttributes;
+    } as TAttributes;
 
-    const self = this;
-
+    // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
     this.field = {
       kind: this.kind,
       name: options.name,
       isRoot: this.isRoot,
+      schema: options.schema,
       required: options.required || false,
       input: {
         attrs: this.attrs,
         get value() {
           return self.model;
         },
-        get rawValue() {
-          return self.rawValue;
-        },
-        defaultValue: options.schema.default,
         setValue: (value: TModel) => {
           this.setValue(value);
           this.commit();
@@ -113,16 +131,27 @@ export abstract class Parser<
         component: this.descriptor.component || this.defaultComponent || defaultDescriptor.component
       },
       label: {
-        attrs: {},
+        attrs: {
+          get id() {
+            return self.field.label.value ? `${self.attrs.id}-label` : undefined;
+          },
+          get for() {
+            return self.attrs.id;
+          }
+        },
         value: this.descriptor.label
       },
       helper: {
-        attrs: {},
+        attrs: {
+          get id() {
+            return self.field.helper.value ? `${self.attrs.id}-helper` : undefined;
+          }
+        },
         value: this.descriptor.helper
       },
       descriptor: this.descriptor,
       parent: parent ? parent.field : undefined
-    } as unknown as TField;
+    } as TField;
   }
 
   get kind(): FieldKind {
@@ -182,31 +211,5 @@ export abstract class Parser<
     }
   }
 
-  parse() {
-    const id = this.field.input.attrs.id;
-    const labelId = this.field.label.value ? `${id}-label` : undefined;
-    const descId = this.field.helper.value ? `${id}-desc` : undefined;
-
-    /**
-     * Use the WAI-ARIA aria-labelledby and aria-describedby attributes to
-     * associate instructions with form controls
-     * @see https://www.w3.org/WAI/tutorials/forms/instructions/#providing-instructions-outside-labels
-     */
-    this.field.input.attrs['aria-labelledby'] = labelId;
-    this.field.input.attrs['aria-describedby'] = descId;
-
-    this.field.label.attrs.id = labelId;
-    this.field.label.attrs.for = id;
-
-    this.field.helper.attrs.id = descId;
-
-    if (this.field.required) {
-      /**
-       * Add support with web browsers that don’t communicate the required
-       * attribute to assistive technology
-       * @see https://www.w3.org/WAI/tutorials/forms/validation/#validating-required-input
-       */
-      this.field.input.attrs['aria-required'] = 'true';
-    }
-  }
+  abstract parse(): void;
 }

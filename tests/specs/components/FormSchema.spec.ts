@@ -140,16 +140,15 @@ describe('components/FormSchema', () => {
       expect(wrapper.html()).toBeUndefined();
     });
 
-    it('after the nextTick', (done) => {
+    it('after the nextTick', () => {
       const wrapper = getWrapper({ schema });
-      const expected = '<form id="id-form"><div data-fs-kind="string" data-fs-required="true"><label id="id-form-field-label" for="id-form-field">String</label><div data-fs-input="text"><input id="id-form-field" type="text" required="required" aria-labelledby="id-form-field-label" aria-describedby="id-form-field-desc" aria-required="true"><p id="id-form-field-desc">A String</p></div></div></form>';
+      const expected = '<form id="id-form"><div data-fs-kind="string" data-fs-required="true"><label id="id-form-field-label" for="id-form-field">String</label><div data-fs-input="text"><input id="id-form-field" type="text" required="required" aria-required="true" aria-labelledby="id-form-field-label" aria-describedby="id-form-field-helper"><p id="id-form-field-helper">A String</p></div></div></form>';
 
-      Vue.nextTick(() => {
+      return Vue.nextTick().then(() => {
         const vm: any = wrapper.vm;
 
         expect(vm.ready).toBeTruthy();
         expect(wrapper.html()).toBe(expected);
-        done();
       });
     });
 
@@ -174,25 +173,19 @@ describe('components/FormSchema', () => {
       expect(wrapper.html()).toBeUndefined();
     });
 
-    it('with a default slot', (done) => {
+    it('with a default slot', () => {
       const children = 'checking...'
       const wrapper = getWrapper({ schema, children });
-      const expected = '<form id="id-form"><div data-fs-kind="string" data-fs-required="true"><label id="id-form-field-label" for="id-form-field">String</label><div data-fs-input="text"><input id="id-form-field" type="text" required="required" aria-labelledby="id-form-field-label" aria-describedby="id-form-field-desc" aria-required="true"><p id="id-form-field-desc">A String</p></div></div>checking...</form>';
+      const expected = '<form id="id-form"><div data-fs-kind="string" data-fs-required="true"><label id="id-form-field-label" for="id-form-field">String</label><div data-fs-input="text"><input id="id-form-field" type="text" required="required" aria-required="true" aria-labelledby="id-form-field-label" aria-describedby="id-form-field-helper"><p id="id-form-field-helper">A String</p></div></div>checking...</form>';
 
-      Vue.nextTick(() => {
-        expect(wrapper.html()).toBe(expected);
-        done();
-      });
+      return Vue.nextTick().then(() => expect(wrapper.html()).toBe(expected));
     });
 
-    it('with only a scalar schema', (done) => {
+    it('with only a scalar schema', () => {
       const wrapper = getWrapper({ schema });
-      const expected = '<form id="id-form"><div data-fs-kind="string" data-fs-required="true"><label id="id-form-field-label" for="id-form-field">String</label><div data-fs-input="text"><input id="id-form-field" type="text" required="required" aria-labelledby="id-form-field-label" aria-describedby="id-form-field-desc" aria-required="true"><p id="id-form-field-desc">A String</p></div></div></form>';
+      const expected = '<form id="id-form"><div data-fs-kind="string" data-fs-required="true"><label id="id-form-field-label" for="id-form-field">String</label><div data-fs-input="text"><input id="id-form-field" type="text" required="required" aria-required="true" aria-labelledby="id-form-field-label" aria-describedby="id-form-field-helper"><p id="id-form-field-helper">A String</p></div></div></form>';
 
-      Vue.nextTick(() => {
-        expect(wrapper.html()).toBe(expected);
-        done();
-      });
+      return Vue.nextTick().then(() => expect(wrapper.html()).toBe(expected));
     });
 
     it('with only a non scalar schema', (done) => {

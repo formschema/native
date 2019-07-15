@@ -28,7 +28,7 @@ describe('components/HelperElement', () => {
     };
 
     const wrapper = mount(HelperElement, { context });
-    const expected = '<p id="name-desc">Your full name</p>';
+    const expected = '<p id="name-helper">Your full name</p>';
 
     expect(wrapper.html()).toBe(expected);
   });
@@ -58,7 +58,7 @@ describe('components/HelperElement', () => {
     };
 
     const wrapper = mount(HelperElement, { context });
-    const expected = '<span id="name-desc">Your full name</span>';
+    const expected = '<span id="name-helper">Your full name</span>';
 
     expect(wrapper.html()).toBe(expected);
   });

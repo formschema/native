@@ -9,7 +9,6 @@ export class NullParser extends Parser<null, NullField, ScalarDescriptor, NullAt
   parse() {
     this.attrs.value = '\u0000';
 
-    super.parse();
     this.commit();
   }
 

@@ -25,8 +25,6 @@ export class NumberParser extends Parser<number, NumberField, ScalarDescriptor, 
   }
 
   parse() {
-    super.parse();
-
     this.attrs.min = this.schema.minimum;
     this.attrs.max = this.schema.maximum;
     this.attrs.step = this.schema.multipleOf;

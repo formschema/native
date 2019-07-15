@@ -6,7 +6,9 @@ import { NativeDescriptor } from '@/lib/NativeDescriptor';
 import { JsonSchema } from '@/types/jsonschema';
 import { TestParser } from '../../lib/TestParser';
 
-class FakeParser extends Parser<any, StringField, ScalarDescriptor> {}
+class FakeParser extends Parser<any, StringField, ScalarDescriptor> {
+  parse() {}
+}
 
 class ObjectFakeParser extends Parser<string, StringField, ScalarDescriptor> {
   get type(): string {
@@ -16,6 +18,8 @@ class ObjectFakeParser extends Parser<string, StringField, ScalarDescriptor> {
   parseValue(data: any): any {
     return data || {};
   }
+
+  parse() {}
 }
 
 class InputFakeParser extends Parser<string, StringField, ScalarDescriptor> {
@@ -26,6 +30,8 @@ class InputFakeParser extends Parser<string, StringField, ScalarDescriptor> {
   parseValue(data: any): string {
     return data;
   }
+
+  parse() {}
 }
 
 function descriptorConstructorFaker({ type }: JsonSchema) {
@@ -38,18 +44,18 @@ const ParserValidator = {
   parent: undefined,
   root: (root: FakeParser, parser: FakeParser) => root === parser,
   options: (value: ParserOptions<any, ScalarDescriptor>) => typeof value === 'object' && value !== null,
-  schema: (schema: JsonSchema, { options }: FakeParser) => schema === options.schema,
+  schema: (value: JsonSchema, { options }: FakeParser) => value === options.schema,
   model: (value: any, { initialValue }: FakeParser) => value === initialValue,
   rawValue: (value: any, { initialValue }: FakeParser) => value === initialValue,
-  descriptor: (value: any) => typeof value !== 'undefined',
+  descriptor: (value: any) => value && typeof value !== 'undefined',
   kind: (value: string, { schema }: FakeParser) => value === schema.type,
-  type: undefined,
   id: (value: string) => typeof value === 'string',
   initialValue: (value: any, { options, schema }: FakeParser) => [schema.default, options.model].includes(value),
   field: {
     kind: (value: string, parser: FakeParser) => value === parser.kind,
     name: (value: string, parser: FakeParser) => value === parser.options.name,
     isRoot: (value: boolean, parser: FakeParser) => value === parser.isRoot,
+    schema: (value: JsonSchema, { options }: FakeParser) => value === options.schema,
     required: (value: boolean, parser: FakeParser) => value === (parser.options.required || false),
     descriptor: (value: Dictionary, parser: FakeParser) => Objects.equals(value, parser.descriptor),
     parent: (value: any, parser: FakeParser) => parser.parent ? value === parser.parent.field : value === undefined,
@@ -61,25 +67,23 @@ const ParserValidator = {
         readonly: (value: boolean, { schema }: FakeParser) => value === schema.readOnly,
         required: (value: boolean, { options }: FakeParser) => value === options.required,
         'aria-required': (value: string | undefined, { field }: FakeParser) => value === (field.required ? 'true' : undefined),
-        'aria-labelledby': (value: string | undefined, { field }: FakeParser) => typeof value === (field.label.value ? 'string' : 'undefined'),
-        'aria-describedby': (value: string | undefined, { field }: FakeParser) => typeof value === (field.helper.value ? 'string' : 'undefined')
+        'aria-labelledby': (value: string | undefined, { field }: FakeParser) => value === field.label.attrs.id,
+        'aria-describedby': (value: string | undefined, { field }: FakeParser) => value === field.helper.attrs.id
       },
       props: (value: Dictionary, parser: FakeParser) => Objects.equals(value, parser.descriptor.props),
       value: (value: any, parser: FakeParser) => value === parser.model,
-      rawValue: (value: any, parser: FakeParser) => value === parser.rawValue,
-      defaultValue: (value: any, { schema }: FakeParser) => value === schema.default,
       component: (value: Dictionary) => typeof value !== 'undefined'
     },
     label: {
       attrs: {
-        id: (value: string | undefined, { field }: FakeParser) => value === field.input.attrs['aria-labelledby'],
-        for: (value: string, parser: FakeParser) => value === parser.id
+        id: (value: string | undefined) => value === undefined || value.endsWith('-label'),
+        for: (value: string, parser: FakeParser) => value === parser.attrs.id
       },
       value: (value: string, parser: FakeParser) => value === parser.descriptor.label
     },
     helper: {
       attrs: {
-        id: (value: string | undefined, { field }: FakeParser) => value === field.input.attrs['aria-describedby']
+        id: (value: string | undefined) => value === undefined || value.endsWith('-helper')
       },
       value: (value: string, parser: FakeParser) => value === parser.descriptor.helper
     }

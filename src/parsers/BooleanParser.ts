@@ -7,8 +7,6 @@ export class BooleanParser extends Parser<boolean, BooleanField, ScalarDescripto
   }
 
   parse(): void {
-    super.parse();
-
     this.attrs.checked = this.model === true;
 
     this.commit();
