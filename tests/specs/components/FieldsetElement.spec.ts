@@ -15,16 +15,16 @@ const options: any = {
   model: 'freezer',
   id: 'id-character',
   name: 'character',
-  onChange: jest.fn((...args) => args),
+  onChange: jest.fn(),
   descriptor: {
     items: {
       goku: {
         label: 'Goku',
-        description: 'Main Hero'
+        helper: 'Main Hero'
       },
       freezer: {
         label: 'Freezer',
-        description: 'Main Monster'
+        helper: 'Main Monster'
       }
     }
   },

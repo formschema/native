@@ -10,7 +10,7 @@ function ShouldLabelDescription(schema: JsonSchema) {
   });
 
   it(`should have description === ${JSON.stringify(schema.description)}`, () => {
-    expect(descriptor.description).toEqual(schema.description);
+    expect(descriptor.helper).toEqual(schema.description);
   });
 }
 
@@ -72,7 +72,7 @@ describe('lib/NativeDescriptor', () => {
 
       it('should have common properties', () => {
         expect(Object.keys(descriptor)).toEqual([
-          'kind', 'label', 'description', 'component',
+          'kind', 'label', 'helper', 'component',
           'attrs', 'props', 'items'
         ]);
       });
@@ -91,7 +91,7 @@ describe('lib/NativeDescriptor', () => {
 
       it('should have common properties', () => {
         expect(Object.keys(descriptor)).toEqual([
-          'kind', 'label', 'description', 'component',
+          'kind', 'label', 'helper', 'component',
           'attrs', 'props', 'items', 'addButtonLabel'
         ]);
       });
@@ -110,7 +110,7 @@ describe('lib/NativeDescriptor', () => {
 
       it('should have common properties', () => {
         expect(Object.keys(descriptor)).toEqual([
-          'kind', 'label', 'description', 'component',
+          'kind', 'label', 'helper', 'component',
           'attrs', 'props', 'order'
         ]);
       });

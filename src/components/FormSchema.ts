@@ -160,7 +160,7 @@ const FormSchema: FormSchemaComponent = {
     }
 
     const attrs = {
-      ...this.field.attrs.input,
+      ...this.field.input.attrs,
       disabled: this.disabled
     };
 
@@ -169,7 +169,7 @@ const FormSchema: FormSchemaComponent = {
       disabled: this.disabled
     };
 
-    const element = createElement(this.field.component, { attrs, props });
+    const element = createElement(this.field.input.component, { attrs, props });
     const root = Schema.isScalar(this.schema)
       ? createElement(this.components.get('field'), { props }, [ element ])
       : element;
@@ -191,12 +191,7 @@ const FormSchema: FormSchemaComponent = {
         role: this.search ? 'search' : undefined,
         'data-fs-disabled': this.disabled
       },
-      props: {
-        field: this.field,
-        search: this.search,
-        disabled: this.disabled,
-        components: this.components
-      },
+      props: props,
       on: this.listeners
     }, nodes);
   },

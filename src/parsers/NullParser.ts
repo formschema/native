@@ -1,13 +1,13 @@
 import { Parser } from '@/parsers/Parser';
-import { NullField, ScalarDescriptor, INullParser } from '@/types';
+import { ScalarDescriptor, NullAttributes } from '@/types';
 
-export class NullParser extends Parser<null, ScalarDescriptor, NullField> implements INullParser {
+export class NullParser extends Parser<'null', null, NullAttributes, ScalarDescriptor> {
   get type() {
     return 'hidden';
   }
 
   parse() {
-    this.field.attrs.input.value = '\u0000';
+    this.attrs.value = '\u0000';
 
     super.parse();
     this.commit();

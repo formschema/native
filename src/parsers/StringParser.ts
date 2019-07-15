@@ -1,5 +1,5 @@
 import { Parser } from '@/parsers/Parser';
-import { StringField, ScalarDescriptor, FieldKind, Dictionary, IStringParser } from '@/types';
+import { FieldKind, Dictionary, ScalarDescriptor, StringAttributes } from '@/types';
 import { Pattern } from '@/lib/Pattern';
 
 const TypeFormat: Dictionary<string> = {
@@ -11,7 +11,7 @@ const TypeFormat: Dictionary<string> = {
   uri: 'url'
 };
 
-export class StringParser extends Parser<string, ScalarDescriptor, StringField> implements IStringParser {
+export class StringParser extends Parser<'string', string, StringAttributes, ScalarDescriptor> {
   get kind(): FieldKind {
     return this.isEnumItem ? 'radio' : 'string';
   }
@@ -29,14 +29,14 @@ export class StringParser extends Parser<string, ScalarDescriptor, StringField> 
   parse() {
     super.parse();
 
-    this.field.attrs.input.value = this.field.value;
-    this.field.attrs.input.minlength = this.schema.minLength;
-    this.field.attrs.input.maxlength = this.schema.maxLength;
+    this.attrs.value = this.field.input.value;
+    this.attrs.minlength = this.schema.minLength;
+    this.attrs.maxlength = this.schema.maxLength;
 
     if (this.schema.pattern) {
-      this.field.attrs.input.pattern = this.schema.pattern;
+      this.attrs.pattern = this.schema.pattern;
     } else if (this.schema.hasOwnProperty('const')) {
-      this.field.attrs.input.pattern = Pattern.escape(`${this.schema.const}`);
+      this.attrs.pattern = Pattern.escape(`${this.schema.const}`);
     }
 
     this.commit();

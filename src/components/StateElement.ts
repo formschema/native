@@ -5,14 +5,15 @@ export const StateElement: StateComponent = {
   name: 'StateElement',
   functional: true,
   render(h, { data, props }) {
+    const attrs = props.field.input.attrs;
     const on = {
       change({ target }: InputEvent) {
-        props.field.setValue(target.checked);
+        props.field.input.setValue(target.checked);
       }
     };
 
     return h(FieldElement, data, [
-      h('input', { ...data, on })
+      h('input', { attrs, on })
     ]);
   }
 };

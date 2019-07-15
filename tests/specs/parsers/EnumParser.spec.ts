@@ -28,30 +28,30 @@ describe('parsers/EnumParser', () => {
   });
 
   it('field.children should be defined', () => {
-    const models = parser.field.children.map(({ value: model }) => model);
+    const models = parser.field.children.map(({ input }) => input.value);
 
     expect(models).toEqual(['jon', 'arya', 'bran', 'ned']);
   });
 
   it('field.value should be equal to the default value', () => {
-    expect(parser.field.value).toBe('jon');
+    expect(parser.field.input.value).toBe('jon');
   });
 
-  it('field.attrs.input.checked should be defined', () => {
-    const checkStates = parser.field.children.map(({ attrs }) => attrs.input.checked);
+  it('field.input.attrs.checked should be defined', () => {
+    const checkStates = parser.field.children.map(({ input }) => input.attrs.checked);
 
     expect(checkStates).toEqual([true, false, false, false]);
   });
 
-  it('field.value should be equal to the updated value using field.setValue()', () => {
-    parser.field.setValue('arya');
-    expect(parser.field.value).toBe('arya');
+  it('field.value should be equal to the updated value using field.input.setValue()', () => {
+    parser.field.input.setValue('arya');
+    expect(parser.field.input.value).toBe('arya');
   });
 
-  it('field.attrs.input.checked should be updated when using field.setValue()', () => {
-    parser.field.setValue('bran');
+  it('field.input.attrs.checked should be updated when using field.input.setValue()', () => {
+    parser.field.input.setValue('bran');
 
-    const checkStates = parser.field.children.map(({ attrs }) => attrs.input.checked);
+    const checkStates = parser.field.children.map(({ input }) => input.attrs.checked);
 
     expect(checkStates).toEqual([false, false, true, false]);
   });
@@ -59,8 +59,8 @@ describe('parsers/EnumParser', () => {
   it('field.value should be updated when a child is checked', () => {
     const childField: any = parser.field.children.slice(-1).pop();
 
-    childField.setValue(childField.value);
-    expect(parser.field.value).toBe('ned');
+    childField.input.setValue(childField.input.value);
+    expect(parser.field.input.value).toBe('ned');
   });
 
   it('should successfully parse default value', () => {
@@ -78,7 +78,7 @@ describe('parsers/EnumParser', () => {
 
     parser.parse();
 
-    expect(parser.field.value).toBe('arya');
+    expect(parser.field.input.value).toBe('arya');
   });
 
   it('field.value should parse default undefined as an undefined model', () => {
@@ -92,7 +92,7 @@ describe('parsers/EnumParser', () => {
 
     parser.parse();
 
-    expect(parser.field.value).toBeUndefined();
+    expect(parser.field.input.value).toBeUndefined();
   });
 
   it('field.children should be equal to an empty array with missing schema.enum', () => {
@@ -152,7 +152,7 @@ describe('parsers/EnumParser', () => {
 
     const parser: any = new EnumParser(options);
 
-    expect(parser.field.component.name).toBe('ListElement');
+    expect(parser.field.input.component.name).toBe('ListElement');
   });
 
   it('with missing options.descriptor.component and options.descriptor.kind', () => {

@@ -12,13 +12,13 @@ export const FieldElement: FieldComponent = {
     };
 
     const labelElement = h('label', {
-      attrs: props.field.attrs.label
-    }, props.field.descriptor.label);
+      attrs: props.field.label.attrs
+    }, props.field.label.value);
 
     const fieldNodes = [ ...children, h(HelperElement, data) ];
     const fieldElement = h('div', {
       attrs: {
-        'data-fs-input': props.field.attrs.input.type || props.field.kind
+        'data-fs-input': props.field.input.attrs.type || props.field.kind
       }
     }, fieldNodes);
 

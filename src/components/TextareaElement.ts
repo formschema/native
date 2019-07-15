@@ -7,11 +7,11 @@ export const TextareaElement: TextareaComponent = {
   functional: true,
   render(h, { data, props }) {
     // attributes `type` and `value` are not applicable to a textarea input
-    delete props.field.attrs.input.type;
-    delete props.field.attrs.input.value;
+    delete props.field.input.attrs.type;
+    delete props.field.input.attrs.value;
 
     return h(FieldElement, data, [
-      CreateInput<InputField>(h, 'textarea', data, props.field.value)
+      CreateInput<InputField>(h, 'textarea', data, props.field.input.value)
     ]);
   }
 };

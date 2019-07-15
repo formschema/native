@@ -51,31 +51,37 @@ const ParserValidator = {
     name: (value: string, parser: FakeParser) => value === parser.options.name,
     isRoot: (value: boolean, parser: FakeParser) => value === parser.isRoot,
     required: (value: boolean, parser: FakeParser) => value === (parser.options.required || false),
-    defaultValue: (value: any, { schema }: FakeParser) => value === schema.default,
-    value: (value: any, parser: FakeParser) => value === parser.model,
-    rawValue: (value: any, parser: FakeParser) => value === parser.rawValue,
-    props: (value: Dictionary, parser: FakeParser) => Objects.equals(value, parser.descriptor.props),
     descriptor: (value: Dictionary, parser: FakeParser) => Objects.equals(value, parser.descriptor),
-    component: (value: Dictionary) => typeof value !== 'undefined',
     parent: (value: any, parser: FakeParser) => parser.parent ? value === parser.parent.field : value === undefined,
-    attrs: {
-      input: {
+    input: {
+      attrs: {
         id: (value: string, parser: FakeParser) => value === parser.id,
         type: (value: string, parser: FakeParser) => value === parser.type,
         name: (value: string, { options }: FakeParser) => value === options.name,
         readonly: (value: boolean, { schema }: FakeParser) => value === schema.readOnly,
         required: (value: boolean, { options }: FakeParser) => value === options.required,
         'aria-required': (value: string | undefined, { field }: FakeParser) => value === (field.required ? 'true' : undefined),
-        'aria-labelledby': (value: string | undefined, { field }: FakeParser) => typeof value === (field.descriptor.label ? 'string' : 'undefined'),
-        'aria-describedby': (value: string | undefined, { field }: FakeParser) => typeof value === (field.descriptor.description ? 'string' : 'undefined')
+        'aria-labelledby': (value: string | undefined, { field }: FakeParser) => typeof value === (field.label.value ? 'string' : 'undefined'),
+        'aria-describedby': (value: string | undefined, { field }: FakeParser) => typeof value === (field.helper.value ? 'string' : 'undefined')
       },
-      label: {
-        id: (value: string | undefined, { field }: FakeParser) => value === field.attrs.input['aria-labelledby'],
+      props: (value: Dictionary, parser: FakeParser) => Objects.equals(value, parser.descriptor.props),
+      value: (value: any, parser: FakeParser) => value === parser.model,
+      rawValue: (value: any, parser: FakeParser) => value === parser.rawValue,
+      defaultValue: (value: any, { schema }: FakeParser) => value === schema.default,
+      component: (value: Dictionary) => typeof value !== 'undefined'
+    },
+    label: {
+      attrs: {
+        id: (value: string | undefined, { field }: FakeParser) => value === field.input.attrs['aria-labelledby'],
         for: (value: string, parser: FakeParser) => value === parser.id
       },
-      description: {
-        id: (value: string | undefined, { field }: FakeParser) => value === field.attrs.input['aria-describedby']
-      }
+      value: (value: string, parser: FakeParser) => value === parser.descriptor.label
+    },
+    helper: {
+      attrs: {
+        id: (value: string | undefined, { field }: FakeParser) => value === field.input.attrs['aria-describedby']
+      },
+      value: (value: string, parser: FakeParser) => value === parser.descriptor.helper
     }
   }
 };
@@ -180,12 +186,12 @@ describe('parsers/Parser', () => {
 
   TestParser.Case({
     case: '1.3.0',
-    description: 'field.setValue() without options.onChange',
+    description: 'field.input.setValue() without options.onChange',
     parser: () => {
       const parser = new FakeParser(options10);
 
       parser.parse();
-      parser.field.setValue('arya');
+      parser.field.input.setValue('arya');
 
       return parser;
     },
@@ -197,13 +203,13 @@ describe('parsers/Parser', () => {
 
   TestParser.Case({
     case: '1.3.1',
-    description: 'field.setValue() with options.onChange (commit)',
+    description: 'field.input.setValue() with options.onChange (commit)',
     parser: () => {
       const onChange = jest.fn((value: any) => value);
       const parser = new FakeParser({ ...options10, onChange });
 
       parser.parse();
-      parser.field.setValue('jon');
+      parser.field.input.setValue('jon');
 
       return parser;
     },

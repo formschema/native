@@ -21,7 +21,7 @@ describe('components/HelperElement', () => {
     parser.parse();
 
     const context: any = {
-      attrs: parser.field.attrs.input,
+      attrs: parser.field.input.attrs,
       props: {
         field: parser.field
       }
@@ -51,7 +51,7 @@ describe('components/HelperElement', () => {
     parser.field.isRoot = false;
 
     const context: any = {
-      attrs: parser.field.attrs.input,
+      attrs: parser.field.input.attrs,
       props: {
         field: parser.field
       }
@@ -78,7 +78,7 @@ describe('components/HelperElement', () => {
     parser.parse();
 
     const context: any = {
-      attrs: parser.field.attrs.input,
+      attrs: parser.field.input.attrs,
       props: {
         field: parser.field
       }

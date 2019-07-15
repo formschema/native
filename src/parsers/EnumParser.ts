@@ -10,10 +10,10 @@ import {
   AbstractUISchemaDescriptor,
   FieldKind,
   RadioField,
-  IEnumParser
+  Attributes
 } from '@/types';
 
-export class EnumParser extends Parser<unknown, ScalarDescriptor, EnumField> implements IEnumParser {
+export class EnumParser extends Parser<'enum', unknown, Attributes, ScalarDescriptor, EnumField> {
   get kind(): FieldKind {
     return 'enum';
   }
@@ -31,6 +31,7 @@ export class EnumParser extends Parser<unknown, ScalarDescriptor, EnumField> imp
 
     const radioName = this.options.name || UniqueId.get();
     const items = this.descriptor.items || {};
+    const descriptorConstructor = this.options.descriptorConstructor;
 
     return this.schema.enum
       .map((item: any): JsonSchema => ({
@@ -42,7 +43,7 @@ export class EnumParser extends Parser<unknown, ScalarDescriptor, EnumField> imp
       }))
       .map((itemSchema) => {
         const item: any = itemSchema.default;
-        const descriptor = items[item] || this.options.descriptorConstructor(itemSchema);
+        const descriptor = items[item] || descriptorConstructor(itemSchema);
 
         if (!descriptor.kind) {
           descriptor.kind = 'radio';
@@ -51,8 +52,8 @@ export class EnumParser extends Parser<unknown, ScalarDescriptor, EnumField> imp
         const options: ParserOptions<unknown, AbstractUISchemaDescriptor, RadioField> = {
           schema: itemSchema,
           model: itemSchema.default,
-          descriptor: items[item] || this.options.descriptorConstructor(itemSchema),
-          descriptorConstructor: this.options.descriptorConstructor,
+          descriptor: items[item] || descriptorConstructor(itemSchema),
+          descriptorConstructor: descriptorConstructor,
           bracketedObjectInputName: this.options.bracketedObjectInputName,
           id: `${radioName}-${UniqueId.parse(item)}`,
           name: radioName
@@ -83,8 +84,8 @@ export class EnumParser extends Parser<unknown, ScalarDescriptor, EnumField> imp
   }
 
   updateInputsState() {
-    this.field.children.forEach(({ attrs, value }) => {
-      attrs.input.checked = value === this.model;
+    this.field.children.forEach(({ input }) => {
+      input.attrs.checked = input.value === this.model;
     });
   }
 

@@ -22,7 +22,7 @@ export interface Attributes {
   name?: string;
   type?: string;
   readonly?: boolean;
-  required: boolean;
+  required?: boolean;
   disabled?: boolean;
   'aria-required'?: 'true';
   'aria-labelledby'?: string;
@@ -76,24 +76,30 @@ export interface Field<
   name?: string;
   isRoot: boolean;
   required: boolean;
-  defaultValue?: TModel;
-  readonly value: TModel;
-  readonly rawValue: TModel;
-  attrs: {
-    input: TAttributes;
-    label: {
+  input: {
+    attrs: TAttributes;
+    props: Dictionary;
+    readonly value: TModel;
+    readonly rawValue: TModel;
+    defaultValue?: TModel;
+    readonly setValue: (value: TModel) => void;
+    component: Component;
+  };
+  label: {
+    attrs: {
       id?: string;
       for: string;
     };
-    description: {
+    value?: string;
+  };
+  helper: {
+    attrs: {
       id?: string;
     };
+    value?: string;
   };
-  props: Dictionary;
   descriptor: TDescriptor;
-  component: Component;
   parent?: Field<any>;
-  readonly setValue: (value: TModel) => void;
 }
 
 export type BooleanField = Field<'boolean', CheckboxAttributes, ScalarDescriptor, boolean>;
@@ -115,7 +121,8 @@ export interface ArrayField extends Field<'array', Attributes, ArrayDescriptor, 
   uniqueItems: boolean;
   children: ArrayItemField[];
   buttons: {
-    add: {
+    push: {
+      readonly label: string;
       readonly disabled: boolean;
       push: () => void;
     };
@@ -158,12 +165,13 @@ export interface ParserOptions<
   onChange?: (value: TModel, field: TField) => void;
 }
 
-export type UnknowParser = IParser<any, AbstractUISchemaDescriptor, UnknowField>;
+export type UnknowParser = IParser<any>;
 
 export interface IParser<
-  TModel,
-  TDescriptor extends AbstractUISchemaDescriptor,
-  TField extends Field<any, Attributes, DescriptorInstance, any>
+  TKind extends FieldKind,
+  TModel = any,
+  TAttributes extends Attributes = Attributes,
+  TDescriptor = DescriptorInstance,
 > {
   readonly isRoot: boolean;
   readonly isEnumItem: boolean;
@@ -174,26 +182,17 @@ export interface IParser<
   rawValue: TModel;
   readonly kind: string;
   readonly type?: string;
-  readonly field: TField;
+  readonly field: Field<TKind, TAttributes, TDescriptor, TModel>;
   readonly descriptor: TDescriptor;
   readonly schema: JsonSchema;
+  readonly attrs: TAttributes;
   parse: () => void;
 }
-
-export interface IArrayParser extends IParser<any, ArrayDescriptor, ArrayField> {}
-export interface IBooleanParser extends IParser<any, ScalarDescriptor, BooleanField> {}
-export interface IEnumParser extends IParser<unknown, ScalarDescriptor, EnumField> {}
-export interface INumberParser extends IParser<number, ScalarDescriptor, NumberField> {}
-export interface IIntegerParser extends INumberParser {}
-export interface IListParser extends IParser<unknown, ScalarDescriptor, ListField> {}
-export interface INullParser extends IParser<null, ScalarDescriptor, NullField> {}
-export interface IObjectParser extends IParser<Dictionary, ObjectDescriptor, ObjectField> {}
-export interface IStringParser extends IParser<string, ScalarDescriptor, StringField> {}
 
 export interface AbstractUISchemaDescriptor {
   kind?: FieldKind;
   label?: string;
-  description?: string;
+  helper?: string;
   component?: Component;
   attrs?: {
     [attr: string]: unknown;

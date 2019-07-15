@@ -15,7 +15,7 @@ const options: any = {
   model: 'Goku',
   id: 'id-name',
   name: 'name',
-  onChange: jest.fn((...args) => args),
+  onChange: jest.fn(),
   descriptorConstructor: NativeDescriptor.get
 };
 
@@ -24,7 +24,7 @@ const parser = new StringParser(options);
 parser.parse();
 
 const context: any = {
-  attrs: parser.field.attrs.input,
+  attrs: parser.field.input.attrs,
   props: {
     field: parser.field
   }

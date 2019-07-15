@@ -9,11 +9,12 @@ export const CreateInput = <T extends Field<any>>(
   event: string = 'input'
 ) => {
   const props = data.props as ElementProps<T>;
+  const attrs = props.field.input.attrs;
   const on = {
     [event]({ target }: InputEvent) {
-      props.field.setValue(target.value);
+      props.field.input.setValue(target.value);
     }
   };
 
-  return h(tag, { ...data, on }, children);
+  return h(tag, { attrs, on }, children);
 };

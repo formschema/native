@@ -27,7 +27,7 @@ export const NativeDescriptor = {
       const descriptor: ScalarDescriptor = {
         kind: kindUsed,
         label: schema.title,
-        description: schema.description,
+        helper: schema.description,
         component: element,
         attrs: {},
         props: {},
@@ -41,7 +41,7 @@ export const NativeDescriptor = {
       const descriptor: ArrayDescriptor = {
         kind: kindUsed,
         label: schema.title,
-        description: schema.description,
+        helper: schema.description,
         component: element,
         attrs: {},
         props: {},
@@ -55,7 +55,7 @@ export const NativeDescriptor = {
     const descriptor: ObjectDescriptor = {
       kind: kindUsed,
       label: schema.title,
-      description: schema.description,
+      helper: schema.description,
       component: element,
       attrs: {},
       props: {},

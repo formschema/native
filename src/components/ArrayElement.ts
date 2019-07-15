@@ -6,8 +6,7 @@ export const ArrayElement: ArrayComponent = {
   name: 'ArrayElement',
   functional: true,
   render(h, { data, props }) {
-    const nodes = props.field.children.map((field) => h(field.component, {
-      attrs: field.attrs.input,
+    const nodes = props.field.children.map((field) => h(field.input.component, {
       props: { field }
     }));
 

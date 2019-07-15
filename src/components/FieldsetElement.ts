@@ -5,13 +5,12 @@ export const FieldsetElement: FieldsetComponent = {
   name: 'FieldsetElement',
   functional: true,
   render(h, { data, props, slots }) {
-    const attrs = props.field.attrs.input;
+    const attrs = props.field.input.attrs;
 
     attrs.disabled = props.disabled;
 
     const nodes = slots().default || props.field.children.map((field) => {
-      return h(field.component, {
-        attrs: field.attrs.input,
+      return h(field.input.component, {
         props: { field }
       });
     });
@@ -22,9 +21,9 @@ export const FieldsetElement: FieldsetComponent = {
       nodes.unshift(helper);
     }
 
-    if (props.field.descriptor.label) {
-      const attrs = props.field.attrs.label;
-      const legend = h('legend', { attrs }, props.field.descriptor.label);
+    if (props.field.label.value) {
+      const attrs = props.field.label.attrs;
+      const legend = h('legend', { attrs }, props.field.label.value);
 
       nodes.unshift(legend);
     }

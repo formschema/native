@@ -1,8 +1,8 @@
 import { Parser } from '@/parsers/Parser';
 import { NumberParser } from '@/parsers/NumberParser';
-import { FieldKind, IIntegerParser } from '@/types';
+import { FieldKind } from '@/types';
 
-export class IntegerParser extends NumberParser implements IIntegerParser {
+export class IntegerParser extends NumberParser {
   get kind(): FieldKind {
     return this.isEnumItem ? 'radio' : 'integer';
   }
@@ -11,13 +11,13 @@ export class IntegerParser extends NumberParser implements IIntegerParser {
     if (this.schema.hasOwnProperty('exclusiveMinimum')) {
       const exclusiveMinimum = this.schema.exclusiveMinimum as number;
 
-      this.field.attrs.input.min = exclusiveMinimum + 1;
+      this.attrs.min = exclusiveMinimum + 1;
     }
 
     if (this.schema.hasOwnProperty('exclusiveMaximum')) {
       const exclusiveMaximum = this.schema.exclusiveMaximum as number;
 
-      this.field.attrs.input.max = exclusiveMaximum - 1;
+      this.attrs.max = exclusiveMaximum - 1;
     }
   }
 

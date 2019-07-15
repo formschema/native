@@ -1,7 +1,7 @@
 import { Parser } from '@/parsers/Parser';
-import { BooleanField, ScalarDescriptor } from '@/types';
+import { ScalarDescriptor, CheckboxAttributes } from '@/types';
 
-export class BooleanParser extends Parser<boolean, ScalarDescriptor, BooleanField> implements BooleanParser {
+export class BooleanParser extends Parser<'boolean', boolean, CheckboxAttributes, ScalarDescriptor> {
   get type() {
     return 'checkbox';
   }
@@ -9,7 +9,7 @@ export class BooleanParser extends Parser<boolean, ScalarDescriptor, BooleanFiel
   parse(): void {
     super.parse();
 
-    this.field.attrs.input.checked = this.model === true;
+    this.attrs.checked = this.model === true;
 
     this.commit();
   }

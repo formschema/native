@@ -10,10 +10,10 @@ import {
   ObjectFieldChild,
   DescriptorConstructor,
   FieldKind,
-  IObjectParser
+  Attributes
 } from '@/types';
 
-export class ObjectParser extends Parser<Dictionary, ObjectDescriptor, ObjectField> implements IObjectParser {
+export class ObjectParser extends Parser<'object', Dictionary, Attributes, ObjectDescriptor, ObjectField> {
   properties: Dictionary<JsonSchema> = {};
 
   get kind(): FieldKind {
@@ -101,11 +101,11 @@ export class ObjectParser extends Parser<Dictionary, ObjectDescriptor, ObjectFie
 
     super.parse();
 
-    delete this.field.attrs.input.required;
-    delete this.field.attrs.input['aria-required'];
+    delete this.attrs.required;
+    delete this.attrs['aria-required'];
 
     if (this.isRoot) {
-      delete this.field.attrs.input.name;
+      delete this.field.input.attrs.name;
     }
 
     this.commit();

@@ -12,7 +12,7 @@ function getContext(schema: JsonSchema, model: any) {
     model: model,
     id: 'id-characters',
     name: 'characters',
-    onChange: jest.fn((...args) => args),
+    onChange: jest.fn(),
     descriptorConstructor: NativeDescriptor.get
   };
 
@@ -113,11 +113,11 @@ describe('components/ArrayElement', () => {
     const wrapper = mount(ArrayElement, { context });
     const button = wrapper.find('button');
 
-    expect(parser.field.rawValue).toEqual(['Goku', 'Freezer']);
+    expect(parser.field.input.rawValue).toEqual(['Goku', 'Freezer']);
 
     button.trigger('click');
 
-    expect(parser.field.rawValue).toEqual(['Goku', 'Freezer', undefined]);
+    expect(parser.field.input.rawValue).toEqual(['Goku', 'Freezer', undefined]);
   });
 
   describe('should successfully render enum array schema', () => {

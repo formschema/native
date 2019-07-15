@@ -1,15 +1,16 @@
 import { Parser } from '@/parsers/Parser';
-import { ListField, ListItem, ScalarDescriptor, FieldKind, IListParser } from '@/types';
+import { ListField, ListItem, ScalarDescriptor, FieldKind, Attributes } from '@/types';
 
-export class ListParser extends Parser<unknown, ScalarDescriptor, ListField> implements IListParser {
+export class ListParser extends Parser<'enum', unknown, Attributes, ScalarDescriptor, ListField> {
   get kind(): FieldKind {
     return 'list';
   }
 
   get defaultComponent() {
-    return this.descriptor.kind
-      ? this.options.descriptorConstructor<ScalarDescriptor>(this.schema, this.descriptor.kind).component
-      : this.options.descriptorConstructor(this.schema, this.kind).component;
+    const kind = this.descriptor.kind ? this.descriptor.kind : this.kind;
+    const descriptor = this.options.descriptorConstructor<ScalarDescriptor>(this.schema, kind);
+
+    return descriptor.component;
   }
 
   get items(): ListItem[] {

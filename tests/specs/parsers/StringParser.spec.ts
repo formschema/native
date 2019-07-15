@@ -31,8 +31,8 @@ describe('parsers/StringParser', () => {
     expect(parser.type).toBe('text');
   });
 
-  it('field.attrs.input.type should be equal to `text`', () => {
-    expect(parser.field.attrs.input.type).toBe('text');
+  it('field.input.attrs.type should be equal to `text`', () => {
+    expect(parser.field.input.attrs.type).toBe('text');
   });
 
   it('parser.type should be equal to `radio` for enum field', () => {
@@ -61,7 +61,7 @@ describe('parsers/StringParser', () => {
   Object.keys(formatTypes).forEach((format) => {
     const type = formatTypes[format];
 
-    it(`field.attrs.input.type should be equal to '${type}' with schema.format === '${format}'`, () => {
+    it(`field.input.attrs.type should be equal to '${type}' with schema.format === '${format}'`, () => {
       const options: ParserOptions<string, ScalarDescriptor> = {
         schema: { type: 'string', format },
         model: '',
@@ -72,31 +72,31 @@ describe('parsers/StringParser', () => {
 
       parser.parse();
 
-      expect(parser.field.attrs.input.type).toBe(type);
+      expect(parser.field.input.attrs.type).toBe(type);
     });
   });
 
   it('field.value should be equal to the default value', () => {
-    expect(parser.field.value).toBe('Goku');
+    expect(parser.field.input.value).toBe('Goku');
   });
 
-  it('field.attrs.input.value should be equal to field.value', () => {
-    expect(parser.field.attrs.input.value).toBe(parser.field.value);
+  it('field.input.attrs.value should be equal to field.value', () => {
+    expect(parser.field.input.attrs.value).toBe(parser.field.input.value);
   });
 
-  it('field.attrs.input.minlength should be equal to schema.minLength', () => {
-    expect(parser.field.attrs.input.minlength).toBe(options.schema.minLength);
+  it('field.input.attrs.minlength should be equal to schema.minLength', () => {
+    expect(parser.field.input.attrs.minlength).toBe(options.schema.minLength);
   });
 
-  it('field.attrs.input.maxlength should be equal to schema.maxLength', () => {
-    expect(parser.field.attrs.input.maxlength).toBe(options.schema.maxLength);
+  it('field.input.attrs.maxlength should be equal to schema.maxLength', () => {
+    expect(parser.field.input.attrs.maxlength).toBe(options.schema.maxLength);
   });
 
-  it('field.attrs.input.pattern should be equal to schema.pattern', () => {
-    expect(parser.field.attrs.input.pattern).toBe(options.schema.pattern);
+  it('field.input.attrs.pattern should be equal to schema.pattern', () => {
+    expect(parser.field.input.attrs.pattern).toBe(options.schema.pattern);
   });
 
-  it('field.attrs.input.pattern should be equal to schema.pattern with provided schema.const', () => {
+  it('field.input.attrs.pattern should be equal to schema.pattern with provided schema.const', () => {
     const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string', pattern: 'arya|jon', const: 'arya' },
       model: undefined,
@@ -107,10 +107,10 @@ describe('parsers/StringParser', () => {
 
     parser.parse();
 
-    expect(parser.field.attrs.input.pattern).toBe(options.schema.pattern);
+    expect(parser.field.input.attrs.pattern).toBe(options.schema.pattern);
   });
 
-  it('field.attrs.input.pattern should be equal to schema.const', () => {
+  it('field.input.attrs.pattern should be equal to schema.const', () => {
     const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string', const: 'arya' },
       model: undefined,
@@ -121,10 +121,10 @@ describe('parsers/StringParser', () => {
 
     parser.parse();
 
-    expect(parser.field.attrs.input.pattern).toBe(options.schema.const);
+    expect(parser.field.input.attrs.pattern).toBe(options.schema.const);
   });
 
-  it('field.attrs.input.pattern should be equal to escaped schema.const', () => {
+  it('field.input.attrs.pattern should be equal to escaped schema.const', () => {
     const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string', const: 'f(x) = ax + b; a = { 1, 2 }' },
       model: undefined,
@@ -135,7 +135,7 @@ describe('parsers/StringParser', () => {
 
     parser.parse();
 
-    expect(parser.field.attrs.input.pattern).toBe('f\\(x\\) = ax \\+ b; a = \\{ 1, 2 \\}');
+    expect(parser.field.input.attrs.pattern).toBe('f\\(x\\) = ax \\+ b; a = \\{ 1, 2 \\}');
   });
 
   it('should parse default undefined value as an undefined string', () => {
@@ -149,7 +149,7 @@ describe('parsers/StringParser', () => {
 
     parser.parse();
 
-    expect(parser.field.value).toBeUndefined();
+    expect(parser.field.input.value).toBeUndefined();
   });
 
   it('should parse default non string value as a string', () => {
@@ -163,6 +163,6 @@ describe('parsers/StringParser', () => {
 
     parser.parse();
 
-    expect(parser.field.value).toBe('12');
+    expect(parser.field.input.value).toBe('12');
   });
 });

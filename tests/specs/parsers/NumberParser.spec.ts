@@ -63,28 +63,28 @@ describe('parsers/NumberParser', () => {
     expect(parser.type).toBe('radio');
   });
 
-  it('field.attrs.input.type should be equal to parser.type', () => {
-    expect(parser.field.attrs.input.type).toBe(parser.type);
+  it('field.input.attrs.type should be equal to parser.type', () => {
+    expect(parser.field.input.attrs.type).toBe(parser.type);
   });
 
-  it('field.attrs.input.min should be equal to schema.minimum', () => {
-    expect(parser.field.attrs.input.min).toBe(options.schema.minimum);
+  it('field.input.attrs.min should be equal to schema.minimum', () => {
+    expect(parser.field.input.attrs.min).toBe(options.schema.minimum);
   });
 
-  it('field.attrs.input.max should be equal to schema.maximum', () => {
-    expect(parser.field.attrs.input.max).toBe(options.schema.maximum);
+  it('field.input.attrs.max should be equal to schema.maximum', () => {
+    expect(parser.field.input.attrs.max).toBe(options.schema.maximum);
   });
 
-  it('field.attrs.input.step should be equal to schema.multipleOf', () => {
-    expect(parser.field.attrs.input.step).toBe(options.schema.multipleOf);
+  it('field.input.attrs.step should be equal to schema.multipleOf', () => {
+    expect(parser.field.input.attrs.step).toBe(options.schema.multipleOf);
   });
 
   it('field.value should be equal to the default value', () => {
-    expect(parser.field.value).toBe(2.0);
+    expect(parser.field.input.value).toBe(2.0);
   });
 
-  it('this.field.attrs.input.value should be equal to field.value', () => {
-    expect(parser.field.attrs.input.value).toBe('2');
+  it('this.field.input.attrs.value should be equal to field.value', () => {
+    expect(parser.field.input.attrs.value).toBe('2');
   });
 
   it('should successfully parse default number value', () => {
@@ -98,7 +98,7 @@ describe('parsers/NumberParser', () => {
 
     parser.parse();
 
-    expect(parser.field.value).toBe(3.1);
+    expect(parser.field.input.value).toBe(3.1);
   });
 
   it('field.value should parse default non number value as an undefined model', () => {
@@ -112,7 +112,7 @@ describe('parsers/NumberParser', () => {
 
     parser.parse();
 
-    expect(parser.field.value).toBeUndefined();
+    expect(parser.field.input.value).toBeUndefined();
   });
 
   describe('exclusiveMinimum/exclusiveMaximum', () => {
@@ -130,12 +130,12 @@ describe('parsers/NumberParser', () => {
 
     parser.parse();
 
-    it('field.attrs.input.min should equal define using schema.exclusiveMinimum', () => {
-      expect(parser.field.attrs.input.min).toBe(0.1);
+    it('field.input.attrs.min should equal define using schema.exclusiveMinimum', () => {
+      expect(parser.field.input.attrs.min).toBe(0.1);
     });
 
-    it('field.attrs.input.max should equal define using schema.exclusiveMaximum', () => {
-      expect(parser.field.attrs.input.max).toBe(9.9);
+    it('field.input.attrs.max should equal define using schema.exclusiveMaximum', () => {
+      expect(parser.field.input.attrs.max).toBe(9.9);
     });
   });
 });

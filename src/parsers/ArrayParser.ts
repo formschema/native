@@ -9,10 +9,10 @@ import {
   AbstractUISchemaDescriptor,
   FieldKind,
   ArrayItemField,
-  IArrayParser
+  Attributes
 } from '@/types';
 
-export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> implements IArrayParser {
+export class ArrayParser extends Parser<'array', any, Attributes, ArrayDescriptor, ArrayField> {
   readonly items: JsonSchema[] = [];
   additionalItems?: JsonSchema;
   minItems: number = 0;
@@ -133,11 +133,11 @@ export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> implem
 
     // initialize the array model
     if (this.field.uniqueItems) {
-      const values = this.field.children.map(({ value }) => value);
+      const values = this.field.children.map(({ input }) => input.value);
 
       this.setValue(values);
     } else {
-      this.field.children.forEach((field) => field.setValue(field.value));
+      this.field.children.forEach(({ input }) => input.setValue(input.value));
     }
   }
 
@@ -162,7 +162,8 @@ export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> implem
     const self = this;
 
     this.field.buttons = {
-      add: {
+      push: {
+        label: this.descriptor.addButtonLabel,
         get disabled() {
           return self.count === self.max || self.items.length === 0;
         },
@@ -182,12 +183,12 @@ export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> implem
   parseCheckboxField(parser: any, itemModel: unknown) {
     const checked = typeof itemModel !== 'undefined' && this.rawValue.includes(itemModel);
 
-    parser.field.attrs.input.type = 'checkbox';
+    parser.attrs.type = 'checkbox';
 
     parser.setValue = (checked: boolean) => {
       parser.rawValue = checked;
       parser.model = checked ? itemModel : undefined;
-      parser.field.attrs.input.checked = checked;
+      parser.attrs.checked = checked;
     };
 
     parser.setValue(checked);

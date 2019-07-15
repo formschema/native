@@ -18,16 +18,16 @@ describe('parsers/BooleanParser', () => {
     expect(parser).toBeInstanceOf(Parser);
   });
 
-  it('parser.field.attrs.input.type should equal to checkbox', () => {
-    expect(parser.field.attrs.input.type).toBe('checkbox');
+  it('parser.field.input.attrs.type should equal to checkbox', () => {
+    expect(parser.field.input.attrs.type).toBe('checkbox');
   });
 
-  it('parser.field.attrs.input.checked should be falsy', () => {
-    expect(parser.field.attrs.input.checked).toBeFalsy;
+  it('parser.field.input.attrs.checked should be falsy', () => {
+    expect(parser.field.input.attrs.checked).toBeFalsy;
   });
 
   it('field.value should be falsy', () => {
-    expect(parser.field.value).toBeFalsy();
+    expect(parser.field.input.value).toBeFalsy();
   });
 
   it('should successfully parse default truthy boolean value', () => {
@@ -41,7 +41,7 @@ describe('parsers/BooleanParser', () => {
 
     parser.parse();
 
-    expect(parser.field.value).toBeTruthy();
+    expect(parser.field.input.value).toBeTruthy();
   });
 
   it('field.value should successfully parse default falsy boolean value', () => {
@@ -55,7 +55,7 @@ describe('parsers/BooleanParser', () => {
 
     parser.parse();
 
-    expect(parser.field.value).toBeFalsy();
+    expect(parser.field.input.value).toBeFalsy();
   });
 
   it('field.value should parse default non boolean value as an undefined model', () => {
@@ -69,6 +69,6 @@ describe('parsers/BooleanParser', () => {
 
     parser.parse();
 
-    expect(parser.field.value).toBeUndefined();
+    expect(parser.field.input.value).toBeUndefined();
   });
 });

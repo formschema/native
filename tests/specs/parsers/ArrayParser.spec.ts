@@ -27,7 +27,8 @@ describe('parsers/ArrayParser', () => {
       children: [],
       field: {
         buttons: {
-          add: {
+          push: {
+            label: '+',
             disabled: true
           }
         }
@@ -126,7 +127,7 @@ describe('parsers/ArrayParser', () => {
       field: {
         uniqueItems: undefined,
         buttons: {
-          add: {
+          push: {
             disabled: true
           }
         }
@@ -165,7 +166,7 @@ describe('parsers/ArrayParser', () => {
         required: true,
         uniqueItems: undefined,
         buttons: {
-          add: {
+          push: {
             disabled: true
           }
         }
@@ -210,7 +211,7 @@ describe('parsers/ArrayParser', () => {
       field: {
         uniqueItems: undefined,
         buttons: {
-          add: {
+          push: {
             disabled: false
           }
         }
@@ -224,7 +225,7 @@ describe('parsers/ArrayParser', () => {
       const parser = new ArrayParser(options4);
 
       parser.parse();
-      parser.field.buttons.add.push();
+      parser.field.buttons.push.push();
 
       return parser;
     },
@@ -240,7 +241,7 @@ describe('parsers/ArrayParser', () => {
       },
       field: {
         buttons: {
-          add: {
+          push: {
             disabled: true
           }
         }
@@ -257,8 +258,8 @@ describe('parsers/ArrayParser', () => {
       parser.parse();
 
       // call field.buttons.add.push() twice
-      parser.field.buttons.add.push();
-      parser.field.buttons.add.push();
+      parser.field.buttons.push.push();
+      parser.field.buttons.push.push();
 
       return parser;
     },
@@ -274,7 +275,7 @@ describe('parsers/ArrayParser', () => {
       },
       field: {
         buttons: {
-          add: {
+          push: {
             disabled: true
           }
         }
@@ -321,7 +322,7 @@ describe('parsers/ArrayParser', () => {
         //   }
         // },
         buttons: {
-          add: {
+          push: {
             disabled: true
           }
         }
@@ -338,19 +339,19 @@ describe('parsers/ArrayParser', () => {
         items: [
           {
             label: 'label-a',
-            description: 'description-a'
+            helper: 'description-a'
           },
           {
             label: 'label-b',
-            description: 'description-b'
+            helper: 'description-b'
           },
           {
             label: 'label-c',
-            description: 'description-c'
+            helper: 'description-c'
           },
           {
             label: 'label-d',
-            description: 'description-d'
+            helper: 'description-d'
           }
         ]
       }
@@ -361,7 +362,7 @@ describe('parsers/ArrayParser', () => {
           const label = `label-${options5.schema.items.enum[i]}`;
           const description = `description-${options5.schema.items.enum[i]}`;
 
-          return descriptor.label === label && descriptor.description === description;
+          return descriptor.label === label && descriptor.helper === description;
         });
       }
     }
@@ -374,7 +375,7 @@ describe('parsers/ArrayParser', () => {
       const parser = new ArrayParser(options5);
 
       parser.parse();
-      parser.field.children[0].setValue(true);
+      parser.field.children[0].input.setValue(true);
 
       return parser;
     },
@@ -415,7 +416,7 @@ describe('parsers/ArrayParser', () => {
       field: {
         uniqueItems: undefined,
         buttons: {
-          add: {
+          push: {
             disabled: false
           }
         }
@@ -460,7 +461,7 @@ describe('parsers/ArrayParser', () => {
         required: false,
         uniqueItems: undefined,
         buttons: {
-          add: {
+          push: {
             disabled: false
           }
         }

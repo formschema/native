@@ -19,14 +19,14 @@ describe('parsers/NullParser', () => {
   });
 
   it('should have type === hidden', () => {
-    expect(parser.field.attrs.input.type).toBe('hidden');
+    expect(parser.field.input.attrs.type).toBe('hidden');
   });
 
   it('should have value === \u0000', () => {
-    expect(parser.field.attrs.input.value).toBe('\u0000');
+    expect(parser.field.input.attrs.value).toBe('\u0000');
   });
 
   it('field.value should be equal to null', () => {
-    expect(parser.field.value).toBe(null);
+    expect(parser.field.input.value).toBe(null);
   });
 });

@@ -4,25 +4,27 @@ import { NativeDescriptor } from '@/lib/NativeDescriptor';
 import { JsonSchema } from '@/types/jsonschema';
 
 import {
-  Field,
   AbstractUISchemaDescriptor,
   ParserOptions,
-  DescriptorInstance,
   Attributes,
   Dictionary,
   ParserKind,
   FieldKind,
   IParser,
-  UnknowParser
+  UnknowParser,
+  DescriptorInstance,
+  Field
 } from '@/types';
 
 const PARSERS: Dictionary<any> = {};
 
 export abstract class Parser<
-  TModel,
-  TDescriptor extends AbstractUISchemaDescriptor,
-  TField extends Field<any, Attributes, DescriptorInstance, any>
-> implements IParser<TModel, TDescriptor, TField> {
+  TKind extends FieldKind = any,
+  TModel = any,
+  TAttributes extends Attributes = Attributes,
+  TDescriptor extends AbstractUISchemaDescriptor = DescriptorInstance,
+  TField extends Field<TKind, TAttributes, TDescriptor, TModel> = Field<TKind, TAttributes, TDescriptor, TModel>
+> implements IParser<TKind, TModel, TAttributes, TDescriptor> {
   readonly id: string;
   readonly isRoot: boolean;
   readonly isEnumItem: boolean;
@@ -30,10 +32,11 @@ export abstract class Parser<
   readonly root: UnknowParser;
   model: TModel;
   rawValue: TModel;
+  field: TField;
   readonly options: ParserOptions<TModel, TDescriptor>;
-  readonly field: TField;
   readonly descriptor: TDescriptor;
   readonly schema: JsonSchema;
+  attrs: TAttributes;
 
   static register(type: ParserKind, parserClass: any) {
     PARSERS[type] = parserClass;
@@ -79,6 +82,15 @@ export abstract class Parser<
 
     this.parseDescriptor();
 
+    this.attrs = {
+      id: this.id,
+      type: this.type,
+      name: options.name,
+      readonly: this.schema.readOnly,
+      required: options.required,
+      ...this.descriptor.attrs
+    } as unknown as TAttributes;
+
     const self = this;
 
     this.field = {
@@ -86,32 +98,31 @@ export abstract class Parser<
       name: options.name,
       isRoot: this.isRoot,
       required: options.required || false,
-      defaultValue: options.schema.default,
-      get value() {
-        return self.model;
-      },
-      get rawValue() {
-        return self.rawValue;
-      },
-      setValue: (value: TModel) => {
-        this.setValue(value);
-        this.commit();
-      },
-      attrs: {
-        input: {
-          id: this.id,
-          type: this.type,
-          name: options.name,
-          readonly: this.schema.readOnly,
-          required: options.required,
-          ...this.descriptor.attrs
+      input: {
+        attrs: this.attrs,
+        get value() {
+          return self.model;
         },
-        label: {},
-        description: {}
+        get rawValue() {
+          return self.rawValue;
+        },
+        defaultValue: options.schema.default,
+        setValue: (value: TModel) => {
+          this.setValue(value);
+          this.commit();
+        },
+        props: Objects.clone(this.descriptor.props as Dictionary),
+        component: this.descriptor.component || this.defaultComponent || defaultDescriptor.component
       },
-      props: Objects.clone(this.descriptor.props as Dictionary),
+      label: {
+        attrs: {},
+        value: this.descriptor.label
+      },
+      helper: {
+        attrs: {},
+        value: this.descriptor.helper
+      },
       descriptor: this.descriptor,
-      component: this.descriptor.component || this.defaultComponent || defaultDescriptor.component,
       parent: parent ? parent.field : undefined
     } as unknown as TField;
   }
@@ -160,8 +171,8 @@ export abstract class Parser<
       this.descriptor.label = this.schema.title;
     }
 
-    if (!this.descriptor.hasOwnProperty('description')) {
-      this.descriptor.description = this.schema.description;
+    if (!this.descriptor.hasOwnProperty('helper')) {
+      this.descriptor.helper = this.schema.description;
     }
 
     if (!this.descriptor.attrs) {
@@ -174,23 +185,22 @@ export abstract class Parser<
   }
 
   parse() {
-    const attrs = this.field.attrs;
-    const id = attrs.input.id;
-    const labelId = this.field.descriptor.label ? `${id}-label` : undefined;
-    const descId = this.field.descriptor.description ? `${id}-desc` : undefined;
+    const id = this.field.input.attrs.id;
+    const labelId = this.field.label.value ? `${id}-label` : undefined;
+    const descId = this.field.helper.value ? `${id}-desc` : undefined;
 
     /**
      * Use the WAI-ARIA aria-labelledby and aria-describedby attributes to
      * associate instructions with form controls
      * @see https://www.w3.org/WAI/tutorials/forms/instructions/#providing-instructions-outside-labels
      */
-    attrs.input['aria-labelledby'] = labelId;
-    attrs.input['aria-describedby'] = descId;
+    this.field.input.attrs['aria-labelledby'] = labelId;
+    this.field.input.attrs['aria-describedby'] = descId;
 
-    attrs.label.id = labelId;
-    attrs.label.for = id;
+    this.field.label.attrs.id = labelId;
+    this.field.label.attrs.for = id;
 
-    attrs.description.id = descId;
+    this.field.helper.attrs.id = descId;
 
     if (this.field.required) {
       /**
@@ -198,7 +208,7 @@ export abstract class Parser<
        * attribute to assistive technology
        * @see https://www.w3.org/WAI/tutorials/forms/validation/#validating-required-input
        */
-      attrs.input['aria-required'] = 'true';
+      this.field.input.attrs['aria-required'] = 'true';
     }
   }
 }

@@ -26,7 +26,7 @@ parser.parse();
 describe('components/FieldElement', () => {
   it('should successfully render component', () => {
     const context: any = {
-      attrs: parser.field.attrs.input,
+      attrs: parser.field.input.attrs,
       props: {
         field: parser.field
       },
@@ -44,11 +44,11 @@ describe('components/FieldElement', () => {
     expect(wrapper.html()).toBe(expected);
   });
 
-  it('should successfully render component with missing field.attrs.input.type', () => {
-    delete parser.field.attrs.input.type;
+  it('should successfully render component with missing field.input.attrs.type', () => {
+    delete parser.field.input.attrs.type;
 
     const context: any = {
-      attrs: parser.field.attrs.input,
+      attrs: parser.field.input.attrs,
       props: {
         field: parser.field
       },

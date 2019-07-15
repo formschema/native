@@ -45,7 +45,7 @@ describe('parsers/ListParser', () => {
   });
 
   it('field.value should be equal to the default value', () => {
-    expect(parser.field.value).toEqual('arya');
+    expect(parser.field.input.value).toEqual('arya');
   });
 
   it('should successfully parse default value', () => {
@@ -63,7 +63,7 @@ describe('parsers/ListParser', () => {
 
     parser.parse();
 
-    expect(parser.field.value).toBe('jon');
+    expect(parser.field.input.value).toBe('jon');
   });
 
   it('field.value should parse default undefined as an undefined model', () => {
@@ -77,7 +77,7 @@ describe('parsers/ListParser', () => {
 
     parser.parse();
 
-    expect(parser.field.value).toBeUndefined();
+    expect(parser.field.input.value).toBeUndefined();
   });
 
   it('field.items should be equal to an empty array with missing schema.enum', () => {
@@ -172,7 +172,7 @@ describe('parsers/ListParser', () => {
 
     const parser: any = new ListParser(options);
 
-    expect(parser.field.component.name).toBe('FieldsetElement');
+    expect(parser.field.input.component.name).toBe('FieldsetElement');
   });
 
   it('with missing options.descriptor.component and options.descriptor.kind', () => {
