@@ -19,12 +19,12 @@ export type ComponentsType = 'form' | FieldKind | 'field';
 
 export interface Attributes {
   readonly id: string;
-  readonly name?: string;
+  name?: string;
   readonly type?: string;
   readonly readonly?: boolean;
-  readonly required?: boolean;
+  required?: boolean;
   readonly disabled?: boolean;
-  readonly 'aria-required'?: 'true';
+  'aria-required'?: 'true';
   readonly 'aria-labelledby'?: string;
   readonly 'aria-describedby'?: string;
 }
