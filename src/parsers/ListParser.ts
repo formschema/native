@@ -1,7 +1,7 @@
 import { Parser } from '@/parsers/Parser';
-import { ListField, ListItem, ScalarDescriptor, FieldKind, Attributes } from '@/types';
+import { ListField, ListItem, ScalarDescriptor, FieldKind } from '@/types';
 
-export class ListParser extends Parser<'enum', unknown, Attributes, ScalarDescriptor, ListField> {
+export class ListParser extends Parser<unknown, ListField, ScalarDescriptor> {
   get kind(): FieldKind {
     return 'list';
   }

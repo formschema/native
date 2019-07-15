@@ -8,11 +8,10 @@ import {
   ParserOptions,
   AbstractUISchemaDescriptor,
   FieldKind,
-  ArrayItemField,
-  Attributes
+  ArrayItemField
 } from '@/types';
 
-export class ArrayParser extends Parser<'array', any, Attributes, ArrayDescriptor, ArrayField> {
+export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
   readonly items: JsonSchema[] = [];
   additionalItems?: JsonSchema;
   minItems: number = 0;

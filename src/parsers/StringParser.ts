@@ -1,5 +1,5 @@
 import { Parser } from '@/parsers/Parser';
-import { FieldKind, Dictionary, ScalarDescriptor, StringAttributes } from '@/types';
+import { FieldKind, Dictionary, ScalarDescriptor, StringField, StringAttributes } from '@/types';
 import { Pattern } from '@/lib/Pattern';
 
 const TypeFormat: Dictionary<string> = {
@@ -11,7 +11,7 @@ const TypeFormat: Dictionary<string> = {
   uri: 'url'
 };
 
-export class StringParser extends Parser<'string', string, StringAttributes, ScalarDescriptor> {
+export class StringParser extends Parser<string, StringField, ScalarDescriptor, StringAttributes> {
   get kind(): FieldKind {
     return this.isEnumItem ? 'radio' : 'string';
   }

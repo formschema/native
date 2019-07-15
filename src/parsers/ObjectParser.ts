@@ -9,11 +9,10 @@ import {
   AbstractUISchemaDescriptor,
   ObjectFieldChild,
   DescriptorConstructor,
-  FieldKind,
-  Attributes
+  FieldKind
 } from '@/types';
 
-export class ObjectParser extends Parser<'object', Dictionary, Attributes, ObjectDescriptor, ObjectField> {
+export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescriptor> {
   properties: Dictionary<JsonSchema> = {};
 
   get kind(): FieldKind {
@@ -105,7 +104,7 @@ export class ObjectParser extends Parser<'object', Dictionary, Attributes, Objec
     delete this.attrs['aria-required'];
 
     if (this.isRoot) {
-      delete this.field.input.attrs.name;
+      delete this.attrs.name;
     }
 
     this.commit();

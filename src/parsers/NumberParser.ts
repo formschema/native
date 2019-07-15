@@ -1,7 +1,7 @@
 import { Parser } from '@/parsers/Parser';
-import { ScalarDescriptor, FieldKind, NumberAttributes } from '@/types';
+import { ScalarDescriptor, FieldKind, NumberField, NumberAttributes } from '@/types';
 
-export class NumberParser extends Parser<'number', number, NumberAttributes, ScalarDescriptor> {
+export class NumberParser extends Parser<number, NumberField, ScalarDescriptor, NumberAttributes> {
   get kind(): FieldKind {
     return this.isEnumItem ? 'radio' : 'number';
   }
@@ -31,8 +31,8 @@ export class NumberParser extends Parser<'number', number, NumberAttributes, Sca
     this.attrs.max = this.schema.maximum;
     this.attrs.step = this.schema.multipleOf;
 
-    if (typeof this.field.input.value !== 'undefined') {
-      this.attrs.value = `${this.field.input.value}`;
+    if (typeof this.model !== 'undefined') {
+      this.attrs.value = `${this.model}`;
     }
 
     this.parseExclusiveKeywords();

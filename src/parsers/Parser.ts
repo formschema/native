@@ -12,19 +12,17 @@ import {
   FieldKind,
   IParser,
   UnknowParser,
-  DescriptorInstance,
   Field
 } from '@/types';
 
 const PARSERS: Dictionary<any> = {};
 
 export abstract class Parser<
-  TKind extends FieldKind = any,
-  TModel = any,
-  TAttributes extends Attributes = Attributes,
-  TDescriptor extends AbstractUISchemaDescriptor = DescriptorInstance,
-  TField extends Field<TKind, TAttributes, TDescriptor, TModel> = Field<TKind, TAttributes, TDescriptor, TModel>
-> implements IParser<TKind, TModel, TAttributes, TDescriptor> {
+  TModel,
+  TField extends Field<any, Attributes, TDescriptor, TModel>,
+  TDescriptor extends AbstractUISchemaDescriptor,
+  TAttributes extends Attributes = Attributes
+> implements IParser<TModel, TField, TDescriptor> {
   readonly id: string;
   readonly isRoot: boolean;
   readonly isEnumItem: boolean;
@@ -32,11 +30,11 @@ export abstract class Parser<
   readonly root: UnknowParser;
   model: TModel;
   rawValue: TModel;
-  field: TField;
+  readonly field: TField;
   readonly options: ParserOptions<TModel, TDescriptor>;
   readonly descriptor: TDescriptor;
   readonly schema: JsonSchema;
-  attrs: TAttributes;
+  readonly attrs: TAttributes;
 
   static register(type: ParserKind, parserClass: any) {
     PARSERS[type] = parserClass;

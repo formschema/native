@@ -9,11 +9,10 @@ import {
   ParserOptions,
   AbstractUISchemaDescriptor,
   FieldKind,
-  RadioField,
-  Attributes
+  RadioField
 } from '@/types';
 
-export class EnumParser extends Parser<'enum', unknown, Attributes, ScalarDescriptor, EnumField> {
+export class EnumParser extends Parser<unknown, EnumField, ScalarDescriptor> {
   get kind(): FieldKind {
     return 'enum';
   }

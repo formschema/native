@@ -168,10 +168,9 @@ export interface ParserOptions<
 export type UnknowParser = IParser<any>;
 
 export interface IParser<
-  TKind extends FieldKind,
-  TModel = any,
-  TAttributes extends Attributes = Attributes,
-  TDescriptor = DescriptorInstance,
+  TModel,
+  TField extends Field<any, Attributes, TDescriptor, TModel> = any,
+  TDescriptor extends AbstractUISchemaDescriptor = DescriptorInstance,
 > {
   readonly isRoot: boolean;
   readonly isEnumItem: boolean;
@@ -182,10 +181,9 @@ export interface IParser<
   rawValue: TModel;
   readonly kind: string;
   readonly type?: string;
-  readonly field: Field<TKind, TAttributes, TDescriptor, TModel>;
+  readonly field: TField;
   readonly descriptor: TDescriptor;
   readonly schema: JsonSchema;
-  readonly attrs: TAttributes;
   parse: () => void;
 }
 

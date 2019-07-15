@@ -1,7 +1,7 @@
 import { Parser } from '@/parsers/Parser';
-import { ScalarDescriptor, CheckboxAttributes } from '@/types';
+import { ScalarDescriptor, BooleanField, CheckboxAttributes } from '@/types';
 
-export class BooleanParser extends Parser<'boolean', boolean, CheckboxAttributes, ScalarDescriptor> {
+export class BooleanParser extends Parser<boolean, BooleanField, ScalarDescriptor, CheckboxAttributes> {
   get type() {
     return 'checkbox';
   }

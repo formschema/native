@@ -6,9 +6,9 @@ import { NativeDescriptor } from '@/lib/NativeDescriptor';
 import { JsonSchema } from '@/types/jsonschema';
 import { TestParser } from '../../lib/TestParser';
 
-class FakeParser extends Parser<any, ScalarDescriptor, StringField> {}
+class FakeParser extends Parser<any, StringField, ScalarDescriptor> {}
 
-class ObjectFakeParser extends Parser<string, ScalarDescriptor, StringField> {
+class ObjectFakeParser extends Parser<string, StringField, ScalarDescriptor> {
   get type(): string {
     return 'object';
   }
@@ -18,7 +18,7 @@ class ObjectFakeParser extends Parser<string, ScalarDescriptor, StringField> {
   }
 }
 
-class InputFakeParser extends Parser<string, ScalarDescriptor, StringField> {
+class InputFakeParser extends Parser<string, StringField, ScalarDescriptor> {
   get type(): string {
     return 'text';
   }

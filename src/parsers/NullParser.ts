@@ -1,7 +1,7 @@
 import { Parser } from '@/parsers/Parser';
-import { ScalarDescriptor, NullAttributes } from '@/types';
+import { ScalarDescriptor, NullField, NullAttributes } from '@/types';
 
-export class NullParser extends Parser<'null', null, NullAttributes, ScalarDescriptor> {
+export class NullParser extends Parser<null, NullField, ScalarDescriptor, NullAttributes> {
   get type() {
     return 'hidden';
   }
