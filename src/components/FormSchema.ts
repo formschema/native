@@ -188,8 +188,7 @@ const FormSchema: FormSchemaComponent = {
       attrs: {
         id: this.id,
         name: this.name,
-        role: this.search ? 'search' : undefined,
-        'data-fs-disabled': this.disabled
+        role: this.search ? 'search' : undefined
       },
       props: props,
       on: this.listeners

@@ -226,7 +226,7 @@ describe('components/FormSchema', () => {
     it('with { schema, disabled }', (done) => {
       const disabled = true;
       const wrapper = getWrapper({ schema, disabled });
-      const expected = { id: 'id-form', 'data-fs-disabled': 'true' };
+      const expected = { id: 'id-form' };
 
       Vue.nextTick(() => {
         expect(wrapper.attributes()).toEqual(expected);
