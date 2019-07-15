@@ -93,21 +93,21 @@ export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> implem
 
     const parser = Parser.get(options, this);
 
-    // set the onChange option after the parser initialization
-    // to prevent first field value emit
-    options.onChange = (value) => {
-      this.rawValue[index] = value;
-
-      this.model.splice(0);
-      this.model.push(...this.parseValue(this.rawValue) as any);
-
-      this.commit();
-    };
-
     if (parser) {
       if (itemDescriptor.kind === 'checkbox') {
         this.parseCheckboxField(parser, itemModel);
       }
+
+      // set the onChange option after the parser initialization
+      // to prevent first field value emit
+      options.onChange = (value) => {
+        this.rawValue[index] = value;
+
+        this.model.splice(0);
+        this.model.push(...this.parseValue(this.rawValue) as any);
+
+        this.commit();
+      };
 
       return parser.field as any;
     }
@@ -132,7 +132,13 @@ export class ArrayParser extends Parser<any, ArrayDescriptor, ArrayField> implem
     this.field.children = this.children;
 
     // initialize the array model
-    this.field.children.forEach((field) => field.setValue(field.value));
+    if (this.field.uniqueItems) {
+      const values = this.field.children.map(({ value }) => value);
+
+      this.setValue(values);
+    } else {
+      this.field.children.forEach((field) => field.setValue(field.value));
+    }
   }
 
   parse() {
