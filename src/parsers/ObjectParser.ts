@@ -160,13 +160,11 @@ export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescript
   }
 
   parse() {
-    if (this.schema.dependencies) {
-      this.dependencies = this.schema.dependencies as Dictionary<string[]>;
+    if (this.schema.properties) {
+      this.properties = { ...this.schema.properties };
     }
 
-    if (this.schema.properties) {
-      this.properties = this.schema.properties;
-    }
+    this.parseDependencies();
 
     this.field.children = this.children;
 
@@ -184,6 +182,28 @@ export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescript
     }
 
     this.commit();
+  }
+
+  parseDependencies() {
+    const dependencies = this.schema.dependencies;
+
+    if (dependencies) {
+      Object.keys(dependencies).forEach((key) => {
+        const dependency = dependencies[key];
+
+        if (dependency instanceof Array) {
+          this.dependencies[key] = dependency;
+        } else {
+          const properties = dependency.properties || {};
+
+          this.dependencies[key] = Object.keys(properties);
+
+          Object.keys(properties).forEach((prop) => {
+            this.properties[prop] = properties[prop];
+          });
+        }
+      });
+    }
   }
 
   parseValue(data: Dictionary): Dictionary {
