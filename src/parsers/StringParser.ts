@@ -26,6 +26,10 @@ export class StringParser extends Parser<string, StringField, ScalarDescriptor, 
       : 'text';
   }
 
+  isEmpty(data: unknown = this.model) {
+    return typeof data === 'string' ? data.length === 0 : true;
+  }
+
   parse() {
     this.attrs.value = this.field.input.value;
     this.attrs.minlength = this.schema.minLength;
@@ -40,7 +44,7 @@ export class StringParser extends Parser<string, StringField, ScalarDescriptor, 
     this.commit();
   }
 
-  parseValue(data: unknown): string | undefined {
+  parseValue(data: unknown) {
     return typeof data !== 'undefined' ? `${data}` : undefined;
   }
 }

@@ -6,13 +6,17 @@ export class BooleanParser extends Parser<boolean, BooleanField, ScalarDescripto
     return 'checkbox';
   }
 
+  isEmpty(data: unknown = this.model) {
+    return data !== true;
+  }
+
   parse(): void {
     this.attrs.checked = this.model === true;
 
     this.commit();
   }
 
-  parseValue(checked: boolean): boolean | undefined {
+  parseValue(checked: boolean) {
     return typeof checked !== 'boolean' ? undefined : checked || false;
   }
 }

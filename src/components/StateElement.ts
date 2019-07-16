@@ -6,6 +6,7 @@ export const StateElement: StateComponent = {
   functional: true,
   render(h, { data, props }) {
     const attrs = props.field.input.attrs;
+    const key = props.field.key;
     const on = {
       change({ target }: InputEvent) {
         props.field.input.setValue(target.checked);
@@ -13,7 +14,7 @@ export const StateElement: StateComponent = {
     };
 
     return h(FieldElement, data, [
-      h('input', { attrs, on })
+      h('input', { key, attrs, on })
     ]);
   }
 };

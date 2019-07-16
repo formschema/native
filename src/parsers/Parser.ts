@@ -12,7 +12,8 @@ import {
   FieldKind,
   IParser,
   UnknowParser,
-  Field
+  Field,
+  UnknowField
 } from '@/types';
 
 const PARSERS: Dictionary<any> = {};
@@ -88,7 +89,10 @@ export abstract class Parser<
       type: this.type,
       name: options.name,
       readonly: this.schema.readOnly,
-      required: options.required,
+      get required() {
+        return self.field.required;
+      },
+
       /**
        * Add support with web browsers that don’t communicate the required
        * attribute to assistive technology
@@ -97,6 +101,7 @@ export abstract class Parser<
       get 'aria-required'() {
         return this.required ? 'true' : undefined;
       },
+
       /**
        * Use the WAI-ARIA aria-labelledby and aria-describedby attributes to
        * associate instructions with form controls
@@ -108,11 +113,16 @@ export abstract class Parser<
       get 'aria-describedby'() {
         return self.field.helper.attrs.id;
       },
+
+      /**
+       * Add descriptor attributes
+       */
       ...this.descriptor.attrs
     } as TAttributes;
 
     // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
     this.field = {
+      key: options.key || UniqueId.get(options.name),
       kind: this.kind,
       name: options.name,
       isRoot: this.isRoot,
@@ -174,6 +184,10 @@ export abstract class Parser<
       : undefined;
   }
 
+  isEmpty(data: unknown = this.model) {
+    return typeof data === 'undefined';
+  }
+
   parseValue(data: unknown): TModel | undefined {
     return data as any;
   }
@@ -186,6 +200,12 @@ export abstract class Parser<
   commit() {
     if (typeof this.options.onChange === 'function') {
       this.options.onChange(this.model, this.field);
+    }
+  }
+
+  requestRender(fields: UnknowField[]) {
+    if (typeof this.root.options.requestRender === 'function') {
+      this.root.options.requestRender(fields);
     }
   }
 

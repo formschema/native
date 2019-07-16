@@ -65,7 +65,7 @@ const ParserValidator = {
         type: (value: string, parser: FakeParser) => value === parser.type,
         name: (value: string, { options }: FakeParser) => value === options.name,
         readonly: (value: boolean, { schema }: FakeParser) => value === schema.readOnly,
-        required: (value: boolean, { options }: FakeParser) => value === options.required,
+        required: (value: boolean, { field }: FakeParser) => value === field.required,
         'aria-required': (value: string | undefined, { field }: FakeParser) => value === (field.required ? 'true' : undefined),
         'aria-labelledby': (value: string | undefined, { field }: FakeParser) => value === field.label.attrs.id,
         'aria-describedby': (value: string | undefined, { field }: FakeParser) => value === field.helper.attrs.id

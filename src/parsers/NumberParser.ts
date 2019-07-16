@@ -29,7 +29,7 @@ export class NumberParser extends Parser<number, NumberField, ScalarDescriptor, 
     this.attrs.max = this.schema.maximum;
     this.attrs.step = this.schema.multipleOf;
 
-    if (typeof this.model !== 'undefined') {
+    if (!this.isEmpty(this.model)) {
       this.attrs.value = `${this.model}`;
     }
 
@@ -39,8 +39,9 @@ export class NumberParser extends Parser<number, NumberField, ScalarDescriptor, 
 
   parseValue(data: unknown): number | undefined {
     const value = Number(data);
+    const parsedValue = Number.parseFloat(data as string);
 
-    return Number.isNaN(value) ? undefined : Number.parseFloat(`${data}`);
+    return Number.isNaN(value) || Number.isNaN(parsedValue) ? undefined : parsedValue;
   }
 }
 

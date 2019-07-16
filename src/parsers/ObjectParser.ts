@@ -9,11 +9,16 @@ import {
   AbstractUISchemaDescriptor,
   ObjectFieldChild,
   DescriptorConstructor,
-  FieldKind
+  FieldKind,
+  UnknowParser
 } from '@/types';
+import { UniqueId } from '@/components/FormSchema';
+import { Objects } from '@/lib/Objects';
 
 export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescriptor> {
   properties: Dictionary<JsonSchema> = {};
+  dependencies: Dictionary<string[]> = {};
+  childrenParsers: Dictionary<UnknowParser> = {};
 
   get kind(): FieldKind {
     return 'object';
@@ -43,24 +48,87 @@ export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescript
       : [];
 
     return this.propertiesList
-      .map((key): ParserOptions<unknown, AbstractUISchemaDescriptor> => ({
-        schema: this.properties[key],
-        model: this.model.hasOwnProperty(key) ? this.model[key] : this.properties[key].default,
-        descriptor: this.getChildDescriptor(key),
-        descriptorConstructor: this.getChildDescriptorConstructor(key),
-        bracketedObjectInputName: this.options.bracketedObjectInputName,
-        id: `${this.id}-${key}`,
-        name: this.getChildName(key, name),
-        required: requiredFields.includes(key),
-        onChange: (value) => {
+      .map((key): { key: string; options: ParserOptions<unknown, AbstractUISchemaDescriptor> } => ({
+        key,
+        options: {
+          schema: this.properties[key],
+          model: this.model.hasOwnProperty(key) ? this.model[key] : this.properties[key].default,
+          descriptor: this.getChildDescriptor(key),
+          descriptorConstructor: this.getChildDescriptorConstructor(key),
+          bracketedObjectInputName: this.options.bracketedObjectInputName,
+          id: `${this.id}-${key}`,
+          name: this.getChildName(key, name),
+          required: requiredFields.includes(key),
+          onChange: (value) => {
+            this.model[key] = value;
+          }
+        }
+      }))
+      .map(({ options, ...args }) => ({
+        ...args,
+        parser: Parser.get(options, this)
+      }))
+      .filter(({ parser }) => parser instanceof Parser)
+      .map(({ key, parser }: any) => {
+        const field = parser.field as ObjectField;
+
+        this.childrenParsers[key] = parser;
+
+        /**
+         * Update the parser.options.onChange reference to
+         * enable dependencies update
+         */
+        parser.options.onChange = (value: unknown) => {
+          /**
+           * No need to set `this.rawValue[key] = value` because
+           * the `this.commit()` will trigger an update of
+           * `this.rawValue` using `this.model`
+           */
           this.model[key] = value;
 
           this.commit();
-        }
-      }))
-      .map((options) => Parser.get(options, this))
-      .filter((parser) => parser instanceof Parser)
-      .map((parser: any) => parser.field as ObjectFieldChild);
+          this.updateDependencies(key, parser);
+        };
+
+        return field;
+      });
+  }
+
+  isEmpty(data: Dictionary = this.model) {
+    return Objects.isEmpty(data);
+  }
+
+  updateDependencies(key: string, parser: UnknowParser) {
+    if (this.dependencies[key]) {
+      const needUpdate = [ parser.field ];
+      const isRequired = !parser.isEmpty();
+      const fieldRequired = isRequired || this.hasFilledDependency(key);
+
+      this.setRequiredDependency(key, parser, fieldRequired);
+
+      this.dependencies[key].forEach((prop) => {
+        const dependencyParser = this.childrenParsers[prop];
+
+        this.setRequiredDependency(prop, dependencyParser, isRequired);
+        needUpdate.push(dependencyParser.field);
+      });
+
+      this.requestRender(needUpdate);
+    }
+  }
+
+  hasFilledDependency(key: string) {
+    return Object.keys(this.dependencies).some((prop) => {
+      return this.dependencies[prop].includes(key) && !this.childrenParsers[prop].isEmpty();
+    });
+  }
+
+  setRequiredDependency(key: string, parser: UnknowParser, required: boolean) {
+    if (parser.isEmpty(this.model[key])) {
+      parser.field.key = UniqueId.get(key);
+    }
+
+    parser.field.required = required;
   }
 
   getChildName(key: string, name?: string) {
@@ -92,16 +160,26 @@ export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescript
   }
 
   parse() {
+    if (this.schema.dependencies) {
+      this.dependencies = this.schema.dependencies as Dictionary<string[]>;
+    }
+
     if (this.schema.properties) {
       this.properties = this.schema.properties;
     }
 
     this.field.children = this.children;
 
+    /**
+     * attributes `required` and `aria-required` are not applicable here
+     */
     delete this.attrs.required;
     delete this.attrs['aria-required'];
 
     if (this.isRoot) {
+      /**
+       * attribute `name` is not applicable here
+       */
       delete this.attrs.name;
     }
 

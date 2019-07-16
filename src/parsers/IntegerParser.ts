@@ -21,10 +21,11 @@ export class IntegerParser extends NumberParser {
     }
   }
 
-  parseValue(data: unknown): number | undefined {
+  parseValue(data: unknown) {
     const value = Number(data);
+    const parsedValue = Number.parseInt(data as string, 10);
 
-    return Number.isNaN(value) ? undefined : Number.parseInt(`${data}`, 10);
+    return Number.isNaN(value) || Number.isNaN(parsedValue) ? undefined : parsedValue;
   }
 }
 

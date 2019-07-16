@@ -60,6 +60,10 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
     return fields;
   }
 
+  isEmpty(data: unknown = this.model) {
+    return data instanceof Array && data.length === 0;
+  }
+
   getFieldItem(itemSchema: JsonSchema, index: number): ArrayItemField | null {
     const kind: FieldKind | undefined = this.field.uniqueItems ? 'checkbox' : undefined;
     const items = this.field.descriptor.items;

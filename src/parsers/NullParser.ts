@@ -12,7 +12,7 @@ export class NullParser extends Parser<null, NullField, ScalarDescriptor, NullAt
     this.commit();
   }
 
-  parseValue(): null {
+  parseValue() {
     return null;
   }
 }

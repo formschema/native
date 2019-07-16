@@ -101,6 +101,7 @@ const FormSchema: FormSchemaComponent = {
     }
   },
   data: () => ({
+    key: undefined,
     ref: UniqueId.get('formschema'),
     initialModel: undefined,
     ready: false
@@ -129,11 +130,14 @@ const FormSchema: FormSchemaComponent = {
         descriptor: this.schemaDescriptor,
         descriptorConstructor: this.descriptorConstructor,
         bracketedObjectInputName: this.bracketedArrayInputName,
-        onChange: this.emitInputEvent
+        onChange: this.emitInputEvent,
+        requestRender: ([ field ]) => {
+          this.key = field.key;
+        }
       });
     },
     field() {
-      return this.parser instanceof Parser ? this.parser.field : null;
+      return this.parser instanceof Parser ? Object.freeze(this.parser.field) : null;
     },
     listeners() {
       const on = { ...this.$listeners };
@@ -169,7 +173,8 @@ const FormSchema: FormSchemaComponent = {
       disabled: this.disabled
     };
 
-    const element = createElement(this.field.input.component, { attrs, props });
+    const key = this.key || this.field.key;
+    const element = createElement(this.field.input.component, { key, attrs, props });
     const root = Schema.isScalar(this.schema)
       ? createElement(this.components.get('field'), { props }, [ element ])
       : element;
@@ -192,7 +197,7 @@ const FormSchema: FormSchemaComponent = {
     }, nodes);
   },
   methods: {
-    clone(value) {
+    clone(value): unknown {
       if (Objects.isScalar(value)) {
         return value;
       }

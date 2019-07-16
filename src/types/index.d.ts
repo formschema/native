@@ -22,7 +22,7 @@ export interface Attributes {
   name?: string;
   type?: string;
   readonly?: boolean;
-  required?: boolean;
+  required: boolean;
   disabled?: boolean;
   'aria-required'?: 'true';
   'aria-labelledby'?: string;
@@ -72,6 +72,7 @@ export interface Field<
   TDescriptor = DescriptorInstance,
   TModel = any
 > {
+  key: string;
   kind: TKind;
   name?: string;
   isRoot: boolean;
@@ -80,8 +81,8 @@ export interface Field<
   input: {
     attrs: TAttributes;
     props: Dictionary;
-    readonly value: TModel;
-    readonly setValue: (value: TModel) => void;
+    value: TModel;
+    setValue: (value: TModel) => void;
     component: Component;
   };
   label: {
@@ -153,6 +154,7 @@ export interface ParserOptions<
   TDescriptor extends AbstractUISchemaDescriptor,
   TField extends Field<any, any, DescriptorInstance, any> = UnknowField
 > {
+  readonly key?: string;
   readonly schema: JsonSchema;
   readonly model: TModel;
   readonly descriptor?: TDescriptor;
@@ -162,6 +164,7 @@ export interface ParserOptions<
   readonly id?: string;
   readonly required?: boolean;
   onChange?: (value: TModel, field: TField) => void;
+  requestRender?: (fields: TField[]) => void;
 }
 
 export type UnknowParser = IParser<any>;
@@ -184,6 +187,7 @@ export interface IParser<
   readonly descriptor: TDescriptor;
   readonly schema: JsonSchema;
   parse: () => void;
+  isEmpty: (data?: TModel) => boolean;
 }
 
 export interface AbstractUISchemaDescriptor {
@@ -233,6 +237,7 @@ export interface FormSchemaVue extends Vue {
   descriptor: DescriptorInstance | DescriptorConstructor;
 
   // data
+  key: string;
   ref: string;
   initialModel: unknown;
   ready: boolean;
@@ -249,7 +254,6 @@ export interface FormSchemaVue extends Vue {
   clone(value: unknown): unknown;
   form(): HTMLFormElement | VNode | undefined;
   emitInputEvent(value: unknown): void;
-  emitSubmitEvent(e: Event): void;
 }
 
 export interface FormSchemaComponent<V extends FormSchemaVue = FormSchemaVue> extends ComponentOptions<V> {

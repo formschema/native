@@ -11,6 +11,7 @@ export const FieldsetElement: FieldsetComponent = {
 
     const nodes = slots().default || props.field.children.map((field) => {
       return h(field.input.component, {
+        key: field.key,
         props: { field }
       });
     });
