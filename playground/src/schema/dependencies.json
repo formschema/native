@@ -1,0 +1,89 @@
+{
+  "title": "Property dependencies",
+  "description": "These samples are best viewed without live validation.",
+  "type": "object",
+  "properties": {
+    "schemaDependencies": {
+      "type": "object",
+      "title": "Schema dependencies",
+
+      "properties": {
+        "name": { "type": "string", "title": "Name" },
+        "credit_card": { "type": "number", "title": "Credit Card" }
+      },
+
+      "required": ["name"],
+
+      "dependencies": {
+        "credit_card": {
+          "properties": {
+            "billing_address": { "type": "string", "title": "Billing Address" }
+          },
+          "required": ["billing_address"]
+        }
+      }
+    },
+    "unidirectional": {
+      "title": "Unidirectional",
+      "src": "https://spacetelescope.github.io/understanding-json-schema/reference/object.html#dependencies",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Name"
+        },
+        "credit_card": {
+          "type": "number",
+          "title": "Credit Card",
+          "description": "If you enter anything here then billing_address will become required"
+        },
+        "billing_address": {
+          "type": "string",
+          "title": "Billing Address",
+          "description": "It’s okay to have a billing address without a credit card number"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "dependencies": {
+        "credit_card": [
+          "billing_address"
+        ]
+      }
+    },
+    "bidirectional": {
+      "title": "Bidirectional",
+      "src": "https://spacetelescope.github.io/understanding-json-schema/reference/object.html#dependencies",
+      "description": "Dependencies are not bidirectional, you can, of course, define the bidirectional dependencies explicitly.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Name"
+        },
+        "credit_card": {
+          "type": "number",
+          "title": "Credit Card",
+          "description": "If you enter anything here then billing_address will become required"
+        },
+        "billing_address": {
+          "type": "string",
+          "title": "Billing Address",
+          "description": "If you enter anything here then credit_card will become required"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "dependencies": {
+        "credit_card": [
+          "billing_address"
+        ],
+        "billing_address": [
+          "credit_card"
+        ]
+      }
+    }
+  }
+}
