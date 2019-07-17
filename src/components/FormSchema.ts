@@ -131,9 +131,7 @@ const FormSchema: FormSchemaComponent = {
         descriptorConstructor: this.descriptorConstructor,
         bracketedObjectInputName: this.bracketedArrayInputName,
         onChange: this.emitInputEvent,
-        requestRender: ([ field ]) => {
-          this.key = field.key;
-        }
+        requestRender: this.update
       });
     },
     field() {
@@ -228,6 +226,13 @@ const FormSchema: FormSchemaComponent = {
       this.$nextTick(() => {
         this.ready = true;
       });
+    },
+
+    /**
+     * @private
+     */
+    update([ field ]) {
+      this.key = field.key;
     }
   }
 };

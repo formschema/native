@@ -254,6 +254,7 @@ export interface FormSchemaVue extends Vue {
   clone(value: unknown): unknown;
   form(): HTMLFormElement | VNode | undefined;
   emitInputEvent(value: unknown): void;
+  update(updatedFields: UnknowField[]): void;
 }
 
 export interface FormSchemaComponent<V extends FormSchemaVue = FormSchemaVue> extends ComponentOptions<V> {

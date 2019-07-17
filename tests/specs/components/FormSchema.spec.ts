@@ -268,4 +268,32 @@ describe('components/FormSchema', () => {
       done();
     });
   });
+
+  it('vm.update(updatedFields) should be called', () => {
+    const schema: JsonSchema = {
+      type: 'object',
+      properties: {
+        credit_card: {
+          type: 'number'
+        },
+        billing_address: {
+          type: 'string'
+        }
+      },
+      dependencies: {
+        credit_card: [
+          'billing_address'
+        ]
+      }
+    };
+
+    const wrapper = getWrapper({ schema });
+    const vm: any = wrapper.vm;
+    const previousKey = vm.key;
+
+    vm.update = jest.fn();
+    vm.parser.field.children[0].input.setValue(123);
+
+    expect(vm.key).not.toBe(previousKey);
+  });
 });
