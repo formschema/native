@@ -1,6 +1,6 @@
 import { Parser } from '@/parsers/Parser';
 import { ObjectParser } from '@/parsers/ObjectParser';
-import { Dictionary, ListField, ScalarDescriptor, ParserOptions } from '@/types';
+import { Dictionary, ListField, ObjectField, ScalarDescriptor, ParserOptions } from '@/types';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
 import { JsonSchema } from '@/types/jsonschema';
 import { TestParser } from '../../lib/TestParser';
@@ -369,22 +369,24 @@ describe('parsers/ObjectParser', () => {
     }
   });
 
+  const options100: any = {
+    schema: {
+      type: 'object',
+      properties: {
+        credit_card: { type: 'number' },
+        billing_address: { type: 'string' }
+      },
+      dependencies: {
+        credit_card: ['billing_address']
+      }
+    },
+    descriptorConstructor: NativeDescriptor.get
+  };
+
   TestParser.Case({
     case: '10.0',
     description: 'parseDependencies() with Property Dependencies',
-    parser: new ObjectParser({
-      schema: {
-        type: 'object',
-        properties: {
-          credit_card: { type: 'number' },
-          billing_address: { type: 'string' }
-        },
-        dependencies: {
-          credit_card: ['billing_address']
-        }
-      },
-      descriptorConstructor: NativeDescriptor.get
-    }),
+    parser: new ObjectParser(options100),
     expected: {
       properties: (value: Dictionary<JsonSchema>, { schema: { properties } }: ObjectParser) => value !== properties && DeepCompare(value, properties),
       dependencies: (value: Dictionary<string[]>, { schema: { dependencies } }: ObjectParser) => value !== dependencies && DeepCompare(value, dependencies)
@@ -428,6 +430,103 @@ describe('parsers/ObjectParser', () => {
           name: [],
           credit_card: ['billing_address']
         });
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '11.0',
+    description: 'updateDependencies() with Property Dependencies',
+    parser: new ObjectParser(options100),
+    expected: {
+      field: {
+        children(values: ObjectField[]) {
+          return values.every(({ required }) => required === false);
+        }
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '11.1',
+    description: 'updateDependencies() with Property Dependencies',
+    parser: () => {
+      const requestRender = jest.fn();
+      const parser = new ObjectParser({ ...options100, requestRender });
+
+      parser.parse();
+      parser.field.children[0].input.setValue(123);
+
+      return parser;
+    },
+    expected: {
+      field: {
+        children(values: ObjectField[], { options }: any) {
+          const [ [ [ creditCardField, billingAddressField ] ] ] = options.requestRender.mock.calls;
+
+          expect(options.requestRender).toBeCalled();
+
+          expect(creditCardField.name).toBe('credit_card');
+          expect(creditCardField.input.value).toBe(123);
+          expect(creditCardField.required).toBeTruthy();
+
+          expect(billingAddressField.name).toBe('billing_address');
+          expect(billingAddressField.required).toBeTruthy();
+        }
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '11.2',
+    description: 'updateDependencies() with Bidirectional Property Dependencies',
+    parser: () => {
+      const schema: JsonSchema = {
+        type: 'object',
+        properties: {
+          credit_card: {
+            type: 'number'
+          },
+          billing_address: {
+            type: 'string'
+          }
+        },
+        dependencies: {
+          credit_card: [
+            'billing_address'
+          ],
+          billing_address: [
+            'credit_card'
+          ]
+        }
+      };
+
+      const requestRender = jest.fn();
+      const descriptorConstructor = NativeDescriptor.get;
+
+      const parser = new ObjectParser({ schema, requestRender, descriptorConstructor });
+
+      parser.parse();
+      parser.field.children[0].input.setValue(123);
+      parser.field.children[1].input.setValue('Darling Street');
+      parser.field.children[1].input.setValue('');
+
+      return parser;
+    },
+    expected: {
+      field: {
+        children(values: ObjectField[], { options }: any) {
+          const [ [ [ creditCardField, billingAddressField ] ] ] = options.requestRender.mock.calls;
+
+          expect(options.requestRender).toBeCalled();
+
+          expect(creditCardField.name).toBe('credit_card');
+          expect(creditCardField.input.value).toBe(123);
+
+          expect(billingAddressField.name).toBe('billing_address');
+          expect(billingAddressField.input.value).toBe('');
+          expect(billingAddressField.required).toBeTruthy();
+        }
       }
     }
   });

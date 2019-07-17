@@ -13,7 +13,9 @@ function toEqual(parser: TParser, prefix: string, actual: Dictionary<any>, expec
   Object.keys(expected).forEach((key) => {
     if (typeof expected[key] === 'function') {
       it(`${prefix}.${key} validation should be succeed`, () => {
-        expect(expected[key](actual[key], parser)).toBeTruthy();
+        const result = expected[key](actual[key], parser) !== false;
+
+        expect(result).toBeTruthy();
       });
     } else if (typeof expected[key] === 'object' && expected[key] !== null && !Array.isArray(expected[key])) {
       toEqual(parser, `${prefix}.${key}`, actual[key], expected[key]);

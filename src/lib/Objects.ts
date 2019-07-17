@@ -9,12 +9,10 @@ export const Objects = {
     Object.keys(src).forEach((key) => {
       const value = src[key];
 
-      if (!Objects.isObject(value)) {
+      if (!Objects.isObject(value) || typeof value === 'function') {
         dest[key] = value;
       } else if (value instanceof Array) {
         dest[key] = [ ...value ];
-      } else if (typeof value === 'function') {
-        dest[key] = value;
       } else {
         if (!dest[key]) {
           dest[key] = {};
