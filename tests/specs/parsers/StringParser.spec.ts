@@ -2,6 +2,7 @@ import { Parser } from '@/parsers/Parser';
 import { StringParser } from '@/parsers/StringParser';
 import { Dictionary, ScalarDescriptor, ParserOptions } from '@/types';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
+import { TestParser } from '../../lib/TestParser';
 
 describe('parsers/StringParser', () => {
   const options: ParserOptions<string, ScalarDescriptor> = {
@@ -164,5 +165,57 @@ describe('parsers/StringParser', () => {
     parser.parse();
 
     expect(parser.field.input.value).toBe('12');
+  });
+
+  TestParser.Case({
+    case: '1.0',
+    description: 'isEmpty() with non empty string',
+    parser: new StringParser({
+      schema: { type: 'string' },
+      model: undefined as any,
+      descriptorConstructor: NativeDescriptor.get
+    }),
+    expected: {
+      isEmpty: (fn: Function) => fn('non empty') === false
+    }
+  });
+
+  TestParser.Case({
+    case: '1.1',
+    description: 'isEmpty() with an empty string',
+    parser: new StringParser({
+      schema: { type: 'string' },
+      model: undefined as any,
+      descriptorConstructor: NativeDescriptor.get
+    }),
+    expected: {
+      isEmpty: (fn: Function) => fn('') === true
+    }
+  });
+
+  TestParser.Case({
+    case: '1.2',
+    description: 'isEmpty() with a non string',
+    parser: new StringParser({
+      schema: { type: 'string' },
+      model: 12 as any,
+      descriptorConstructor: NativeDescriptor.get
+    }),
+    expected: {
+      isEmpty: (fn: Function, parser: StringParser) => fn.apply(parser, [12]) === true
+    }
+  });
+
+  TestParser.Case({
+    case: '1.3',
+    description: 'isEmpty() with default value',
+    parser: new StringParser({
+      schema: { type: 'string' },
+      model: 'hello' as any,
+      descriptorConstructor: NativeDescriptor.get
+    }),
+    expected: {
+      isEmpty: (fn: Function, parser: StringParser) => fn.apply(parser, []) === false
+    }
   });
 });

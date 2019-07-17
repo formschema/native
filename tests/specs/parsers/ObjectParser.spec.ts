@@ -1,8 +1,10 @@
 import { Parser } from '@/parsers/Parser';
 import { ObjectParser } from '@/parsers/ObjectParser';
-import { ListField, ScalarDescriptor, ParserOptions } from '@/types';
+import { Dictionary, ListField, ScalarDescriptor, ParserOptions } from '@/types';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
+import { JsonSchema } from '@/types/jsonschema';
 import { TestParser } from '../../lib/TestParser';
+import { DeepCompare } from '../../lib/DeepCompare';
 
 import '@/parsers';
 
@@ -326,6 +328,105 @@ describe('parsers/ObjectParser', () => {
           }
 
           return name === `user.${names[i]}`
+        });
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '9.0',
+    description: 'isEmpty() with an empty object',
+    parser: new ObjectParser({
+      schema: { type: 'object' },
+      descriptorConstructor: NativeDescriptor.get
+    }),
+    expected: {
+      isEmpty: (fn: Function) => fn({}) === true
+    }
+  });
+
+  TestParser.Case({
+    case: '9.1',
+    description: 'isEmpty() with a non empty object',
+    parser: new ObjectParser({
+      schema: { type: 'object' },
+      descriptorConstructor: NativeDescriptor.get
+    }),
+    expected: {
+      isEmpty: (fn: Function) => fn({ x: 12 }) === false
+    }
+  });
+
+  TestParser.Case({
+    case: '9.2',
+    description: 'isEmpty() with default value',
+    parser: new ObjectParser({
+      schema: { type: 'object', default: { x: 12 } },
+      descriptorConstructor: NativeDescriptor.get
+    }),
+    expected: {
+      isEmpty: (fn: Function, parser: ObjectParser) => fn.apply(parser) === false
+    }
+  });
+
+  TestParser.Case({
+    case: '10.0',
+    description: 'parseDependencies() with Property Dependencies',
+    parser: new ObjectParser({
+      schema: {
+        type: 'object',
+        properties: {
+          credit_card: { type: 'number' },
+          billing_address: { type: 'string' }
+        },
+        dependencies: {
+          credit_card: ['billing_address']
+        }
+      },
+      descriptorConstructor: NativeDescriptor.get
+    }),
+    expected: {
+      properties: (value: Dictionary<JsonSchema>, { schema: { properties } }: ObjectParser) => value !== properties && DeepCompare(value, properties),
+      dependencies: (value: Dictionary<string[]>, { schema: { dependencies } }: ObjectParser) => value !== dependencies && DeepCompare(value, dependencies)
+    }
+  });
+
+  TestParser.Case({
+    case: '10.1',
+    description: 'parseDependencies() with Schema Dependencies',
+    parser: new ObjectParser({
+      schema: {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+          credit_card: { type: 'number' }
+        },
+        dependencies: {
+          name: {
+            type: 'object'
+          },
+          credit_card: {
+            type: 'object',
+            properties: {
+              billing_address: { type: 'string' }
+            }
+          }
+        }
+      },
+      descriptorConstructor: NativeDescriptor.get
+    }),
+    expected: {
+      properties(value: Dictionary<JsonSchema>) {
+        return DeepCompare(value, {
+          name: { type: 'string' },
+          credit_card: { type: 'number' },
+          billing_address: { type: 'string' }
+        });
+      },
+      dependencies(value: Dictionary<string[]>) {
+        return DeepCompare(value, {
+          name: [],
+          credit_card: ['billing_address']
         });
       }
     }

@@ -1,67 +1,16 @@
 import { Objects } from '@/lib/Objects';
 
 describe('lib/Objects', () => {
-  describe('Objects.equals(o1, o2)', () => {
-    it('should return false for inputs with not equal keys length', () => {
-      const o1 = { a: 1 };
-      const o2 = { a: 1, b: 2 };
-
-      expect(Objects.equals(o1, o2)).toEqual(false);
-    });
-
-    it('should return false for different inputs with equal keys length', () => {
-      const o1 = { a: 1, b: 3 };
-      const o2 = { a: 1, b: 2 };
-
-      expect(Objects.equals(o1, o2)).toEqual(false);
-    });
-
-    it('should return true for different inputs with equal ordered keys', () => {
-      const o1 = { a: 1, b: 3 };
-      const o2 = { a: 1, b: 3 };
-
-      expect(Objects.equals(o1, o2)).toBeTruthy();
-    });
-
-    it('should return true for different inputs with equal non ordered keys', () => {
-      const o1 = { a: 1, b: 3 };
-      const o2 = { b: 3, a: 1 };
-
-      expect(Objects.equals(o1, o2)).toBeTruthy();
-    });
-
-    it('should return true for empty inputs', () => {
-      const o1 = {};
-      const o2 = {};
-
-      expect(Objects.equals(o1, o2)).toBeTruthy();
-    });
-
-    it('should return true with for identical scalar inputs', () => {
-      const o1 = 1;
-      const o2 = 1;
-
-      expect(Objects.equals(o1, o2)).toBeTruthy();
-    });
-
-    it('should return false for different scalar inputs', () => {
-      const o1 = 1;
-      const o2 = 2;
-
-      expect(Objects.equals(o1, o2)).toBe(false);
-    });
-  });
-
-  describe('Objects.isScalar(value)', () => {
-    [ 'hello', 123, true, undefined, null ].forEach((value) => {
-      it(`should return true for '${value}' as scalar value`, () => {
-        expect(Objects.isScalar(value)).toBeTruthy();
+  describe('Objects.isObject(value)', () => {
+    [ 'hello', 123, true, undefined, null, () => {} ].forEach((value) => {
+      it(`should return false for '${value}' as scalar value`, () => {
+        expect(Objects.isObject(value)).toBeFalsy();
       });
     });
 
     [ {}, [] ].forEach((value) => {
-      it(`should return false for '${JSON.stringify(value)}' as non scalar value`, () => {
-        expect(Objects.isScalar(value)).toBe(false);
+      it(`should return true for '${JSON.stringify(value)}' as non scalar value`, () => {
+        expect(Objects.isObject(value)).toBeTruthy();
       });
     });
   });
@@ -89,18 +38,6 @@ describe('lib/Objects', () => {
       const result = Objects.clone(src);
 
       expect(result).toEqual(expected);
-    });
-  });
-
-  describe('Objects.clear(object)', () => {
-    it('should successfully clear object', () => {
-      const F = function F() {};
-
-      const object = { a: 1, c: 2, e: { x: 1 }, d: [ 1 ], f: { g: 1 }, F };
-      const expected = {};
-
-      Objects.clear(object);
-      expect(object).toEqual(expected);
     });
   });
 

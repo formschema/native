@@ -1,5 +1,7 @@
 import { Parser } from '@/parsers/Parser';
 import { JsonSchema } from '@/types/jsonschema';
+import { UniqueId } from '@/components/FormSchema';
+import { Objects } from '@/lib/Objects';
 
 import {
   Dictionary,
@@ -12,8 +14,6 @@ import {
   FieldKind,
   UnknowParser
 } from '@/types';
-import { UniqueId } from '@/components/FormSchema';
-import { Objects } from '@/lib/Objects';
 
 export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescriptor> {
   properties: Dictionary<JsonSchema> = {};

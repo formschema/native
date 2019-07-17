@@ -5,6 +5,7 @@ import { Objects } from '@/lib/Objects';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
 import { JsonSchema } from '@/types/jsonschema';
 import { TestParser } from '../../lib/TestParser';
+import { DeepCompare } from '../../lib/DeepCompare';
 
 class FakeParser extends Parser<any, StringField, ScalarDescriptor> {
   parse() {}
@@ -57,7 +58,7 @@ const ParserValidator = {
     isRoot: (value: boolean, parser: FakeParser) => value === parser.isRoot,
     schema: (value: JsonSchema, { options }: FakeParser) => value === options.schema,
     required: (value: boolean, parser: FakeParser) => value === (parser.options.required || false),
-    descriptor: (value: Dictionary, parser: FakeParser) => Objects.equals(value, parser.descriptor),
+    descriptor: (value: Dictionary, parser: FakeParser) => DeepCompare(value, parser.descriptor),
     parent: (value: any, parser: FakeParser) => parser.parent ? value === parser.parent.field : value === undefined,
     input: {
       attrs: {
@@ -70,7 +71,7 @@ const ParserValidator = {
         'aria-labelledby': (value: string | undefined, { field }: FakeParser) => value === field.label.attrs.id,
         'aria-describedby': (value: string | undefined, { field }: FakeParser) => value === field.helper.attrs.id
       },
-      props: (value: Dictionary, parser: FakeParser) => Objects.equals(value, parser.descriptor.props),
+      props: (value: Dictionary, parser: FakeParser) => DeepCompare(value, parser.descriptor.props),
       value: (value: any, parser: FakeParser) => value === parser.model,
       component: (value: Dictionary) => typeof value !== 'undefined'
     },
@@ -209,7 +210,7 @@ describe('parsers/Parser', () => {
     case: '1.3.1',
     description: 'field.input.setValue() with options.onChange (commit)',
     parser: () => {
-      const onChange = jest.fn((value: any) => value);
+      const onChange = jest.fn();
       const parser = new FakeParser({ ...options10, onChange });
 
       parser.parse();
@@ -267,6 +268,42 @@ describe('parsers/Parser', () => {
     },
     expected: {
       defaultComponent: undefined
+    }
+  });
+
+  TestParser.Case({
+    case: '4.0',
+    description: 'parser.requestRender()',
+    parser: () => {
+      const requestRender = jest.fn();
+      const parser = new FakeParser({ ...options10, requestRender });
+
+      parser.parse();
+      parser.requestRender([parser.field]);
+
+      return parser;
+    },
+    expected: {
+      options: {
+        requestRender: (requestRender: any) => requestRender.mock.calls.length === 1
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '4.1',
+    description: 'parser.requestRender() with options.requestRender as non function',
+    parser: () => {
+      const requestRender = { x: jest.fn() };
+      const parser = new FakeParser({ ...options10, requestRender });
+
+      parser.parse();
+      parser.requestRender([parser.field]);
+
+      return parser;
+    },
+    expected: {
+      options: (options: any) => options.requestRender.x.mock.calls.length === 0
     }
   });
 });

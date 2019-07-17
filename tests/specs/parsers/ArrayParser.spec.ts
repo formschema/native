@@ -526,4 +526,40 @@ describe('parsers/ArrayParser', () => {
       }
     }
   });
+
+  TestParser.Case({
+    case: '9.0',
+    description: 'isEmpty() with an empty array',
+    parser: new ArrayParser({
+      schema: { type: 'array' },
+      descriptorConstructor: NativeDescriptor.get
+    }),
+    expected: {
+      isEmpty: (fn: Function) => fn([]) === true
+    }
+  });
+
+  TestParser.Case({
+    case: '9.1',
+    description: 'isEmpty() with a non empty array',
+    parser: new ArrayParser({
+      schema: { type: 'array' },
+      descriptorConstructor: NativeDescriptor.get
+    }),
+    expected: {
+      isEmpty: (fn: Function) => fn([1]) === false
+    }
+  });
+
+  TestParser.Case({
+    case: '9.2',
+    description: 'isEmpty() with default value',
+    parser: new ArrayParser({
+      schema: { type: 'array', default: [2] },
+      descriptorConstructor: NativeDescriptor.get
+    }),
+    expected: {
+      isEmpty: (fn: Function, parser: ArrayParser) => fn.apply(parser) === false
+    }
+  });
 });

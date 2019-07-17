@@ -2,6 +2,7 @@ import { Parser } from '@/parsers/Parser';
 import { BooleanParser } from '@/parsers/BooleanParser';
 import { ScalarDescriptor, ParserOptions } from '@/types';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
+import { TestParser } from '../../lib/TestParser';
 
 describe('parsers/BooleanParser', () => {
   const options: ParserOptions<any, ScalarDescriptor> = {
@@ -70,5 +71,53 @@ describe('parsers/BooleanParser', () => {
     parser.parse();
 
     expect(parser.field.input.value).toBeUndefined();
+  });
+
+  TestParser.Case({
+    case: '1.0',
+    description: 'isEmpty() with non boolean',
+    parser: new BooleanParser({
+      schema: { type: 'boolean' },
+      descriptorConstructor: NativeDescriptor.get
+    }),
+    expected: {
+      isEmpty: (fn: Function, parser: BooleanParser) => fn.apply(parser, [undefined]) === true
+    }
+  });
+
+  TestParser.Case({
+    case: '1.1',
+    description: 'isEmpty() with a falsy boolean',
+    parser: new BooleanParser({
+      schema: { type: 'boolean' },
+      descriptorConstructor: NativeDescriptor.get
+    }),
+    expected: {
+      isEmpty: (fn: Function) => fn(false) === true
+    }
+  });
+
+  TestParser.Case({
+    case: '1.2',
+    description: 'isEmpty() with a truthy boolean',
+    parser: new BooleanParser({
+      schema: { type: 'boolean' },
+      descriptorConstructor: NativeDescriptor.get
+    }),
+    expected: {
+      isEmpty: (fn: Function, parser: BooleanParser) => fn.apply(parser, [true]) === false
+    }
+  });
+
+  TestParser.Case({
+    case: '1.3',
+    description: 'isEmpty() with default value',
+    parser: new BooleanParser({
+      schema: { type: 'boolean', default: true },
+      descriptorConstructor: NativeDescriptor.get
+    }),
+    expected: {
+      isEmpty: (fn: Function, parser: BooleanParser) => fn.apply(parser, []) === false
+    }
   });
 });

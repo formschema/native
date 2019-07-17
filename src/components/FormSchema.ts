@@ -198,13 +198,13 @@ const FormSchema: FormSchemaComponent = {
   },
   methods: {
     clone(value): unknown {
-      if (Objects.isScalar(value)) {
-        return value;
+      if (Objects.isObject(value)) {
+        const object = value instanceof Array ? [] : {};
+
+        return Objects.assign(object, value as any);
       }
 
-      const object = value instanceof Array ? [] : {};
-
-      return Objects.assign(object, value as any);
+      return value;
     },
 
     /**

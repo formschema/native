@@ -156,7 +156,7 @@ export interface ParserOptions<
 > {
   readonly key?: string;
   readonly schema: JsonSchema;
-  readonly model: TModel;
+  readonly model?: TModel;
   readonly descriptor?: TDescriptor;
   readonly descriptorConstructor: DescriptorConstructor;
   readonly bracketedObjectInputName?: boolean;
