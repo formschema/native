@@ -1,6 +1,7 @@
 import { Parser } from '@/parsers/Parser';
 import { JsonSchema } from '@/types/jsonschema';
 import { Objects } from '@/lib/Objects';
+import { UniqueId } from '@/lib/UniqueId';
 
 import {
   ArrayField,
@@ -168,7 +169,12 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
         get disabled() {
           return self.count === self.max || self.items.length === 0;
         },
-        push: () => this.setCount(this.count + 1)
+        push: () => {
+          this.field.key = UniqueId.get(this.field.name);
+
+          this.setCount(this.count + 1);
+          this.requestRender([ this.field ]);
+        }
       }
     };
 
