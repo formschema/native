@@ -1,6 +1,5 @@
 import { terser } from 'rollup-plugin-terser';
 import typescript from 'rollup-plugin-typescript';
-import compiler from '@ampproject/rollup-plugin-closure-compiler';
 import resolve from 'rollup-plugin-node-resolve';
 import pkg from './package.json';
 
@@ -12,8 +11,6 @@ const BANNER = `/* ${pkg.name} v${pkg.version} (c) ${pkg.author} - ${pkg.license
 const ResolvePlugin = resolve({
   browser: true
 });
-
-const ClosurePlugin = compiler();
 
 const TerserPlugin = terser({
   compress: true,
@@ -28,7 +25,6 @@ const ES6_PLUGINS = [
   typescript({
     target: 'es6'
   }),
-  ClosurePlugin,
   TerserPlugin
 ];
 
@@ -37,7 +33,6 @@ const ES5_PLUGINS = [
   typescript({
     target: 'es5'
   }),
-  ClosurePlugin,
   TerserPlugin
 ];
 

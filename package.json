@@ -33,7 +33,6 @@
   },
   "homepage": "https://gitlab.com/formschema/native",
   "devDependencies": {
-    "@ampproject/rollup-plugin-closure-compiler": "^0.10.0",
     "@babel/core": "^7.5.4",
     "@babel/preset-env": "^7.5.4",
     "@types/jest": "^24.0.15",
