@@ -4,6 +4,7 @@
   "description": "Vue component form based on JSON Schema",
   "main": "dist/FormSchema.esm.min.js",
   "browser": "dist/FormSchema.umd.min.js",
+  "types": "dist/types/index.d.ts",
   "scripts": {
     "playground": "cd playground && npm run serve",
     "playground:install": "cd playground && npm i",
@@ -49,6 +50,7 @@
     "eslint-import-resolver-typescript": "^1.1.1",
     "eslint-plugin-import": "^2.18.0",
     "rollup": "^1.17.0",
+    "rollup-plugin-copy": "^3.0.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-terser": "^5.1.1",
     "rollup-plugin-typescript": "^1.0.1",

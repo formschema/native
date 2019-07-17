@@ -27,11 +27,15 @@
       "scripthost"
     ]
   },
+  "typedocOptions": {
+    "mode": "modules",
+    "out": "docs"
+  },
   "include": [
     "src/**/*.ts",
     "tests/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules", "dist"
   ]
 }

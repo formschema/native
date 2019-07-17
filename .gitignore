@@ -36,9 +36,11 @@ jspm_packages
 # Optional REPL history
 .node_repl_history
 
+*.tgz
 *~
 *.kate-swp
 .directory
 dist
 *.kdev4
 .codeline
+.vscode
