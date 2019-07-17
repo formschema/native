@@ -74,6 +74,7 @@ npm install --save @formschema/native
   - HTML input `time` to render schema with `format: 'time'`
   - HTML input `url` to render schema with `format: 'uri'`
 - [String-Encoding Non-JSON Data](https://json-schema.org/latest/json-schema-validation.html#rfc.section.8)
+- [Property dependencies and Schema dependencies](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.5.7)
 - [Schema Re-Use With "definitions"](https://json-schema.org/latest/json-schema-validation.html#rfc.section.9) (see [JSON Schema $ref Pointers](#json-schema-ref-pointers))
 - [Schema Annotations](https://json-schema.org/latest/json-schema-validation.html#rfc.section.10)
 
@@ -85,6 +86,7 @@ npm install --save @formschema/native
 - [multipleOf](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.2.1) is used to render the input attribute `step`
 - [maxLength](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.3.1), [minLength](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.3.2), [pattern](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.3.3) and [const](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.1.3) are used to render string fields
 - [items](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4.1), [additionalItems](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4.2), [maxItems](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4.3), [minItems](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4.4) and [uniqueItems](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4.5) are used to render array fields
+- [dependencies](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.5.7) is used to implement *Property dependencies* and *Schema dependencies*
 - [contentEncoding](https://json-schema.org/latest/json-schema-validation.html#rfc.section.8.3)
 - [contentMediaType](https://json-schema.org/latest/json-schema-validation.html#rfc.section.8.4)
 - [title](https://json-schema.org/latest/json-schema-validation.html#rfc.section.10.1) is used to render the input label
@@ -102,6 +104,7 @@ are irrelevant:
 - [minProperties](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.5.2)
 - [patternProperties](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.5.5)
 - [additionalProperties](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.5.6)
+- [propertyNames](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.5.8)
 - [writeOnly](https://json-schema.org/latest/json-schema-validation.html#rfc.section.10.3)
 - [examples](https://json-schema.org/latest/json-schema-validation.html#rfc.section.10.4)
 
