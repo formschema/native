@@ -77,9 +77,11 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
       ? this.model[index]
       : itemSchema.default;
 
-    const itemName = this.options.bracketedObjectInputName
-      ? `${this.options.name}[]`
+    const name = itemDescriptor.kind === 'enum'
+      ? `${this.options.name}-${index}`
       : this.options.name;
+
+    const itemName = this.options.bracketedObjectInputName ? `${name}[]` : name;
 
     const options: ParserOptions<unknown, AbstractUISchemaDescriptor> = {
       schema: itemSchema,
