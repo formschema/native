@@ -1,6 +1,6 @@
 import { Parser } from '@/parsers/Parser';
 import { JsonSchema } from '@/types/jsonschema';
-import { UniqueId } from '@/components/FormSchema';
+import { UniqueId } from '@/lib/UniqueId';
 import { Objects } from '@/lib/Objects';
 
 import {

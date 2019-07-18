@@ -11,7 +11,7 @@ import {
   ComputedOptions
 } from 'vue/types/options';
 
-import { JsonSchema } from '@/types/jsonschema';
+import { JsonSchema } from './jsonschema';
 
 export type Scalar = boolean | number | null | string;
 export interface Dictionary<T = unknown> { [key: string]: T }
