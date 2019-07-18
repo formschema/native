@@ -16,15 +16,19 @@
           <div class="playground__input__rendering__viewport__options">
             <label>
               <input type="checkbox" v-model="disabled" @change="updateRenderKey">
-              <span>Disable</span>
+              <span>Disable whole form</span>
             </label>
             <label>
               <input type="checkbox" v-model="search" @change="updateRenderKey">
               <span>Search</span>
             </label>
+            <label>
+              <input type="checkbox" v-model="enableDescriptor" @change="updateRenderKey">
+              <span>Enable Descriptor</span>
+            </label>
           </div>
           <div ref="form" class="playground__input__rendering__viewport__card" :key="renderKey">
-            <FormSchema v-bind="{ schema, descriptor, disabled, search }" v-model="model" @input="generateCode" @submit.prevent>
+            <FormSchema v-bind="props" v-model="model" @input="generateCode" @submit.prevent>
               <div class="playground__input__rendering__viewport__card__buttons">
                 <button type="submit">Submit</button>
                 <button type="reset">Reset</button>
@@ -72,6 +76,7 @@
       search: false,
       renderKey: UniqueId.get('code'),
       modelKey: UniqueId.get('model'),
+      enableDescriptor: true,
       descriptor: {
         properties: {
           name: {
@@ -108,14 +113,14 @@
               placeholder: 'Select your list subscription',
               title: 'Please select your list subscription'
             },
-            labels: {
-              monday: 'Monday',
-              tuesday: 'Tuesday',
-              wednesday: 'Wednesday',
-              thursday: 'Thursday',
-              friday: 'Friday',
-              saturday: 'Saturday',
-              sunday: 'Sunday'
+            items: {
+              monday: { label: 'Monday' },
+              tuesday: { label: 'Tuesday' },
+              wednesday: { label: 'Wednesday' },
+              thursday: { label: 'Thursday' },
+              friday: { label: 'Friday' },
+              saturday: { label: 'Saturday' },
+              sunday: { label: 'Sunday' }
             }
           },
           source: {
@@ -132,9 +137,9 @@
             }
           },
           frequence: {
-            labels: {
-              daily: 'Daily',
-              weekly: 'Weekly'
+            items: {
+              daily: { label: 'Daily' },
+              weekly: { label: 'Weekly' }
             }
           }
         }
@@ -146,6 +151,14 @@
       },
       rawModel() {
         return JSON.stringify(this.model, null, 2);
+      },
+      props() {
+        return {
+          schema: this.schema,
+          search: this.search,
+          disabled: this.disabled,
+          descriptor: this.enableDescriptor ? this.descriptor : {}
+        };
       }
     },
     watch: {
@@ -187,256 +200,217 @@
   }
 </script>
 
-<style>
-  .playground {
-    text-align: left;
-    margin: auto;
-    /* display: flex; */
-    flex-direction: column;
-    color: #f5f5f5;
-    background-color: #333333;
-    overflow: hidden;
+<style lang="stylus">
+  .playground
+    text-align: left
+    margin: auto
+    /* display: flex */
+    flex-direction: column
+    color: #f5f5f5
+    background-color: #333333
+    overflow: hidden
 
-    position: relative;
-    height: 100%;
-  }
+    position: relative
+    height: 100%
 
-  .playground h2 {
-    margin: 0;
-    padding: 8px;
-    font-size: 12px;
-    font-weight: 400;
-    width: 100%;
-  }
+    h2
+      margin: 0
+      padding: 8px
+      font-size: 12px
+      font-weight: 400
+      width: 100%
 
-  .playground pre {
-    margin: 0;
-  }
+    pre
+      margin: 0
 
-  .playground__input {
-    display: flex;
-    flex-direction: row;
+    h2, &__input
+      border-bottom: 1px solid rgba(255, 255, 255, .1)
 
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 70%;
-  }
+    &__input
+      display: flex
+      flex-direction: row
 
-  .playground h2,
-  .playground__input {
-    border-bottom: 1px solid rgba(255, 255, 255, .1);
-  }
+      position: absolute
+      top: 0
+      left: 0
+      width: 100%
+      height: 70%
 
-  .playground__input__schema {
-    display: flex;
-    flex-direction: column;
-  }
+      &__schema
+        display: flex
+        flex-direction: column
 
-  .playground__input__schema__editor {
-    flex: 1;
-    display: flex;
-    align-items: flex-start;
-    max-width: 400px;
-    overflow: auto;
-  }
+        &__editor
+          flex: 1
+          display: flex
+          align-items: flex-start
+          max-width: 400px
+          overflow: auto
 
-  .playground__input__schema__editor,
-  .playground__input__model__value,
-  .playground__output__code {
-    background-color: #2d2d2d;
-    flex: 1;
-    width: 100%;
-  }
+      &__schema__editor, &__model__value, &__output__code
+        background-color: #2d2d2d
+        flex: 1
+        width: 100%
 
-  .playground__input__rendering {
-    width: 100%;
-    border-left: 1px solid rgba(116, 81, 81, 0.1);
-    border-right: 1px solid rgba(255, 255, 255, .1);
-  }
+      &__rendering, &__model
+        display: flex
+        flex-direction: column
+        align-items: flex-start
+        overflow: hidden
 
-  .playground__input__rendering,
-  .playground__input__model {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    overflow: hidden;
-  }
+      &__rendering
+        width: 100%
+        border-left: 1px solid rgba(116, 81, 81, 0.1)
+        border-right: 1px solid rgba(255, 255, 255, .1)
 
-  .playground__input__rendering__viewport {
-    flex: 1;
-    padding: 20px 0 40px;
-    overflow: auto;
-    margin: auto;
-    color: #333;
-    background-color: #f5f5f5;
-    font-size: .8em;
-    width: 100%;
-  }
+        &__viewport
+          flex: 1
+          padding: 20px 0 40px
+          overflow: auto
+          margin: auto
+          color: #333
+          background-color: #f5f5f5
+          font-size: .8em
+          width: 100%
 
-  .playground__input__rendering__viewport__options {
-    text-align: left;
-    padding: 0 15px 20px;
+          &__options
+            text-align: left
+            padding: 0 15px 20px
 
-    display: flex;
-    flex-direction: row;
-  }
+            display: flex
+            flex-direction: row
 
-  .playground__input__rendering__viewport__options label {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-  }
+            label
+              display: flex
+              flex-direction: row
+              align-items: center
 
-  .playground__input__rendering__viewport__options label:not(:first-child) {
-    margin-left: 20px;
-  }
+              &:not(:first-child)
+                margin-left: 20px
 
-  .playground__input__rendering__viewport__options label span {
-    flex: 1;
-  }
+              span
+                flex: 1
 
-  .playground__input__rendering__viewport__card {
-    border-radius: 10px;
-    box-shadow: 0 0 2rem 0 rgba(136,152,170, .45);
-    background-color: #fff;
-    padding: 20px 20px;
-    max-width: 400px;
-    margin: auto;
-  }
+          &__card
+            border-radius: 10px
+            box-shadow: 0 0 2rem 0 rgba(136,152,170, .45)
+            background-color: #fff
+            padding: 20px 20px
+            max-width: 400px
+            margin: auto
 
-  .playground__input__rendering__viewport__card__buttons {
-    text-align: center;
-  }
+            &__buttons
+              text-align: center
 
-  .playground__input__rendering__viewport__card__buttons button:not(:first-child) {
-    margin-left: 15px;
-  }
+              button:not(:first-child)
+                margin-left: 15px
 
-  .playground__input__rendering__viewport__card fieldset {
-    border: none;
-    border-bottom: 1px solid rgba(0, 0, 0, .2);
+            fieldset
+              border: none
+              /* border-bottom: 1px solid rgba(0, 0, 0, .2) */
 
-    padding: 10px 0;
-    margin-bottom: 10px;
-  }
+              padding: 10px 0
+              margin-bottom: 10px
 
-  .playground__input__rendering__viewport__card legend {
-    font-size: 1.7em;
-    text-align: center;
-    margin-top: 0;
-    margin-bottom: .2em
-  }
+            legend
+              font-size: 1.7em
+              text-align: center
+              margin-top: 0
+              margin-bottom: .2em
 
-  .playground__input__model__value {
-    overflow: auto
-  }
+      &__model
+        flex: 0
+        margin: 0
+        min-width: 280px
 
-  .playground__input__rendering form > fieldset > legend {
-    font-size: 18px;
-  }
+        &__value
+          display: flex
+          overflow: auto
 
-  .playground__input__rendering form > fieldset > p {
-    margin-bottom: 25px;
-  }
+      &__rendering
+        p
+          text-align: center
+          margin-top: 0
 
-  .playground__input__rendering p {
-    text-align: center;
-    margin-top: 0;
-  }
+        form > fieldset
+          & > legend
+            font-size: 18px
 
-  .playground__input__rendering__viewport__card span {
-    color: rgba(0, 0, 0, .6);
-  }
+          & > p
+            margin-bottom: 25px
 
-  .playground__input__rendering fieldset fieldset legend {
-    display: block;
-    font-size: 14px;
-    text-align: left;
-    width: 100%;
-    padding: 0 0 2px;
-    border-bottom: 1px solid rgba(0, 0, 0, .2);
-  }
+        &__viewport
+          &__card
+            span
+              color: rgba(0, 0, 0, .6)
 
-  .playground__input__rendering__viewport__card input,
-  .playground__input__rendering__viewport__card textarea,
-  .playground__input__rendering__viewport__card select {
-    display: block;
-  }
+            input, textarea, select
+              display: block
 
-  .playground__input__model {
-    flex: 0;
-    margin: 0;
-    min-width: 280px;
-  }
+        fieldset fieldset legend
+          display: block
+          font-size: 14px
+          text-align: left
+          width: 100%
+          padding: 0 0 2px
+          border-bottom: 1px solid rgba(0, 0, 0, .2)
 
-  .playground__output {
-    position: absolute;
-    top: 70%;
-    left: 0;
-    width: 100%;
-    height: 30%;
+    &__output
+      position: absolute
+      top: 70%
+      left: 0
+      width: 100%
+      height: 30%
 
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
+      overflow: hidden
+      display: flex
+      flex-direction: column
 
-  .playground__output__code {
-    flex: 1;
-    display: flex;
-    overflow: auto;
-  }
+      &__code
+        flex: 1
+        display: flex
+        overflow: auto
 
-  [data-fs-kind] {
-    flex: 1;
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 5px;
-  }
+  [data-fs-kind]
+    flex: 1
+    display: flex
+    flex-direction: row
+    margin-bottom: 5px
 
-  [data-fs-kind] > label {
-    display: block;
-    width: 120px;
-    min-width: 120px;
-    text-align: right;
-    margin-right: 10px
-  }
+    & > label
+      display: block
+      width: 120px
+      min-width: 120px
+      text-align: right
+      margin-right: 10px
 
-  [data-fs-kind] > label:active {
-    outline: none;
-  }
+      &:active
+        outline: none
 
-  [data-fs-kind="enum"] [data-fs-kind] {
-    flex-direction: row-reverse;
-  }
+  [data-fs-kind="enum"]
+    [data-fs-kind]
+      flex-direction: row-reverse
 
-  [data-fs-kind="enum"] [data-fs-kind] label {
-    text-align: left;
-    flex: 1;
-  }
+      label
+        text-align: left
+        flex: 1
 
-  [data-fs-input] {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
+  [data-fs-input]
+    flex: 1
+    display: flex
+    flex-direction: column
+    align-items: flex-start
 
-  [data-fs-input="array"] > [data-fs-kind] {
-    flex-direction: column;
-  }
+  [data-fs-input="array"]
+    & > [data-fs-kind]
+      flex-direction: column
 
-  [data-fs-input="array"] > [data-fs-kind] label {
-    text-align: left;
-  }
+      label
+        text-align: left
 
-  [data-fs-input="array"] > [data-fs-input] {
-    margin-bottom: 5px;
-  }
+    & > [data-fs-input]
+      margin-bottom: 5px
 
-  [data-fs-input="array"] > [data-fs-input] > * {
-    margin-left: 0;
-  }
+      & > *
+        margin-left: 0
 </style>
