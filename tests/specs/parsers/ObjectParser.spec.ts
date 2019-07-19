@@ -272,7 +272,7 @@ describe('parsers/ObjectParser', () => {
     });
   });
 
-  const options8: any = (bracketedObjectInputNameValue: boolean) => ({
+  const options7: any = (bracketedObjectInputNameValue: boolean) => ({
     name: 'user',
     schema: {
       type: 'object',
@@ -292,13 +292,44 @@ describe('parsers/ObjectParser', () => {
     bracketedObjectInputName: bracketedObjectInputNameValue
   });
 
+  TestParser.Case({
+    case: '7.0',
+    description: 'field.deep validation',
+    parser: new ObjectParser(options7(true)),
+    expected: {
+      field: {
+        deep: (value: number) => expect(value).toBe(0),
+        children: (values: ObjectField[]) => values.forEach(({ deep }) => expect(deep).toBe(1))
+      }
+    }
+  });
+
   const names = ['name', 'dateBirth'];
   const nestedNames = ['first', 'last'];
 
   TestParser.Case({
     case: '8.0',
     description: 'nested object with name and bracketedObjectInputName === true',
-    parser: new ObjectParser(options8(true)),
+    parser: new ObjectParser(options7(true)),
+    expected: {
+      children(items: ListField[]) {
+        return items.every(({ kind, name, children }: any, i: number) => {
+          if (kind === 'object') {
+            return children.every(({ name: nestedName }: any, j: number) => {
+              return nestedName === `user[${names[i]}][${nestedNames[j]}]`
+            });
+          }
+
+          return name === `user[${names[i]}]`
+        });
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '8.0',
+    description: 'nested object with name and bracketedObjectInputName === true',
+    parser: new ObjectParser(options7(true)),
     expected: {
       children(items: ListField[]) {
         return items.every(({ kind, name, children }: any, i: number) => {
@@ -317,7 +348,7 @@ describe('parsers/ObjectParser', () => {
   TestParser.Case({
     case: '8.1',
     description: 'nested object with name and bracketedObjectInputName === false',
-    parser: new ObjectParser(options8(false)),
+    parser: new ObjectParser(options7(false)),
     expected: {
       children(items: ListField[]) {
         return items.every(({ kind, name, children }: any, i: number) => {

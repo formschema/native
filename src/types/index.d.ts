@@ -78,6 +78,7 @@ export interface Field<
   isRoot: boolean;
   schema: JsonSchema;
   required: boolean;
+  deep: number;
   input: {
     attrs: TAttributes;
     props: Dictionary;

@@ -60,6 +60,7 @@ const ParserValidator = {
     required: (value: boolean, parser: FakeParser) => value === (parser.options.required || false),
     descriptor: (value: Dictionary, parser: FakeParser) => DeepCompare(value, parser.descriptor),
     parent: (value: any, parser: FakeParser) => parser.parent ? value === parser.parent.field : value === undefined,
+    deep: (value: number, parser: FakeParser) => parser.field.parent ? value === (parser.field.parent.deep + 1) : value === 0,
     input: {
       attrs: {
         id: (value: string, parser: FakeParser) => value === parser.id,

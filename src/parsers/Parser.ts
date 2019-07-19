@@ -128,6 +128,7 @@ export abstract class Parser<
       isRoot: this.isRoot,
       schema: options.schema,
       required: options.required || false,
+      deep: this.isRoot ? 0 : this.root.field.deep + 1,
       input: {
         attrs: this.attrs,
         get value() {

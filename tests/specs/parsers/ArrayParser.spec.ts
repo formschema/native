@@ -562,4 +562,16 @@ describe('parsers/ArrayParser', () => {
       isEmpty: (fn: Function, parser: ArrayParser) => fn.apply(parser) === false
     }
   });
+
+  TestParser.Case({
+    case: '10',
+    description: 'field.deep validation',
+    parser: new ArrayParser(options8(true)),
+    expected: {
+      field: {
+        deep: (value: number) => expect(value).toBe(0),
+        children: (values: ArrayField[]) => values.forEach(({ deep }) => expect(deep).toBe(1))
+      }
+    }
+  });
 });
