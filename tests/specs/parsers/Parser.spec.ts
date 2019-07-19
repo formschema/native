@@ -5,7 +5,6 @@ import { Objects } from '@/lib/Objects';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
 import { JsonSchema } from '@/types/jsonschema';
 import { TestParser } from '../../lib/TestParser';
-import { DeepCompare } from '../../lib/DeepCompare';
 
 class FakeParser extends Parser<any, StringField, ScalarDescriptor> {
   parse() {}
@@ -43,51 +42,54 @@ const ParserValidator = {
   isRoot: true,
   isEnumItem: false,
   parent: undefined,
-  root: (root: FakeParser, parser: FakeParser) => root === parser,
-  options: (value: ParserOptions<any, ScalarDescriptor>) => typeof value === 'object' && value !== null,
-  schema: (value: JsonSchema, { options }: FakeParser) => value === options.schema,
-  model: (value: any, { initialValue }: FakeParser) => value === initialValue,
-  rawValue: (value: any, { initialValue }: FakeParser) => value === initialValue,
-  descriptor: (value: any) => value && typeof value !== 'undefined',
-  kind: (value: string, { schema }: FakeParser) => value === schema.type,
-  id: (value: string) => typeof value === 'string',
+  root: (value: FakeParser, parser: FakeParser) => expect(value).toBe(parser),
+  options: (value: ParserOptions<any, ScalarDescriptor>) => {
+    expect(typeof value).toBe('object');
+    expect(value).not.toBeNull();
+  },
+  schema: (value: JsonSchema, { options }: FakeParser) => expect(value).toBe(options.schema),
+  model: (value: any, { initialValue }: FakeParser) => expect(value).toBe(initialValue),
+  rawValue: (value: any, { initialValue }: FakeParser) => expect(value).toBe(initialValue),
+  descriptor: (value: any) => expect(value).toBeDefined(),
+  kind: (value: string, { schema }: FakeParser) => expect(value).toBe(schema.type),
+  id: (value: string) => expect(typeof value).toBe('string'),
   initialValue: (value: any, { options, schema }: FakeParser) => [schema.default, options.model].includes(value),
   field: {
-    kind: (value: string, parser: FakeParser) => value === parser.kind,
-    name: (value: string, parser: FakeParser) => value === parser.options.name,
-    isRoot: (value: boolean, parser: FakeParser) => value === parser.isRoot,
-    schema: (value: JsonSchema, { options }: FakeParser) => value === options.schema,
-    required: (value: boolean, parser: FakeParser) => value === (parser.options.required || false),
-    descriptor: (value: Dictionary, parser: FakeParser) => DeepCompare(value, parser.descriptor),
-    parent: (value: any, parser: FakeParser) => parser.parent ? value === parser.parent.field : value === undefined,
-    deep: (value: number, parser: FakeParser) => parser.field.parent ? value === (parser.field.parent.deep + 1) : value === 0,
+    kind: (value: string, parser: FakeParser) => expect(value).toBe(parser.kind),
+    name: (value: string, parser: FakeParser) => expect(value).toBe(parser.options.name),
+    isRoot: (value: boolean, parser: FakeParser) => expect(value).toBe(parser.isRoot),
+    schema: (value: JsonSchema, { options }: FakeParser) => expect(value).toBe(options.schema),
+    required: (value: boolean, parser: FakeParser) => expect(value).toBe(parser.options.required || false),
+    descriptor: (value: Dictionary, parser: FakeParser) => expect(value).toEqual(parser.descriptor),
+    parent: (value: any, parser: FakeParser) => parser.parent ? expect(value).toBe(parser.parent.field) : expect(value).toBeUndefined(),
+    deep: (value: number, parser: FakeParser) => parser.field.parent ? expect(value).toBe(parser.field.parent.deep + 1) : expect(value).toBe(0),
     input: {
       attrs: {
-        id: (value: string, parser: FakeParser) => value === parser.id,
-        type: (value: string, parser: FakeParser) => value === parser.type,
-        name: (value: string, { options }: FakeParser) => value === options.name,
-        readonly: (value: boolean, { schema }: FakeParser) => value === schema.readOnly,
-        required: (value: boolean, { field }: FakeParser) => value === field.required,
-        'aria-required': (value: string | undefined, { field }: FakeParser) => value === (field.required ? 'true' : undefined),
-        'aria-labelledby': (value: string | undefined, { field }: FakeParser) => value === field.label.attrs.id,
-        'aria-describedby': (value: string | undefined, { field }: FakeParser) => value === field.helper.attrs.id
+        id: (value: string, parser: FakeParser) => expect(value).toBe(parser.id),
+        type: (value: string, parser: FakeParser) => expect(value).toBe(parser.type),
+        name: (value: string, { options }: FakeParser) => expect(value).toBe(options.name),
+        readonly: (value: boolean, { schema }: FakeParser) => expect(value).toBe(schema.readOnly),
+        required: (value: boolean, { field }: FakeParser) => expect(value).toBe(field.required),
+        'aria-required': (value: string | undefined, { field }: FakeParser) => expect(value).toBe(field.required ? 'true' : undefined),
+        'aria-labelledby': (value: string | undefined, { field }: FakeParser) => expect(value).toBe(field.label.attrs.id),
+        'aria-describedby': (value: string | undefined, { field }: FakeParser) => expect(value).toBe(field.helper.attrs.id)
       },
-      props: (value: Dictionary, parser: FakeParser) => DeepCompare(value, parser.descriptor.props),
-      value: (value: any, parser: FakeParser) => value === parser.model,
-      component: (value: Dictionary) => typeof value !== 'undefined'
+      props: (value: Dictionary, parser: FakeParser) => expect(value).toEqual(parser.descriptor.props),
+      value: (value: any, parser: FakeParser) => expect(value).toBe(parser.model),
+      component: (value: Dictionary) => expect(value).toBeDefined()
     },
     label: {
       attrs: {
-        id: (value: string | undefined) => value === undefined || value.endsWith('-label'),
-        for: (value: string, parser: FakeParser) => value === parser.attrs.id
+        id: (value: string | undefined) => typeof value === 'undefined' || expect(value.endsWith('-label')).toBeTruthy(),
+        for: (value: string, parser: FakeParser) => expect(value).toBe(parser.attrs.id)
       },
-      value: (value: string, parser: FakeParser) => value === parser.descriptor.label
+      value: (value: string, parser: FakeParser) => expect(value).toBe(parser.descriptor.label)
     },
     helper: {
       attrs: {
-        id: (value: string | undefined) => value === undefined || value.endsWith('-helper')
+        id: (value: string | undefined) => typeof value === 'undefined' || expect(value.endsWith('-helper')).toBeTruthy()
       },
-      value: (value: string, parser: FakeParser) => value === parser.descriptor.helper
+      value: (value: string, parser: FakeParser) => expect(value).toBe(parser.descriptor.helper)
     }
   }
 };
@@ -223,7 +225,7 @@ describe('parsers/Parser', () => {
       model: 'jon',
       rawValue: 'jon',
       options: {
-        onChange: (onChange: any) => onChange.mock.calls.length === 1
+        onChange: (onChange: any) => expect(onChange.mock.calls.length).toBe(1)
       }
     }
   });
@@ -286,7 +288,7 @@ describe('parsers/Parser', () => {
     },
     expected: {
       options: {
-        requestRender: (requestRender: any) => requestRender.mock.calls.length === 1
+        requestRender: (requestRender: any) => expect(requestRender.mock.calls.length).toBe(1)
       }
     }
   });
@@ -304,7 +306,7 @@ describe('parsers/Parser', () => {
       return parser;
     },
     expected: {
-      options: (options: any) => options.requestRender.x.mock.calls.length === 0
+      options: (options: any) => expect(options.requestRender.x.mock.calls.length).toBe(0)
     }
   });
 });

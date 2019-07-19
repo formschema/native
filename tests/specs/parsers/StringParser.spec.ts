@@ -176,7 +176,7 @@ describe('parsers/StringParser', () => {
       descriptorConstructor: NativeDescriptor.get
     }),
     expected: {
-      isEmpty: (fn: Function) => fn('non empty') === false
+      isEmpty: (fn: Function) => expect(fn('non empty')).toBeFalsy()
     }
   });
 
@@ -189,7 +189,7 @@ describe('parsers/StringParser', () => {
       descriptorConstructor: NativeDescriptor.get
     }),
     expected: {
-      isEmpty: (fn: Function) => fn('') === true
+      isEmpty: (fn: Function) => expect(fn('')).toBeTruthy()
     }
   });
 
@@ -202,7 +202,7 @@ describe('parsers/StringParser', () => {
       descriptorConstructor: NativeDescriptor.get
     }),
     expected: {
-      isEmpty: (fn: Function, parser: StringParser) => fn.apply(parser, [12]) === true
+      isEmpty: (fn: Function, parser: StringParser) => expect(fn.apply(parser, [12])).toBeTruthy()
     }
   });
 
@@ -215,7 +215,7 @@ describe('parsers/StringParser', () => {
       descriptorConstructor: NativeDescriptor.get
     }),
     expected: {
-      isEmpty: (fn: Function, parser: StringParser) => fn.apply(parser, []) === false
+      isEmpty: (fn: Function, parser: StringParser) => expect(fn.apply(parser, [])).toBeFalsy()
     }
   });
 });

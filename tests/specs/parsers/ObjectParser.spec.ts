@@ -4,7 +4,6 @@ import { Dictionary, ListField, ObjectField, ScalarDescriptor, ParserOptions } f
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
 import { JsonSchema } from '@/types/jsonschema';
 import { TestParser } from '../../lib/TestParser';
-import { DeepCompare } from '../../lib/DeepCompare';
 
 import '@/parsers';
 
@@ -313,33 +312,14 @@ describe('parsers/ObjectParser', () => {
     parser: new ObjectParser(options7(true)),
     expected: {
       children(items: ListField[]) {
-        return items.every(({ kind, name, children }: any, i: number) => {
+        items.forEach(({ kind, name, children }: any, i: number) => {
           if (kind === 'object') {
-            return children.every(({ name: nestedName }: any, j: number) => {
-              return nestedName === `user[${names[i]}][${nestedNames[j]}]`
+            children.forEach(({ name: nestedName }: any, j: number) => {
+              expect(nestedName).toBe(`user[${names[i]}][${nestedNames[j]}]`);
             });
+          } else {
+            expect(name).toBe(`user[${names[i]}]`);
           }
-
-          return name === `user[${names[i]}]`
-        });
-      }
-    }
-  });
-
-  TestParser.Case({
-    case: '8.0',
-    description: 'nested object with name and bracketedObjectInputName === true',
-    parser: new ObjectParser(options7(true)),
-    expected: {
-      children(items: ListField[]) {
-        return items.every(({ kind, name, children }: any, i: number) => {
-          if (kind === 'object') {
-            return children.every(({ name: nestedName }: any, j: number) => {
-              return nestedName === `user[${names[i]}][${nestedNames[j]}]`
-            });
-          }
-
-          return name === `user[${names[i]}]`
         });
       }
     }
@@ -351,14 +331,14 @@ describe('parsers/ObjectParser', () => {
     parser: new ObjectParser(options7(false)),
     expected: {
       children(items: ListField[]) {
-        return items.every(({ kind, name, children }: any, i: number) => {
+        items.forEach(({ kind, name, children }: any, i: number) => {
           if (kind === 'object') {
-            return children.every(({ name: nestedName }: any, j: number) => {
-              return nestedName === `user.${names[i]}.${nestedNames[j]}`
+            children.forEach(({ name: nestedName }: any, j: number) => {
+              expect(nestedName).toBe(`user.${names[i]}.${nestedNames[j]}`);
             });
+          } else {
+            expect(name).toBe(`user.${names[i]}`);
           }
-
-          return name === `user.${names[i]}`
         });
       }
     }
@@ -372,7 +352,7 @@ describe('parsers/ObjectParser', () => {
       descriptorConstructor: NativeDescriptor.get
     }),
     expected: {
-      isEmpty: (fn: Function) => fn({}) === true
+      isEmpty: (fn: Function) => expect(fn({})).toBeTruthy()
     }
   });
 
@@ -384,7 +364,7 @@ describe('parsers/ObjectParser', () => {
       descriptorConstructor: NativeDescriptor.get
     }),
     expected: {
-      isEmpty: (fn: Function) => fn({ x: 12 }) === false
+      isEmpty: (fn: Function) => expect(fn({ x: 12 })).toBeFalsy()
     }
   });
 
@@ -396,7 +376,7 @@ describe('parsers/ObjectParser', () => {
       descriptorConstructor: NativeDescriptor.get
     }),
     expected: {
-      isEmpty: (fn: Function, parser: ObjectParser) => fn.apply(parser) === false
+      isEmpty: (fn: Function, parser: ObjectParser) => expect(fn.apply(parser)).toBeFalsy()
     }
   });
 
@@ -419,8 +399,14 @@ describe('parsers/ObjectParser', () => {
     description: 'parseDependencies() with Property Dependencies',
     parser: new ObjectParser(options100),
     expected: {
-      properties: (value: Dictionary<JsonSchema>, { schema: { properties } }: ObjectParser) => value !== properties && DeepCompare(value, properties),
-      dependencies: (value: Dictionary<string[]>, { schema: { dependencies } }: ObjectParser) => value !== dependencies && DeepCompare(value, dependencies)
+      properties: (value: Dictionary<JsonSchema>, { schema: { properties } }: ObjectParser) => {
+        expect(value).not.toBe(properties);
+        expect(value).toEqual(properties);
+      },
+      dependencies: (value: Dictionary<string[]>, { schema: { dependencies } }: ObjectParser) => {
+        expect(value).not.toBe(dependencies);
+        expect(value).toEqual(dependencies);
+      }
     }
   });
 
@@ -450,14 +436,14 @@ describe('parsers/ObjectParser', () => {
     }),
     expected: {
       properties(value: Dictionary<JsonSchema>) {
-        return DeepCompare(value, {
+        expect(value).toEqual({
           name: { type: 'string' },
           credit_card: { type: 'number' },
           billing_address: { type: 'string' }
         });
       },
       dependencies(value: Dictionary<string[]>) {
-        return DeepCompare(value, {
+        expect(value).toEqual({
           name: [],
           credit_card: ['billing_address']
         });
@@ -472,7 +458,7 @@ describe('parsers/ObjectParser', () => {
     expected: {
       field: {
         children(values: ObjectField[]) {
-          return values.every(({ required }) => required === false);
+          values.forEach(({ required }) => expect(required).toBeFalsy());
         }
       }
     }

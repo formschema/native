@@ -160,7 +160,7 @@ describe('parsers/ArrayParser', () => {
       rawValue: [undefined],
       limit: 1,
       children({ length }: ArrayField[]) {
-        return length === this.limit;
+        expect(length).toBe(this.limit);
       },
       field: {
         required: true,
@@ -206,7 +206,7 @@ describe('parsers/ArrayParser', () => {
         return this.count;
       },
       children({ length }: ArrayField[]) {
-        return length === this.limit;
+        expect(length).toBe(this.limit);
       },
       field: {
         uniqueItems: undefined,
@@ -237,7 +237,7 @@ describe('parsers/ArrayParser', () => {
         return this.count;
       },
       children({ length }: ArrayField[]) {
-        return length === this.limit;
+        expect(length).toBe(this.limit);
       },
       field: {
         buttons: {
@@ -271,7 +271,7 @@ describe('parsers/ArrayParser', () => {
         return this.count;
       },
       children({ length }: ArrayField[]) {
-        return length === this.limit;
+        expect(length).toBe(this.limit);
       },
       field: {
         buttons: {
@@ -312,7 +312,7 @@ describe('parsers/ArrayParser', () => {
       model: ['b', 'd'],
       rawValue: [undefined, 'b', undefined, 'd'],
       limit: 4,
-      children: ({ length }: ArrayField[]) => length === 4,
+      children: ({ length }: ArrayField[]) => expect(length).toBe(4),
       field: {
         required: false,
         uniqueItems: true,
@@ -357,14 +357,13 @@ describe('parsers/ArrayParser', () => {
       }
     }),
     expected: {
-      children(fields: ArrayField[]) {
-        return fields.every(({ descriptor }: ArrayField, i) => {
-          const label = `label-${options5.schema.items.enum[i]}`;
-          const description = `description-${options5.schema.items.enum[i]}`;
+      children: (fields: ArrayField[]) => fields.forEach(({ descriptor }: ArrayField, i) => {
+        const label = `label-${options5.schema.items.enum[i]}`;
+        const description = `description-${options5.schema.items.enum[i]}`;
 
-          return descriptor.label === label && descriptor.helper === description;
-        });
-      }
+        expect(descriptor.label).toBe(label);
+        expect(descriptor.helper).toBe(description);
+      })
     }
   });
 
@@ -412,7 +411,7 @@ describe('parsers/ArrayParser', () => {
       get limit() {
         return this.count;
       },
-      children: ({ length }: ArrayField[]) => length === 3,
+      children: ({ length }: ArrayField[]) => expect(length).toBe(3),
       field: {
         uniqueItems: undefined,
         buttons: {
@@ -455,7 +454,7 @@ describe('parsers/ArrayParser', () => {
         return this.items.length;
       },
       children({ length }: ArrayField[]) {
-        return length === this.rawValue.length;
+        expect(length).toBe(this.rawValue.length);
       },
       field: {
         required: false,
@@ -489,7 +488,7 @@ describe('parsers/ArrayParser', () => {
       ],
       additionalItems: { type: undefined },
       children({ length }: ArrayField[]) {
-        return length === this.items.length;
+        expect(length).toBe(this.items.length);
       }
     }
   });
@@ -511,7 +510,7 @@ describe('parsers/ArrayParser', () => {
     parser: new ArrayParser(options8(true)),
     expected: {
       children(items: ArrayField[]) {
-        return items.every(({ name }) => name === 'array[]');
+        items.forEach(({ name }) => expect(name).toBe('array[]'));
       }
     }
   });
@@ -522,7 +521,7 @@ describe('parsers/ArrayParser', () => {
     parser: new ArrayParser(options8(false)),
     expected: {
       children(items: ArrayField[]) {
-        return items.every(({ name }) => name === 'array');
+        items.forEach(({ name }) => expect(name).toBe('array'));
       }
     }
   });
@@ -535,7 +534,7 @@ describe('parsers/ArrayParser', () => {
       descriptorConstructor: NativeDescriptor.get
     }),
     expected: {
-      isEmpty: (fn: Function) => fn([]) === true
+      isEmpty: (fn: Function) => expect(fn([])).toBeTruthy()
     }
   });
 
@@ -547,7 +546,7 @@ describe('parsers/ArrayParser', () => {
       descriptorConstructor: NativeDescriptor.get
     }),
     expected: {
-      isEmpty: (fn: Function) => fn([1]) === false
+      isEmpty: (fn: Function) => expect(fn([1])).toBeFalsy()
     }
   });
 
@@ -559,7 +558,7 @@ describe('parsers/ArrayParser', () => {
       descriptorConstructor: NativeDescriptor.get
     }),
     expected: {
-      isEmpty: (fn: Function, parser: ArrayParser) => fn.apply(parser) === false
+      isEmpty: (fn: Function, parser: ArrayParser) => expect(fn.apply(parser)).toBeFalsy()
     }
   });
 

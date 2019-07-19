@@ -81,7 +81,7 @@ describe('parsers/BooleanParser', () => {
       descriptorConstructor: NativeDescriptor.get
     }),
     expected: {
-      isEmpty: (fn: Function, parser: BooleanParser) => fn.apply(parser, [undefined]) === true
+      isEmpty: (fn: Function, parser: BooleanParser) => expect(fn.apply(parser, [undefined])).toBeTruthy()
     }
   });
 
@@ -105,7 +105,7 @@ describe('parsers/BooleanParser', () => {
       descriptorConstructor: NativeDescriptor.get
     }),
     expected: {
-      isEmpty: (fn: Function, parser: BooleanParser) => fn.apply(parser, [true]) === false
+      isEmpty: (fn: Function, parser: BooleanParser) => expect(fn.apply(parser, [true])).toBeFalsy()
     }
   });
 
@@ -117,7 +117,7 @@ describe('parsers/BooleanParser', () => {
       descriptorConstructor: NativeDescriptor.get
     }),
     expected: {
-      isEmpty: (fn: Function, parser: BooleanParser) => fn.apply(parser, []) === false
+      isEmpty: (fn: Function, parser: BooleanParser) => expect(fn.apply(parser, [])).toBeFalsy()
     }
   });
 });
