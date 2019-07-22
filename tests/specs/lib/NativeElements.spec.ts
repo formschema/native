@@ -1,26 +1,34 @@
 import { NativeElements } from '@/lib/NativeElements';
 
-const items = [
-  { kind: 'array', name: 'ArrayElement' },
-  { kind: 'boolean', name: 'StateElement' },
-  { kind: 'string', name: 'InputElement' },
-  { kind: 'radio', name: 'StateElement' },
-  { kind: 'checkbox', name: 'StateElement' },
-  { kind: 'enum', name: 'FieldsetElement' },
-  { kind: 'number', name: 'InputElement' },
-  { kind: 'integer', name: 'InputElement' },
-  { kind: 'object', name: 'FieldsetElement' },
-  { kind: 'list', name: 'ListElement' },
-  { kind: 'textarea', name: 'TextareaElement' },
-  { kind: 'field', name: 'FieldElement' }
-];
+const items: any = {
+  array: 'ArrayElement',
+  boolean: 'StateElement',
+  string: 'InputElement',
+  radio: 'StateElement',
+  checkbox: 'StateElement',
+  enum: 'FieldsetElement',
+  number: 'InputElement',
+  integer: 'InputElement',
+  object: 'FieldsetElement',
+  list: 'ListElement',
+  textarea: 'TextareaElement'
+};
 
 describe('lib/NativeElements', () => {
-  items.forEach(({ kind, name }) => {
-    const component: any = NativeElements.get(kind as any);
+  Object.keys(NativeElements.$).forEach((kind: any) => {
+    const name = items[kind];
+    const component: any = NativeElements.get(kind);
 
-    it(`component for kind '${kind}' should be '${name}'`, () => {
+    it(`component for kind '${kind}' should be equal to '${name}'`, () => {
       expect(component.name).toBe(name);
     });
+  });
+
+  it('component for kind form should have native form element', () => {
+    expect(NativeElements.get('form')).toBe('form');
+  });
+
+  it('getting an unknow kind should return the native input element', () => {
+    expect(NativeElements.get('unknow' as any)).toBe('input');
   });
 });

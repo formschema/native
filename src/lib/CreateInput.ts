@@ -6,7 +6,7 @@ export const CreateInput = <T extends Field<any>>(
   tag: string,
   data: VNodeData,
   children: VNodeChildren = [],
-  event: string = 'input'
+  event: 'input' | 'change' = 'input'
 ) => {
   const props = data.props as ElementProps<T>;
   const key = props.field.key;

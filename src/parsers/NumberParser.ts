@@ -29,8 +29,8 @@ export class NumberParser extends Parser<number, NumberField, ScalarDescriptor, 
     this.attrs.max = this.schema.maximum;
     this.attrs.step = this.schema.multipleOf;
 
-    if (!this.isEmpty(this.model)) {
-      this.attrs.value = `${this.model}`;
+    if (!this.isEmpty(this.field.input.initialValue)) {
+      this.attrs.value = `${this.field.input.initialValue}`;
     }
 
     this.parseExclusiveKeywords();

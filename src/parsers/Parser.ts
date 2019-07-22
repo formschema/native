@@ -138,6 +138,7 @@ export abstract class Parser<
           this.setValue(value);
           this.commit();
         },
+        initialValue: this.initialValue,
         props: Objects.clone(this.descriptor.props as Dictionary),
         component: this.descriptor.component || this.defaultComponent || defaultDescriptor.component
       },

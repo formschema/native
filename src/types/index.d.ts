@@ -15,7 +15,7 @@ import { JsonSchema } from './jsonschema';
 
 export type Scalar = boolean | number | null | string;
 export interface Dictionary<T = unknown> { [key: string]: T }
-export type ComponentsType = 'form' | FieldKind | 'field';
+export type ComponentsType = 'form' | FieldKind;
 
 export interface Attributes {
   id: string;
@@ -84,6 +84,7 @@ export interface Field<
     props: Dictionary;
     value: TModel;
     setValue: (value: TModel) => void;
+    initialValue: TModel;
     component: Component;
   };
   label: {

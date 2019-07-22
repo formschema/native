@@ -6,9 +6,6 @@ export const FieldsetElement: FieldsetComponent = {
   functional: true,
   render(h, { data, props, slots }) {
     const attrs = props.field.input.attrs;
-
-    attrs.disabled = props.disabled;
-
     const nodes = slots().default || props.field.children.map((field) => {
       return h(field.input.component, {
         key: field.key,

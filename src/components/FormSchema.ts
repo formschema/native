@@ -8,7 +8,6 @@ import { NativeElements } from '@/lib/NativeElements';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
 
 import '@/parsers';
-import { Schema } from '@/lib/Schema';
 
 export const GLOBAL = {
   Elements: NativeElements,
@@ -97,7 +96,7 @@ const FormSchema: FormSchemaComponent = {
      */
     descriptor: {
       type: [ Object, Function ],
-      default: () => GLOBAL.Descriptor
+      default: () => GLOBAL.Descriptor.get
     }
   },
   data: () => ({
@@ -161,10 +160,7 @@ const FormSchema: FormSchemaComponent = {
       return null as any; // nothing to render
     }
 
-    const attrs = {
-      ...this.field.input.attrs,
-      disabled: this.disabled
-    };
+    this.field.input.attrs.disabled = this.disabled;
 
     const props = {
       field: this.field,
@@ -172,12 +168,8 @@ const FormSchema: FormSchemaComponent = {
     };
 
     const key = this.key || this.field.key;
-    const element = createElement(this.field.input.component, { key, attrs, props });
-    const root = Schema.isScalar(this.schema)
-      ? createElement(this.components.get('field'), { props }, [ element ])
-      : element;
-
-    const nodes = [ root ];
+    const element = createElement(this.field.input.component, { key, props });
+    const nodes = [ element ];
 
     if (this.$slots.default) {
       nodes.push(...this.$slots.default);

@@ -12,6 +12,7 @@ export class BooleanParser extends Parser<boolean, BooleanField, ScalarDescripto
 
   parse(): void {
     this.attrs.checked = this.model === true;
+    this.attrs.value = this.field.input.initialValue as any;
 
     this.commit();
   }
