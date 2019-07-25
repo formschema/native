@@ -5,6 +5,6 @@ export const Arrays = {
   swap<T = unknown>(items: T[], from: number, to: number) {
     [ items[from], items[to] ] = [ items[to], items[from] ];
 
-    return items[from];
+    return items[to];
   }
 };
