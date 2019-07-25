@@ -86,6 +86,8 @@ export interface Field<
     setValue: (value: TModel) => void;
     initialValue: TModel;
     component: Component;
+    clear: () => {};
+    reset: () => {};
   };
   label: {
     attrs: {
@@ -117,18 +119,33 @@ export interface EnumField extends Field<'enum', Attributes, ScalarDescriptor> {
   children: RadioField[];
 }
 
-export type ArrayItemField = Field<any, Attributes, ScalarDescriptor>;
+export interface ArrayItemField extends Field<any, Attributes, ScalarDescriptor> {
+  buttons: {
+    clear: ActionButton<ActionClearTrigger>;
+    moveUp: ActionButton<ActionMoveTrigger>;
+    moveDown: ActionButton<ActionMoveTrigger>;
+    delete: ActionButton<ActionDeleteTrigger>;
+  };
+}
+
+export type ActionClearTrigger = () => void;
+export type ActionPushTrigger = () => void;
+export type ActionMoveTrigger = () => ArrayItemField | undefined;
+export type ActionDeleteTrigger = () => ArrayItemField | undefined;
+
+export interface ActionButton<T extends Function> {
+  readonly type: string;
+  readonly label: string;
+  readonly tooltip?: string;
+  disabled?: boolean;
+  readonly trigger: T;
+}
 
 export interface ArrayField extends Field<'array', Attributes, ArrayDescriptor, any[]> {
   uniqueItems: boolean;
   children: ArrayItemField[];
-  buttons: {
-    push: {
-      readonly label: string;
-      readonly disabled: boolean;
-      push: () => void;
-    };
-  };
+  sortable: boolean;
+  pushButton: ActionButton<ActionPushTrigger>;
 }
 
 export interface ListItem {
@@ -218,9 +235,20 @@ export interface ObjectDescriptor extends AbstractUISchemaDescriptor {
   order?: string[];
 }
 
+export interface ButtonDescriptor {
+  label: string;
+  tooltip?: string;
+}
+
 export interface ArrayDescriptor extends AbstractUISchemaDescriptor {
   items?: DescriptorInstance[];
-  addButtonLabel: string;
+  buttons: {
+    push: ButtonDescriptor;
+    clear: ButtonDescriptor;
+    moveUp: ButtonDescriptor;
+    moveDown: ButtonDescriptor;
+    delete: ButtonDescriptor;
+  };
 }
 
 export type DescriptorInstance = ScalarDescriptor | ObjectDescriptor | ArrayDescriptor;
@@ -300,12 +328,16 @@ export interface ComponentsDeclaration {
 
 export interface ElementProps<T extends Field<any>> {
   field: T;
-  value: unknown;
   disabled: boolean;
-  components: ComponentsDeclaration;
 }
 
-export type ArrayButtonComponent = FunctionalComponentOptions<ElementProps<ArrayField>>;
+export interface ArrayButtonProps extends ButtonDescriptor {
+  type: string;
+  disabled: boolean;
+  trigger: Function;
+}
+
+export type ArrayButtonComponent = FunctionalComponentOptions<ArrayButtonProps>;
 export type ArrayComponent = FunctionalComponentOptions<ElementProps<ArrayField>>;
 export type BooleanComponent = FunctionalComponentOptions<ElementProps<BooleanField>>;
 export type InputComponent = FunctionalComponentOptions<ElementProps<InputField>>;

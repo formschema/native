@@ -26,11 +26,10 @@ describe('parsers/ArrayParser', () => {
       limit: 0,
       children: [],
       field: {
-        buttons: {
-          push: {
-            label: '+',
-            disabled: true
-          }
+        sortable: false,
+        pushButton: {
+          label: '+',
+          disabled: true
         }
       }
     }
@@ -64,7 +63,10 @@ describe('parsers/ArrayParser', () => {
     expected: {
       initialValue: ['arya'],
       model: ['arya'],
-      rawValue: ['arya']
+      rawValue: ['arya'],
+      field: {
+        sortable: true
+      }
     }
   });
 
@@ -126,10 +128,8 @@ describe('parsers/ArrayParser', () => {
       children: [],
       field: {
         uniqueItems: undefined,
-        buttons: {
-          push: {
-            disabled: true
-          }
+        pushButton: {
+          disabled: true
         }
       }
     }
@@ -165,10 +165,9 @@ describe('parsers/ArrayParser', () => {
       field: {
         required: true,
         uniqueItems: undefined,
-        buttons: {
-          push: {
-            disabled: true
-          }
+        sortable: false,
+        pushButton: {
+          disabled: true
         }
       }
     }
@@ -210,10 +209,8 @@ describe('parsers/ArrayParser', () => {
       },
       field: {
         uniqueItems: undefined,
-        buttons: {
-          push: {
-            disabled: false
-          }
+        pushButton: {
+          disabled: false
         }
       }
     }
@@ -225,7 +222,7 @@ describe('parsers/ArrayParser', () => {
       const parser = new ArrayParser(options4);
 
       parser.parse();
-      parser.field.buttons.push.push();
+      parser.field.pushButton.trigger();
 
       return parser;
     },
@@ -240,10 +237,8 @@ describe('parsers/ArrayParser', () => {
         expect(length).toBe(this.limit);
       },
       field: {
-        buttons: {
-          push: {
-            disabled: true
-          }
+        pushButton: {
+          disabled: true
         }
       }
     }
@@ -251,15 +246,15 @@ describe('parsers/ArrayParser', () => {
 
   TestParser.Case({
     case: '4.2',
-    description: 'field.buttons.add.push()',
+    description: 'field.pushButton.trigger()',
     parser() {
       const parser = new ArrayParser(options4);
 
       parser.parse();
 
-      // call field.buttons.add.push() twice
-      parser.field.buttons.push.push();
-      parser.field.buttons.push.push();
+      // call field.pushButton.trigger() twice
+      parser.field.pushButton.trigger();
+      parser.field.pushButton.trigger();
 
       return parser;
     },
@@ -274,10 +269,8 @@ describe('parsers/ArrayParser', () => {
         expect(length).toBe(this.limit);
       },
       field: {
-        buttons: {
-          push: {
-            disabled: true
-          }
+        pushButton: {
+          disabled: true
         }
       }
     }
@@ -321,10 +314,8 @@ describe('parsers/ArrayParser', () => {
         //     type: 'checkbox'
         //   }
         // },
-        buttons: {
-          push: {
-            disabled: true
-          }
+        pushButton: {
+          disabled: true
         }
       }
     }
@@ -408,16 +399,14 @@ describe('parsers/ArrayParser', () => {
       count: 3,
       model: ['a', 'd'],
       rawValue: ['a', 'd', undefined],
-      get limit() {
-        return this.count;
+      limit(value: number) {
+        expect(value).toBe(this.count);
       },
       children: ({ length }: ArrayField[]) => expect(length).toBe(3),
       field: {
         uniqueItems: undefined,
-        buttons: {
-          push: {
-            disabled: false
-          }
+        pushButton: {
+          disabled: false
         }
       }
     }
@@ -450,8 +439,8 @@ describe('parsers/ArrayParser', () => {
       },
       model: ['a', 12],
       rawValue: ['a', 12],
-      get limit() {
-        return this.items.length;
+      limit(value: number) {
+        expect(value).toBe(this.items.length);
       },
       children({ length }: ArrayField[]) {
         expect(length).toBe(this.rawValue.length);
@@ -459,10 +448,8 @@ describe('parsers/ArrayParser', () => {
       field: {
         required: false,
         uniqueItems: undefined,
-        buttons: {
-          push: {
-            disabled: false
-          }
+        pushButton: {
+          disabled: false
         }
       }
     }

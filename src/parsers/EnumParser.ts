@@ -82,6 +82,16 @@ export class EnumParser extends Parser<unknown, EnumField, ScalarDescriptor> {
     this.updateInputsState();
   }
 
+  reset() {
+    this.field.children.forEach(({ input }) => input.reset());
+    super.reset();
+  }
+
+  clear() {
+    this.field.children.forEach(({ input }) => input.clear());
+    super.clear();
+  }
+
   updateInputsState() {
     this.field.children.forEach(({ input }) => {
       input.attrs.checked = input.value === this.model;

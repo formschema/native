@@ -7,13 +7,14 @@
     "importHelpers": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "experimentalDecorators": true,
+    "experimentalDecorators": false,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "baseUrl": ".",
     "types": [
-      "@types/jest"
+      "@types/jest",
+      "./src/types"
     ],
     "paths": {
       "@/*": [
@@ -29,9 +30,13 @@
   },
   "include": [
     "src/**/*.ts",
-    "tests/**/*.ts"
+    "tests/**/*.ts",
+    "tests/specs/**/*.ts"
   ],
   "exclude": [
-    "node_modules", "dist"
+    "dist",
+    "coverage",
+    "playground",
+    "node_modules"
   ]
 }

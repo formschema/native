@@ -46,7 +46,28 @@ export const NativeDescriptor = {
         attrs: {},
         props: {},
         items: [],
-        addButtonLabel: '+'
+        buttons: {
+          push: {
+            label: '+',
+            tooltip: undefined
+          },
+          clear: {
+            label: 'x',
+            tooltip: undefined
+          },
+          moveUp: {
+            label: '&#x2191;',
+            tooltip: undefined
+          },
+          moveDown: {
+            label: '&#x2193;',
+            tooltip: undefined
+          },
+          delete: {
+            label: '-',
+            tooltip: undefined
+          }
+        }
       };
 
       return descriptor as unknown as T;

@@ -5,9 +5,10 @@ import { InputComponent, InputField } from '@/types';
 export const InputElement: InputComponent = {
   name: 'InputElement',
   functional: true,
-  render(h, { data }) {
+  render(h, { data, children }) {
     return h(FieldElement, data, [
-      CreateInput<InputField>(h, 'input', data)
+      CreateInput<InputField>(h, 'input', data),
+      ...children
     ]);
   }
 };

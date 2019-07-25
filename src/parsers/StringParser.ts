@@ -31,7 +31,12 @@ export class StringParser extends Parser<string, StringField, ScalarDescriptor, 
   }
 
   parse() {
-    this.attrs.value = this.field.input.initialValue;
+    Object.defineProperty(this.attrs, 'value', {
+      enumerable: true,
+      configurable: true,
+      get: () => this.model
+    });
+
     this.attrs.minlength = this.schema.minLength;
     this.attrs.maxlength = this.schema.maxLength;
 

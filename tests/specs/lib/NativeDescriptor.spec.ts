@@ -92,7 +92,7 @@ describe('lib/NativeDescriptor', () => {
       it('should have common properties', () => {
         expect(Object.keys(descriptor)).toEqual([
           'kind', 'label', 'helper', 'component',
-          'attrs', 'props', 'items', 'addButtonLabel'
+          'attrs', 'props', 'items', 'buttons'
         ]);
       });
 

@@ -73,11 +73,16 @@ export abstract class Parser<
     this.isEnumItem = !!parent && parent.schema.enum instanceof Array;
     this.schema = options.schema;
 
-    const defaultDescriptor = options.descriptorConstructor<TDescriptor>(this.schema);
+    const optionsDescriptor = options.descriptor || {} as unknown as TDescriptor;
+    const defaultDescriptor = options.descriptorConstructor<TDescriptor>(this.schema, optionsDescriptor.kind);
 
-    this.descriptor = options.descriptor || defaultDescriptor;
+    this.descriptor = { ...defaultDescriptor, ...optionsDescriptor };
     this.rawValue = this.parseValue(this.initialValue) as TModel;
     this.model = this.parseValue(this.initialValue) as TModel;
+
+    if (optionsDescriptor.kind) {
+      this.descriptor.component = defaultDescriptor.component;
+    }
 
     this.parseDescriptor();
 
@@ -140,7 +145,15 @@ export abstract class Parser<
         },
         initialValue: this.initialValue,
         props: Objects.clone(this.descriptor.props as Dictionary),
-        component: this.descriptor.component || this.defaultComponent || defaultDescriptor.component
+        component: this.descriptor.component || this.defaultComponent || defaultDescriptor.component,
+        reset: () => {
+          this.reset();
+          this.requestRender();
+        },
+        clear: () => {
+          this.clear();
+          this.requestRender();
+        }
       },
       label: {
         attrs: {
@@ -199,13 +212,26 @@ export abstract class Parser<
     this.model = this.parseValue(value) as TModel;
   }
 
+  reset() {
+    this.field.input.setValue(this.parseValue(this.initialValue) as any);
+  }
+
+  clear() {
+    this.field.input.setValue(this.parseValue(undefined) as any);
+  }
+
   commit() {
     if (typeof this.options.onChange === 'function') {
       this.options.onChange(this.model, this.field);
     }
   }
 
-  requestRender(fields: UnknowField[]) {
+  requestRender(fields?: UnknowField[]) {
+    if (!fields) {
+      this.field.key = UniqueId.get(this.options.name);
+      fields = [ this.field ];
+    }
+
     if (typeof this.root.options.requestRender === 'function') {
       this.root.options.requestRender(fields);
     }

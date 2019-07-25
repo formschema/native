@@ -98,6 +98,16 @@ export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescript
     return Objects.isEmpty(data);
   }
 
+  reset() {
+    this.field.children.forEach(({ input }) => input.reset());
+    super.reset();
+  }
+
+  clear() {
+    this.field.children.forEach(({ input }) => input.clear());
+    super.clear();
+  }
+
   updateDependencies(key: string, parser: UnknowParser) {
     if (this.dependencies[key]) {
       const needUpdate = [ parser.field ];

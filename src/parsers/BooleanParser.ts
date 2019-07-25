@@ -10,15 +10,30 @@ export class BooleanParser extends Parser<boolean, BooleanField, ScalarDescripto
     return data !== true;
   }
 
-  parse(): void {
+  resetChecked() {
     this.attrs.checked = this.model === true;
+  }
+
+  reset() {
+    super.reset();
+    this.resetChecked();
+  }
+
+  clear() {
+    super.clear();
+
+    this.attrs.checked = false;
+  }
+
+  parse(): void {
     this.attrs.value = this.field.input.initialValue as any;
 
+    this.resetChecked();
     this.commit();
   }
 
   parseValue(checked: boolean) {
-    return typeof checked !== 'boolean' ? undefined : checked || false;
+    return typeof checked === 'boolean' ? checked : undefined;
   }
 }
 

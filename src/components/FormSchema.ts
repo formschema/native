@@ -134,10 +134,18 @@ const FormSchema: FormSchemaComponent = {
       });
     },
     field() {
-      return this.parser instanceof Parser ? Object.freeze(this.parser.field) : null;
+      return this.parser instanceof Parser ? this.parser.field : null;
     },
-    listeners() {
-      const on = { ...this.$listeners };
+    listeners(): Record<string, Function | Function[]> {
+      const on: any = { ...this.$listeners };
+
+      on.reset = on.reset ? [ on.reset ] : [];
+
+      on.reset.unshift(() => {
+        if (this.field) {
+          this.field.input.reset();
+        }
+      });
 
       // remove the injected vue's input event
       // to prevent vue errors on the submit event

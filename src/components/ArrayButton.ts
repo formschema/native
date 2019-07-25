@@ -4,16 +4,19 @@ export const ArrayButton: ArrayButtonComponent = {
   functional: true,
   name: 'ArrayButton',
   render(h, { props }) {
-    const button = props.field.buttons.push;
-
     return h('button', {
       attrs: {
         type: 'button',
-        disabled: button.disabled
+        title: props.tooltip,
+        disabled: props.disabled,
+        'data-fs-button': props.type
+      },
+      domProps: {
+        innerHTML: props.label
       },
       on: {
-        click: () => button.push()
+        click: props.trigger
       }
-    }, button.label);
+    });
   }
 };

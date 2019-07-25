@@ -25,13 +25,14 @@ export class NumberParser extends Parser<number, NumberField, ScalarDescriptor, 
   }
 
   parse() {
+    Object.defineProperty(this.attrs, 'value', {
+      enumerable: true,
+      get: () => (this.isEmpty(this.model) ? undefined : `${this.model}`)
+    });
+
     this.attrs.min = this.schema.minimum;
     this.attrs.max = this.schema.maximum;
     this.attrs.step = this.schema.multipleOf;
-
-    if (!this.isEmpty(this.field.input.initialValue)) {
-      this.attrs.value = `${this.field.input.initialValue}`;
-    }
 
     this.parseExclusiveKeywords();
     this.commit();

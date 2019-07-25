@@ -4,7 +4,7 @@ import { StateComponent, InputEvent } from '@/types';
 export const StateElement: StateComponent = {
   name: 'StateElement',
   functional: true,
-  render(h, { data, props }) {
+  render(h, { data, props, children }) {
     const attrs = props.field.input.attrs;
     const key = props.field.key;
     const on = {
@@ -14,7 +14,8 @@ export const StateElement: StateComponent = {
     };
 
     return h(FieldElement, data, [
-      h('input', { key, attrs, on })
+      h('input', { key, attrs, on }),
+      ...children
     ]);
   }
 };

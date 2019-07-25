@@ -42,7 +42,7 @@ describe('components/ArrayElement', () => {
     const { context } = getContext(schema, []);
 
     const wrapper = mount(ArrayElement, { context });
-    const expected = '<fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper"><legend id="id-characters-label" for="id-characters">Empty array</legend><p id="id-characters-helper">Your characters</p><button type="button" disabled="disabled">+</button></fieldset>';
+    const expected = '<fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper"><legend id="id-characters-label" for="id-characters">Empty array</legend><p id="id-characters-helper">Your characters</p><button type="button" disabled="disabled" data-fs-button="push">+</button></fieldset>';
 
     expect(wrapper.html()).toBe(expected);
   });
@@ -57,7 +57,7 @@ describe('components/ArrayElement', () => {
     const { context } = getContext(schema, ['freezer']);
 
     const wrapper = mount(ArrayElement, { context });
-    const expected = '<fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper"><legend id="id-characters-label" for="id-characters">Empty array</legend><p id="id-characters-helper">Your characters</p><button type="button" disabled="disabled">+</button></fieldset>';
+    const expected = '<fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper"><legend id="id-characters-label" for="id-characters">Empty array</legend><p id="id-characters-helper">Your characters</p><button type="button" disabled="disabled" data-fs-button="push">+</button></fieldset>';
 
     expect(wrapper.html()).toBe(expected);
   });
@@ -75,7 +75,7 @@ describe('components/ArrayElement', () => {
     const { context } = getContext(schema, []);
 
     const wrapper = mount(ArrayElement, { context });
-    const expected = '<fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper"><legend id="id-characters-label" for="id-characters">Characters</legend><p id="id-characters-helper">Your characters</p><div data-fs-kind="string" data-fs-field="characters"><label for="id-characters-0"></label><div data-fs-input="text"><input id="id-characters-0" type="text" name="characters"><!----></div></div><button type="button">+</button></fieldset>';
+    const expected = '<fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper"><legend id="id-characters-label" for="id-characters">Characters</legend><p id="id-characters-helper">Your characters</p><div data-fs-kind="string" data-fs-field="characters"><label for="id-characters-0"></label><div data-fs-input="text"><input id="id-characters-0" type="text" name="characters"><div data-fs-buttons="true"><button type="button" data-fs-button="clear">x</button><button type="button" disabled="disabled" data-fs-button="move-up">↑</button><button type="button" disabled="disabled" data-fs-button="move-down">↓</button><button type="button" data-fs-button="delete">-</button></div><!----></div></div><button type="button" data-fs-button="push">+</button></fieldset>';
 
     expect(wrapper.html()).toBe(expected);
   });
@@ -93,7 +93,7 @@ describe('components/ArrayElement', () => {
     const { context } = getContext(schema, ['Goku', 'Freezer']);
 
     const wrapper = mount(ArrayElement, { context });
-    const expected = '<fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper"><legend id="id-characters-label" for="id-characters">Characters</legend><p id="id-characters-helper">Your characters</p><div data-fs-kind="string" data-fs-field="characters"><label for="id-characters-0"></label><div data-fs-input="text"><input id="id-characters-0" type="text" name="characters" value="Goku"><!----></div></div><div data-fs-kind="string" data-fs-field="characters"><label for="id-characters-1"></label><div data-fs-input="text"><input id="id-characters-1" type="text" name="characters" value="Freezer"><!----></div></div><button type="button">+</button></fieldset>';
+    const expected = '<fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper"><legend id="id-characters-label" for="id-characters">Characters</legend><p id="id-characters-helper">Your characters</p><div data-fs-kind="string" data-fs-field="characters"><label for="id-characters-0"></label><div data-fs-input="text"><input id="id-characters-0" type="text" name="characters" value="Goku"><div data-fs-buttons="true"><button type="button" data-fs-button="clear">x</button><button type="button" disabled="disabled" data-fs-button="move-up">↑</button><button type="button" data-fs-button="move-down">↓</button><button type="button" data-fs-button="delete">-</button></div><!----></div></div><div data-fs-kind="string" data-fs-field="characters"><label for="id-characters-1"></label><div data-fs-input="text"><input id="id-characters-1" type="text" name="characters" value="Freezer"><div data-fs-buttons="true"><button type="button" data-fs-button="clear">x</button><button type="button" data-fs-button="move-up">↑</button><button type="button" disabled="disabled" data-fs-button="move-down">↓</button><button type="button" data-fs-button="delete">-</button></div><!----></div></div><button type="button" data-fs-button="push">+</button></fieldset>';
 
     expect(wrapper.html()).toBe(expected);
   });
@@ -111,7 +111,7 @@ describe('components/ArrayElement', () => {
     const { context, parser } = getContext(schema, ['Goku', 'Freezer']);
 
     const wrapper = mount(ArrayElement, { context });
-    const button = wrapper.find('button');
+    const button = wrapper.find('button[data-fs-button=push]');
 
     expect(parser.rawValue).toEqual(['Goku', 'Freezer']);
 
@@ -135,7 +135,7 @@ describe('components/ArrayElement', () => {
     const { context, options } = getContext(schema, ['Goku', 'Picolo']);
 
     const wrapper = mount(ArrayElement, { context });
-    const pushButton = wrapper.find('button');
+    const pushButton = wrapper.find('button[data-fs-button=push]');
     const inputs: any = wrapper.findAll('input[type=checkbox]');
 
     it('should don\'t have push button', () => {

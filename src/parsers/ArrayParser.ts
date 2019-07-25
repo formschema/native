@@ -1,7 +1,7 @@
 import { Parser } from '@/parsers/Parser';
 import { JsonSchema } from '@/types/jsonschema';
 import { Objects } from '@/lib/Objects';
-import { UniqueId } from '@/lib/UniqueId';
+import { Arrays } from '@/lib/Arrays';
 
 import {
   ArrayField,
@@ -38,6 +38,10 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
       : this.items.length;
   }
 
+  get initialCount() {
+    return this.minItems > this.model.length ? this.minItems : this.model.length;
+  }
+
   get children(): ArrayItemField[] {
     const limit = this.limit;
     const fields = Array(...Array(limit))
@@ -63,6 +67,16 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
 
   isEmpty(data: unknown = this.model) {
     return data instanceof Array && data.length === 0;
+  }
+
+  reset() {
+    super.reset();
+    this.setCount(this.initialCount);
+  }
+
+  clear() {
+    this.field.children.forEach(({ input }) => input.clear());
+    super.clear();
   }
 
   getFieldItem(itemSchema: JsonSchema, index: number): ArrayItemField | null {
@@ -107,6 +121,11 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
       // set the onChange option after the parser initialization
       // to prevent first field value emit
       options.onChange = (value) => {
+        // since it's possible to order children fields, the
+        // current field's index must be computed each time
+        // TODO: an improvement can be done by using a caching index table
+        const index = Arrays.index(this.field.children, parser.field);
+
         this.rawValue[index] = value;
 
         this.model.splice(0);
@@ -129,6 +148,19 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
     return this.getFieldItem(itemSchema, index);
   }
 
+  move(from: number, to: number) {
+    const items = this.field.children;
+
+    if (items[from] && items[to]) {
+      Arrays.swap(this.rawValue, from, to);
+      this.field.input.setValue(this.rawValue);
+
+      return Arrays.swap<ArrayItemField>(items, from, to);
+    }
+
+    return undefined;
+  }
+
   setCount(value: number) {
     if (this.maxItems && value > this.maxItems) {
       return;
@@ -145,9 +177,82 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
     } else {
       this.field.children.forEach(({ input }) => input.setValue(input.value));
     }
+
+    const sortable = this.field.sortable;
+    const items = this.field.children;
+
+    const isDisabled = ([ from, to ]: [ number, number ]) => {
+      return !sortable || !items[from] || !items[to];
+    };
+
+    const upIndexes = (field: ArrayItemField): [ number, number ] => {
+      const from = Arrays.index(items, field);
+      const to = from - 1;
+
+      return [ from, to ];
+    };
+
+    const downIndexes = (field: ArrayItemField): [ number, number ] => {
+      const from = Arrays.index(items, field);
+      const to = from + 1;
+
+      return [ from, to ];
+    };
+
+    const buttons = this.descriptor.buttons;
+
+    items.forEach((field) => {
+      field.buttons = {
+        clear: {
+          ...buttons.clear,
+          type: 'clear',
+          disabled: false,
+          trigger: () => field.input.clear()
+        },
+        moveUp: {
+          // CAUTION: Don't use spread notation here (...buttons.moveUp)
+          // to avoid to loose the computed `disabled` behaviour
+          type: 'move-up',
+          label: buttons.moveUp.label,
+          tooltip: buttons.moveUp.tooltip,
+          get disabled() {
+            return isDisabled(upIndexes(field));
+          },
+          trigger: () => this.move(...upIndexes(field))
+        },
+        moveDown: {
+          // CAUTION: Don't use spread notation here (...buttons.moveDown)
+          // to avoid to loose the computed `disabled` behaviour
+          type: 'move-down',
+          label: buttons.moveDown.label,
+          tooltip: buttons.moveDown.tooltip,
+          get disabled() {
+            return isDisabled(downIndexes(field));
+          },
+          trigger: () => this.move(...downIndexes(field))
+        },
+        delete: {
+          ...buttons.delete,
+          type: 'delete',
+          disabled: !sortable,
+          trigger: () => {
+            const index = Arrays.index(items, field);
+
+            this.rawValue.splice(index, 1);
+            this.field.input.setValue(this.rawValue);
+
+            this.count--;
+
+            return items.splice(index, 1).pop();
+          }
+        }
+      };
+    });
   }
 
   parse() {
+    this.field.sortable = false;
+
     if (this.schema.items) {
       if (this.schema.items instanceof Array) {
         this.items.push(...this.schema.items);
@@ -157,6 +262,8 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
         }
       } else {
         this.items.push(this.schema.items);
+
+        this.field.sortable = true;
       }
     }
 
@@ -164,28 +271,25 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
     this.minItems = this.schema.minItems || (this.field.required ? 1 : 0);
 
     const self = this;
+    const button = this.descriptor.buttons.push;
 
-    this.field.buttons = {
-      push: {
-        label: this.descriptor.addButtonLabel,
-        get disabled() {
-          return self.count === self.max || self.items.length === 0;
-        },
-        push: () => {
-          this.field.key = UniqueId.get(this.field.name);
-
-          this.setCount(this.count + 1);
-          this.requestRender([ this.field ]);
-        }
+    this.field.pushButton = {
+      // CAUTION: Don't use spread notation here (...button.push)
+      // to avoid to loose the computed `disabled` behaviour
+      type: 'push',
+      label: button.label,
+      tooltip: button.tooltip,
+      get disabled() {
+        return self.count === self.max || self.items.length === 0;
+      },
+      trigger: () => {
+        this.setCount(this.count + 1);
+        this.requestRender();
       }
     };
 
-    this.count = this.minItems > this.model.length
-      ? this.minItems
-      : this.model.length;
-
     this.parseUniqueItems();
-    this.setCount(this.count);
+    this.setCount(this.initialCount);
     this.commit();
   }
 
