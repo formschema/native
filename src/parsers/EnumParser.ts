@@ -9,10 +9,13 @@ import {
   ParserOptions,
   AbstractUISchemaDescriptor,
   FieldKind,
-  RadioField
+  RadioField,
+  UnknowParser
 } from '@/types';
 
 export class EnumParser extends Parser<unknown, EnumField, ScalarDescriptor> {
+  childrenParsers: UnknowParser[] = [];
+
   get kind(): FieldKind {
     return 'enum';
   }
@@ -74,7 +77,11 @@ export class EnumParser extends Parser<unknown, EnumField, ScalarDescriptor> {
         return parser;
       })
       .filter((parser) => parser instanceof Parser)
-      .map((parser: any) => parser.field as RadioField);
+      .map((parser: any) => {
+        this.childrenParsers.push(parser);
+
+        return parser.field as RadioField;
+      });
   }
 
   setValue(value: unknown) {
@@ -83,13 +90,13 @@ export class EnumParser extends Parser<unknown, EnumField, ScalarDescriptor> {
   }
 
   reset() {
-    this.field.children.forEach(({ input }) => input.reset());
     super.reset();
+    this.childrenParsers.forEach((parser) => parser.reset());
   }
 
   clear() {
-    this.field.children.forEach(({ input }) => input.clear());
     super.clear();
+    this.childrenParsers.forEach((parser) => parser.clear());
   }
 
   updateInputsState() {

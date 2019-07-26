@@ -2,6 +2,7 @@ import { Parser } from '@/parsers/Parser';
 import { EnumParser } from '@/parsers/EnumParser';
 import { ScalarDescriptor, ParserOptions } from '@/types';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
+import { TestParser } from '../../lib/TestParser';
 
 import '@/parsers';
 
@@ -172,5 +173,52 @@ describe('parsers/EnumParser', () => {
     delete parser.descriptor.kind;
 
     expect(parser.defaultComponent.name).toBe('FieldsetElement');
+  });
+
+  TestParser.Case({
+    case: '11.0',
+    description: 'parser.reset()',
+    parser: () => {
+      const model = 'arya';
+      const onChange = jest.fn();
+      const parser = new EnumParser({ ...options, model, onChange });
+
+      parser.parse();
+
+      return parser;
+    },
+    expected: {
+      reset(fn: Function, parser: any) {
+        const onChange = parser.options.onChange;
+        const expected = [
+          'arya',
+          'jon'
+        ];
+
+        expect(parser.rawValue).toEqual('arya');
+        expect(parser.model).toEqual('arya');
+        expect(onChange.mock.calls.length).toBe(1);
+        expect(onChange.mock.calls[0][0]).toEqual(expected[0]);
+
+        parser.field.children[0].input.setValue('jon');
+
+        expect(onChange.mock.calls.length).toBe(2);
+        expect(onChange.mock.calls[1][0]).toEqual(expected[1]);
+        expect(parser.rawValue).toEqual('jon');
+        expect(parser.model).toEqual('jon');
+
+        parser.reset(); // reset without calling onChange
+
+        expect(onChange.mock.calls.length).toBe(2);
+        expect(parser.initialValue).toEqual('arya');
+        expect(parser.rawValue).toEqual('arya');
+        expect(parser.model).toEqual('arya');
+
+        parser.field.input.reset(); // reset with calling onChange
+
+        expect(onChange.mock.calls.length).toBe(3);
+        expect(onChange.mock.calls[2][0]).toEqual(expected[0]);
+      }
+    }
   });
 });
