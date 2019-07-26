@@ -72,7 +72,7 @@ describe('components/FieldsetElement', () => {
     };
 
     const wrapper = mount(FieldsetElement, { context });
-    const expected = '<fieldset id="id-character" name="character"><div data-fs-kind="radio" data-fs-field="character"><label id="character-goku-label" for="character-goku">goku</label><div data-fs-input="radio"><input id="character-goku" type="radio" name="character" aria-labelledby="character-goku-label" value="goku"><!----></div></div><div data-fs-kind="radio" data-fs-field="character"><label id="character-freezer-label" for="character-freezer">freezer</label><div data-fs-input="radio"><input id="character-freezer" type="radio" name="character" aria-labelledby="character-freezer-label" value="freezer"><!----></div></div></fieldset>';
+    const expected = '<fieldset id="id-character" name="character"><div data-fs-kind="radio" data-fs-field="character"><label id="character-goku-label" for="character-goku">goku</label><div data-fs-input="radio"><input id="character-goku" type="radio" name="character" aria-labelledby="character-goku-label" value="goku"></div></div><div data-fs-kind="radio" data-fs-field="character"><label id="character-freezer-label" for="character-freezer">freezer</label><div data-fs-input="radio"><input id="character-freezer" type="radio" name="character" aria-labelledby="character-freezer-label" value="freezer"></div></div></fieldset>';
 
     expect(wrapper.html()).toBe(expected);
   });

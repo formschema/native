@@ -15,7 +15,7 @@ export const FieldElement: FieldComponent = {
       attrs: props.field.label.attrs
     }, props.field.label.value);
 
-    const fieldNodes = [ ...children, h(HelperElement, data) ];
+    const fieldNodes = [ ...children, h(HelperElement, data) ].filter(({ tag }) => tag);
     const fieldElement = h('div', {
       attrs: {
         'data-fs-input': props.field.input.attrs.type || props.field.kind

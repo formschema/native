@@ -8,7 +8,7 @@ export const InputElement: InputComponent = {
   render(h, { data, children }) {
     return h(FieldElement, data, [
       CreateInput<InputField>(h, 'input', data),
-      ...children
+      ...(children || [])
     ]);
   }
 };

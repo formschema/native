@@ -24,6 +24,12 @@ export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescript
     return 'object';
   }
 
+  get initialValue(): Dictionary | unknown {
+    const value = this.options.model || this.schema.default || {};
+
+    return { ...value };
+  }
+
   get propertiesList() {
     const keys = Object.keys(this.properties);
     const items = this.field.descriptor.order instanceof Array
@@ -59,9 +65,7 @@ export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescript
           id: `${this.id}-${key}`,
           name: this.getChildName(key, name),
           required: requiredFields.includes(key),
-          onChange: (value) => {
-            this.model[key] = value;
-          }
+          onChange: (value) => this.setKeyValue(key, value)
         }
       }))
       .map(({ options, ...args }) => ({
@@ -71,6 +75,7 @@ export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescript
       .filter(({ parser }) => parser instanceof Parser)
       .map(({ key, parser }: any) => {
         const field = parser.field as ObjectField;
+        const update = parser.options.onChange;
 
         this.childrenParsers[key] = parser;
 
@@ -79,13 +84,7 @@ export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescript
          * enable dependencies update
          */
         parser.options.onChange = (value: unknown) => {
-          /**
-           * No need to set `this.rawValue[key] = value` because
-           * the `this.commit()` will trigger an update of
-           * `this.rawValue` using `this.model`
-           */
-          this.model[key] = value;
-
+          update(value);
           this.commit();
           this.updateDependencies(key, parser);
         };
@@ -94,18 +93,35 @@ export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescript
       });
   }
 
+  setKeyValue(key: string, value: unknown) {
+    this.rawValue[key] = value;
+    this.model[key] = value;
+  }
+
   isEmpty(data: Dictionary = this.model) {
     return Objects.isEmpty(data);
   }
 
+  clearModel() {
+    Objects.clear(this.rawValue);
+    Objects.clear(this.model);
+  }
+
   reset() {
-    this.field.children.forEach(({ input }) => input.reset());
-    super.reset();
+    this.clearModel();
+
+    for (const key in this.childrenParsers) {
+      this.childrenParsers[key].reset();
+      this.setKeyValue(key, this.childrenParsers[key].model);
+    }
   }
 
   clear() {
-    this.field.children.forEach(({ input }) => input.clear());
-    super.clear();
+    this.clearModel();
+
+    for (const key in this.childrenParsers) {
+      this.childrenParsers[key].clear();
+    }
   }
 
   updateDependencies(key: string, parser: UnknowParser) {

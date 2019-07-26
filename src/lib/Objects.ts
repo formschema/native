@@ -35,5 +35,11 @@ export const Objects = {
     }
 
     return true;
+  },
+
+  clear<T extends Dictionary = Dictionary<any>>(object: T) {
+    for (const key in object) {
+      delete object[key];
+    }
   }
 };

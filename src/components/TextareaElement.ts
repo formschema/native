@@ -14,7 +14,7 @@ export const TextareaElement: TextareaComponent = {
 
     return h(FieldElement, data, [
       CreateInput<InputField>(h, 'textarea', data, props.field.input.value),
-      ...children
+      ...(children || [])
     ]);
   }
 };

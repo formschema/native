@@ -15,7 +15,7 @@ export const StateElement: StateComponent = {
 
     return h(FieldElement, data, [
       h('input', { key, attrs, on }),
-      ...children
+      ...(children || [])
     ]);
   }
 };

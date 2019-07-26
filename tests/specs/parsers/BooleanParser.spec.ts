@@ -120,4 +120,38 @@ describe('parsers/BooleanParser', () => {
       isEmpty: (fn: Function, parser: BooleanParser) => expect(fn.apply(parser, [])).toBeFalsy()
     }
   });
+
+  TestParser.Case({
+    case: '2.0',
+    description: 'parser.reset()',
+    parser: () => {
+      const model = true;
+      const onChange = jest.fn();
+      const parser = new BooleanParser({ ...options, model, onChange });
+
+      parser.parse();
+
+      return parser;
+    },
+    expected: {
+      reset(fn: Function, parser: any) {
+        expect(parser.rawValue).toBe(true);
+        expect(parser.model).toBe(true);
+
+        parser.field.input.setValue(false);
+
+        expect(parser.rawValue).toBe(false);
+        expect(parser.model).toBe(false);
+
+        parser.reset();
+
+        expect(parser.rawValue).toBe(true);
+        expect(parser.model).toBe(true);
+
+        parser.field.input.reset();
+
+        expect(parser.options.onChange.mock.calls.map(([value]: any) => value)).toEqual([true, false, true]);
+      }
+    }
+  });
 });

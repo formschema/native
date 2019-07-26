@@ -148,10 +148,12 @@ export abstract class Parser<
         component: this.descriptor.component || this.defaultComponent || defaultDescriptor.component,
         reset: () => {
           this.reset();
+          this.commit();
           this.requestRender();
         },
         clear: () => {
           this.clear();
+          this.commit();
           this.requestRender();
         }
       },
@@ -213,11 +215,11 @@ export abstract class Parser<
   }
 
   reset() {
-    this.field.input.setValue(this.parseValue(this.initialValue) as any);
+    this.setValue(this.parseValue(this.initialValue) as any);
   }
 
   clear() {
-    this.field.input.setValue(this.parseValue(undefined) as any);
+    this.setValue(this.parseValue(undefined) as any);
   }
 
   commit() {

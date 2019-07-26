@@ -2,6 +2,7 @@ import { Parser } from '@/parsers/Parser';
 import { NumberParser } from '@/parsers/NumberParser';
 import { ScalarDescriptor, ParserOptions } from '@/types';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
+import { TestParser } from '../../lib/TestParser';
 
 describe('parsers/NumberParser', () => {
   const options: ParserOptions<any, ScalarDescriptor> = {
@@ -137,5 +138,39 @@ describe('parsers/NumberParser', () => {
     it('field.input.attrs.max should equal define using schema.exclusiveMaximum', () => {
       expect(parser.field.input.attrs.max).toBe(9.9);
     });
+  });
+
+  TestParser.Case({
+    case: '1.0',
+    description: 'parser.reset()',
+    parser: () => {
+      const model = 2.1;
+      const onChange = jest.fn();
+      const parser = new NumberParser({ ...options, model, onChange });
+
+      parser.parse();
+
+      return parser;
+    },
+    expected: {
+      reset(fn: Function, parser: any) {
+        expect(parser.rawValue).toBe(2.1);
+        expect(parser.model).toBe(2.1);
+
+        parser.field.input.setValue(1.1);
+
+        expect(parser.rawValue).toBe(1.1);
+        expect(parser.model).toBe(1.1);
+
+        parser.reset();
+
+        expect(parser.rawValue).toBe(2.1);
+        expect(parser.model).toBe(2.1);
+
+        parser.field.input.reset();
+
+        expect(parser.options.onChange.mock.calls.map(([value]: any) => value)).toEqual([2.1, 1.1, 2.1]);
+      }
+    }
   });
 });

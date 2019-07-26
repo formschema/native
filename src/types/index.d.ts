@@ -206,6 +206,8 @@ export interface IParser<
   readonly descriptor: TDescriptor;
   readonly schema: JsonSchema;
   parse: () => void;
+  reset: () => void;
+  clear: () => void;
   isEmpty: (data?: TModel) => boolean;
 }
 

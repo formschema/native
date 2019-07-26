@@ -9,7 +9,8 @@ import {
   ParserOptions,
   AbstractUISchemaDescriptor,
   FieldKind,
-  ArrayItemField
+  ArrayItemField,
+  UnknowParser
 } from '@/types';
 
 export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
@@ -19,9 +20,16 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
   maxItems?: number;
   max: number = -1;
   count: number = 0;
+  childrenParsers: UnknowParser[] = [];
 
   get kind(): FieldKind {
     return 'array';
+  }
+
+  get initialValue(): unknown[] {
+    const value = this.options.model || this.schema.default || [];
+
+    return [ ...value ];
   }
 
   get limit(): number {
@@ -65,12 +73,40 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
     return fields;
   }
 
+  setFieldValue(field: ArrayItemField, value: unknown) {
+    // since it's possible to order children fields, the
+    // current field's index must be computed each time
+    // TODO: an improvement can be done by using a caching index table
+    const index = Arrays.index(this.field.children, field);
+
+    this.setIndexValue(index, value);
+  }
+
+  setIndexValue(index: number, value: unknown) {
+    this.rawValue[index] = value;
+
+    this.setValue(this.rawValue);
+  }
+
   isEmpty(data: unknown = this.model) {
     return data instanceof Array && data.length === 0;
   }
 
+  clearModel() {
+    this.rawValue.splice(0);
+    this.model.splice(0);
+  }
+
+  setValue(value: unknown[]) {
+    this.rawValue = value as any;
+
+    this.model.splice(0);
+    this.model.push(...this.parseValue(this.rawValue) as any);
+  }
+
   reset() {
-    super.reset();
+    this.clearModel();
+    this.setValue(this.initialValue);
     this.setCount(this.initialCount);
   }
 
@@ -97,14 +133,21 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
 
     const itemName = this.options.bracketedObjectInputName ? `${name}[]` : name;
 
+    const key = `${this.id}-${index}`;
+
     const options: ParserOptions<unknown, AbstractUISchemaDescriptor> = {
       schema: itemSchema,
       model: itemModel,
       descriptor: itemDescriptor,
       descriptorConstructor: this.options.descriptorConstructor,
       bracketedObjectInputName: this.options.bracketedObjectInputName,
-      id: `${this.id}-${index}`,
-      name: itemName
+      id: key,
+      name: itemName,
+      onChange: (value) => {
+        if (!this.field.uniqueItems) {
+          this.setIndexValue(index, value);
+        }
+      }
     };
 
     if (this.rawValue.length <= index) {
@@ -118,19 +161,12 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
         this.parseCheckboxField(parser, itemModel);
       }
 
+      this.childrenParsers.push(parser);
+
       // set the onChange option after the parser initialization
       // to prevent first field value emit
       options.onChange = (value) => {
-        // since it's possible to order children fields, the
-        // current field's index must be computed each time
-        // TODO: an improvement can be done by using a caching index table
-        const index = Arrays.index(this.field.children, parser.field);
-
-        this.rawValue[index] = value;
-
-        this.model.splice(0);
-        this.model.push(...this.parseValue(this.rawValue) as any);
-
+        this.setFieldValue(parser.field, value);
         this.commit();
       };
 
@@ -167,19 +203,20 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
     }
 
     this.count = value;
-    this.field.children = this.children;
 
-    // initialize the array model
-    if (this.field.uniqueItems) {
-      const values = this.field.children.map(({ input }) => input.value);
-
-      this.setValue(values);
-    } else {
-      this.field.children.forEach(({ input }) => input.setValue(input.value));
-    }
+    this.childrenParsers.splice(0);
 
     const sortable = this.field.sortable;
-    const items = this.field.children;
+    const items = this.children;
+
+    this.field.children = items;
+
+    // initialize enum array
+    if (this.field.uniqueItems) {
+      const values = items.map(({ input }) => input.value);
+
+      this.setValue(values);
+    }
 
     const isDisabled = ([ from, to ]: [ number, number ]) => {
       return !sortable || !items[from] || !items[to];

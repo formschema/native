@@ -309,4 +309,38 @@ describe('parsers/Parser', () => {
       options: (options: any) => expect(options.requestRender.x.mock.calls.length).toBe(0)
     }
   });
+
+  TestParser.Case({
+    case: '5.0',
+    description: 'parser.reset()',
+    parser: () => {
+      const model = 'arya';
+      const onChange = jest.fn();
+      const parser = new FakeParser({ ...options10, model, onChange });
+
+      parser.parse();
+
+      return parser;
+    },
+    expected: {
+      reset(fn: Function, parser: any) {
+        expect(parser.rawValue).toBe('arya');
+        expect(parser.model).toBe('arya');
+
+        parser.field.input.setValue('jon');
+
+        expect(parser.rawValue).toBe('jon');
+        expect(parser.model).toBe('jon');
+
+        parser.reset();
+
+        expect(parser.rawValue).toBe('arya');
+        expect(parser.model).toBe('arya');
+
+        parser.field.input.reset();
+
+        expect(parser.options.onChange.mock.calls.map(([value]: any) => value)).toEqual(['jon', 'arya']);
+      }
+    }
+  });
 });
