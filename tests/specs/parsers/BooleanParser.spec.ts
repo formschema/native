@@ -143,14 +143,54 @@ describe('parsers/BooleanParser', () => {
         expect(parser.rawValue).toBe(false);
         expect(parser.model).toBe(false);
 
-        parser.reset();
+        parser.reset(); // reset without calling onChange()
 
         expect(parser.rawValue).toBe(true);
         expect(parser.model).toBe(true);
 
-        parser.field.input.reset();
+        parser.field.input.reset(); // reset with calling onChange()
 
-        expect(parser.options.onChange.mock.calls.map(([value]: any) => value)).toEqual([true, false, true]);
+        const onChange = parser.options.onChange;
+        const result = onChange.mock.calls.map(([value]: any) => value);
+
+        expect(result).toEqual([true, false, true]);
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '3.0',
+    description: 'parser.clear()',
+    parser: () => {
+      const model = true;
+      const onChange = jest.fn();
+      const parser = new BooleanParser({ ...options, model, onChange });
+
+      parser.parse();
+
+      return parser;
+    },
+    expected: {
+      clear(fn: Function, parser: any) {
+        expect(parser.rawValue).toBe(true);
+        expect(parser.model).toBe(true);
+
+        parser.field.input.setValue(false);
+
+        expect(parser.rawValue).toBe(false);
+        expect(parser.model).toBe(false);
+
+        parser.clear(); // clear without calling onChange()
+
+        expect(parser.rawValue).toBeUndefined();
+        expect(parser.model).toBeUndefined();
+
+        parser.field.input.clear(); // clear with calling onChange()
+
+        const onChange = parser.options.onChange;
+        const result = onChange.mock.calls.map(([value]: any) => value);
+
+        expect(result).toEqual([true, false, undefined]);
       }
     }
   });

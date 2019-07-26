@@ -607,4 +607,51 @@ describe('parsers/ArrayParser', () => {
       }
     }
   });
+
+  TestParser.Case({
+    case: '12.0',
+    description: 'parser.clear()',
+    parser: () => {
+      const model = ['arya'];
+      const onChange = jest.fn();
+      const parser = new ArrayParser({ ...options4, model, onChange });
+
+      parser.parse();
+
+      return parser;
+    },
+    expected: {
+      clear(fn: Function, parser: any) {
+        const onChange = parser.options.onChange;
+        const expected = [
+          ['arya'],
+          ['jon']
+        ];
+
+        expect(parser.rawValue).toEqual(['arya']);
+        expect(parser.model).toEqual(['arya']);
+        expect(onChange.mock.calls.length).toBe(1);
+        expect(onChange.mock.calls[0][0]).toEqual(expected[0]);
+
+        parser.field.children[0].input.setValue('jon');
+
+        expect(onChange.mock.calls.length).toBe(2);
+        expect(onChange.mock.calls[1][0]).toEqual(expected[1]);
+        expect(parser.rawValue).toEqual(['jon']);
+        expect(parser.model).toEqual(['jon']);
+
+        parser.clear(); // clear without calling onChange
+
+        expect(onChange.mock.calls.length).toBe(2);
+        expect(parser.initialValue).toEqual(['arya']);
+        expect(parser.rawValue).toEqual([]);
+        expect(parser.model).toEqual([]);
+
+        parser.field.input.clear(); // clear with calling onChange
+
+        expect(onChange.mock.calls.length).toBe(3);
+        expect(onChange.mock.calls[2][0]).toEqual([]);
+      }
+    }
+  });
 });

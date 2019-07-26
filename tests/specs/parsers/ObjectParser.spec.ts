@@ -594,4 +594,51 @@ describe('parsers/ObjectParser', () => {
       }
     }
   });
+
+  TestParser.Case({
+    case: '13.0',
+    description: 'parser.clear()',
+    parser: () => {
+      const model = { name: 'arya' };
+      const onChange = jest.fn();
+      const parser = new ObjectParser({ ...options, model, onChange });
+
+      parser.parse();
+
+      return parser;
+    },
+    expected: {
+      clear(fn: Function, parser: any) {
+        const onChange = parser.options.onChange;
+        const expected = [
+          { name: 'arya' },
+          { name: 'jon' }
+        ];
+
+        expect(parser.rawValue).toEqual({ name: 'arya' });
+        expect(parser.model).toEqual({ name: 'arya' });
+        expect(onChange.mock.calls.length).toBe(1);
+        expect(onChange.mock.calls[0][0]).toEqual(expected[0]);
+
+        parser.field.children[0].input.setValue('jon');
+
+        expect(onChange.mock.calls.length).toBe(2);
+        expect(onChange.mock.calls[1][0]).toEqual(expected[1]);
+        expect(parser.rawValue).toEqual({ name: 'jon' });
+        expect(parser.model).toEqual({ name: 'jon' });
+
+        parser.clear(); // clear without calling onChange
+
+        expect(onChange.mock.calls.length).toBe(2);
+        expect(parser.initialValue).toEqual({ name: 'arya' });
+        expect(parser.rawValue).toEqual({});
+        expect(parser.model).toEqual({});
+
+        parser.field.input.clear(); // clear with calling onChange
+
+        expect(onChange.mock.calls.length).toBe(3);
+        expect(onChange.mock.calls[2][0]).toEqual({});
+      }
+    }
+  });
 });

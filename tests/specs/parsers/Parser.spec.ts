@@ -332,14 +332,51 @@ describe('parsers/Parser', () => {
         expect(parser.rawValue).toBe('jon');
         expect(parser.model).toBe('jon');
 
-        parser.reset();
+        parser.reset(); // reset without calling onChange
 
         expect(parser.rawValue).toBe('arya');
         expect(parser.model).toBe('arya');
 
-        parser.field.input.reset();
+        parser.field.input.reset(); // reset with calling onChange
 
         expect(parser.options.onChange.mock.calls.map(([value]: any) => value)).toEqual(['jon', 'arya']);
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '6.0',
+    description: 'parser.clear()',
+    parser: () => {
+      const model = 'arya';
+      const onChange = jest.fn();
+      const parser = new FakeParser({ ...options10, model, onChange });
+
+      parser.parse();
+
+      return parser;
+    },
+    expected: {
+      clear(fn: Function, parser: any) {
+        expect(parser.rawValue).toBe('arya');
+        expect(parser.model).toBe('arya');
+
+        parser.field.input.setValue('jon');
+
+        expect(parser.rawValue).toBe('jon');
+        expect(parser.model).toBe('jon');
+
+        parser.clear(); // clear without calling onChange
+
+        expect(parser.rawValue).toBeUndefined();
+        expect(parser.model).toBeUndefined();
+
+        parser.field.input.clear(); // clear with calling onChange
+
+        const onChange = parser.options.onChange;
+        const result = onChange.mock.calls.map(([value]: any) => value);
+
+        expect(result).toEqual(['jon', undefined]);
       }
     }
   });

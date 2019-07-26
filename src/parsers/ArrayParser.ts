@@ -111,8 +111,8 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
   }
 
   clear() {
-    this.field.children.forEach(({ input }) => input.clear());
     super.clear();
+    this.childrenParsers.forEach((parser) => parser.clear());
   }
 
   getFieldItem(itemSchema: JsonSchema, index: number): ArrayItemField | null {

@@ -2,6 +2,7 @@ import { Parser } from '@/parsers/Parser';
 import { IntegerParser } from '@/parsers/IntegerParser';
 import { ScalarDescriptor, ParserOptions } from '@/types';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
+import { TestParser } from '../../lib/TestParser';
 
 describe('parsers/IntegerParser', () => {
   const options: ParserOptions<any, ScalarDescriptor> = {
@@ -117,5 +118,79 @@ describe('parsers/IntegerParser', () => {
     it('field.input.attrs.max should equal define using schema.exclusiveMaximum', () => {
       expect(parser.field.input.attrs.max).toBe(9);
     });
+  });
+
+  TestParser.Case({
+    case: '1.0',
+    description: 'parser.reset()',
+    parser: () => {
+      const model = 2;
+      const onChange = jest.fn();
+      const parser = new IntegerParser({ ...options, model, onChange });
+
+      parser.parse();
+
+      return parser;
+    },
+    expected: {
+      reset(fn: Function, parser: any) {
+        expect(parser.rawValue).toBe(2);
+        expect(parser.model).toBe(2);
+
+        parser.field.input.setValue(1);
+
+        expect(parser.rawValue).toBe(1);
+        expect(parser.model).toBe(1);
+
+        parser.reset(); // reset without calling onChange
+
+        expect(parser.rawValue).toBe(2);
+        expect(parser.model).toBe(2);
+
+        parser.field.input.reset(); // reset with calling onChange
+
+        const onChange = parser.options.onChange;
+        const result = onChange.mock.calls.map(([value]: any) => value);
+
+        expect(result).toEqual([2, 1, 2]);
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '2.0',
+    description: 'parser.clear()',
+    parser: () => {
+      const model = 2;
+      const onChange = jest.fn();
+      const parser = new IntegerParser({ ...options, model, onChange });
+
+      parser.parse();
+
+      return parser;
+    },
+    expected: {
+      clear(fn: Function, parser: any) {
+        expect(parser.rawValue).toBe(2);
+        expect(parser.model).toBe(2);
+
+        parser.field.input.setValue(1);
+
+        expect(parser.rawValue).toBe(1);
+        expect(parser.model).toBe(1);
+
+        parser.clear(); // clear without calling onChange
+
+        expect(parser.rawValue).toBeUndefined();
+        expect(parser.model).toBeUndefined();
+
+        parser.field.input.clear(); // clear with calling onChange
+
+        const onChange = parser.options.onChange;
+        const result = onChange.mock.calls.map(([value]: any) => value);
+
+        expect(result).toEqual([2, 1, undefined]);
+      }
+    }
   });
 });

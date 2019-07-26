@@ -162,14 +162,54 @@ describe('parsers/NumberParser', () => {
         expect(parser.rawValue).toBe(1.1);
         expect(parser.model).toBe(1.1);
 
-        parser.reset();
+        parser.reset(); // reset without calling onChange
 
         expect(parser.rawValue).toBe(2.1);
         expect(parser.model).toBe(2.1);
 
-        parser.field.input.reset();
+        parser.field.input.reset(); // reset with calling onChange
 
-        expect(parser.options.onChange.mock.calls.map(([value]: any) => value)).toEqual([2.1, 1.1, 2.1]);
+        const onChange = parser.options.onChange;
+        const result = onChange.mock.calls.map(([value]: any) => value);
+
+        expect(result).toEqual([2.1, 1.1, 2.1]);
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '2.0',
+    description: 'parser.clear()',
+    parser: () => {
+      const model = 2.1;
+      const onChange = jest.fn();
+      const parser = new NumberParser({ ...options, model, onChange });
+
+      parser.parse();
+
+      return parser;
+    },
+    expected: {
+      clear(fn: Function, parser: any) {
+        expect(parser.rawValue).toBe(2.1);
+        expect(parser.model).toBe(2.1);
+
+        parser.field.input.setValue(1.1);
+
+        expect(parser.rawValue).toBe(1.1);
+        expect(parser.model).toBe(1.1);
+
+        parser.clear(); // clear without calling onChange
+
+        expect(parser.rawValue).toBeUndefined();
+        expect(parser.model).toBeUndefined();
+
+        parser.field.input.clear(); // clear with calling onChange
+
+        const onChange = parser.options.onChange;
+        const result = onChange.mock.calls.map(([value]: any) => value);
+
+        expect(result).toEqual([2.1, 1.1, undefined]);
       }
     }
   });

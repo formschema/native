@@ -149,12 +149,10 @@ export abstract class Parser<
         reset: () => {
           this.reset();
           this.commit();
-          this.requestRender();
         },
         clear: () => {
           this.clear();
           this.commit();
-          this.requestRender();
         }
       },
       label: {

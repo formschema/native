@@ -176,7 +176,7 @@ describe('parsers/EnumParser', () => {
   });
 
   TestParser.Case({
-    case: '11.0',
+    case: '1.0',
     description: 'parser.reset()',
     parser: () => {
       const model = 'arya';
@@ -200,7 +200,7 @@ describe('parsers/EnumParser', () => {
         expect(onChange.mock.calls.length).toBe(1);
         expect(onChange.mock.calls[0][0]).toEqual(expected[0]);
 
-        parser.field.children[0].input.setValue('jon');
+        parser.field.children[0].input.setValue(true);
 
         expect(onChange.mock.calls.length).toBe(2);
         expect(onChange.mock.calls[1][0]).toEqual(expected[1]);
@@ -218,6 +218,48 @@ describe('parsers/EnumParser', () => {
 
         expect(onChange.mock.calls.length).toBe(3);
         expect(onChange.mock.calls[2][0]).toEqual(expected[0]);
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '2.0',
+    description: 'parser.clear()',
+    parser: () => {
+      const model = 'arya';
+      const onChange = jest.fn();
+      const parser = new EnumParser({ ...options, model, onChange });
+
+      parser.parse();
+
+      return parser;
+    },
+    expected: {
+      clear(fn: Function, parser: any) {
+        const onChange = parser.options.onChange;
+
+        expect(parser.rawValue).toEqual('arya');
+        expect(parser.model).toEqual('arya');
+        expect(onChange.mock.calls.length).toBe(1);
+        expect(onChange.mock.calls[0][0]).toEqual('arya');
+
+        parser.field.children[0].input.setValue(true);
+
+        expect(onChange.mock.calls.length).toBe(2);
+        expect(onChange.mock.calls[1][0]).toEqual('jon');
+        expect(parser.rawValue).toEqual('jon');
+        expect(parser.model).toEqual('jon');
+
+        parser.clear(); // clear without calling onChange
+
+        expect(onChange.mock.calls.length).toBe(2);
+        expect(parser.rawValue).toEqual(undefined);
+        expect(parser.model).toEqual(undefined);
+
+        parser.field.input.clear(); // clear with calling onChange
+
+        expect(onChange.mock.calls.length).toBe(3);
+        expect(onChange.mock.calls[2][0]).toEqual(undefined);
       }
     }
   });
