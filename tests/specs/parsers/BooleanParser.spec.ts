@@ -59,7 +59,7 @@ describe('parsers/BooleanParser', () => {
     expect(parser.field.input.value).toBeFalsy();
   });
 
-  it('field.value should parse default non boolean value as an undefined model', () => {
+  it('field.value should parse default non boolean value as a falsy model', () => {
     const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'boolean' },
       model: 12,
@@ -70,7 +70,7 @@ describe('parsers/BooleanParser', () => {
 
     parser.parse();
 
-    expect(parser.field.input.value).toBeUndefined();
+    expect(parser.field.input.value).toBeFalsy();
   });
 
   TestParser.Case({
@@ -162,7 +162,7 @@ describe('parsers/BooleanParser', () => {
     case: '3.0',
     description: 'parser.clear()',
     parser: () => {
-      const model = true;
+      const model = false;
       const onChange = jest.fn();
       const parser = new BooleanParser({ ...options, model, onChange });
 
@@ -172,25 +172,25 @@ describe('parsers/BooleanParser', () => {
     },
     expected: {
       clear(fn: Function, parser: any) {
-        expect(parser.rawValue).toBe(true);
-        expect(parser.model).toBe(true);
-
-        parser.field.input.setValue(false);
-
         expect(parser.rawValue).toBe(false);
         expect(parser.model).toBe(false);
 
+        parser.field.input.setValue(true);
+
+        expect(parser.rawValue).toBe(true);
+        expect(parser.model).toBe(true);
+
         parser.clear(); // clear without calling onChange()
 
-        expect(parser.rawValue).toBeUndefined();
-        expect(parser.model).toBeUndefined();
+        expect(parser.rawValue).toBeFalsy();
+        expect(parser.model).toBeFalsy();
 
         parser.field.input.clear(); // clear with calling onChange()
 
         const onChange = parser.options.onChange;
         const result = onChange.mock.calls.map(([value]: any) => value);
 
-        expect(result).toEqual([true, false, undefined]);
+        expect(result).toEqual([false, true, false]);
       }
     }
   });

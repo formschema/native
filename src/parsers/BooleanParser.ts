@@ -22,7 +22,7 @@ export class BooleanParser extends Parser<boolean, BooleanField, ScalarDescripto
   }
 
   parseValue(checked: boolean) {
-    return typeof checked === 'boolean' ? checked : undefined;
+    return checked === true;
   }
 }
 
