@@ -2,6 +2,7 @@ import { VNode } from 'vue';
 import { FieldsetElement } from '@/components/FieldsetElement';
 import { ArrayButton } from '@/components/ArrayButton';
 import { ArrayComponent } from '@/types';
+import { FieldElement } from './FieldElement';
 
 const BUTTONS = [ 'clear', 'moveUp', 'moveDown', 'delete' ];
 
@@ -24,6 +25,19 @@ export const ArrayElement: ArrayComponent = {
             'data-fs-buttons': true
           }
         }, buttonsNodes));
+      }
+
+      if (field.descriptor.kind === 'object') {
+        return h(FieldElement, {
+          props: {
+            field: { ...field, helper: {} } // remove the duplicate bottom helper
+          }
+        }, [
+          h(field.input.component, {
+            props: { field }
+          }),
+          buttonsWrapper
+        ]);
       }
 
       return h(field.input.component, {
