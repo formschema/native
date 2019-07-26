@@ -41,16 +41,35 @@ describe('lib/Objects', () => {
     });
   });
 
-  describe('clear(object)', () => {
+  describe('Objects.isEmpty(object)', () => {
     it('should return true with an empty object', () => {
       expect(Objects.isEmpty({})).toBeTruthy();
-    })
+    });
 
     it('should return false with a non empty object', () => {
       const F = function F() {};
       const object = { a: 1, c: 2, e: { x: 1 }, d: [ 1 ], f: { g: 1 }, F };
 
       expect(Objects.isEmpty(object)).toBe(false);
+    });
+  });
+
+  describe('Objects.clear(object)', () => {
+    it('should clear an empty object', () => {
+      const object = {};
+
+      Objects.clear(object);
+
+      expect(object).toEqual({});
+    });
+
+    it('should delete all properties', () => {
+      const F = function F() {};
+      const object = { a: 1, c: 2, e: { x: 1 }, d: [ 1 ], f: { g: 1 }, F };
+
+      Objects.clear(object);
+
+      expect(object).toEqual({});
     });
   });
 });
