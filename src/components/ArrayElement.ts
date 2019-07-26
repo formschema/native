@@ -27,6 +27,7 @@ export const ArrayElement: ArrayComponent = {
       }
 
       return h(field.input.component, {
+        attrs: field.input.attrs,
         props: { field }
       }, buttonsWrapper);
     });
