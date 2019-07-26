@@ -86,8 +86,8 @@ export interface Field<
     setValue: (value: TModel) => void;
     initialValue: TModel;
     component: Component;
-    clear: () => {};
-    reset: () => {};
+    clear: () => void;
+    reset: () => void;
   };
   label: {
     attrs: {

@@ -309,11 +309,13 @@ describe('parsers/ArrayParser', () => {
       field: {
         required: false,
         uniqueItems: true,
-        // attrs: {
-        //   input: {
-        //     type: 'checkbox'
-        //   }
-        // },
+        descriptor: {
+          kind: 'array'
+        },
+        children: ([ field0 ]: ArrayField[]) => {
+          expect(field0.descriptor.kind).toBe('checkbox');
+          expect(field0.input.attrs.type).toBe('checkbox');
+        },
         pushButton: {
           disabled: true
         }
@@ -644,7 +646,7 @@ describe('parsers/ArrayParser', () => {
 
         expect(onChange.mock.calls.length).toBe(2);
         expect(parser.initialValue).toEqual(['arya']);
-        expect(parser.rawValue).toEqual([]);
+        expect(parser.rawValue).toEqual([undefined]);
         expect(parser.model).toEqual([]);
 
         parser.field.input.clear(); // clear with calling onChange
