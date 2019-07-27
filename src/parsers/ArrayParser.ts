@@ -272,13 +272,18 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
           disabled: !sortable,
           trigger: () => {
             const index = Arrays.index(items, field);
+            const deletedField = items.splice(index, 1).pop();
 
-            this.rawValue.splice(index, 1);
-            this.field.input.setValue(this.rawValue);
+            if (deletedField) {
+              this.rawValue.splice(index, 1);
+              this.field.input.setValue(this.rawValue);
 
-            this.count--;
+              this.count--;
 
-            return items.splice(index, 1).pop();
+              this.requestRender();
+            }
+
+            return deletedField;
           }
         }
       };
