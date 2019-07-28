@@ -65,6 +65,7 @@ const ParserValidator = {
     required: (value: boolean, parser: FakeParser) => expect(value).toBe(parser.options.required || false),
     descriptor: (value: Dictionary, parser: FakeParser) => expect(value).toEqual(parser.descriptor),
     parent: (value: any, parser: FakeParser) => parser.parent ? expect(value).toBe(parser.parent.field) : expect(value).toBeUndefined(),
+    root: (value: any, parser: FakeParser) => expect(value).toBe(parser.root.field),
     deep: (value: number, parser: FakeParser) => parser.field.parent ? expect(value).toBe(parser.field.parent.deep + 1) : expect(value).toBe(0),
     input: {
       attrs: {
@@ -79,7 +80,11 @@ const ParserValidator = {
       },
       props: (value: Dictionary, parser: FakeParser) => expect(value).toEqual(parser.descriptor.props),
       value: (value: any, parser: FakeParser) => expect(value).toBe(parser.model),
-      component: (value: Dictionary) => expect(value).toBeDefined()
+      component: (value: Dictionary) => expect(value).toBeDefined(),
+      setValue: (value: Function) => expect(value).toBeInstanceOf(Function),
+      commit: (value: Function) => expect(value).toBeInstanceOf(Function),
+      reset: (value: Function) => expect(value).toBeInstanceOf(Function),
+      clear: (value: Function) => expect(value).toBeInstanceOf(Function)
     },
     label: {
       attrs: {
@@ -93,7 +98,8 @@ const ParserValidator = {
         id: (value: string | undefined) => typeof value === 'undefined' || expect(value.endsWith('-helper')).toBeTruthy()
       },
       value: (value: string, parser: FakeParser) => expect(value).toBe(parser.descriptor.helper)
-    }
+    },
+    requestRender: (value: Function) => expect(value).toBeInstanceOf(Function)
   }
 };
 
@@ -214,7 +220,7 @@ describe('parsers/Parser', () => {
 
   TestParser.Case({
     case: '1.3.1',
-    description: 'field.input.setValue() with options.onChange (commit)',
+    description: 'field.input.setValue(value, true) with options.onChange (commit)',
     parser: () => {
       const onChange = jest.fn();
       const parser = new FakeParser({ ...options10, onChange });
@@ -228,7 +234,38 @@ describe('parsers/Parser', () => {
       model: 'jon',
       rawValue: 'jon',
       options: {
-        onChange: (onChange: any) => expect(onChange.mock.calls.length).toBe(1)
+        onChange(onChange: any) {
+          expect(onChange.mock.calls.length).toBe(1);
+          expect(onChange.mock.calls[0][0]).toBe('jon');
+        }
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '1.3.2',
+    description: 'field.input.setValue(value, false) with options.onChange and field.input.commit() (commit)',
+    parser: () => {
+      const onChange = jest.fn();
+      const parser = new FakeParser({ ...options10, onChange });
+
+      parser.parse();
+      parser.field.input.setValue('jon', false);
+
+      return parser;
+    },
+    expected: {
+      model: 'jon',
+      rawValue: 'jon',
+      options: {
+        onChange(onChange: any, parser: any) {
+          expect(onChange.mock.calls.length).toBe(0);
+
+          parser.field.input.commit();
+
+          expect(onChange.mock.calls.length).toBe(1);
+          expect(onChange.mock.calls[0][0]).toBe('jon');
+        }
       }
     }
   });
@@ -280,18 +317,39 @@ describe('parsers/Parser', () => {
   TestParser.Case({
     case: '4.0',
     description: 'parser.requestRender()',
-    parser: () => {
-      const requestRender = jest.fn();
-      const parser = new FakeParser({ ...options10, requestRender });
-
-      parser.parse();
-      parser.requestRender([parser.field]);
-
-      return parser;
-    },
+    parser: new FakeParser({ ...options10, requestRender: jest.fn() }),
     expected: {
       options: {
-        requestRender: (requestRender: any) => expect(requestRender.mock.calls.length).toBe(1)
+        requestRender(requestRender: any, parser: any) {
+          let oldFieldKey = parser.field.key;
+
+          // calling requestRender() with arguments without
+          // updated the field.key value have no effect
+          parser.requestRender([parser.field]);
+          expect(parser.field.key).toEqual(oldFieldKey);
+
+
+          // calling requestRender() with arguments after
+          // updated the field.key value have no effect
+          parser.field.key = 'random-key';
+          parser.requestRender([parser.field]);
+          expect(parser.field.key).not.toEqual(oldFieldKey);
+
+          oldFieldKey = parser.field.key;
+
+          // calling requestRender() without arguments will
+          // automatically update the field.key value
+          parser.requestRender();
+          expect(parser.field.key).not.toEqual(oldFieldKey);
+
+          oldFieldKey = parser.field.key;
+
+          // field.requestRender() is an alias of parser.requestRender()
+          parser.field.requestRender();
+          expect(parser.field.key).not.toEqual(oldFieldKey);
+
+          expect(requestRender.mock.calls.length).toBe(4);
+        }
       }
     }
   });

@@ -66,11 +66,24 @@ export type ParserKind = SchemaType | 'enum' | 'list';
 export type FieldKind = SchemaType | 'enum' | 'radio' | 'list' | 'textarea' | 'checkbox';
 export type Component = string | VueComponent | AsyncComponent;
 
+export interface FieldInput<TAttributes = Attributes, TModel = any> {
+  attrs: TAttributes;
+  props: Dictionary<any>;
+  value: TModel;
+  setValue: (value: TModel, emitChange?: boolean) => void;
+  commit: () => void;
+  initialValue: TModel;
+  component: Component;
+  clear: () => void;
+  reset: () => void;
+}
+
 export interface Field<
   TKind extends FieldKind,
   TAttributes = Attributes,
   TDescriptor = DescriptorInstance,
-  TModel = any
+  TModel = any,
+  TInput extends FieldInput<any, any> = FieldInput<TAttributes, TModel>
 > {
   key: string;
   kind: TKind;
@@ -79,16 +92,7 @@ export interface Field<
   schema: JsonSchema;
   required: boolean;
   deep: number;
-  input: {
-    attrs: TAttributes;
-    props: Dictionary<any>;
-    value: TModel;
-    setValue: (value: TModel) => void;
-    initialValue: TModel;
-    component: Component;
-    clear: () => void;
-    reset: () => void;
-  };
+  input: TInput;
   label: {
     attrs: {
       id?: string;
@@ -104,6 +108,8 @@ export interface Field<
   };
   descriptor: TDescriptor;
   parent?: Field<any>;
+  root: Field<any>;
+  requestRender: () => void;
 }
 
 export type BooleanField = Field<'boolean', CheckboxAttributes, ScalarDescriptor, boolean>;

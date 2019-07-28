@@ -139,10 +139,14 @@ export abstract class Parser<
         get value() {
           return self.model;
         },
-        setValue: (value: TModel) => {
+        setValue: (value, emitChange = true) => {
           this.setValue(value);
-          this.commit();
+
+          if (emitChange) {
+            this.commit();
+          }
         },
+        commit: () => this.commit(),
         initialValue: this.initialValue,
         props: Objects.clone(this.descriptor.props as Dictionary),
         component: this.descriptor.component || this.defaultComponent || defaultDescriptor.component,
@@ -175,7 +179,11 @@ export abstract class Parser<
         value: this.descriptor.helper
       },
       descriptor: this.descriptor,
-      parent: parent ? parent.field : undefined
+      parent: parent ? parent.field : undefined,
+      get root() {
+        return self.root.field;
+      },
+      requestRender: () => this.requestRender()
     } as TField;
   }
 
