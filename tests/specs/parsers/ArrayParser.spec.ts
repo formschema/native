@@ -1,6 +1,7 @@
 import { ArrayField } from '@/types';
 import { ArrayParser } from '@/parsers/ArrayParser';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
+import { NativeElements } from '@/lib/NativeElements';
 import { TestParser } from '../../lib/TestParser';
 
 import '@/parsers';
@@ -11,7 +12,7 @@ describe('parsers/ArrayParser', () => {
     parser: new ArrayParser({
       schema: { type: 'array' },
       model: [],
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     }),
     expected: {
       kind: 'array',
@@ -40,7 +41,7 @@ describe('parsers/ArrayParser', () => {
     parser: new ArrayParser({
       schema: { type: 'array' },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     }),
     expected: {
       initialValue: [],
@@ -58,7 +59,7 @@ describe('parsers/ArrayParser', () => {
         default: ['arya']
       },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     }),
     expected: {
       initialValue: ['arya'],
@@ -79,7 +80,7 @@ describe('parsers/ArrayParser', () => {
         minItems: 1
       },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     }),
     expected: {
       initialValue: [],
@@ -97,7 +98,7 @@ describe('parsers/ArrayParser', () => {
       },
       model: undefined,
       required: true,
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     }),
     expected: {
       initialValue: [],
@@ -111,7 +112,7 @@ describe('parsers/ArrayParser', () => {
     parser: new ArrayParser({
       schema: { type: 'array' },
       model: [12],
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     }),
     expected: {
       items: [],
@@ -147,7 +148,7 @@ describe('parsers/ArrayParser', () => {
       },
       model: [],
       required: true,
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     }),
     expected: {
       items: [{ type: 'string' }],
@@ -182,7 +183,7 @@ describe('parsers/ArrayParser', () => {
       uniqueItems: true
     },
     model: [],
-    descriptorConstructor: NativeDescriptor.get
+    descriptorConstructor: new NativeDescriptor(NativeElements)
   };
 
   TestParser.Case({
@@ -283,7 +284,7 @@ describe('parsers/ArrayParser', () => {
       uniqueItems: true
     },
     model: ['b', 'd'],
-    descriptorConstructor: NativeDescriptor.get
+    descriptorConstructor: new NativeDescriptor(NativeElements)
   };
 
   TestParser.Case({
@@ -388,7 +389,7 @@ describe('parsers/ArrayParser', () => {
         maxItems: 4
       },
       model: ['a', 'd'],
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     }),
     expected: {
       items: [
@@ -426,7 +427,7 @@ describe('parsers/ArrayParser', () => {
         additionalItems: { type: 'number' }
       },
       model: ['a', 12],
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     }),
     expected: {
       items: [
@@ -469,7 +470,7 @@ describe('parsers/ArrayParser', () => {
         additionalItems: { type: undefined } as any
       },
       model: ['a', 12],
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     }),
     expected: {
       items: [
@@ -489,7 +490,7 @@ describe('parsers/ArrayParser', () => {
       items: { type: 'string' }
     },
     model: ['a', 12],
-    descriptorConstructor: NativeDescriptor.get,
+    descriptorConstructor: new NativeDescriptor(NativeElements),
     bracketedObjectInputName: bracketedObjectInputNameValue
   });
 
@@ -520,7 +521,7 @@ describe('parsers/ArrayParser', () => {
     description: 'isEmpty() with an empty array',
     parser: new ArrayParser({
       schema: { type: 'array' },
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     }),
     expected: {
       isEmpty: (fn: Function) => expect(fn([])).toBeTruthy()
@@ -532,7 +533,7 @@ describe('parsers/ArrayParser', () => {
     description: 'isEmpty() with a non empty array',
     parser: new ArrayParser({
       schema: { type: 'array' },
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     }),
     expected: {
       isEmpty: (fn: Function) => expect(fn([1])).toBeFalsy()
@@ -544,7 +545,7 @@ describe('parsers/ArrayParser', () => {
     description: 'isEmpty() with default value',
     parser: new ArrayParser({
       schema: { type: 'array', default: [2] },
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     }),
     expected: {
       isEmpty: (fn: Function, parser: ArrayParser) => expect(fn.apply(parser)).toBeFalsy()

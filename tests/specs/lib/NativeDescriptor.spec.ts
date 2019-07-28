@@ -1,9 +1,12 @@
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
+import { NativeElements } from '@/lib/NativeElements';
 import { DescriptorInstance } from '@/types';
 import { JsonSchema } from '@/types/jsonschema';
 
+const Descriptor = new NativeDescriptor(NativeElements);
+
 function ShouldLabelDescription(schema: JsonSchema) {
-  const descriptor = NativeDescriptor.get(schema);
+  const descriptor = Descriptor.get(schema);
 
   it(`should have label === ${JSON.stringify(schema.title)}`, () => {
     expect(descriptor.label).toEqual(schema.title);
@@ -68,7 +71,7 @@ describe('lib/NativeDescriptor', () => {
   describe('NativeDescriptor.get(schema, kind?)', () => {
     describe('ScalarDescriptor', () => {
       const schema = { type: 'string' } as any;
-      const descriptor = NativeDescriptor.get(schema);
+      const descriptor = Descriptor.get(schema);
 
       it('should have common properties', () => {
         expect(Object.keys(descriptor)).toEqual([
@@ -87,7 +90,7 @@ describe('lib/NativeDescriptor', () => {
 
     describe('ArrayDescriptor', () => {
       const schema = { type: 'array' } as any;
-      const descriptor = NativeDescriptor.get(schema);
+      const descriptor = Descriptor.get(schema);
 
       it('should have common properties', () => {
         expect(Object.keys(descriptor)).toEqual([
@@ -106,7 +109,7 @@ describe('lib/NativeDescriptor', () => {
 
     describe('ObjectDescriptor', () => {
       const schema = { type: 'object' } as any;
-      const descriptor = NativeDescriptor.get(schema);
+      const descriptor = Descriptor.get(schema);
 
       it('should have common properties', () => {
         expect(Object.keys(descriptor)).toEqual([
@@ -125,7 +128,7 @@ describe('lib/NativeDescriptor', () => {
 
     it('should return descriptor with custum kind', () => {
       const schema = { type: 'number' } as any;
-      const descriptor = NativeDescriptor.get(schema, 'boolean');
+      const descriptor = Descriptor.get(schema, 'boolean');
       const component = descriptor.component as any;
 
       expect(component.name).toBe('StateElement');

@@ -2,6 +2,7 @@ import { Parser } from '@/parsers/Parser';
 import { ObjectParser } from '@/parsers/ObjectParser';
 import { Dictionary, ListField, ObjectField, ScalarDescriptor, ParserOptions } from '@/types';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
+import { NativeElements } from '@/lib/NativeElements';
 import { JsonSchema } from '@/types/jsonschema';
 import { TestParser } from '../../lib/TestParser';
 
@@ -18,7 +19,7 @@ describe('parsers/ObjectParser', () => {
     },
     model: { name: 'Jon Snow' },
     name: 'profile',
-    descriptorConstructor: NativeDescriptor.get
+    descriptorConstructor: new NativeDescriptor(NativeElements)
   };
 
   const parser = new ObjectParser(options);
@@ -65,7 +66,7 @@ describe('parsers/ObjectParser', () => {
         }
       },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     };
 
     const parser = new ObjectParser(options);
@@ -81,7 +82,7 @@ describe('parsers/ObjectParser', () => {
     const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'object' },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     };
 
     const parser = new ObjectParser(options);
@@ -98,7 +99,7 @@ describe('parsers/ObjectParser', () => {
         properties: {}
       },
       model: {},
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     };
 
     const parser = new ObjectParser(options);
@@ -120,7 +121,7 @@ describe('parsers/ObjectParser', () => {
         required: ['name']
       },
       model: {},
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     };
 
     const parser = new ObjectParser(options);
@@ -142,7 +143,7 @@ describe('parsers/ObjectParser', () => {
         required: ['name']
       },
       model: {},
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     };
 
     const parser = new ObjectParser(options);
@@ -165,7 +166,7 @@ describe('parsers/ObjectParser', () => {
         }
       },
       model: {},
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     };
 
     const parser = new ObjectParser(options);
@@ -189,7 +190,7 @@ describe('parsers/ObjectParser', () => {
         }
       },
       model: {},
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     };
 
     const parser = new ObjectParser(options);
@@ -219,7 +220,7 @@ describe('parsers/ObjectParser', () => {
         }
       },
       model: {},
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     };
 
     const parser = new ObjectParser(options);
@@ -287,7 +288,7 @@ describe('parsers/ObjectParser', () => {
       }
     },
     model: {},
-    descriptorConstructor: NativeDescriptor.get,
+    descriptorConstructor: new NativeDescriptor(NativeElements),
     bracketedObjectInputName: bracketedObjectInputNameValue
   });
 
@@ -349,7 +350,7 @@ describe('parsers/ObjectParser', () => {
     description: 'isEmpty() with an empty object',
     parser: new ObjectParser({
       schema: { type: 'object' },
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     }),
     expected: {
       isEmpty: (fn: Function) => expect(fn({})).toBeTruthy()
@@ -361,7 +362,7 @@ describe('parsers/ObjectParser', () => {
     description: 'isEmpty() with a non empty object',
     parser: new ObjectParser({
       schema: { type: 'object' },
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     }),
     expected: {
       isEmpty: (fn: Function) => expect(fn({ x: 12 })).toBeFalsy()
@@ -373,7 +374,7 @@ describe('parsers/ObjectParser', () => {
     description: 'isEmpty() with default value',
     parser: new ObjectParser({
       schema: { type: 'object', default: { x: 12 } },
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     }),
     expected: {
       isEmpty: (fn: Function, parser: ObjectParser) => expect(fn.apply(parser)).toBeFalsy()
@@ -391,7 +392,7 @@ describe('parsers/ObjectParser', () => {
         credit_card: ['billing_address']
       }
     },
-    descriptorConstructor: NativeDescriptor.get
+    descriptorConstructor: new NativeDescriptor(NativeElements)
   };
 
   TestParser.Case({
@@ -432,7 +433,7 @@ describe('parsers/ObjectParser', () => {
           }
         }
       },
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     }),
     expected: {
       properties(value: Dictionary<JsonSchema>) {
@@ -519,7 +520,7 @@ describe('parsers/ObjectParser', () => {
       };
 
       const requestRender = jest.fn();
-      const descriptorConstructor = NativeDescriptor.get;
+      const descriptorConstructor = new NativeDescriptor(NativeElements);
 
       const parser = new ObjectParser({ schema, requestRender, descriptorConstructor });
 

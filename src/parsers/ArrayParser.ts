@@ -2,6 +2,7 @@ import { Parser } from '@/parsers/Parser';
 import { JsonSchema } from '@/types/jsonschema';
 import { Objects } from '@/lib/Objects';
 import { Arrays } from '@/lib/Arrays';
+import { NativeDescriptor } from '@/lib/NativeDescriptor';
 
 import {
   ArrayField,
@@ -10,7 +11,8 @@ import {
   AbstractUISchemaDescriptor,
   FieldKind,
   ArrayItemField,
-  UnknowParser
+  UnknowParser,
+  DescriptorConstructor
 } from '@/types';
 
 export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
@@ -114,13 +116,41 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
     this.childrenParsers.forEach((parser) => parser.clear());
   }
 
-  getFieldItem(itemSchema: JsonSchema, index: number): ArrayItemField | null {
-    const kind: FieldKind | undefined = this.field.uniqueItems ? 'checkbox' : undefined;
+  getChildDescriptor(index: number, schema: JsonSchema, kind?: FieldKind) {
     const items = this.field.descriptor.items;
 
-    const itemDescriptor = items && items[index]
-      ? items[index]
-      : this.options.descriptorConstructor(itemSchema, kind);
+    if (items) {
+      const descriptorIndex = items instanceof Array ? items[index] : items;
+
+      if (descriptorIndex instanceof NativeDescriptor) {
+        return descriptorIndex.get(schema, kind);
+      }
+
+      if (descriptorIndex) {
+        return descriptorIndex;
+      }
+    }
+
+    return this.options.descriptorConstructor.get(schema, kind);
+  }
+
+  getChildDescriptorConstructor(index: number): DescriptorConstructor {
+    const items = this.field.descriptor.items;
+
+    if (items) {
+      const itemIndex = items instanceof Array ? items[index] : items;
+
+      if (itemIndex instanceof NativeDescriptor) {
+        return itemIndex;
+      }
+    }
+
+    return this.options.descriptorConstructor;
+  }
+
+  getFieldItem(itemSchema: JsonSchema, index: number): ArrayItemField | null {
+    const kind: FieldKind | undefined = this.field.uniqueItems ? 'checkbox' : undefined;
+    const itemDescriptor = this.getChildDescriptor(index, itemSchema, kind);
 
     const itemModel = typeof this.model[index] === 'undefined'
       ? itemSchema.default
@@ -134,7 +164,7 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
       schema: itemSchema,
       model: itemModel,
       descriptor: itemDescriptor,
-      descriptorConstructor: this.options.descriptorConstructor,
+      descriptorConstructor: this.getChildDescriptorConstructor(index),
       bracketedObjectInputName: this.options.bracketedObjectInputName,
       id: `${this.id}-${index}`,
       name: this.options.bracketedObjectInputName ? `${name}[]` : name

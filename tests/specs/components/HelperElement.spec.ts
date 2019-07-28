@@ -3,6 +3,7 @@ import { HelperElement } from '@/components/HelperElement';
 import { StringParser } from '@/parsers/StringParser';
 import { ScalarDescriptor, ParserOptions } from '@/types';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
+import { NativeElements } from '@/lib/NativeElements';
 
 describe('components/HelperElement', () => {
   it('should successfully render component', () => {
@@ -13,7 +14,7 @@ describe('components/HelperElement', () => {
       },
       model: 'Goku',
       id: 'name',
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     };
 
     const parser = new StringParser(options);
@@ -41,7 +42,7 @@ describe('components/HelperElement', () => {
       },
       model: 'Goku',
       id: 'name',
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     };
 
     const parser = new StringParser(options);
@@ -70,7 +71,7 @@ describe('components/HelperElement', () => {
       },
       model: 'Goku',
       id: 'name',
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     };
 
     const parser = new StringParser(options);

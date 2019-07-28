@@ -22,8 +22,8 @@ export class EnumParser extends Parser<unknown, EnumField, ScalarDescriptor> {
 
   get defaultComponent() {
     return this.descriptor.kind
-      ? this.options.descriptorConstructor<ScalarDescriptor>(this.schema, this.descriptor.kind).component
-      : this.options.descriptorConstructor(this.schema, this.kind).component;
+      ? this.options.descriptorConstructor.get(this.schema, this.descriptor.kind).component
+      : this.options.descriptorConstructor.get(this.schema, this.kind).component;
   }
 
   get children(): RadioField[] {
@@ -45,7 +45,7 @@ export class EnumParser extends Parser<unknown, EnumField, ScalarDescriptor> {
       }))
       .map((itemSchema) => {
         const item: any = itemSchema.default;
-        const descriptor = items[item] || descriptorConstructor(itemSchema);
+        const descriptor = items[item] || descriptorConstructor.get(itemSchema);
 
         if (!descriptor.kind) {
           descriptor.kind = 'radio';
@@ -54,7 +54,7 @@ export class EnumParser extends Parser<unknown, EnumField, ScalarDescriptor> {
         const options: ParserOptions<unknown, AbstractUISchemaDescriptor, RadioField> = {
           schema: itemSchema,
           model: itemSchema.default,
-          descriptor: items[item] || descriptorConstructor(itemSchema),
+          descriptor: items[item] || descriptorConstructor.get(itemSchema),
           descriptorConstructor: descriptorConstructor,
           bracketedObjectInputName: this.options.bracketedObjectInputName,
           id: `${radioName}-${UniqueId.parse(item)}`,

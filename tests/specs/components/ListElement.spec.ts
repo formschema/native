@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils';
 import { ListElement } from '@/components/ListElement';
 import { ListParser } from '@/parsers/ListParser';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
+import { NativeElements } from '@/lib/NativeElements';
 
 const options: any = {
   schema: {
@@ -24,7 +25,7 @@ const options: any = {
       }
     }
   },
-  descriptorConstructor: NativeDescriptor.get
+  descriptorConstructor: new NativeDescriptor(NativeElements)
 };
 
 const parser = new ListParser(options);

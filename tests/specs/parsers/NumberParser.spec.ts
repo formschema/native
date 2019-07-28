@@ -2,6 +2,7 @@ import { Parser } from '@/parsers/Parser';
 import { NumberParser } from '@/parsers/NumberParser';
 import { ScalarDescriptor, ParserOptions } from '@/types';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
+import { NativeElements } from '@/lib/NativeElements';
 import { TestParser } from '../../lib/TestParser';
 
 describe('parsers/NumberParser', () => {
@@ -13,7 +14,7 @@ describe('parsers/NumberParser', () => {
       multipleOf: 2
     },
     model: 2.0,
-    descriptorConstructor: NativeDescriptor.get
+    descriptorConstructor: new NativeDescriptor(NativeElements)
   };
 
   const parser = new NumberParser(options);
@@ -32,7 +33,7 @@ describe('parsers/NumberParser', () => {
     const options: ParserOptions<number, ScalarDescriptor> = {
         schema: { type: 'number' },
         model: 1,
-        descriptorConstructor: NativeDescriptor.get
+        descriptorConstructor: new NativeDescriptor(NativeElements)
       };
 
       const parser: any = new NumberParser(options);
@@ -52,7 +53,7 @@ describe('parsers/NumberParser', () => {
     const options: ParserOptions<number, ScalarDescriptor> = {
         schema: { type: 'number' },
         model: 1,
-        descriptorConstructor: NativeDescriptor.get
+        descriptorConstructor: new NativeDescriptor(NativeElements)
       };
 
       const parser: any = new NumberParser(options);
@@ -92,7 +93,7 @@ describe('parsers/NumberParser', () => {
     const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'number' },
       model: 3.1,
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     };
 
     const parser = new NumberParser(options);
@@ -106,7 +107,7 @@ describe('parsers/NumberParser', () => {
     const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'number' },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     };
 
     const parser = new NumberParser(options);
@@ -124,7 +125,7 @@ describe('parsers/NumberParser', () => {
         exclusiveMaximum: 10
       },
       model: 0,
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     };
 
     const parser = new NumberParser(options);

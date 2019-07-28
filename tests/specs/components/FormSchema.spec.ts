@@ -116,11 +116,11 @@ describe('components/FormSchema', () => {
       expect(vm.components).toBeDefined();
     });
 
-    it('vm.descriptor should be defined', () => {
+    it('vm.descriptor should be undefined', () => {
       const wrapper = getWrapper({ schema });
       const vm: any = wrapper.vm;
 
-      expect(vm.descriptor).toBeDefined();
+      expect(vm.descriptor).toBeUndefined();
     });
 
     it('vm.fieldId should be defined', () => {

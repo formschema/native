@@ -8,7 +8,7 @@ export class ListParser extends Parser<unknown, ListField, ScalarDescriptor> {
 
   get defaultComponent() {
     const kind = this.descriptor.kind ? this.descriptor.kind : this.kind;
-    const descriptor = this.options.descriptorConstructor<ScalarDescriptor>(this.schema, kind);
+    const descriptor = this.options.descriptorConstructor.get(this.schema, kind);
 
     return descriptor.component;
   }
@@ -20,7 +20,7 @@ export class ListParser extends Parser<unknown, ListField, ScalarDescriptor> {
       return this.schema.enum.map((item: any): ListItem => ({
         value: item,
         selected: this.model === item,
-        label: items[item] ? items[item].label || item : item
+        label: items[item] ? items[item].label : item
       }));
     }
 

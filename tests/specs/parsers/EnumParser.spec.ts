@@ -2,6 +2,7 @@ import { Parser } from '@/parsers/Parser';
 import { EnumParser } from '@/parsers/EnumParser';
 import { ScalarDescriptor, ParserOptions } from '@/types';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
+import { NativeElements } from '@/lib/NativeElements';
 import { TestParser } from '../../lib/TestParser';
 
 import '@/parsers';
@@ -13,7 +14,7 @@ describe('parsers/EnumParser', () => {
       enum: ['jon', 'arya', 'bran', 'ned']
     },
     model: 'jon',
-    descriptorConstructor: NativeDescriptor.get
+    descriptorConstructor: new NativeDescriptor(NativeElements)
   };
 
   const parser = new EnumParser(options);
@@ -72,7 +73,7 @@ describe('parsers/EnumParser', () => {
         default: 'arya'
       },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     };
 
     const parser = new EnumParser(options);
@@ -86,7 +87,7 @@ describe('parsers/EnumParser', () => {
     const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string', enum: ['jon', 'arya'] },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     };
 
     const parser = new EnumParser(options);
@@ -100,7 +101,7 @@ describe('parsers/EnumParser', () => {
     const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string' },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     };
 
     const parser = new EnumParser(options);
@@ -117,7 +118,7 @@ describe('parsers/EnumParser', () => {
         enum: ['jon', 'arya']
       },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     };
 
     const parser = new EnumParser(options);
@@ -148,7 +149,7 @@ describe('parsers/EnumParser', () => {
         props: {},
         items: {}
       },
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     };
 
     const parser: any = new EnumParser(options);
@@ -165,7 +166,7 @@ describe('parsers/EnumParser', () => {
         props: {},
         items: {}
       },
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     };
 
     const parser: any = new EnumParser(options);

@@ -2,13 +2,14 @@ import { Parser } from '@/parsers/Parser';
 import { BooleanParser } from '@/parsers/BooleanParser';
 import { ScalarDescriptor, ParserOptions } from '@/types';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
+import { NativeElements } from '@/lib/NativeElements';
 import { TestParser } from '../../lib/TestParser';
 
 describe('parsers/BooleanParser', () => {
   const options: ParserOptions<any, ScalarDescriptor> = {
     schema: { type: 'boolean' },
     model: undefined,
-    descriptorConstructor: NativeDescriptor.get
+    descriptorConstructor: new NativeDescriptor(NativeElements)
   };
 
   const parser = new BooleanParser(options);
@@ -35,7 +36,7 @@ describe('parsers/BooleanParser', () => {
     const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'boolean' },
       model: true,
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     };
 
     const parser = new BooleanParser(options);
@@ -49,7 +50,7 @@ describe('parsers/BooleanParser', () => {
     const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'boolean' },
       model: false,
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     };
 
     const parser = new BooleanParser(options);
@@ -63,7 +64,7 @@ describe('parsers/BooleanParser', () => {
     const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'boolean' },
       model: 12,
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     };
 
     const parser = new BooleanParser(options);
@@ -78,7 +79,7 @@ describe('parsers/BooleanParser', () => {
     description: 'isEmpty() with non boolean',
     parser: new BooleanParser({
       schema: { type: 'boolean' },
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     }),
     expected: {
       isEmpty: (fn: Function, parser: BooleanParser) => expect(fn.apply(parser, [undefined])).toBeTruthy()
@@ -90,7 +91,7 @@ describe('parsers/BooleanParser', () => {
     description: 'isEmpty() with a falsy boolean',
     parser: new BooleanParser({
       schema: { type: 'boolean' },
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     }),
     expected: {
       isEmpty: (fn: Function) => fn(false) === true
@@ -102,7 +103,7 @@ describe('parsers/BooleanParser', () => {
     description: 'isEmpty() with a truthy boolean',
     parser: new BooleanParser({
       schema: { type: 'boolean' },
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     }),
     expected: {
       isEmpty: (fn: Function, parser: BooleanParser) => expect(fn.apply(parser, [true])).toBeFalsy()
@@ -114,7 +115,7 @@ describe('parsers/BooleanParser', () => {
     description: 'isEmpty() with default value',
     parser: new BooleanParser({
       schema: { type: 'boolean', default: true },
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     }),
     expected: {
       isEmpty: (fn: Function, parser: BooleanParser) => expect(fn.apply(parser, [])).toBeFalsy()

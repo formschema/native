@@ -3,6 +3,7 @@ import { JsonSchema } from '@/types/jsonschema';
 import { ArrayElement } from '@/components/ArrayElement';
 import { ArrayParser } from '@/parsers/ArrayParser';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
+import { NativeElements } from '@/lib/NativeElements';
 
 import '@/parsers';
 
@@ -13,7 +14,7 @@ function getContext(schema: JsonSchema, model: any) {
     id: 'id-characters',
     name: 'characters',
     onChange: jest.fn(),
-    descriptorConstructor: NativeDescriptor.get
+    descriptorConstructor: new NativeDescriptor(NativeElements)
   };
 
   const parser: any = new ArrayParser(options);

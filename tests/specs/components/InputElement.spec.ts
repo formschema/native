@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils';
 import { InputElement } from '@/components/InputElement';
 import { StringParser } from '@/parsers/StringParser';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
+import { NativeElements } from '@/lib/NativeElements';
 
 const options: any = {
   schema: {
@@ -16,7 +17,7 @@ const options: any = {
   id: 'id-name',
   name: 'name',
   onChange: jest.fn(),
-  descriptorConstructor: NativeDescriptor.get
+  descriptorConstructor: new NativeDescriptor(NativeElements)
 };
 
 const parser = new StringParser(options);

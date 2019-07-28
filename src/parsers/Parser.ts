@@ -51,7 +51,7 @@ export abstract class Parser<
     }
 
     const descriptor = options.descriptor
-      || options.descriptorConstructor<AbstractUISchemaDescriptor>(options.schema);
+      || options.descriptorConstructor.get(options.schema);
 
     const schemaKind = descriptor.kind && PARSERS.hasOwnProperty(descriptor.kind)
       ? descriptor.kind
@@ -74,7 +74,7 @@ export abstract class Parser<
     this.schema = options.schema;
 
     const optionsDescriptor = options.descriptor || {} as unknown as TDescriptor;
-    const defaultDescriptor = options.descriptorConstructor<TDescriptor>(this.schema, optionsDescriptor.kind);
+    const defaultDescriptor = options.descriptorConstructor.get(this.schema, optionsDescriptor.kind);
 
     this.descriptor = { ...defaultDescriptor, ...optionsDescriptor };
     this.rawValue = this.parseValue(this.initialValue) as TModel;
@@ -195,7 +195,7 @@ export abstract class Parser<
 
   get defaultComponent() {
     return this.descriptor.kind
-      ? this.options.descriptorConstructor<TDescriptor>(this.schema, this.descriptor.kind).component
+      ? this.options.descriptorConstructor.get(this.schema, this.descriptor.kind).component
       : undefined;
   }
 

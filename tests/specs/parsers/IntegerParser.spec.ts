@@ -2,6 +2,7 @@ import { Parser } from '@/parsers/Parser';
 import { IntegerParser } from '@/parsers/IntegerParser';
 import { ScalarDescriptor, ParserOptions } from '@/types';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
+import { NativeElements } from '@/lib/NativeElements';
 import { TestParser } from '../../lib/TestParser';
 
 describe('parsers/IntegerParser', () => {
@@ -13,7 +14,7 @@ describe('parsers/IntegerParser', () => {
       multipleOf: 2
     },
     model: 2,
-    descriptorConstructor: NativeDescriptor.get
+    descriptorConstructor: new NativeDescriptor(NativeElements)
   };
 
   const parser = new IntegerParser(options);
@@ -32,7 +33,7 @@ describe('parsers/IntegerParser', () => {
     const options: ParserOptions<number, ScalarDescriptor> = {
         schema: { type: 'integer' },
         model: 1,
-        descriptorConstructor: NativeDescriptor.get
+        descriptorConstructor: new NativeDescriptor(NativeElements)
       };
 
       const parser: any = new IntegerParser(options);
@@ -72,7 +73,7 @@ describe('parsers/IntegerParser', () => {
     const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'integer' },
       model: 3,
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     };
 
     const parser = new IntegerParser(options);
@@ -86,7 +87,7 @@ describe('parsers/IntegerParser', () => {
     const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'integer' },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     };
 
     const parser = new IntegerParser(options);
@@ -104,7 +105,7 @@ describe('parsers/IntegerParser', () => {
         exclusiveMaximum: 10
       },
       model: 0,
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     };
 
     const parser = new IntegerParser(options);

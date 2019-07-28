@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils';
 import { FieldsetElement } from '@/components/FieldsetElement';
 import { EnumParser } from '@/parsers/EnumParser';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
+import { NativeElements } from '@/lib/NativeElements';
 
 import '@/parsers';
 
@@ -28,7 +29,7 @@ const options: any = {
       }
     }
   },
-  descriptorConstructor: NativeDescriptor.get
+  descriptorConstructor: new NativeDescriptor(NativeElements)
 };
 
 const parser: any = new EnumParser(options);
@@ -58,7 +59,7 @@ describe('components/FieldsetElement', () => {
       model: undefined,
       id: 'id-character',
       name: 'character',
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     };
 
     const parser: any = new EnumParser(options);

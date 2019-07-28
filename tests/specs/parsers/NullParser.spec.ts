@@ -2,13 +2,14 @@ import { Parser } from '@/parsers/Parser';
 import { NullParser } from '@/parsers/NullParser';
 import { ScalarDescriptor, ParserOptions } from '@/types';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
+import { NativeElements } from '@/lib/NativeElements';
 import { TestParser } from '../../lib/TestParser';
 
 describe('parsers/NullParser', () => {
   const options: ParserOptions<any, ScalarDescriptor> = {
     schema: { type: 'null' },
     model: undefined,
-    descriptorConstructor: NativeDescriptor.get
+    descriptorConstructor: new NativeDescriptor(NativeElements)
   };
 
   const parser = new NullParser(options);

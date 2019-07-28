@@ -11,8 +11,6 @@ export class BooleanParser extends Parser<boolean, BooleanField, ScalarDescripto
   }
 
   parse(): void {
-    this.attrs.value = this.field.input.initialValue as any;
-
     Object.defineProperty(this.attrs, 'checked', {
       enumerable: true,
       get: () => this.model === true

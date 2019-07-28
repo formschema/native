@@ -1,27 +1,36 @@
 import { Schema } from '@/lib/Schema';
 import { JsonSchema } from '@/types/jsonschema';
 import { NativeElements } from '@/lib/NativeElements';
+import { Components } from '@/lib/Components';
 
 import {
   FieldKind,
   ScalarDescriptor,
   ObjectDescriptor,
   ArrayDescriptor,
-  DescriptorInstance
+  DescriptorInstance,
+  DescriptorConstructor
 } from '@/types';
 
-export const NativeDescriptor = {
-  kind(schema: JsonSchema) {
+export class NativeDescriptor implements DescriptorConstructor {
+  readonly components: Components;
+
+  static kind(schema: JsonSchema) {
     return schema.enum
       ? schema.enum.length > 4 ? 'list' : 'enum'
       : schema.type;
-  },
+  }
+
+  constructor(components: Components = NativeElements) {
+    this.components = components;
+  }
+
   get<T = DescriptorInstance>(schema: JsonSchema, kind?: FieldKind): T {
     const kindUsed = typeof kind === 'undefined'
       ? NativeDescriptor.kind(schema)
       : kind;
 
-    const element = NativeElements.get(kindUsed);
+    const element = this.components.get(kindUsed);
 
     if (Schema.isScalar(schema)) {
       const descriptor: ScalarDescriptor = {
@@ -85,4 +94,4 @@ export const NativeDescriptor = {
 
     return descriptor as T;
   }
-};
+}

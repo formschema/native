@@ -3,6 +3,7 @@ import { FieldElement } from '@/components/FieldElement';
 import { StringParser } from '@/parsers/StringParser';
 import { Dictionary, ScalarDescriptor, ParserOptions } from '@/types';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
+import { NativeElements } from '@/lib/NativeElements';
 
 const options: ParserOptions<string, ScalarDescriptor> = {
   schema: {
@@ -16,7 +17,7 @@ const options: ParserOptions<string, ScalarDescriptor> = {
   model: 'Goku',
   id: 'id-name',
   name: 'name',
-  descriptorConstructor: NativeDescriptor.get
+  descriptorConstructor: new NativeDescriptor(NativeElements)
 };
 
 const parser = new StringParser(options);

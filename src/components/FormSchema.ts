@@ -4,13 +4,13 @@ import { UniqueId as UniqueIdLib } from '@/lib/UniqueId';
 import { Objects as ObjectsLib } from '@/lib/Objects';
 import { Components as ComponentsLib } from '@/lib/Components';
 import { Parser as ParserLib } from '@/parsers/Parser';
-import { NativeElements } from '@/lib/NativeElements';
+import { NativeElements as NativeElementsLib } from '@/lib/NativeElements';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
 
 import '@/parsers';
 
 export const GLOBAL = {
-  Elements: NativeElements,
+  Elements: NativeElementsLib,
   Descriptor: NativeDescriptor
 };
 
@@ -18,6 +18,7 @@ export const Objects = ObjectsLib;
 export const UniqueId = UniqueIdLib;
 export const Components = ComponentsLib;
 export const Parser = ParserLib;
+export const NativeElements = NativeElementsLib;
 
 const FormSchema: FormSchemaComponent = {
   name: 'FormSchema',
@@ -95,8 +96,8 @@ const FormSchema: FormSchemaComponent = {
      * @type {ScalarDescriptor|ObjectDescriptor|ArrayDescriptor|DescriptorConstructor}
      */
     descriptor: {
-      type: [ Object, Function ],
-      default: () => GLOBAL.Descriptor.get
+      type: [ NativeDescriptor, Object ],
+      default: () => undefined
     }
   },
   data: () => ({
@@ -110,14 +111,14 @@ const FormSchema: FormSchemaComponent = {
       return `${this.id}-field`;
     },
     descriptorConstructor() {
-      return typeof this.descriptor === 'function'
+      return this.descriptor instanceof NativeDescriptor
         ? this.descriptor
-        : GLOBAL.Descriptor.get;
+        : new GLOBAL.Descriptor(this.components);
     },
     schemaDescriptor() {
-      return typeof this.descriptor === 'function'
-        ? this.descriptor(this.schema)
-        : this.descriptor || GLOBAL.Descriptor.get(this.schema);
+      return this.descriptor instanceof NativeDescriptor
+        ? this.descriptor.get(this.schema)
+        : this.descriptor || this.descriptorConstructor.get(this.schema);
     },
     parser() {
       return Parser.get({

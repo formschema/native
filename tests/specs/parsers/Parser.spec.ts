@@ -3,6 +3,7 @@ import { Parser } from '@/parsers/Parser';
 import { Dictionary, ScalarDescriptor, StringField, ParserOptions, ObjectDescriptor } from '@/types';
 import { Objects } from '@/lib/Objects';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
+import { NativeElements } from '@/lib/NativeElements';
 import { JsonSchema } from '@/types/jsonschema';
 import { TestParser } from '../../lib/TestParser';
 
@@ -34,9 +35,11 @@ class InputFakeParser extends Parser<string, StringField, ScalarDescriptor> {
   parse() {}
 }
 
-function descriptorConstructorFaker({ type }: JsonSchema) {
-  return type === 'object' ? {} : { kind: type };
-}
+const descriptorConstructorFaker = {
+  get({ type }: JsonSchema) {
+    return type === 'object' ? {} : { kind: type };
+  }
+};
 
 const ParserValidator = {
   isRoot: true,
@@ -161,7 +164,7 @@ describe('parsers/Parser', () => {
   const options10: any = {
     schema: { type: 'string' },
     model: '',
-    descriptorConstructor: NativeDescriptor.get
+    descriptorConstructor: new NativeDescriptor(NativeElements)
   };
 
   TestParser.Case({
@@ -175,7 +178,7 @@ describe('parsers/Parser', () => {
     parser: new FakeParser({
       schema: { type: 'string', default: 'Hello' },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     }),
     expected: ParserValidator
   });
@@ -187,7 +190,7 @@ describe('parsers/Parser', () => {
       schema: { type: 'string' },
       model: undefined,
       required: true,
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     }),
     expected: ParserValidator
   });
@@ -245,7 +248,7 @@ describe('parsers/Parser', () => {
           name: 'TextInput'
         }
       },
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     }),
     expected: ParserValidator
   });
@@ -262,7 +265,7 @@ describe('parsers/Parser', () => {
           props: {},
           items: {}
         },
-        descriptorConstructor: NativeDescriptor.get
+        descriptorConstructor: new NativeDescriptor(NativeElements)
       });
 
       delete parser.field.descriptor.kind;

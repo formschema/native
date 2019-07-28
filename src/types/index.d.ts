@@ -243,7 +243,7 @@ export interface ButtonDescriptor {
 }
 
 export interface ArrayDescriptor extends AbstractUISchemaDescriptor {
-  items?: DescriptorInstance[];
+  items?: DescriptorInstance[] | DescriptorInstance;
   buttons: {
     push: ButtonDescriptor;
     clear: ButtonDescriptor;
@@ -254,7 +254,10 @@ export interface ArrayDescriptor extends AbstractUISchemaDescriptor {
 }
 
 export type DescriptorInstance = ScalarDescriptor | ObjectDescriptor | ArrayDescriptor;
-export type DescriptorConstructor = <T = DescriptorInstance>(schema: JsonSchema, kind?: FieldKind) => T;
+
+export interface DescriptorConstructor {
+  get: <T = DescriptorInstance>(schema: JsonSchema, kind?: FieldKind) => T;
+}
 
 export interface FormSchemaVue extends Vue {
   // props

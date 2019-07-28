@@ -2,6 +2,7 @@ import { Parser } from '@/parsers/Parser';
 import { JsonSchema } from '@/types/jsonschema';
 import { UniqueId } from '@/lib/UniqueId';
 import { Objects } from '@/lib/Objects';
+import { NativeDescriptor } from '@/lib/NativeDescriptor';
 
 import {
   Dictionary,
@@ -170,19 +171,33 @@ export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescript
   getChildDescriptor(key: string) {
     const properties = this.field.descriptor.properties;
 
-    return properties
-      ? typeof properties[key] === 'function'
-        ? (properties[key] as Function)(properties[key])
-        : properties[key]
-      : this.options.descriptorConstructor(this.properties[key]);
+    if (properties) {
+      const descriptorKey = properties[key];
+
+      if (descriptorKey instanceof NativeDescriptor) {
+        return descriptorKey.get(this.properties[key]);
+      }
+
+      if (descriptorKey) {
+        return descriptorKey;
+      }
+    }
+
+    return this.options.descriptorConstructor.get(this.properties[key]);
   }
 
   getChildDescriptorConstructor(key: string): DescriptorConstructor {
     const properties = this.field.descriptor.properties;
 
-    return properties && typeof properties[key] === 'function'
-      ? properties[key] as DescriptorConstructor
-      : this.options.descriptorConstructor;
+    if (properties) {
+      const propertiesKey = properties[key];
+
+      if (propertiesKey instanceof NativeDescriptor) {
+        return propertiesKey;
+      }
+    }
+
+    return this.options.descriptorConstructor;
   }
 
   parse() {

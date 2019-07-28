@@ -2,6 +2,7 @@ import { Parser } from '@/parsers/Parser';
 import { StringParser } from '@/parsers/StringParser';
 import { Dictionary, ScalarDescriptor, ParserOptions } from '@/types';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
+import { NativeElements } from '@/lib/NativeElements';
 import { TestParser } from '../../lib/TestParser';
 
 describe('parsers/StringParser', () => {
@@ -13,7 +14,7 @@ describe('parsers/StringParser', () => {
       maxLength: 15
     },
     model: 'Goku',
-    descriptorConstructor: NativeDescriptor.get
+    descriptorConstructor: new NativeDescriptor(NativeElements)
   };
 
   const parser = new StringParser(options);
@@ -40,7 +41,7 @@ describe('parsers/StringParser', () => {
     const options: ParserOptions<string, ScalarDescriptor> = {
       schema: { type: 'string' },
       model: '',
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     };
 
     const parser: any = new StringParser(options);
@@ -66,7 +67,7 @@ describe('parsers/StringParser', () => {
       const options: ParserOptions<string, ScalarDescriptor> = {
         schema: { type: 'string', format },
         model: '',
-        descriptorConstructor: NativeDescriptor.get
+        descriptorConstructor: new NativeDescriptor(NativeElements)
       };
 
       const parser = new StringParser(options);
@@ -101,7 +102,7 @@ describe('parsers/StringParser', () => {
     const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string', pattern: 'arya|jon', const: 'arya' },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     };
 
     const parser = new StringParser(options);
@@ -115,7 +116,7 @@ describe('parsers/StringParser', () => {
     const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string', const: 'arya' },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     };
 
     const parser = new StringParser(options);
@@ -129,7 +130,7 @@ describe('parsers/StringParser', () => {
     const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string', const: 'f(x) = ax + b; a = { 1, 2 }' },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     };
 
     const parser = new StringParser(options);
@@ -143,7 +144,7 @@ describe('parsers/StringParser', () => {
     const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string' },
       model: undefined,
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     };
 
     const parser = new StringParser(options);
@@ -157,7 +158,7 @@ describe('parsers/StringParser', () => {
     const options: ParserOptions<any, ScalarDescriptor> = {
       schema: { type: 'string' },
       model: 12,
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     };
 
     const parser = new StringParser(options);
@@ -173,7 +174,7 @@ describe('parsers/StringParser', () => {
     parser: new StringParser({
       schema: { type: 'string' },
       model: undefined as any,
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     }),
     expected: {
       isEmpty: (fn: Function) => expect(fn('non empty')).toBeFalsy()
@@ -186,7 +187,7 @@ describe('parsers/StringParser', () => {
     parser: new StringParser({
       schema: { type: 'string' },
       model: undefined as any,
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     }),
     expected: {
       isEmpty: (fn: Function) => expect(fn('')).toBeTruthy()
@@ -199,7 +200,7 @@ describe('parsers/StringParser', () => {
     parser: new StringParser({
       schema: { type: 'string' },
       model: 12 as any,
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     }),
     expected: {
       isEmpty: (fn: Function, parser: StringParser) => expect(fn.apply(parser, [12])).toBeTruthy()
@@ -212,7 +213,7 @@ describe('parsers/StringParser', () => {
     parser: new StringParser({
       schema: { type: 'string' },
       model: 'hello' as any,
-      descriptorConstructor: NativeDescriptor.get
+      descriptorConstructor: new NativeDescriptor(NativeElements)
     }),
     expected: {
       isEmpty: (fn: Function, parser: StringParser) => expect(fn.apply(parser, [])).toBeFalsy()
