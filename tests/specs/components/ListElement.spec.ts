@@ -42,7 +42,7 @@ const context: any = {
 describe('components/ListElement', () => {
   it('should successfully render component', () => {
     const wrapper = mount(ListElement, { context });
-    const expected = '<div data-fs-kind="list" data-fs-field="character"><label id="id-character-label" for="id-character">Character</label><div data-fs-input="list"><select id="id-character" name="character" aria-labelledby="id-character-label" aria-describedby="id-character-helper"><option value="goku">Goku</option><option value="freezer" selected="selected">Freezer</option></select><p id="id-character-helper">Your character</p></div></div>';
+    const expected = '<div data-fs-kind="list" data-fs-field="character"><label id="id-character-label" for="id-character">Character</label><div data-fs-input="list"><select id="id-character" name="character" aria-labelledby="id-character-label" aria-describedby="id-character-helper"><option value=""></option><option value="goku">Goku</option><option value="freezer" selected="selected">Freezer</option></select><p id="id-character-helper">Your character</p></div></div>';
 
     expect(wrapper.html()).toBe(expected);
   });
@@ -50,7 +50,7 @@ describe('components/ListElement', () => {
   it('should successfully emit input event', () => {
     const wrapper = mount(ListElement, { context });
     const select = wrapper.find('select');
-    const option: any = wrapper.find('option');
+    const option: any = wrapper.find('option[value=goku]');
 
     option.element.selected = true;
 

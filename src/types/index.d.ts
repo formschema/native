@@ -81,7 +81,7 @@ export interface Field<
   deep: number;
   input: {
     attrs: TAttributes;
-    props: Dictionary;
+    props: Dictionary<any>;
     value: TModel;
     setValue: (value: TModel) => void;
     initialValue: TModel;
