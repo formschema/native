@@ -10,13 +10,8 @@
           "first_name": {
             "type": "string",
             "title": "First Name",
-            "minLength": 8,
-            "maxLength": 80,
-            "default": "Jon"
-          },
-          "middle_name": {
-            "type": "string",
-            "title": "Middle Name"
+            "minLength": 3,
+            "maxLength": 80
           },
           "last_name": {
             "type": "string",
@@ -24,6 +19,14 @@
           }
         },
         "required": ["first_name"]
+      },
+      "custom-array": {
+        "title": "Custom array of strings",
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "minItems": 1
       },
       "int": {
         "type": "integer",
@@ -81,10 +84,10 @@
       "agree": {
         "type": "boolean",
         "title": "Agree",
-        "description": "You agree to receive occasional updates and special offers for vue-json-schema updates.",
+        "description": "You agree to receive occasional updates.",
         "default": false
       }
     },
     "additionalProperties": false,
-    "required": ["name", "email", "lists", "aList", "int"]
+    "required": ["name", "email", "lists", "aList", "int", "agree"]
   }

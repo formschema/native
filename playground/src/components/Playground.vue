@@ -1,55 +1,61 @@
 <template>
   <div class="playground">
-    <div class="playground__input">
-      <div class="playground__input__schema">
-        <h2>Schema</h2>
-        <div class="playground__input__schema__editor">
-          <PrismEditor
-            :code="rawSchema"
-            language="json"
-            @change="setRawSchema"/>
-        </div>
-      </div>
-      <div class="playground__input__rendering">
-        <h2>Rendering</h2>
-        <div class="playground__input__rendering__viewport">
-          <div class="playground__input__rendering__viewport__options">
-            <label>
-              <input type="checkbox" v-model="disabled" @change="updateRenderKey">
-              <span>Disable whole form</span>
-            </label>
-            <label>
-              <input type="checkbox" v-model="search" @change="updateRenderKey">
-              <span>Search</span>
-            </label>
-            <label>
-              <input type="checkbox" v-model="enableDescriptor" @change="updateRenderKey">
-              <span>Enable Descriptor</span>
-            </label>
+    <div class="playground__top">
+      <PlaygroundPanel class="playground__top__schema">
+        <template v-slot:header>
+          <div>Schema</div>
+          <select>
+            <template v-for="key in schemas">
+              <option :key="key" :value="key">{{ schemas[key] }}</option>
+            </template>
+          </select>
+        </template>
+        <template v-slot:body>
+          <PrismEditor :code="rawSchema" language="json" @change="setRawSchema"/>
+        </template>
+      </PlaygroundPanel>
+      <PlaygroundPanel class="playground__top__rendering">
+        <template v-slot:header>Rendering</template>
+        <template v-slot:body>
+          <div class="playground__top__rendering__viewport">
+            <div class="playground__top__rendering__viewport__options">
+              <label>
+                <input type="checkbox" v-model="disabled" @change="updateRenderKey">
+                <span>Disable whole form</span>
+              </label>
+              <label>
+                <input type="checkbox" v-model="search" @change="updateRenderKey">
+                <span>Search</span>
+              </label>
+              <label>
+                <input type="checkbox" v-model="enableDescriptor" @change="updateRenderKey">
+                <span>Enable Descriptor</span>
+              </label>
+            </div>
+            <div ref="form" class="playground__top__rendering__viewport__card" :key="renderKey">
+              <FormSchema v-bind="props" v-model="model" @input="generateCode" @submit.prevent>
+                <div class="playground__top__rendering__viewport__card__buttons">
+                  <button type="submit">Submit</button>
+                  <button type="reset">Reset</button>
+                </div>
+              </FormSchema>
+            </div>
           </div>
-          <div ref="form" class="playground__input__rendering__viewport__card" :key="renderKey">
-            <FormSchema v-bind="props" v-model="model" @input="generateCode" @submit.prevent>
-              <div class="playground__input__rendering__viewport__card__buttons">
-                <button type="submit">Submit</button>
-                <button type="reset">Reset</button>
-              </div>
-            </FormSchema>
-          </div>
-        </div>
-      </div>
-      <div class="playground__input__model">
-        <h2>Model</h2>
-        <div class="playground__input__model__value">
+        </template>
+      </PlaygroundPanel>
+      <PlaygroundPanel class="playground__top__model">
+        <template v-slot:header>Model</template>
+        <template v-slot:body>
           <PrismEditor :code="rawModel" language="json" readonly/>
-        </div>
-      </div>
+        </template>
+      </PlaygroundPanel>
     </div>
-    <div class="playground__output">
-      <h2>Generated HTML</h2>
-      <div class="playground__output__code">
+    <PlaygroundPanel class="playground__output">
+      <template v-slot:header>Generated HTML</template>
+      <template v-slot:body>
         <PrismEditor :code="code" language="html" readonly/>
-      </div>
-    </div>
+      </template>
+    </PlaygroundPanel>
   </div>
 </template>
 
@@ -61,11 +67,12 @@
   import $RefParser from 'json-schema-ref-parser';
 
   import PrismEditor from 'vue-prism-editor';
+  import PlaygroundPanel from './PlaygroundPanel';
   import FormSchema, { UniqueId } from '../../../dist/FormSchema.esm.min.js';
   import Schema from '@/schema/newsletter';
 
   export default {
-    components: { PrismEditor, FormSchema },
+    components: { PlaygroundPanel, PrismEditor, FormSchema },
     data: () => ({
       model: undefined,
       rawSchema: JSON.stringify(Schema, null, 2),
@@ -77,6 +84,12 @@
       renderKey: UniqueId.get('code'),
       modelKey: UniqueId.get('model'),
       enableDescriptor: true,
+      schemas: {
+        array: 'Array',
+        dependencies: 'Dependencies',
+        number: 'Number',
+        object: 'Object'
+      },
       descriptor: {
         properties: {
           name: {
@@ -85,12 +98,6 @@
                 attrs: {
                   placeholder: 'Your First Name',
                   title: 'Please enter your first name'
-                }
-              },
-              middle_name: {
-                attrs: {
-                  placeholder: 'Your Middle Name',
-                  title: 'Please enter your middle name'
                 }
               },
               last_name: {
@@ -126,7 +133,7 @@
           source: {
             kind: 'textarea',
             label: 'Source',
-            description: 'Ex. Using the NPM Search Engine',
+            helper: 'Ex. Using the NPM Search Engine',
             attrs: {
               placeholder: 'How did you hear about us?'
             }
@@ -154,10 +161,11 @@
       },
       props() {
         return {
+          id: 'form',
           schema: this.schema,
           search: this.search,
           disabled: this.disabled,
-          descriptor: this.enableDescriptor ? this.descriptor : {}
+          descriptor: this.enableDescriptor ? this.descriptor : undefined
         };
       }
     },
@@ -186,9 +194,7 @@
       },
       generateCode() {
         setTimeout(() => {
-          const code = this.$refs.form.innerHTML.replace(/\s*<!---->/g, '');
-
-          this.code = html(code, {
+          this.code = html(this.$refs.form.innerHTML, {
             indent_size: 2
           });
         }, 300);
@@ -208,55 +214,26 @@
     flex-direction: column
     color: #f5f5f5
     background-color: #333333
+    background-color: #2d2d2d
     overflow: hidden
 
     position: relative
     height: 100%
 
-    h2
-      margin: 0
-      padding: 8px
-      font-size: 12px
-      font-weight: 400
-      width: 100%
-
     pre
       margin: 0
 
-    h2, &__input
-      border-bottom: 1px solid rgba(255, 255, 255, .1)
-
-    &__input
+    &__top
       display: flex
       flex-direction: row
 
-      position: absolute
-      top: 0
-      left: 0
       width: 100%
       height: 70%
 
+      border-bottom: 1px solid rgba(255, 255, 255, .1)
+
       &__schema
-        display: flex
-        flex-direction: column
-
-        &__editor
-          flex: 1
-          display: flex
-          align-items: flex-start
-          max-width: 400px
-          overflow: auto
-
-      &__schema__editor, &__model__value, &__output__code
-        background-color: #2d2d2d
-        flex: 1
-        width: 100%
-
-      &__rendering, &__model
-        display: flex
-        flex-direction: column
-        align-items: flex-start
-        overflow: hidden
+        max-width: 30%
 
       &__rendering
         width: 100%
@@ -307,69 +284,42 @@
 
             fieldset
               border: none
-              /* border-bottom: 1px solid rgba(0, 0, 0, .2) */
-
               padding: 10px 0
               margin-bottom: 10px
 
-            legend
-              font-size: 1.7em
-              text-align: center
-              margin-top: 0
-              margin-bottom: .2em
+            form > fieldset
+              & > legend
+                font-size: 1.7em
+                text-align: center
+                margin-top: 0
+                margin-bottom: .2em
+
+              & > p // main description
+                text-align: center
+                margin-top: 0
+                margin-bottom: 1.5em
+
+              [data-fs-kind="object"]
+                & > legend
+                  display: block
+                  font-size: 14px
+                  text-align: left
+                  width: 100%
+                  padding: 0 0 2px
+
+              span // helper
+                color: rgba(0, 0, 0, .6)
+
+              input, textarea, select
+                display: block
 
       &__model
-        flex: 0
-        margin: 0
         min-width: 280px
-
-        &__value
-          display: flex
-          overflow: auto
-
-      &__rendering
-        p
-          text-align: center
-          margin-top: 0
-
-        form > fieldset
-          & > legend
-            font-size: 18px
-
-          & > p
-            margin-bottom: 25px
-
-        &__viewport
-          &__card
-            span
-              color: rgba(0, 0, 0, .6)
-
-            input, textarea, select
-              display: block
-
-        fieldset fieldset legend
-          display: block
-          font-size: 14px
-          text-align: left
-          width: 100%
-          padding: 0 0 2px
-          border-bottom: 1px solid rgba(0, 0, 0, .2)
+        width: 50%
 
     &__output
-      position: absolute
-      top: 70%
-      left: 0
       width: 100%
       height: 30%
-
-      overflow: hidden
-      display: flex
-      flex-direction: column
-
-      &__code
-        flex: 1
-        display: flex
-        overflow: auto
 
   [data-fs-kind]
     flex: 1
@@ -377,7 +327,7 @@
     flex-direction: row
     margin-bottom: 5px
 
-    & > label
+    & > label, & > legend
       display: block
       width: 120px
       min-width: 120px
@@ -387,19 +337,30 @@
       &:active
         outline: none
 
-  [data-fs-kind="enum"]
-    [data-fs-kind]
-      flex-direction: row-reverse
+  [data-fs-input]
+    display: flex
+    flex-direction: column
+    align-items: flex-start
+
+    select
+      & > option[value=""]:first-child
+        color: #666
+
+  [data-fs-input="object"]
+    & > [data-fs-kind]
+      flex-direction: column
 
       label
         text-align: left
         flex: 1
 
-  [data-fs-input]
-    flex: 1
-    display: flex
-    flex-direction: column
-    align-items: flex-start
+  [data-fs-input="enum"]
+    & > [data-fs-kind]
+      flex-direction: row-reverse
+
+      label
+        text-align: left
+        flex: 1
 
   [data-fs-input="array"]
     & > [data-fs-kind]
