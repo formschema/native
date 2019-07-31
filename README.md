@@ -112,9 +112,9 @@ are irrelevant:
 
 ### props
 
-- `schema` ***Object*** (*optional*) `default: {}`
+- `schema` ***Object*** (*required*)
 
-  The JSON Schema object.
+  The input JSON Schema object.
 
 - `v-model` ***Number|String|Array|Object|Boolean*** (*optional*) `default: undefined`
 
@@ -122,97 +122,42 @@ are irrelevant:
   component. It automatically picks the correct way to update the
   element based on the input type.
 
-- `action` ***String*** (*optional*)
+- `id` ***String*** (*optional*)
 
-  The URI of a program that processes the form information.
+  The id property of the Element interface represents the form's identifier,
+  reflecting the id global attribute.
 
-- `autocomplete` ***String*** (*optional*)
+- `name` ***String*** (*optional*) `default: undefined`
 
-  This property indicates whether the value of the control can be
-  automatically completed by the browser.
+  The name of the form. It must be unique among the forms in a document.
 
-  Possible values are: `off` and `on`.
-
-- `bracketed-array-input-name` ***Boolean*** (*optional*) `default: true`
+- `bracketed-object-input-name` ***Boolean*** (*optional*) `default: true`
 
   When set to true (default), checkbox inputs will automatically include
   brackets at the end of their names (e.g. name="Multicheckbox-Value1[]".
   Setting this property to false, disables this behaviour.
-
-- `enctype` ***String*** (*optional*) `default: 'application/x-www-form-urlencoded'`
-
-  When the value of the method attribute is post, enctype is the
-  MIME type of content that is used to submit the form to the
-  server.
-
-  Possible values are:
-  - `application/x-www-form-urlencoded`: The default value if the
-  attribute is not specified.
-  - `multipart/form-data`: The value used for an `<input/>` element
-  with the type attribute set to "file".
-  - `text/plain` (HTML5).
-
-- `method` ***String*** (*optional*) `default: 'post'`
-
-  The HTTP method that the browser uses to submit the form.
-
-  Possible values are:
-  - `post`: Corresponds to the HTTP POST method ; form data are
-  included in the body of the form and sent to the server.
-  - `get`: Corresponds to the HTTP GET method; form data are
-  appended to the action attribute URI with a '?' as separator,
-  and the resulting URI is sent to the server. Use this method
-  when the form has no side-effects and contains only ASCII
-  characters.
-
-- `novalidate` ***Boolean*** (*optional*)
-
-  This Boolean attribute indicates that the form is not to be
-  validated when submitted.
 
 - `search` ***Boolean*** (*optional*) `default: false`
 
   Use this prop to enable `search` landmark role to identify a section
   of the page used to search the page, site, or collection of sites.
 
+- `disabled` ***Boolean*** (*optional*) `default: false`
+
+  Indicates whether the form elements are disabled or not.
+
 - `components` ***Components*** (*optional*) `default: GLOBAL.components`
 
-  Use this prop to overwrite the default Native HTML Elements for
+  Use this prop to overwrite the default Native HTML Elements with
   custom components.
 
 ### events
-
-- `change`
-
-  Fired when a change to the element's value is committed
-  by the user.
 
 - `input`
 
   Fired synchronously when the value of an element is changed.
 
-- `invalid`
-
-  Fired when a submittable element has been checked and doesn't
-  satisfy its constraints. The validity of submittable elements is
-  checked before submitting their owner form, or after the
-  `checkValidity()` of the element or its owner form is called.
-
-- `submit`
-
-  Fired when a form is submitted
-
 ### methods
-
-- `load(schema, model)`
-
-  Load the given `schema` with initial filled `value`.
-  Use this to load async schema.
-
-  **parameters:**
-
-     - `schema` **object** - The JSON Schema object to load
-     - `model` **Number|String|Array|Object|Boolean** - The initial data for the schema.
 
 - `form()`
 
@@ -220,30 +165,9 @@ are irrelevant:
 
    **return value:**
 
-     - **HTMLFormElement,undefined** -  Returns the HTML form element or `undefined` for empty object
-- `reportValidity()`
-
-  Returns true if the element's child controls satisfy their
-  validation constraints. When false is returned, cancelable invalid
-  events are fired for each invalid child and validation problems
-  are reported to the user.
-
-- `checkValidity()`
-
-  Checks whether the form has any constraints and whether it
-  satisfies them. If the form fails its constraints, the browser
-  fires a cancelable `invalid` event at the element, and then
-  returns false.
-
-- `reset()`
-
-  Reset the value of all elements of the parent form.
+     - **HTMLFormElement|VNode|undefined** -  Returns the HTML form element or `undefined` for empty object
 
 ## Working with Async Schema
-
-You may want to use `FormSchema` with a schema loaded from a remote URL.
-
-To do that, use the `load(schema[, value = undefined])` method:
 
 ```html
 <template>
@@ -412,7 +336,7 @@ See the file [NativeElements.ts](https://gitlab.com/formschema/native/blob/maste
 </template>
 
 <script>
-  import FormSchema, { Components } from '@formschema/native'
+  import FormSchema from '@formschema/native'
   import { MyCustomElements } from './MyCustomElements'
 
   export default {

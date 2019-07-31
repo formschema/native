@@ -196,6 +196,9 @@ const FormSchema: FormSchemaComponent = {
     }, nodes);
   },
   methods: {
+    /**
+     * @private
+     */
     clone(value): unknown {
       if (Objects.isObject(value)) {
         const object = value instanceof Array ? [] : {};
