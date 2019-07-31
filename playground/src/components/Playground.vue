@@ -188,6 +188,7 @@
       dereferenceSchema() {
         $RefParser.dereference(this.parsedSchema)
           .then((schema) => {
+            this.model = {};
             this.schema = schema;
           })
           .catch((err) => console.error(err));
