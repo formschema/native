@@ -39,7 +39,7 @@ describe('components/FieldElement', () => {
     };
 
     const wrapper = mount(FieldElement, { context, stubs });
-    const expected = '<div data-fs-kind="string" data-fs-field="name"><label id="id-name-label" for="id-name">Name</label><div data-fs-input="text"><p id="id-name-helper">Your full name</p></div></div>';
+    const expected = '<div data-fs-kind="string" data-fs-field="name"><label id="id-name-label" for="id-name">Name</label><div data-fs-wrapper="2"><div data-fs-input="text"></div><p id="id-name-helper">Your full name</p></div></div>';
 
     expect(wrapper.is(FieldElement)).toBeTruthy();
     expect(wrapper.html()).toBe(expected);
@@ -61,7 +61,7 @@ describe('components/FieldElement', () => {
     };
 
     const wrapper = mount(FieldElement, { context, stubs });
-    const expected = '<div data-fs-kind="string" data-fs-field="name"><label id="id-name-label" for="id-name">Name</label><div data-fs-input="string"><p id="id-name-helper">Your full name</p></div></div>';
+    const expected = '<div data-fs-kind="string" data-fs-field="name"><label id="id-name-label" for="id-name">Name</label><div data-fs-wrapper="2"><div data-fs-input="string"></div><p id="id-name-helper">Your full name</p></div></div>';
 
     expect(wrapper.is(FieldElement)).toBeTruthy();
     expect(wrapper.html()).toBe(expected);

@@ -114,6 +114,32 @@
               title: 'Please enter your email'
             }
           },
+          date: {
+            label: 'Date of birth',
+            props: {
+              horizontal: true
+            },
+            properties: {
+              day: {
+                label: '',
+                attrs: {
+                  placeholder: 'Day'
+                }
+              },
+              month: {
+                label: '',
+                attrs: {
+                  placeholder: 'Month'
+                }
+              },
+              year: {
+                label: '',
+                attrs: {
+                  placeholder: 'Year'
+                }
+              }
+            }
+          },
           day: {
             label: 'Newsletter Day',
             attrs: {
@@ -337,6 +363,15 @@
 
       &:active
         outline: none
+
+  [data-fs-horizontal] > [data-fs-wrapper] > [data-fs-input]
+    flex-direction: row
+
+    & > [data-fs-kind]
+      width: 55px
+
+      input, select, textarea
+        width: @width
 
   [data-fs-input]
     display: flex

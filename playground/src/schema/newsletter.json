@@ -20,17 +20,38 @@
         },
         "required": ["first_name"]
       },
-      "custom-array": {
+      "date": {
+        "type": "object",
+        "title": "Date",
+        "description": "Horizontal field",
+        "properties": {
+          "day": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 31,
+            "title": "Day"
+          },
+          "month": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 12,
+            "title": "Month"
+          },
+          "year": {
+            "type": "integer",
+            "minimum": 1900,
+            "maximum": 2900,
+            "title": "Year"
+          }
+        }
+      },
+      "array": {
         "title": "Custom array of strings",
         "type": "array",
         "items": {
           "type": "string"
         },
         "minItems": 1
-      },
-      "int": {
-        "type": "integer",
-        "title": "Integer"
       },
       "float": {
         "type": "number",
