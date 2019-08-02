@@ -353,7 +353,7 @@ See the file [NativeElements.ts](https://gitlab.com/formschema/native/blob/maste
 [**ElementUI Example**](https://gitlab.com/formschema/components/elementui)
 
 - Definition: https://gitlab.com/formschema/components/elementui/blob/master/lib/ElementUIComponents.js
-- Usage: https://gitlab.com/formschema/components/elementui/blob/master/demo/src/components/Subscription.vue
+- Usage: https://gitlab.com/formschema/components/elementui/blob/master/playground/src/components/Subscription.vue
 
 ## Contributing
 
