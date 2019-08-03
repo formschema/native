@@ -20,6 +20,7 @@ export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescript
   properties: Dictionary<JsonSchema> = {};
   dependencies: Dictionary<string[]> = {};
   childrenParsers: Dictionary<UnknowParser> = {};
+  orders: string[] = [];
 
   get kind(): FieldKind {
     return 'object';
@@ -33,9 +34,7 @@ export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescript
 
   get propertiesList() {
     const keys = Object.keys(this.properties);
-    const items = this.field.descriptor.order instanceof Array
-      ? this.field.descriptor.order
-      : keys;
+    const items = [ ...this.orders ];
 
     if (items.length < keys.length) {
       keys.forEach((prop) => {
@@ -205,6 +204,14 @@ export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescript
       this.properties = { ...this.schema.properties };
     }
 
+    this.orders = this.field.descriptor.order instanceof Array
+      ? this.field.descriptor.order
+      : [];
+
+    if (this.orders.length === 0) {
+      this.orders = Object.keys(this.properties);
+    }
+
     this.parseDependencies();
 
     this.field.children = this.children;
@@ -235,12 +242,17 @@ export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescript
         if (dependency instanceof Array) {
           this.dependencies[key] = dependency;
         } else {
+          const indexKey = (this.orders.indexOf(key) + 1) || this.orders.length;
           const properties = dependency.properties || {};
 
           this.dependencies[key] = Object.keys(properties);
 
-          Object.keys(properties).forEach((prop) => {
+          Object.keys(properties).forEach((prop, indexProp) => {
             this.properties[prop] = properties[prop];
+
+            if (!this.orders.includes(prop)) {
+              this.orders.splice(indexKey + indexProp, 0, prop);
+            }
           });
         }
       });
