@@ -61,4 +61,155 @@ describe('components/ListElement', () => {
     expect(initialValue).toEqual('freezer');
     expect(changedValue).toEqual('goku');
   });
+
+  it('should successfully emit input event with an integer schema', () => {
+    const options: any = {
+      schema: {
+        type: 'number',
+        enum: [1, 2, 3]
+      },
+      model: 2,
+      onChange: jest.fn(),
+      descriptorConstructor: new NativeDescriptor(NativeElements)
+    };
+
+    const parser = new ListParser(options);
+
+    parser.parse();
+
+    const context: any = {
+      attrs: parser.field.input.attrs,
+      props: {
+        field: parser.field
+      }
+    };
+
+    const wrapper = mount(ListElement, { context });
+    const select = wrapper.find('select');
+    const option: any = wrapper.find('option[value="3"]');
+
+    option.element.selected = true;
+
+    select.trigger('change');
+
+    const [ [ initialValue ], [ changedValue ] ] = options.onChange.mock.calls;
+
+    expect(initialValue).toEqual(2);
+    expect(changedValue).toEqual(3);
+  });
+
+  it('should successfully render and emit input event with a boolean schema', () => {
+    const options: any = {
+      schema: {
+        type: 'boolean',
+        enum: [true, false]
+      },
+      model: true,
+      id: 'id',
+      onChange: jest.fn(),
+      descriptorConstructor: new NativeDescriptor(NativeElements)
+    };
+
+    const parser = new ListParser(options);
+
+    parser.parse();
+
+    const context: any = {
+      attrs: parser.field.input.attrs,
+      props: {
+        field: parser.field
+      }
+    };
+
+    const wrapper = mount(ListElement, { context });
+    const select = wrapper.find('select');
+    const option: any = wrapper.find('option[value="false"]');
+
+    expect(wrapper.html()).toBe('<div data-fs-kind="list" data-fs-type="list"><label for="id"></label><div data-fs-input="list"><select id="id"><option value=""></option><option value="true">true</option><option value="false">false</option></select></div></div>')
+
+    option.element.selected = true;
+
+    select.trigger('change');
+
+    const [ [ initialValue ], [ changedValue ] ] = options.onChange.mock.calls;
+
+    expect(initialValue).toEqual(true);
+    expect(changedValue).toEqual(false);
+  });
+
+  it('should successfully render and emit input event with a null schema', () => {
+    const options: any = {
+      schema: {
+        type: 'null',
+        enum: [null, null]
+      },
+      model: null,
+      id: 'id',
+      onChange: jest.fn(),
+      descriptorConstructor: new NativeDescriptor(NativeElements)
+    };
+
+    const parser = new ListParser(options);
+
+    parser.parse();
+
+    const context: any = {
+      attrs: parser.field.input.attrs,
+      props: {
+        field: parser.field
+      }
+    };
+
+    const wrapper = mount(ListElement, { context });
+    const select = wrapper.find('select');
+    const optionElements: any = wrapper.findAll('option');
+    const option: any = optionElements.at(2);
+
+    expect(wrapper.html()).toBe('<div data-fs-kind="list" data-fs-type="list"><label for="id"></label><div data-fs-input="list"><select id="id"><option value=""></option><option value="null">null</option><option value="null">null</option></select></div></div>')
+
+    option.element.selected = true;
+
+    select.trigger('change');
+
+    const [ [ initialValue ], [ changedValue ] ] = options.onChange.mock.calls;
+
+    expect(initialValue).toEqual(null);
+    expect(changedValue).toEqual(null);
+  });
+
+  it('should successfully emit input event with an unknow schema', () => {
+    const options: any = {
+      schema: {
+        type: 'unknow',
+        enum: ['goku', 'freezer']
+      },
+      model: 'goku',
+      onChange: jest.fn(),
+      descriptorConstructor: new NativeDescriptor(NativeElements)
+    };
+
+    const parser = new ListParser(options);
+
+    parser.parse();
+
+    const context: any = {
+      attrs: parser.field.input.attrs,
+      props: {
+        field: parser.field
+      }
+    };
+
+    const wrapper = mount(ListElement, { context });
+    const select = wrapper.find('select');
+    const option: any = wrapper.find('option[value="freezer"]');
+
+    option.element.selected = true;
+
+    select.trigger('change');
+
+    const [ [ initialValue ], [ changedValue ] ] = options.onChange.mock.calls;
+
+    expect(initialValue).toEqual('goku');
+    expect(changedValue).toEqual('freezer');
+  });
 });

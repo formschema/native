@@ -1,5 +1,6 @@
 import { Parser } from '@/parsers/Parser';
 import { ScalarDescriptor, BooleanField, CheckboxAttributes } from '@/types';
+import { Value } from '@/lib/Value';
 
 export class BooleanParser extends Parser<boolean, BooleanField, ScalarDescriptor, CheckboxAttributes> {
   get type() {
@@ -20,7 +21,7 @@ export class BooleanParser extends Parser<boolean, BooleanField, ScalarDescripto
   }
 
   parseValue(checked: boolean) {
-    return checked === true;
+    return Value.boolean(checked);
   }
 }
 

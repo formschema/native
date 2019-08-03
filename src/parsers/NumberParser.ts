@@ -1,5 +1,6 @@
 import { Parser } from '@/parsers/Parser';
 import { ScalarDescriptor, FieldKind, NumberField, NumberAttributes } from '@/types';
+import { Value } from '@/lib/Value';
 
 export class NumberParser extends Parser<number, NumberField, ScalarDescriptor, NumberAttributes> {
   get kind(): FieldKind {
@@ -38,11 +39,8 @@ export class NumberParser extends Parser<number, NumberField, ScalarDescriptor, 
     this.commit();
   }
 
-  parseValue(data: unknown): number | undefined {
-    const value = Number(data);
-    const parsedValue = Number.parseFloat(data as string);
-
-    return Number.isNaN(value) || Number.isNaN(parsedValue) ? undefined : parsedValue;
+  parseValue(data: unknown) {
+    return Value.number(data);
   }
 }
 

@@ -1,6 +1,7 @@
 import { Parser } from '@/parsers/Parser';
 import { NumberParser } from '@/parsers/NumberParser';
 import { FieldKind } from '@/types';
+import { Value } from '@/lib/Value';
 
 export class IntegerParser extends NumberParser {
   get kind(): FieldKind {
@@ -22,10 +23,7 @@ export class IntegerParser extends NumberParser {
   }
 
   parseValue(data: unknown) {
-    const value = Number(data);
-    const parsedValue = Number.parseInt(data as string, 10);
-
-    return Number.isNaN(value) || Number.isNaN(parsedValue) ? undefined : parsedValue;
+    return Value.integer(data);
   }
 }
 

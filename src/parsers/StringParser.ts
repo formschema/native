@@ -1,6 +1,7 @@
 import { Parser } from '@/parsers/Parser';
 import { FieldKind, Dictionary, ScalarDescriptor, StringField, StringAttributes } from '@/types';
 import { Pattern } from '@/lib/Pattern';
+import { Value } from '@/lib/Value';
 
 const TypeFormat: Dictionary<string> = {
   date: 'date',
@@ -50,7 +51,7 @@ export class StringParser extends Parser<string, StringField, ScalarDescriptor, 
   }
 
   parseValue(data: unknown) {
-    return typeof data !== 'undefined' ? `${data}` : undefined;
+    return Value.string(data);
   }
 }
 

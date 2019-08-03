@@ -3,6 +3,7 @@ import { JsonSchema } from '@/types/jsonschema';
 import { Objects } from '@/lib/Objects';
 import { Arrays } from '@/lib/Arrays';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
+import { Value } from '@/lib/Value';
 
 import {
   ArrayField,
@@ -433,10 +434,8 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
     }
   }
 
-  parseValue(data: unknown[]): unknown[] {
-    return data instanceof Array
-      ? data.filter((item) => typeof item !== 'undefined')
-      : [];
+  parseValue(data: unknown[]) {
+    return Value.array(data);
   }
 }
 

@@ -3,6 +3,7 @@ import { JsonSchema } from '@/types/jsonschema';
 import { UniqueId } from '@/lib/UniqueId';
 import { Objects } from '@/lib/Objects';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
+import { Value } from '@/lib/Value';
 
 import {
   Dictionary,
@@ -261,8 +262,8 @@ export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescript
     }
   }
 
-  parseValue(data: Dictionary): Dictionary {
-    return data || {};
+  parseValue(data: unknown) {
+    return Value.object(data);
   }
 }
 
