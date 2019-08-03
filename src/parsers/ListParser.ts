@@ -19,26 +19,28 @@ export class ListParser extends Parser<unknown, ListField, ScalarDescriptor> {
       const items = this.descriptor.items || {};
 
       return this.schema.enum
-        .map((item: any) => {
-          switch (this.schema.type) {
-            case 'boolean':
-              return item === true ? 'true' : 'false';
-
-            case 'null':
-              return 'null';
-
-            default:
-              return item;
-          }
-        })
+        .map((item: any) => this.parseItem(item))
         .map((item: any) => ({
           value: item,
-          selected: this.model === item,
+          selected: this.model === this.parseValue(item),
           label: items[item] ? items[item].label : item
         }));
     }
 
     return [];
+  }
+
+  parseItem(item: unknown) {
+    switch (this.schema.type) {
+      case 'boolean':
+        return item === true ? 'true' : 'false';
+
+      case 'null':
+        return 'null';
+
+      default:
+        return item;
+    }
   }
 
   parseValue(data: unknown): unknown {

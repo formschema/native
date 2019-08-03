@@ -98,7 +98,7 @@ describe('components/ListElement', () => {
     expect(changedValue).toEqual(3);
   });
 
-  it('should successfully render and emit input event with a boolean schema', () => {
+  it('should successfully emit input event with a boolean schema', () => {
     const options: any = {
       schema: {
         type: 'boolean',
@@ -125,8 +125,6 @@ describe('components/ListElement', () => {
     const select = wrapper.find('select');
     const option: any = wrapper.find('option[value="false"]');
 
-    expect(wrapper.html()).toBe('<div data-fs-kind="list" data-fs-type="list"><label for="id"></label><div data-fs-input="list"><select id="id"><option value=""></option><option value="true">true</option><option value="false">false</option></select></div></div>')
-
     option.element.selected = true;
 
     select.trigger('change');
@@ -137,7 +135,7 @@ describe('components/ListElement', () => {
     expect(changedValue).toEqual(false);
   });
 
-  it('should successfully render and emit input event with a null schema', () => {
+  it('should successfully emit input event with a null schema', () => {
     const options: any = {
       schema: {
         type: 'null',
@@ -164,8 +162,6 @@ describe('components/ListElement', () => {
     const select = wrapper.find('select');
     const optionElements: any = wrapper.findAll('option');
     const option: any = optionElements.at(2);
-
-    expect(wrapper.html()).toBe('<div data-fs-kind="list" data-fs-type="list"><label for="id"></label><div data-fs-input="list"><select id="id"><option value=""></option><option value="null">null</option><option value="null">null</option></select></div></div>')
 
     option.element.selected = true;
 
