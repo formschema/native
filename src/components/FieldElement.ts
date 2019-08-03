@@ -6,8 +6,10 @@ export const FieldElement: FieldComponent = {
   functional: true,
   render(h, { data, props, children }) {
     const field = props.field;
+    const type = field.input.attrs.type || field.kind;
     const attrs: Dictionary = {
       'data-fs-kind': field.kind,
+      'data-fs-type': type,
       'data-fs-field': field.name,
       'data-fs-required': field.required,
       'data-fs-horizontal': field.input.props.horizontal
@@ -19,7 +21,7 @@ export const FieldElement: FieldComponent = {
 
     const fieldElement = h('div', {
       attrs: {
-        'data-fs-input': field.input.attrs.type || field.kind
+        'data-fs-input': type
       }
     }, children);
 

@@ -4,9 +4,11 @@
       <PlaygroundPanel class="playground__top__schema">
         <template v-slot:header>
           <div>Schema</div>
-          <select>
-            <template v-for="key in schemas">
-              <option :key="key" :value="key">{{ schemas[key] }}</option>
+          <select v-model="schemaKey">
+            <template v-for="(key, index) in Object.keys(schemas)">
+              <option :key="key" :value="key" :selected="index === 0">
+                {{ schemas[key] }}
+              </option>
             </template>
           </select>
         </template>
@@ -69,14 +71,26 @@
   import PrismEditor from 'vue-prism-editor';
   import PlaygroundPanel from './PlaygroundPanel';
   import FormSchema, { UniqueId } from '../../../dist/FormSchema.esm.min.js';
-  import Schema from '@/schema/newsletter';
+
+  import NewsletterSchema from '@/schema/newsletter';
+  import ArraySchema from '@/schema/array';
+  import NestedArraySchema from '@/schema/nestedarray.schema';
+  import NumberSchema from '@/schema/number';
+  import PersonalInfoSchema from '@/schema/personalinfo';
+
+  const Schema = {
+    object: NewsletterSchema,
+    array: ArraySchema,
+    dependencies: NestedArraySchema,
+    number: NumberSchema,
+    personalinfo: PersonalInfoSchema,
+  };
 
   export default {
     components: { PlaygroundPanel, PrismEditor, FormSchema },
     data: () => ({
       model: undefined,
-      rawSchema: JSON.stringify(Schema, null, 2),
-      schema: {},
+      dereferencedSchema: {},
       code: '',
       formatter: null,
       disabled: false,
@@ -90,6 +104,7 @@
         number: 'Number',
         object: 'Object'
       },
+      schemaKey: 'object',
       descriptor: {
         properties: {
           name: {
@@ -179,6 +194,12 @@
       }
     }),
     computed: {
+      schema() {
+        return Schema[this.schemaKey];
+      },
+      rawSchema() {
+        return JSON.stringify(this.schema, null, 2);
+      },
       parsedSchema() {
         return JSON.parse(this.rawSchema);
       },
@@ -188,7 +209,7 @@
       props() {
         return {
           id: 'form',
-          schema: this.schema,
+          schema: this.dereferencedSchema,
           search: this.search,
           disabled: this.disabled,
           descriptor: this.enableDescriptor ? this.descriptor : undefined
@@ -215,7 +236,7 @@
         $RefParser.dereference(this.parsedSchema)
           .then((schema) => {
             this.model = {};
-            this.schema = schema;
+            this.dereferencedSchema = schema;
           })
           .catch((err) => console.error(err));
       },
@@ -404,6 +425,10 @@
 
       label
         text-align: left
+
+    & > [data-fs-type="radio"]
+    & > [data-fs-type="checkbox"]
+      flex-direction: row-reverse
 
     & > [data-fs-input]
       margin-bottom: 5px
