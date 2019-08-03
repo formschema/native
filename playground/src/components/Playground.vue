@@ -5,9 +5,9 @@
         <template v-slot:header>
           <div>Schema</div>
           <select v-model="schemaKey">
-            <template v-for="(key, index) in Object.keys(schemas)">
-              <option :key="key" :value="key" :selected="index === 0">
-                {{ schemas[key] }}
+            <template v-for="key in Object.keys(registry)">
+              <option :key="key" :value="key">
+                {{ registry[key].name }}
               </option>
             </template>
           </select>
@@ -72,19 +72,16 @@
   import PlaygroundPanel from './PlaygroundPanel';
   import FormSchema, { UniqueId } from '../../../dist/FormSchema.esm.min.js';
 
-  import NewsletterSchema from '@/schema/newsletter';
+  import ObjectRecursiveSchema from '@/schema/object.recursive.schema';
+  import ObjectRecursiveDescriptor from '@/schema/object.recursive.descriptor';
+  import NewsletterSchema from '@/schema/newsletter.schema';
+  import NewsletterDescriptor from '@/schema/newsletter.descriptor';
   import ArraySchema from '@/schema/array';
   import NestedArraySchema from '@/schema/nestedarray.schema';
   import NumberSchema from '@/schema/number';
   import PersonalInfoSchema from '@/schema/personalinfo';
-
-  const Schema = {
-    object: NewsletterSchema,
-    array: ArraySchema,
-    dependencies: NestedArraySchema,
-    number: NumberSchema,
-    personalinfo: PersonalInfoSchema,
-  };
+  import FacebookSignupSchema from '@/schema/facebook.signup.schema';
+  import FacebookSignupDescriptor from '@/schema/facebook.signup.descriptor';
 
   export default {
     components: { PlaygroundPanel, PrismEditor, FormSchema },
@@ -98,104 +95,57 @@
       renderKey: UniqueId.get('code'),
       modelKey: UniqueId.get('model'),
       enableDescriptor: true,
-      schemas: {
-        array: 'Array',
-        dependencies: 'Dependencies',
-        number: 'Number',
-        object: 'Object'
-      },
-      schemaKey: 'object',
-      descriptor: {
-        properties: {
-          name: {
-            properties: {
-              first_name: {
-                attrs: {
-                  placeholder: 'Your First Name',
-                  title: 'Please enter your first name'
-                }
-              },
-              last_name: {
-                attrs: {
-                  placeholder: 'Your Last Name',
-                  title: 'Please enter your last name'
-                }
-              }
-            }
-          },
-          email: {
-            attrs: {
-              placeholder: 'Your Email',
-              title: 'Please enter your email'
-            }
-          },
-          date: {
-            label: 'Date of birth',
-            props: {
-              horizontal: true
-            },
-            properties: {
-              day: {
-                label: '',
-                attrs: {
-                  placeholder: 'Day'
-                }
-              },
-              month: {
-                label: '',
-                attrs: {
-                  placeholder: 'Month'
-                }
-              },
-              year: {
-                label: '',
-                attrs: {
-                  placeholder: 'Year'
-                }
-              }
-            }
-          },
-          day: {
-            label: 'Newsletter Day',
-            attrs: {
-              placeholder: 'Select your list subscription',
-              title: 'Please select your list subscription'
-            },
-            items: {
-              monday: { label: 'Monday' },
-              tuesday: { label: 'Tuesday' },
-              wednesday: { label: 'Wednesday' },
-              thursday: { label: 'Thursday' },
-              friday: { label: 'Friday' },
-              saturday: { label: 'Saturday' },
-              sunday: { label: 'Sunday' }
-            }
-          },
-          source: {
-            kind: 'textarea',
-            label: 'Source',
-            helper: 'Ex. Using the NPM Search Engine',
-            attrs: {
-              placeholder: 'How did you hear about us?'
-            }
-          },
-          password: {
-            attrs: {
-              type: 'password'
-            }
-          },
-          frequence: {
-            items: {
-              daily: { label: 'Daily' },
-              weekly: { label: 'Weekly' }
-            }
-          }
+      customSchema: null,
+      schemaKey: 'facebookSignup',
+      registry: {
+        custom: {
+          name: 'Custom Schema',
+          schema: {},
+          descriptor: {}
+        },
+        facebookSignup: {
+          name: 'Facebook Signup',
+          schema: FacebookSignupSchema,
+          descriptor: FacebookSignupDescriptor
+        },
+        object: {
+          name: 'Newsletter Signup',
+          schema: NewsletterSchema,
+          descriptor: NewsletterDescriptor
+        },
+        objectRecursive: {
+          name: 'Recursive Object',
+          schema: ObjectRecursiveSchema,
+          descriptor: ObjectRecursiveDescriptor
+        },
+        array: {
+          name: 'Array',
+          schema: ArraySchema,
+          descriptor: {}
+        },
+        dependencies: {
+          name: 'Nested Array',
+          schema: NestedArraySchema,
+          descriptor: {}
+        },
+        number: {
+          name: 'Number',
+          schema: NumberSchema,
+          descriptor: {}
+        },
+        personalinfo: {
+          name: 'Object',
+          schema: PersonalInfoSchema,
+          descriptor: {}
         }
       }
     }),
     computed: {
+      isCustomSchema() {
+        return this.schemaKey === 'custom';
+      },
       schema() {
-        return Schema[this.schemaKey];
+        return this.registry[this.schemaKey].schema;
       },
       rawSchema() {
         return JSON.stringify(this.schema, null, 2);
@@ -212,11 +162,15 @@
           schema: this.dereferencedSchema,
           search: this.search,
           disabled: this.disabled,
-          descriptor: this.enableDescriptor ? this.descriptor : undefined
+          descriptor: this.enableDescriptor
+            ? this.registry[this.schemaKey].descriptor
+            : undefined
         };
       }
     },
     watch: {
+      schema() {
+      },
       parsedSchema(value) {
         this.dereferenceSchema();
       }
@@ -227,9 +181,9 @@
     methods: {
       setRawSchema(value) {
         try {
-          JSON.parse(value);
-
-          this.rawSchema = value;
+          // validate & parse schema
+          this.registry.custom.schema = JSON.parse(value);
+          this.schemaKey = 'custom';
         } catch(e) {}
       },
       dereferenceSchema() {
