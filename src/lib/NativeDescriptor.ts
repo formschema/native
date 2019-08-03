@@ -89,6 +89,7 @@ export class NativeDescriptor implements DescriptorConstructor {
       component: element,
       attrs: {},
       props: {},
+      groups: {},
       order: []
     };
 

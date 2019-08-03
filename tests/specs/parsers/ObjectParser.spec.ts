@@ -106,8 +106,8 @@ describe('parsers/ObjectParser', () => {
 
     parser.parse();
 
-    it('parser.propertiesList should have equal to an empty array', () => {
-      expect(parser.propertiesList).toEqual([]);
+    it('parser.orderedProperties have equal to an empty array', () => {
+      expect(parser.orderedProperties).toEqual([]);
     });
   });
 
@@ -175,8 +175,8 @@ describe('parsers/ObjectParser', () => {
 
     parser.parse();
 
-    it('parser.propertiesList should have equal to an empty array', () => {
-      expect(parser.propertiesList).toEqual(['lastName', 'dateBirth', 'firstName']);
+    it('parser.orderedProperties should be equal to an empty array', () => {
+      expect(parser.orderedProperties).toEqual(['lastName', 'dateBirth', 'firstName']);
     });
   });
 
@@ -199,8 +199,8 @@ describe('parsers/ObjectParser', () => {
 
     parser.parse();
 
-    it('parser.propertiesList should be defined', () => {
-      expect(parser.propertiesList).toEqual(['firstName', 'lastName']);
+    it('parser.orderedProperties should be defined', () => {
+      expect(parser.orderedProperties).toEqual(['firstName', 'lastName']);
     });
   });
 

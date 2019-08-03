@@ -3,6 +3,7 @@ import { FormSchemaComponent } from '@/types';
 import { UniqueId as UniqueIdLib } from '@/lib/UniqueId';
 import { Objects as ObjectsLib } from '@/lib/Objects';
 import { Components as ComponentsLib } from '@/lib/Components';
+import { Groups as GroupsLib } from '@/lib/Groups';
 import { Parser as ParserLib } from '@/parsers/Parser';
 import { NativeElements as NativeElementsLib } from '@/lib/NativeElements';
 import { NativeDescriptor } from '@/lib/NativeDescriptor';
@@ -17,6 +18,7 @@ export const GLOBAL = {
 export const Objects = ObjectsLib;
 export const UniqueId = UniqueIdLib;
 export const Components = ComponentsLib;
+export const Groups = GroupsLib;
 export const Parser = ParserLib;
 export const NativeElements = NativeElementsLib;
 

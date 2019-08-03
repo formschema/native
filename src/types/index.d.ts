@@ -164,11 +164,12 @@ export interface ListField extends Field<'enum', Attributes, ScalarDescriptor> {
   items: ListItem[];
 }
 
-export type ObjectFieldChild = Field<any, Attributes, DescriptorInstance>;
+export interface ObjectFieldChild extends Field<any, Attributes, DescriptorInstance> {
+  property: string;
+}
 
 export interface ObjectField extends Field<'object', Attributes, ObjectDescriptor, Dictionary> {
   children: ObjectFieldChild[];
-  isArrayField?: boolean;
   minItems?: number;
   itemsNum?: number;
   order: string[];
@@ -236,11 +237,19 @@ export interface ScalarDescriptor extends AbstractUISchemaDescriptor {
   };
 }
 
+export interface ObjectGroupDescriptor extends AbstractUISchemaDescriptor {
+  label?: string;
+  properties: string[];
+}
+
 export interface ObjectDescriptor extends AbstractUISchemaDescriptor {
   properties?: {
     [property: string]: DescriptorInstance;
   };
   order?: string[];
+  groups?: {
+    [groupId: string]: ObjectGroupDescriptor;
+  };
 }
 
 export interface ButtonDescriptor {

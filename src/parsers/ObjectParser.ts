@@ -22,6 +22,7 @@ export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescript
   dependencies: Dictionary<string[]> = {};
   childrenParsers: Dictionary<UnknowParser> = {};
   orders: string[] = [];
+  orderedProperties: string[] = [];
 
   get kind(): FieldKind {
     return 'object';
@@ -33,28 +34,13 @@ export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescript
     return { ...value };
   }
 
-  get propertiesList() {
-    const keys = Object.keys(this.properties);
-    const items = [ ...this.orders ];
-
-    if (items.length < keys.length) {
-      keys.forEach((prop) => {
-        if (!items.includes(prop)) {
-          items.push(prop);
-        }
-      });
-    }
-
-    return items;
-  }
-
   get children(): ObjectFieldChild[] {
     const name = this.options.name;
     const requiredFields = this.schema.required instanceof Array
       ? this.schema.required
       : [];
 
-    return this.propertiesList
+    return this.orderedProperties
       .map((key): { key: string; options: ParserOptions<unknown, AbstractUISchemaDescriptor> } => ({
         key,
         options: {
@@ -75,9 +61,10 @@ export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescript
       }))
       .filter(({ parser }) => parser instanceof Parser)
       .map(({ key, parser }: any) => {
-        const field = parser.field as ObjectField;
+        const field = parser.field as ObjectFieldChild;
         const update = parser.options.onChange;
 
+        field.property = key;
         this.childrenParsers[key] = parser;
 
         /**
@@ -205,15 +192,9 @@ export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescript
       this.properties = { ...this.schema.properties };
     }
 
-    this.orders = this.field.descriptor.order instanceof Array
-      ? this.field.descriptor.order
-      : [];
-
-    if (this.orders.length === 0) {
-      this.orders = Object.keys(this.properties);
-    }
-
+    this.parseOrder();
     this.parseDependencies();
+    this.parseProperties();
 
     this.field.children = this.children;
 
@@ -231,6 +212,16 @@ export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescript
     }
 
     this.commit();
+  }
+
+  parseOrder() {
+    this.orders = this.field.descriptor.order instanceof Array
+      ? this.field.descriptor.order
+      : [];
+
+    if (this.orders.length === 0) {
+      this.orders = Object.keys(this.properties);
+    }
   }
 
   parseDependencies() {
@@ -257,6 +248,20 @@ export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescript
               this.orders.splice(indexKey + indexProp, 0, prop);
             }
           });
+        }
+      });
+    }
+  }
+
+  parseProperties() {
+    const keys = Object.keys(this.properties);
+
+    this.orderedProperties = [ ...this.orders ];
+
+    if (this.orderedProperties.length < keys.length) {
+      keys.forEach((prop) => {
+        if (!this.orderedProperties.includes(prop)) {
+          this.orderedProperties.push(prop);
         }
       });
     }
