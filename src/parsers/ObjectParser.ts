@@ -251,6 +251,8 @@ export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescript
             this.properties[prop] = properties[prop];
 
             if (!this.orders.includes(prop)) {
+              // insert dependency after its sibling property
+              // if's there is no custum order defined
               this.orders.splice(indexKey + indexProp, 0, prop);
             }
           });
