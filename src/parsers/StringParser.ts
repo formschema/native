@@ -19,9 +19,17 @@ export class StringParser extends Parser<string, StringField, ScalarDescriptor, 
     }
 
     if (this.schema.contentMediaType) {
-      if (this.schema.contentMediaType.startsWith('text/')) {
+      const mime = this.schema.contentMediaType;
+
+      if (mime.startsWith('text/')) {
         return 'textarea';
       }
+
+      if (mime.startsWith('image/')) {
+        return 'image';
+      }
+
+      return 'file';
     }
 
     return 'string';

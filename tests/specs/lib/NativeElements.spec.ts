@@ -5,6 +5,7 @@ const items: any = {
   boolean: 'StateElement',
   string: 'InputElement',
   file: 'InputElement',
+  image: 'InputElement',
   radio: 'StateElement',
   checkbox: 'StateElement',
   enum: 'FieldsetElement',

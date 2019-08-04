@@ -194,7 +194,26 @@ describe('parsers/StringParser', () => {
       descriptorConstructor: new NativeDescriptor(NativeElements)
     }),
     expected: {
-      kind: (value: string) => expect(value).toBe('string'),
+      kind: (value: string) => expect(value).toBe('image'),
+      type: (value: string) => expect(value).toBe('file'),
+      attrs: {
+        accept(value: string, { options }: StringParser) {
+          expect(value).toBe(options.schema.contentMediaType);
+        }
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '1.2',
+    description: 'any other values for schema.contentMediaType',
+    parser: new StringParser({
+      schema: { type: 'string', contentMediaType: 'any/mime' },
+      model: undefined as any,
+      descriptorConstructor: new NativeDescriptor(NativeElements)
+    }),
+    expected: {
+      kind: (value: string) => expect(value).toBe('file'),
       type: (value: string) => expect(value).toBe('file'),
       attrs: {
         accept(value: string, { options }: StringParser) {

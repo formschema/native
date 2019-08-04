@@ -12,6 +12,7 @@ NativeElements.set('array', ArrayElement);
 NativeElements.set('boolean', StateElement);
 NativeElements.set('string', InputElement);
 NativeElements.set('file', InputElement);
+NativeElements.set('image', InputElement);
 NativeElements.set('radio', StateElement);
 NativeElements.set('checkbox', StateElement);
 NativeElements.set('enum', FieldsetElement);

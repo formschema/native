@@ -15,7 +15,11 @@ import { JsonSchema } from './jsonschema';
 
 export type Scalar = boolean | number | null | string;
 export interface Dictionary<T = unknown> { [key: string]: T }
-export type ComponentsType = 'form' | 'file' | FieldKind;
+export type SchemaType = 'object' | 'array' | 'string' | 'number' | 'integer' | 'boolean' | 'null';
+export type ParserKind = SchemaType | 'enum' | 'list';
+export type FieldKind = SchemaType | 'enum' | 'radio' | 'list' | 'textarea' | 'checkbox' | 'file' | 'image';
+export type ComponentsType = 'form' | FieldKind;
+export type Component = string | VueComponent | AsyncComponent;
 
 export interface Attributes {
   id: string;
@@ -61,11 +65,6 @@ export interface StringAttributes extends InputAttributes {
   pattern?: string;
   accept?: string;
 }
-
-export type SchemaType = 'object' | 'array' | 'string' | 'number' | 'integer' | 'boolean' | 'null';
-export type ParserKind = SchemaType | 'enum' | 'list';
-export type FieldKind = SchemaType | 'enum' | 'radio' | 'list' | 'textarea' | 'checkbox';
-export type Component = string | VueComponent | AsyncComponent;
 
 export interface FieldInput<TAttributes = Attributes, TModel = any> {
   attrs: TAttributes;
