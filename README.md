@@ -179,16 +179,46 @@ are irrelevant:
   import FormSchema from '@formschema/native'
 
   export default {
+    components: { FormSchema },
     data: () => ({
       schema: {}
     }),
-    created () {
-      axios.get('/api/schema/subscription.json').then(({ data }) => {
-        this.schema = data
-      })
+    created() {
+      axios.get('/api/schema/subscription.json').then(({ data: schema }) => {
+        this.schema = schema
+      });
+    }
+  };
+</script>
+```
+
+## Working with Async Schema and Vue Router
+
+```html
+<template>
+  <FormSchema v-model="schema"/>
+</template>
+
+<script>
+  import axios from 'axios'
+  import FormSchema from '@formschema/native'
+
+  export default {
+    components: { FormSchema },
+    data: () => ({
+      schema: {}
+    }),
+    beforeRouterEnter(from, to, next) {
+      axios.get('/api/schema/subscription.json')
+        .then(({ data: schema }) => next((vm) => vm.setSchema(schema)))
+        .catch(next);
     },
-    components: { FormSchema }
-  }
+    methods: {
+      setSchema(schema) {
+        this.schema = schema;
+      }
+    }
+  };
 </script>
 ```
 
