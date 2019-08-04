@@ -105,6 +105,7 @@ are irrelevant:
 - [patternProperties](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.5.5)
 - [additionalProperties](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.5.6)
 - [propertyNames](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.5.8)
+- [not](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.7.4)
 - [writeOnly](https://json-schema.org/latest/json-schema-validation.html#rfc.section.10.3)
 - [examples](https://json-schema.org/latest/json-schema-validation.html#rfc.section.10.4)
 
