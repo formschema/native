@@ -183,7 +183,7 @@ describe('parsers/StringParser', () => {
   });
 
   TestParser.Case({
-    case: '1.1.0',
+    case: '1.1',
     description: 'schema.contentMediaType with `image/*`',
     parser: new StringParser({
       schema: { type: 'string', contentMediaType: 'image/png' },
@@ -193,48 +193,6 @@ describe('parsers/StringParser', () => {
     expected: {
       kind: (value: string) => expect(value).toBe('string'),
       type: (value: string) => expect(value).toBe('file')
-    }
-  });
-
-  TestParser.Case({
-    case: '1.1.1',
-    description: 'schema.contentMediaType with `audio/*`',
-    parser: new StringParser({
-      schema: { type: 'string', contentMediaType: 'audio/ogg' },
-      model: undefined as any,
-      descriptorConstructor: new NativeDescriptor(NativeElements)
-    }),
-    expected: {
-      kind: (value: string) => expect(value).toBe('string'),
-      type: (value: string) => expect(value).toBe('file')
-    }
-  });
-
-  TestParser.Case({
-    case: '1.1.2',
-    description: 'schema.contentMediaType with `application/*`',
-    parser: new StringParser({
-      schema: { type: 'string', contentMediaType: 'application/javascript' },
-      model: undefined as any,
-      descriptorConstructor: new NativeDescriptor(NativeElements)
-    }),
-    expected: {
-      kind: (value: string) => expect(value).toBe('string'),
-      type: (value: string) => expect(value).toBe('file')
-    }
-  });
-
-  TestParser.Case({
-    case: '1.1.3',
-    description: 'schema.contentMediaType with an unknown MIME',
-    parser: new StringParser({
-      schema: { type: 'string', contentMediaType: 'unknown/mime' },
-      model: undefined as any,
-      descriptorConstructor: new NativeDescriptor(NativeElements)
-    }),
-    expected: {
-      kind: (value: string) => expect(value).toBe('string'),
-      type: (value: string) => expect(value).toBe('text')
     }
   });
 

@@ -89,8 +89,8 @@ npm install --save @formschema/native
 - [dependencies](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.5.7) is used to implement *Property dependencies* and *Schema dependencies*
 - [contentEncoding](https://json-schema.org/latest/json-schema-validation.html#rfc.section.8.3)
 - [contentMediaType](https://json-schema.org/latest/json-schema-validation.html#rfc.section.8.4)<br>
-  - HTML input `file` is used on rendering when `contentMediaType: (image|audio|application)/*`
   - HTML element `<textarea/>` is used on rendering when `contentMediaType: text/*`
+  - HTML input `file` is used on rendering when `contentMediaType` is not equal to `text/*`
 - [title](https://json-schema.org/latest/json-schema-validation.html#rfc.section.10.1) is used to render the input label
 - [description](https://json-schema.org/latest/json-schema-validation.html#rfc.section.10.1) is used to render the input description
 - [default](https://json-schema.org/latest/json-schema-validation.html#rfc.section.10.2) is used to define the default input value

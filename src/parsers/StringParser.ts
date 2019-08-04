@@ -12,8 +12,6 @@ const TypeFormat: Dictionary<string> = {
   uri: 'url'
 };
 
-const TypeFileMime = [ 'image/', 'audio/', 'application/' ];
-
 export class StringParser extends Parser<string, StringField, ScalarDescriptor, StringAttributes> {
   get kind(): FieldKind {
     if (this.isEnumItem) {
@@ -39,12 +37,7 @@ export class StringParser extends Parser<string, StringField, ScalarDescriptor, 
     }
 
     if (this.schema.contentMediaType) {
-      const mime = this.schema.contentMediaType;
-      const isMimeFile = TypeFileMime.some((prefix) => mime.startsWith(prefix));
-
-      if (isMimeFile) {
-        return 'file';
-      }
+      return 'file';
     }
 
     return this.schema.format
