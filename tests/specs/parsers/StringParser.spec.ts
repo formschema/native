@@ -178,7 +178,10 @@ describe('parsers/StringParser', () => {
     }),
     expected: {
       kind: (value: string) => expect(value).toBe('textarea'),
-      type: (value: string) => expect(value).toBeUndefined()
+      type: (value: string) => expect(value).toBeUndefined(),
+      attrs: {
+        accept: (value: string) => expect(value).toBeUndefined()
+      }
     }
   });
 
@@ -192,7 +195,12 @@ describe('parsers/StringParser', () => {
     }),
     expected: {
       kind: (value: string) => expect(value).toBe('string'),
-      type: (value: string) => expect(value).toBe('file')
+      type: (value: string) => expect(value).toBe('file'),
+      attrs: {
+        accept(value: string, { options }: StringParser) {
+          expect(value).toBe(options.schema.contentMediaType);
+        }
+      }
     }
   });
 

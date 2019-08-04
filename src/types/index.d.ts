@@ -55,10 +55,11 @@ export interface NullAttributes extends InputAttributes {
 }
 
 export interface StringAttributes extends InputAttributes {
-  type: 'text' | 'date' | 'datetime-local' | 'email' | 'idn-email' | 'time' | 'url' | 'radio';
+  type: 'text' | 'date' | 'datetime-local' | 'email' | 'idn-email' | 'time' | 'url' | 'radio' | 'file';
   minlength?: number;
   maxlength?: number;
   pattern?: string;
+  accept?: string;
 }
 
 export type SchemaType = 'object' | 'array' | 'string' | 'number' | 'integer' | 'boolean' | 'null';

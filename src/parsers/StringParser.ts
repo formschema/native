@@ -65,6 +65,10 @@ export class StringParser extends Parser<string, StringField, ScalarDescriptor, 
       this.attrs.pattern = Pattern.escape(`${this.schema.const}`);
     }
 
+    if (this.attrs.type === 'file') {
+      this.attrs.accept = this.schema.contentMediaType;
+    }
+
     this.commit();
   }
 

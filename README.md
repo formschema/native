@@ -89,8 +89,8 @@ npm install --save @formschema/native
 - [dependencies](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.5.7) is used to implement *Property dependencies* and *Schema dependencies*
 - [contentEncoding](https://json-schema.org/latest/json-schema-validation.html#rfc.section.8.3)
 - [contentMediaType](https://json-schema.org/latest/json-schema-validation.html#rfc.section.8.4)<br>
-  - HTML element `<textarea/>` is used on rendering when `contentMediaType: text/*`
-  - HTML input `file` is used on rendering when `contentMediaType` is not equal to `text/*`
+  - When `contentMediaType` is equal to `text/*`, the HTML element `<textarea/>` is used for rendering
+  - When `contentMediaType` is not equal to `text/*`, the HTML element `<input/>` with attributes `{ type: file, accept: contentMediaType }` is used for rendering
 - [title](https://json-schema.org/latest/json-schema-validation.html#rfc.section.10.1) is used to render the input label
 - [description](https://json-schema.org/latest/json-schema-validation.html#rfc.section.10.1) is used to render the input description
 - [default](https://json-schema.org/latest/json-schema-validation.html#rfc.section.10.2) is used to define the default input value
@@ -225,11 +225,24 @@ are irrelevant:
 </script>
 ```
 
+## Render a Textarea
+
+Add a `text/*` media types to a string schema to render a Textarea.
+
+**Example schema.json**
+
+```json
+{
+  "type": "string",
+  "contentMediaType": "text/plain"
+}
+```
+
 ## Multiple Checkbox elements
 
 To define multiple checkbox, use the [JSON Schema keyword `anyOf`](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.27):
 
-**schema.json**
+**Example schema.json**
 
 ```json
 {
@@ -250,7 +263,7 @@ To define multiple checkbox, use the [JSON Schema keyword `anyOf`](http://json-s
 
 To group radio elements, use the [JSON Schema keyword `enum`](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.23):
 
-**schema.json**
+**Example schema.json**
 
 ```json
 {
@@ -271,7 +284,7 @@ To group radio elements, use the [JSON Schema keyword `enum`](http://json-schema
 
 To render a [array field](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4), define your schema like:
 
-**schema.json**
+**Example schema.json**
 
 ```json
 {
@@ -293,7 +306,7 @@ To render a [array field](http://json-schema.org/latest/json-schema-validation.h
 
 To render a [regex input](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.3.3), define your schema like:
 
-**schema.json**
+**Example schema.json**
 
 ```json
 {
