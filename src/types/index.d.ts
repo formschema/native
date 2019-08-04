@@ -15,7 +15,7 @@ import { JsonSchema } from './jsonschema';
 
 export type Scalar = boolean | number | null | string;
 export interface Dictionary<T = unknown> { [key: string]: T }
-export type ComponentsType = 'form' | FieldKind;
+export type ComponentsType = 'form' | 'file' | FieldKind;
 
 export interface Attributes {
   id: string;

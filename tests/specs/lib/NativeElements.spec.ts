@@ -4,6 +4,7 @@ const items: any = {
   array: 'ArrayElement',
   boolean: 'StateElement',
   string: 'InputElement',
+  file: 'InputElement',
   radio: 'StateElement',
   checkbox: 'StateElement',
   enum: 'FieldsetElement',
