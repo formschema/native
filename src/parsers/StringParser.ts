@@ -12,14 +12,39 @@ const TypeFormat: Dictionary<string> = {
   uri: 'url'
 };
 
+const TypeFileMime = [ 'image/', 'audio/', 'application/' ];
+
 export class StringParser extends Parser<string, StringField, ScalarDescriptor, StringAttributes> {
   get kind(): FieldKind {
-    return this.isEnumItem ? 'radio' : 'string';
-  }
-
-  get type(): string {
     if (this.isEnumItem) {
       return 'radio';
+    }
+
+    if (this.schema.contentMediaType) {
+      if (this.schema.contentMediaType.startsWith('text/')) {
+        return 'textarea';
+      }
+    }
+
+    return 'string';
+  }
+
+  get type() {
+    if (this.kind === 'textarea') {
+      return undefined;
+    }
+
+    if (this.isEnumItem) {
+      return 'radio';
+    }
+
+    if (this.schema.contentMediaType) {
+      const mime = this.schema.contentMediaType;
+      const isMimeFile = TypeFileMime.some((prefix) => mime.startsWith(prefix));
+
+      if (isMimeFile) {
+        return 'file';
+      }
     }
 
     return this.schema.format

@@ -170,7 +170,77 @@ describe('parsers/StringParser', () => {
 
   TestParser.Case({
     case: '1.0',
-    description: 'isEmpty() with non empty string',
+    description: 'schema.contentMediaType with `text/*`',
+    parser: new StringParser({
+      schema: { type: 'string', contentMediaType: 'text/plain' },
+      model: undefined as any,
+      descriptorConstructor: new NativeDescriptor(NativeElements)
+    }),
+    expected: {
+      kind: (value: string) => expect(value).toBe('textarea'),
+      type: (value: string) => expect(value).toBeUndefined()
+    }
+  });
+
+  TestParser.Case({
+    case: '1.1.0',
+    description: 'schema.contentMediaType with `image/*`',
+    parser: new StringParser({
+      schema: { type: 'string', contentMediaType: 'image/png' },
+      model: undefined as any,
+      descriptorConstructor: new NativeDescriptor(NativeElements)
+    }),
+    expected: {
+      kind: (value: string) => expect(value).toBe('string'),
+      type: (value: string) => expect(value).toBe('file')
+    }
+  });
+
+  TestParser.Case({
+    case: '1.1.1',
+    description: 'schema.contentMediaType with `audio/*`',
+    parser: new StringParser({
+      schema: { type: 'string', contentMediaType: 'audio/ogg' },
+      model: undefined as any,
+      descriptorConstructor: new NativeDescriptor(NativeElements)
+    }),
+    expected: {
+      kind: (value: string) => expect(value).toBe('string'),
+      type: (value: string) => expect(value).toBe('file')
+    }
+  });
+
+  TestParser.Case({
+    case: '1.1.2',
+    description: 'schema.contentMediaType with `application/*`',
+    parser: new StringParser({
+      schema: { type: 'string', contentMediaType: 'application/javascript' },
+      model: undefined as any,
+      descriptorConstructor: new NativeDescriptor(NativeElements)
+    }),
+    expected: {
+      kind: (value: string) => expect(value).toBe('string'),
+      type: (value: string) => expect(value).toBe('file')
+    }
+  });
+
+  TestParser.Case({
+    case: '1.1.3',
+    description: 'schema.contentMediaType with an unknown MIME',
+    parser: new StringParser({
+      schema: { type: 'string', contentMediaType: 'unknown/mime' },
+      model: undefined as any,
+      descriptorConstructor: new NativeDescriptor(NativeElements)
+    }),
+    expected: {
+      kind: (value: string) => expect(value).toBe('string'),
+      type: (value: string) => expect(value).toBe('text')
+    }
+  });
+
+  TestParser.Case({
+    case: '2.0',
+    description: 'parser.isEmpty() with non empty string',
     parser: new StringParser({
       schema: { type: 'string' },
       model: undefined as any,
@@ -182,8 +252,8 @@ describe('parsers/StringParser', () => {
   });
 
   TestParser.Case({
-    case: '1.1',
-    description: 'isEmpty() with an empty string',
+    case: '2.1',
+    description: 'parser.isEmpty() with an empty string',
     parser: new StringParser({
       schema: { type: 'string' },
       model: undefined as any,
@@ -195,8 +265,8 @@ describe('parsers/StringParser', () => {
   });
 
   TestParser.Case({
-    case: '1.2',
-    description: 'isEmpty() with a non string',
+    case: '2.2',
+    description: 'parser.isEmpty() with a non string',
     parser: new StringParser({
       schema: { type: 'string' },
       model: 12 as any,
@@ -208,8 +278,8 @@ describe('parsers/StringParser', () => {
   });
 
   TestParser.Case({
-    case: '1.3',
-    description: 'isEmpty() with default value',
+    case: '2.3',
+    description: 'parser.isEmpty() with default value',
     parser: new StringParser({
       schema: { type: 'string' },
       model: 'hello' as any,
@@ -221,7 +291,7 @@ describe('parsers/StringParser', () => {
   });
 
   TestParser.Case({
-    case: '2.0',
+    case: '3.0',
     description: 'parser.reset()',
     parser: () => {
       const model = 'arya';
@@ -258,7 +328,7 @@ describe('parsers/StringParser', () => {
   });
 
   TestParser.Case({
-    case: '3.0',
+    case: '4.0',
     description: 'parser.clear()',
     parser: () => {
       const model = 'arya';

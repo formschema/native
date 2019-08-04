@@ -88,7 +88,9 @@ npm install --save @formschema/native
 - [items](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4.1), [additionalItems](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4.2), [maxItems](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4.3), [minItems](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4.4) and [uniqueItems](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4.5) are used to render array fields
 - [dependencies](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.5.7) is used to implement *Property dependencies* and *Schema dependencies*
 - [contentEncoding](https://json-schema.org/latest/json-schema-validation.html#rfc.section.8.3)
-- [contentMediaType](https://json-schema.org/latest/json-schema-validation.html#rfc.section.8.4)
+- [contentMediaType](https://json-schema.org/latest/json-schema-validation.html#rfc.section.8.4)<br>
+  - HTML input `file` is used on rendering when `contentMediaType: (image|audio|application)/*`
+  - HTML element `<textarea/>` is used on rendering when `contentMediaType: text/*`
 - [title](https://json-schema.org/latest/json-schema-validation.html#rfc.section.10.1) is used to render the input label
 - [description](https://json-schema.org/latest/json-schema-validation.html#rfc.section.10.1) is used to render the input description
 - [default](https://json-schema.org/latest/json-schema-validation.html#rfc.section.10.2) is used to define the default input value

@@ -164,4 +164,6 @@ export interface JsonSchema {
    */
   readOnly?: boolean;
   writeOnly?: boolean;
+
+  contentMediaType?: string;
 }
