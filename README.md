@@ -225,9 +225,9 @@ are irrelevant:
 </script>
 ```
 
-## Render a Textarea
+## Render a Textarea Element
 
-Add a `text/*` media types to a string schema to render a Textarea.
+Add a `text/*` media types to a string schema to render a Textarea element.
 
 **Example schema.json**
 
@@ -235,6 +235,19 @@ Add a `text/*` media types to a string schema to render a Textarea.
 {
   "type": "string",
   "contentMediaType": "text/plain"
+}
+```
+
+## Render an Input File Element
+
+String schemas with media types not starting with `text/*` are automatically render as Input File elements.
+
+**Example schema.json**
+
+```json
+{
+  "type": "string",
+  "contentMediaType": "image/png"
 }
 ```
 

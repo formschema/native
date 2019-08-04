@@ -181,6 +181,16 @@ describe('parsers/StringParser', () => {
       type: (value: string) => expect(value).toBeUndefined(),
       attrs: {
         accept: (value: string) => expect(value).toBeUndefined()
+      },
+      field: {
+        kind(value: string, parser: StringParser) {
+          expect(value).toBe(parser.kind);
+        }
+      },
+      descriptor: {
+        kind(value: string, parser: StringParser) {
+          expect(value).toBe(parser.kind);
+        }
       }
     }
   });
@@ -200,12 +210,53 @@ describe('parsers/StringParser', () => {
         accept(value: string, { options }: StringParser) {
           expect(value).toBe(options.schema.contentMediaType);
         }
+      },
+      field: {
+        kind(value: string, parser: StringParser) {
+          expect(value).toBe(parser.kind);
+        }
+      },
+      descriptor: {
+        kind(value: string, parser: StringParser) {
+          expect(value).toBe(parser.kind);
+        }
       }
     }
   });
 
   TestParser.Case({
     case: '1.2',
+    description: 'schema.contentMediaType with custom descriptor.kind',
+    parser: new StringParser({
+      schema: { type: 'string', contentMediaType: 'audio/ogg' },
+      model: undefined as any,
+      descriptor: { kind: 'string' },
+      descriptorConstructor: new NativeDescriptor(NativeElements)
+    }),
+    expected: {
+      kind: (value: string) => expect(value).toBe('file'),
+      type: (value: string) => expect(value).toBe('file'),
+      attrs: {
+        accept(value: string, { options }: StringParser) {
+          expect(value).toBe(options.schema.contentMediaType);
+        }
+      },
+      field: {
+        kind(value: string, parser: StringParser) {
+          expect(value).toBe(parser.kind);
+        }
+      },
+      descriptor: {
+        kind(value: string, parser: any) {
+          expect(value).toBe(parser.options.descriptor.kind);
+          expect(value).not.toBe(parser.kind);
+        }
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '1.3',
     description: 'any other values for schema.contentMediaType',
     parser: new StringParser({
       schema: { type: 'string', contentMediaType: 'any/mime' },
@@ -218,6 +269,16 @@ describe('parsers/StringParser', () => {
       attrs: {
         accept(value: string, { options }: StringParser) {
           expect(value).toBe(options.schema.contentMediaType);
+        }
+      },
+      field: {
+        kind(value: string, parser: StringParser) {
+          expect(value).toBe(parser.kind);
+        }
+      },
+      descriptor: {
+        kind(value: string, parser: StringParser) {
+          expect(value).toBe(parser.kind);
         }
       }
     }

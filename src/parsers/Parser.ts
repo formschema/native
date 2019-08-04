@@ -73,8 +73,10 @@ export abstract class Parser<
     this.isEnumItem = !!parent && parent.schema.enum instanceof Array;
     this.schema = options.schema;
 
+    const parserKind = this.kind;
     const optionsDescriptor = options.descriptor || {} as unknown as TDescriptor;
-    const defaultDescriptor = options.descriptorConstructor.get(this.schema, optionsDescriptor.kind);
+    const descriptorKind = optionsDescriptor.kind || parserKind;
+    const defaultDescriptor = options.descriptorConstructor.get(this.schema, descriptorKind);
 
     this.descriptor = { ...defaultDescriptor, ...optionsDescriptor };
     this.rawValue = this.parseValue(this.initialValue) as TModel;
@@ -128,7 +130,7 @@ export abstract class Parser<
     // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
     this.field = {
       key: options.key || UniqueId.get(options.name),
-      kind: this.kind,
+      kind: parserKind,
       name: options.name,
       isRoot: this.isRoot,
       schema: options.schema,
