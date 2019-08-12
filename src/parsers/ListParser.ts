@@ -1,6 +1,5 @@
 import { Parser } from '@/parsers/Parser';
 import { ListField, ListItemModel, ListDescriptor, ParserOptions, UnknowParser } from '@/types';
-import { Value } from '@/lib/Value';
 
 export class ListParser extends Parser<unknown, ListField, ListDescriptor> {
   constructor(options: ParserOptions<unknown>, parent?: UnknowParser) {
@@ -31,20 +30,6 @@ export class ListParser extends Parser<unknown, ListField, ListDescriptor> {
       default:
         return item;
     }
-  }
-
-  parseValue(data: unknown): unknown {
-    const type = this.schema.type;
-
-    if (Value.hasOwnProperty(type)) {
-      if (type === 'boolean' && typeof data === 'string') {
-        data = data === 'true';
-      }
-
-      return (Value as any)[type](data);
-    }
-
-    return data as any;
   }
 
   parse() {

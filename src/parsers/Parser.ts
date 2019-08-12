@@ -141,10 +141,6 @@ export abstract class Parser<
     } as TField;
   }
 
-  getKind(): FieldKind {
-    return this.schema.type;
-  }
-
   get root() {
     return this.parent ? this.parent.root : this;
   }

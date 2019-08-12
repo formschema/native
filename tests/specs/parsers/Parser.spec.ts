@@ -3,6 +3,7 @@ import { Parser } from '@/parsers/Parser';
 import { Dict, ObjectField, StringField, UnknowParser, ParserOptions, ScalarDescriptor, ObjectDescriptor } from '@/types';
 import { Objects } from '@/lib/Objects';
 import { JsonSchema } from '@/types/jsonschema';
+import { Options } from '../../lib/Options';
 import { TestParser, Scope } from '../../lib/TestParser';
 
 class FakeParser extends Parser<any, StringField, ScalarDescriptor> {
@@ -273,6 +274,140 @@ describe('parsers/Parser', () => {
             expect(onChange.mock.calls.length).toBe(1);
             expect(onChange.mock.calls[0][0]).toBe('jon');
           }
+        }
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '2.0: Parser.kind()',
+    description: 'should return an enum parser with schema.num.length < 5',
+    given: Options.get({
+      schema: {
+        type: 'number',
+        enum: [1, 2, 3, 4]
+      }
+    }),
+    expected: {
+      parser: {
+        kind: 'enum'
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '2.1: Parser.kind()',
+    description: 'should return a list parser with schema.num.length > 4',
+    given: Options.get({
+      schema: {
+        type: 'number',
+        enum: [1, 2, 3, 4, 5]
+      }
+    }),
+    expected: {
+      parser: {
+        kind: 'list'
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '3.0: parser.parseValue()',
+    description: 'should successfully parse value with boolean schema',
+    given: Options.get({
+      kind: 'list',
+      schema: {
+        type: 'boolean',
+        enum: [true, false]
+      }
+    }),
+    expected: {
+      parser: {
+        parseValue({ parser }: Scope<any>) {
+          expect(parser.parseValue('true')).toBe(true);
+          expect(parser.parseValue('false')).toBe(false);
+          expect(parser.parseValue('unknow')).toBe(false);
+          expect(parser.parseValue(undefined)).toBe(false);
+        }
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '3.1: parser.parseValue()',
+    description: 'should successfully parse value with string schema',
+    given: Options.get({
+      kind: 'list',
+      schema: {
+        type: 'string'
+      }
+    }),
+    expected: {
+      parser: {
+        parseValue({ parser }: Scope<any>) {
+          expect(parser.parseValue('true')).toBe('true');
+          expect(parser.parseValue('false')).toBe('false');
+          expect(parser.parseValue(undefined)).toBe(undefined);
+        }
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '3.2: parser.parseValue()',
+    description: 'should successfully parse value with a number schema',
+    given: Options.get({
+      kind: 'list',
+      schema: {
+        type: 'number'
+      }
+    }),
+    expected: {
+      parser: {
+        parseValue({ parser }: Scope<any>) {
+          expect(parser.parseValue('12')).toBe(12);
+          expect(parser.parseValue('0.5')).toBe(0.5);
+          expect(parser.parseValue(undefined)).toBe(undefined);
+        }
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '3.2: parser.parseValue()',
+    description: 'should successfully parse value with an integer schema',
+    given: Options.get({
+      kind: 'list',
+      schema: {
+        type: 'integer'
+      }
+    }),
+    expected: {
+      parser: {
+        parseValue({ parser }: Scope<any>) {
+          expect(parser.parseValue('12')).toBe(12);
+          expect(parser.parseValue('0.5')).toBe(0);
+          expect(parser.parseValue(undefined)).toBe(undefined);
+        }
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '3.3: parser.parseValue()',
+    description: 'should successfully parse value with a null schema',
+    given: Options.get({
+      kind: 'list',
+      schema: {
+        type: 'null'
+      }
+    }),
+    expected: {
+      parser: {
+        parseValue({ parser }: Scope<any>) {
+          expect(parser.parseValue('12')).toBe(null);
+          expect(parser.parseValue('0.5')).toBe(null);
+          expect(parser.parseValue(undefined)).toBe(null);
         }
       }
     }
