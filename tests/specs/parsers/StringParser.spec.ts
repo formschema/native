@@ -231,7 +231,7 @@ describe('parsers/StringParser', () => {
   });
 
   TestParser.Case({
-    case: '2.0: schema.const',
+    case: '1.4: schema.contentMediaType',
     description: 'with `image/*`',
     given: {
       parser: new StringParser({
