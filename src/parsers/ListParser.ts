@@ -1,29 +1,19 @@
 import { Parser } from '@/parsers/Parser';
-import { ListField, ListItem, ScalarDescriptor, FieldKind } from '@/types';
+import { ListField, ListItemModel, ListDescriptor, ParserOptions, UnknowParser } from '@/types';
 import { Value } from '@/lib/Value';
 
-export class ListParser extends Parser<unknown, ListField, ScalarDescriptor> {
-  get kind(): FieldKind {
-    return 'list';
+export class ListParser extends Parser<unknown, ListField, ListDescriptor> {
+  constructor(options: ParserOptions<unknown>, parent?: UnknowParser) {
+    super('list', options, parent);
   }
 
-  get defaultComponent() {
-    const kind = this.descriptor.kind ? this.descriptor.kind : this.kind;
-    const descriptor = this.options.descriptorConstructor.get(this.schema, kind);
-
-    return descriptor.component;
-  }
-
-  get items(): ListItem[] {
+  get items(): ListItemModel[] {
     if (this.schema.enum instanceof Array) {
-      const items = this.descriptor.items || {};
-
       return this.schema.enum
         .map((item: any) => this.parseItem(item))
         .map((item: any) => ({
           value: item,
-          selected: this.model === this.parseValue(item),
-          label: items[item] ? items[item].label : item
+          selected: this.model === this.parseValue(item)
         }));
     }
 

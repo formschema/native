@@ -1,14 +1,15 @@
 import { Parser } from '@/parsers/Parser';
-import { ScalarDescriptor, FieldKind, NumberField, NumberAttributes } from '@/types';
+import { ScalarParser } from '@/parsers/ScalarParser';
+import { NumberField, NumberAttributes, ParserOptions, UnknowParser } from '@/types';
 import { Value } from '@/lib/Value';
 
-export class NumberParser extends Parser<number, NumberField, ScalarDescriptor, NumberAttributes> {
-  get kind(): FieldKind {
-    return this.isEnumItem ? 'radio' : 'number';
-  }
+export class NumberParser extends ScalarParser<number, NumberField, NumberAttributes> {
+  constructor(options: ParserOptions<number>, parent?: UnknowParser) {
+    const schema = options.schema;
+    const kind = options.kind || ScalarParser.getKind(schema, parent) || schema.type;
+    const type = ScalarParser.getType(kind) || 'number';
 
-  get type() {
-    return this.isEnumItem ? 'radio' : 'number';
+    super(kind, type, options, parent);
   }
 
   parseExclusiveKeywords() {

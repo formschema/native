@@ -1,23 +1,29 @@
 import { HelperElement } from '@/components/HelperElement';
-import { Dictionary, FieldComponent } from '@/types';
+import { Dict, FieldComponent } from '@/types';
 
 export const FieldElement: FieldComponent = {
   name: 'FieldElement',
   functional: true,
   render(h, { data, props, children }) {
     const field = props.field;
-    const type = field.input.attrs.type || field.kind;
-    const attrs: Dictionary = {
+    const descriptor = props.descriptor;
+
+    if (field.kind === 'hidden') {
+      return children;
+    }
+
+    const type = descriptor.attrs.type || field.kind;
+    const attrs: Dict = {
       'data-fs-kind': field.kind,
       'data-fs-type': type,
       'data-fs-field': field.name,
       'data-fs-required': field.required,
-      'data-fs-horizontal': field.input.props.horizontal
+      'data-fs-horizontal': descriptor.props.horizontal
     };
 
     const labelElement = h('label', {
-      attrs: field.label.attrs
-    }, field.label.value);
+      attrs: descriptor.labelAttrs
+    }, descriptor.label);
 
     const fieldElement = h('div', {
       attrs: {

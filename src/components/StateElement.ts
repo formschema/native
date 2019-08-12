@@ -5,11 +5,11 @@ export const StateElement: StateComponent = {
   name: 'StateElement',
   functional: true,
   render(h, { data, props, children }) {
-    const attrs = props.field.input.attrs;
+    const attrs = props.descriptor.attrs;
     const key = props.field.key;
     const on = {
       change({ target }: InputEvent) {
-        props.field.input.setValue(target.checked);
+        props.field.setValue(target.checked);
       }
     };
 

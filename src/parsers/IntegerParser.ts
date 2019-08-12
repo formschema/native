@@ -1,13 +1,8 @@
 import { Parser } from '@/parsers/Parser';
 import { NumberParser } from '@/parsers/NumberParser';
-import { FieldKind } from '@/types';
 import { Value } from '@/lib/Value';
 
 export class IntegerParser extends NumberParser {
-  get kind(): FieldKind {
-    return this.isEnumItem ? 'radio' : 'integer';
-  }
-
   parseExclusiveKeywords() {
     if (this.schema.hasOwnProperty('exclusiveMinimum')) {
       const exclusiveMinimum = this.schema.exclusiveMinimum as number;

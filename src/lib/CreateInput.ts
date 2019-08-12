@@ -1,5 +1,5 @@
 import { VNodeData, CreateElement, VNodeChildren } from 'vue';
-import { Field, ElementProps, InputEvent } from '@/types';
+import { Field, ElementProps, InputEvent, IScalarDescriptor } from '@/types';
 
 export const CreateInput = <T extends Field<any>>(
   h: CreateElement,
@@ -8,12 +8,12 @@ export const CreateInput = <T extends Field<any>>(
   children: VNodeChildren = [],
   event: 'input' | 'change' = 'input'
 ) => {
-  const props = data.props as ElementProps<T>;
+  const props = data.props as ElementProps<T, IScalarDescriptor>;
   const key = props.field.key;
-  const attrs = props.field.input.attrs;
+  const attrs = props.descriptor.attrs;
   const on = {
     [event]({ target }: InputEvent) {
-      props.field.input.setValue(target.value);
+      props.field.setValue(target.value);
     }
   };
 

@@ -1,10 +1,9 @@
 import { mount } from '@vue/test-utils';
 import { InputElement } from '@/components/InputElement';
-import { StringParser } from '@/parsers/StringParser';
-import { NativeDescriptor } from '@/lib/NativeDescriptor';
-import { NativeElements } from '@/lib/NativeElements';
+import { Options } from '../../lib/Options';
 
-const options: any = {
+const onChangeMock = jest.fn();
+const { context } = Options.get({
   schema: {
     type: 'string',
     pattern: 'arya|jon',
@@ -16,25 +15,13 @@ const options: any = {
   model: 'Goku',
   id: 'id-name',
   name: 'name',
-  onChange: jest.fn(),
-  descriptorConstructor: new NativeDescriptor(NativeElements)
-};
-
-const parser = new StringParser(options);
-
-parser.parse();
-
-const context: any = {
-  attrs: parser.field.input.attrs,
-  props: {
-    field: parser.field
-  }
-};
+  onChange: onChangeMock
+});
 
 describe('components/InputElement', () => {
   it('should successfully render component', () => {
     const wrapper = mount(InputElement, { context });
-    const expected = '<div data-fs-kind="string" data-fs-type="text" data-fs-field="name"><label id="id-name-label" for="id-name">Name</label><div data-fs-wrapper="2"><div data-fs-input="text"><input id="id-name" type="text" name="name" aria-labelledby="id-name-label" aria-describedby="id-name-helper" value="Goku" minlength="5" maxlength="15" pattern="arya|jon"></div><p id="id-name-helper">Your full name</p></div></div>';
+    const expected = '<div data-fs-kind="string" data-fs-type="text" data-fs-field="name"><label id="id-name-label" for="id-name">Name</label><div data-fs-wrapper="2"><div data-fs-input="text"><input id="id-name" type="text" name="name" value="Goku" pattern="arya|jon" minlength="5" maxlength="15" aria-labelledby="id-name-label" aria-describedby="id-name-helper"></div><p id="id-name-helper">Your full name</p></div></div>';
 
     expect(wrapper.html()).toBe(expected);
   });
@@ -43,10 +30,9 @@ describe('components/InputElement', () => {
     const wrapper = mount(InputElement, { context });
     const input: any = wrapper.find('input');
 
-    input.element.value = 'Gohan';
-    input.trigger('input');
+    input.setValue('Gohan');
 
-    const [ [ initialValue ], [ changedValue ] ] = options.onChange.mock.calls;
+    const [ [ initialValue ], [ changedValue ] ] = onChangeMock.mock.calls;
 
     expect(initialValue).toEqual('Goku');
     expect(changedValue).toEqual('Gohan');

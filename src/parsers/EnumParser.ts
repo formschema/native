@@ -1,29 +1,20 @@
 import { Parser } from '@/parsers/Parser';
-
 import { UniqueId } from '@/lib/UniqueId';
 import { JsonSchema } from '@/types/jsonschema';
 
 import {
   EnumField,
-  ScalarDescriptor,
   ParserOptions,
-  AbstractUISchemaDescriptor,
-  FieldKind,
   RadioField,
-  UnknowParser
+  UnknowParser,
+  EnumDescriptor
 } from '@/types';
 
-export class EnumParser extends Parser<unknown, EnumField, ScalarDescriptor> {
+export class EnumParser extends Parser<unknown, EnumField, EnumDescriptor> {
   childrenParsers: UnknowParser[] = [];
 
-  get kind(): FieldKind {
-    return 'enum';
-  }
-
-  get defaultComponent() {
-    return this.descriptor.kind
-      ? this.options.descriptorConstructor.get(this.schema, this.descriptor.kind).component
-      : this.options.descriptorConstructor.get(this.schema, this.kind).component;
+  constructor(options: ParserOptions<unknown>, parent?: UnknowParser) {
+    super('enum', options, parent);
   }
 
   get children(): RadioField[] {
@@ -31,57 +22,50 @@ export class EnumParser extends Parser<unknown, EnumField, ScalarDescriptor> {
       return [];
     }
 
+    const radioId = this.options.id || UniqueId.get();
     const radioName = this.options.name || UniqueId.get();
-    const items = this.descriptor.items || {};
-    const descriptorConstructor = this.options.descriptorConstructor;
+    const descriptorItems = this.descriptor.items || {};
+
+    this.childrenParsers.splice(0);
 
     return this.schema.enum
       .map((item: any): JsonSchema => ({
         ...this.schema,
         default: item,
+        const: undefined,
         enum: undefined,
         description: undefined,
         title: `${item}`
       }))
-      .map((itemSchema) => {
+      .reduce((fields, itemSchema) => {
         const item: any = itemSchema.default;
-        const descriptor = items[item] || descriptorConstructor.get(itemSchema);
 
-        if (!descriptor.kind) {
-          descriptor.kind = 'radio';
-        }
-
-        const options: ParserOptions<unknown, AbstractUISchemaDescriptor, RadioField> = {
+        const parser = Parser.get({
           schema: itemSchema,
           model: itemSchema.default,
-          descriptor: items[item] || descriptorConstructor.get(itemSchema),
-          descriptorConstructor: descriptorConstructor,
-          bracketedObjectInputName: this.options.bracketedObjectInputName,
-          id: `${radioName}-${UniqueId.parse(item)}`,
-          name: radioName
-        };
+          id: `${radioId}-${UniqueId.parse(item)}`,
+          name: radioName,
+          descriptor: descriptorItems[item]
+        }, this);
 
-        const parser = Parser.get(options, this);
+        if (parser) {
+          // set the onChange option after the parser initialization
+          // to prevent first field value emit
+          parser.options.onChange = () => {
+            // In this step the input.checked property is already setted.
+            // So no need to call updateInputsState().
+            // So call the parent function super.setValue() instead of
+            // the overrided one this.setValue()
+            super.setValue(item);
+            this.commit();
+          };
 
-        // set the onChange option after the parser initialization
-        // to prevent first field value emit
-        options.onChange = () => {
-          // In this step the input.checked property is already setted.
-          // So no need to call updateInputsState().
-          // So call the parent function super.setValue() instead of
-          // the overrided one this.setValue()
-          super.setValue(item);
-          this.commit();
-        };
+          fields.push(parser.field);
+          this.childrenParsers.push(parser);
+        }
 
-        return parser;
-      })
-      .filter((parser) => parser instanceof Parser)
-      .map((parser: any) => {
-        this.childrenParsers.push(parser);
-
-        return parser.field as RadioField;
-      });
+        return fields;
+      }, [] as RadioField[]);
   }
 
   setValue(value: unknown) {
@@ -100,8 +84,8 @@ export class EnumParser extends Parser<unknown, EnumField, ScalarDescriptor> {
   }
 
   updateInputsState() {
-    this.field.children.forEach(({ input }) => {
-      input.attrs.checked = input.value === this.model;
+    this.field.children.forEach(({ attrs, value }) => {
+      attrs.checked = value === this.model;
     });
   }
 

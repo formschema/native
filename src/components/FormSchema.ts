@@ -3,23 +3,24 @@ import { FormSchemaComponent } from '@/types';
 import { UniqueId as UniqueIdLib } from '@/lib/UniqueId';
 import { Objects as ObjectsLib } from '@/lib/Objects';
 import { Components as ComponentsLib } from '@/lib/Components';
-import { Groups as GroupsLib } from '@/lib/Groups';
+import { Elements as ElementsLib } from '@/lib/Elements';
 import { Parser as ParserLib } from '@/parsers/Parser';
 import { NativeElements as NativeElementsLib } from '@/lib/NativeElements';
-import { NativeDescriptor } from '@/lib/NativeDescriptor';
+import { UIDescriptor as UIDescriptorLib } from '@/descriptors/UIDescriptor';
 
 import '@/parsers';
+import '@/descriptors';
 
 export const GLOBAL = {
-  Elements: NativeElementsLib,
-  Descriptor: NativeDescriptor
+  Elements: Object.freeze(NativeElementsLib)
 };
 
 export const Objects = ObjectsLib;
 export const UniqueId = UniqueIdLib;
 export const Components = ComponentsLib;
-export const Groups = GroupsLib;
+export const Elements = ElementsLib;
 export const Parser = ParserLib;
+export const UIDescriptor = UIDescriptorLib;
 export const NativeElements = NativeElementsLib;
 
 const FormSchema: FormSchemaComponent = {
@@ -95,11 +96,11 @@ const FormSchema: FormSchemaComponent = {
     /**
      * UI Schema Descriptor to use for rendering.
      *
-     * @type {ScalarDescriptor|ObjectDescriptor|ArrayDescriptor|DescriptorConstructor}
+     * @type {ScalarDescriptor|ObjectDescriptor|ListDescriptor|ArrayDescriptor|IDescriptor}
      */
     descriptor: {
-      type: [ NativeDescriptor, Object ],
-      default: () => undefined
+      type: Object,
+      default: () => ({})
     }
   },
   data: () => ({
@@ -112,16 +113,6 @@ const FormSchema: FormSchemaComponent = {
     fieldId() {
       return `${this.id}-field`;
     },
-    descriptorConstructor() {
-      return this.descriptor instanceof NativeDescriptor
-        ? this.descriptor
-        : new GLOBAL.Descriptor(this.components);
-    },
-    schemaDescriptor() {
-      return this.descriptor instanceof NativeDescriptor
-        ? this.descriptor.get(this.schema)
-        : this.descriptor || this.descriptorConstructor.get(this.schema);
-    },
     parser() {
       return Parser.get({
         schema: this.schema,
@@ -129,8 +120,7 @@ const FormSchema: FormSchemaComponent = {
         name: this.name,
         id: this.fieldId,
         required: true,
-        descriptor: this.schemaDescriptor,
-        descriptorConstructor: this.descriptorConstructor,
+        descriptor: this.descriptor,
         bracketedObjectInputName: this.bracketedArrayInputName,
         onChange: this.emitInputEvent,
         requestRender: this.update
@@ -139,6 +129,11 @@ const FormSchema: FormSchemaComponent = {
     field() {
       return this.parser instanceof Parser ? this.parser.field : null;
     },
+    uiDescriptor() {
+      return this.field
+        ? UIDescriptor.get(this.descriptor, this.field, this.components)
+        : null;
+    },
     listeners(): Record<string, Function | Function[]> {
       const on: any = { ...this.$listeners };
 
@@ -146,7 +141,7 @@ const FormSchema: FormSchemaComponent = {
 
       on.reset.unshift(() => {
         if (this.field) {
-          this.field.input.reset();
+          this.field.reset();
         }
       });
 
@@ -167,19 +162,22 @@ const FormSchema: FormSchemaComponent = {
     }
   },
   render(createElement) {
-    if (this.field === null || this.ready === false) {
+    if (this.field === null || this.uiDescriptor === null || this.ready === false) {
       return null as any; // nothing to render
     }
 
-    this.field.input.attrs.disabled = this.disabled;
-
-    const props = {
-      field: this.field,
+    const attrs = {
+      ...this.descriptor.attrs,
       disabled: this.disabled
     };
 
+    const props = {
+      field: this.field,
+      descriptor: this.uiDescriptor
+    };
+
     const key = this.key || this.field.key;
-    const element = createElement(this.field.input.component, { key, props });
+    const element = createElement(this.uiDescriptor.component, { key, attrs, props });
     const nodes = [ element ];
 
     if (this.$slots.default) {

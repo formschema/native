@@ -72,6 +72,8 @@
   import PlaygroundPanel from './PlaygroundPanel';
   import FormSchema, { UniqueId } from '../../../dist/FormSchema.esm.min.js';
 
+  import InputHiddenSchema from '@/schema/input.hidden.schema';
+  import InputHiddenDescriptor from '@/schema/input.hidden.descriptor';
   import ObjectRecursiveSchema from '@/schema/object.recursive.schema';
   import ObjectRecursiveDescriptor from '@/schema/object.recursive.descriptor';
   import NewsletterSchema from '@/schema/newsletter.schema';
@@ -96,7 +98,7 @@
       modelKey: UniqueId.get('model'),
       enableDescriptor: true,
       customSchema: null,
-      schemaKey: 'facebookSignup',
+      schemaKey: 'array',
       registry: {
         custom: {
           name: 'Custom Schema',
@@ -107,6 +109,11 @@
           name: 'Facebook Signup',
           schema: FacebookSignupSchema,
           descriptor: FacebookSignupDescriptor
+        },
+        inputHidden: {
+          name: 'Hidden Input',
+          schema: InputHiddenSchema,
+          descriptor: InputHiddenDescriptor
         },
         object: {
           name: 'Newsletter Signup',
@@ -169,9 +176,9 @@
       }
     },
     watch: {
-      schema() {
-      },
       parsedSchema(value) {
+        this.model = undefined;
+
         this.dereferenceSchema();
       }
     },
@@ -181,7 +188,7 @@
     methods: {
       setRawSchema(value) {
         try {
-          // validate & parse schema
+          this.model = undefined;
           this.registry.custom.schema = JSON.parse(value);
           this.schemaKey = 'custom';
         } catch(e) {}
@@ -189,7 +196,6 @@
       dereferenceSchema() {
         $RefParser.dereference(this.parsedSchema)
           .then((schema) => {
-            this.model = {};
             this.dereferencedSchema = schema;
           })
           .catch((err) => console.error(err));
@@ -235,7 +241,8 @@
       border-bottom: 1px solid rgba(255, 255, 255, .1)
 
       &__schema
-        max-width: 30%
+        min-width: 30%
+        max-width: @min-width
 
       &__rendering
         width: 100%
@@ -317,6 +324,7 @@
 
       &__model
         min-width: 280px
+        max-width: @min-width
         width: 50%
 
     &__output

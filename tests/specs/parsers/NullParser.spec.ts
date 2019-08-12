@@ -1,15 +1,12 @@
 import { Parser } from '@/parsers/Parser';
 import { NullParser } from '@/parsers/NullParser';
-import { ScalarDescriptor, ParserOptions } from '@/types';
-import { NativeDescriptor } from '@/lib/NativeDescriptor';
-import { NativeElements } from '@/lib/NativeElements';
-import { TestParser } from '../../lib/TestParser';
+import { ParserOptions } from '@/types';
+import { TestParser, Scope } from '../../lib/TestParser';
 
 describe('parsers/NullParser', () => {
-  const options: ParserOptions<any, ScalarDescriptor> = {
+  const options: ParserOptions<any, any> = {
     schema: { type: 'null' },
-    model: undefined,
-    descriptorConstructor: new NativeDescriptor(NativeElements)
+    model: undefined
   };
 
   const parser = new NullParser(options);
@@ -21,45 +18,49 @@ describe('parsers/NullParser', () => {
   });
 
   it('should have type === hidden', () => {
-    expect(parser.field.input.attrs.type).toBe('hidden');
+    expect(parser.field.attrs.type).toBe('hidden');
   });
 
   it('should have value === \u0000', () => {
-    expect(parser.field.input.attrs.value).toBe('\u0000');
+    expect(parser.field.attrs.value).toBe('\u0000');
   });
 
   it('field.value should be equal to null', () => {
-    expect(parser.field.input.value).toBe(null);
+    expect(parser.field.value).toBe(null);
   });
 
   TestParser.Case({
     case: '1.0',
     description: 'parser.reset()',
-    parser: () => {
-      const model = null;
-      const onChange = jest.fn();
-      const parser = new NullParser({ ...options, model, onChange });
+    given: {
+      parser() {
+        const model = null;
+        const onChange = jest.fn();
+        const parser = new NullParser({ ...options, model, onChange });
 
-      parser.parse();
+        parser.parse();
 
-      return parser;
+        return parser;
+      }
     },
     expected: {
-      reset(fn: Function, parser: any) {
-        expect(parser.rawValue).toBe(null);
-        expect(parser.model).toBe(null);
+      parser: {
+        reset({ parser }: Scope) {
+          expect(parser.rawValue).toBe(null);
+          expect(parser.model).toBe(null);
 
-        parser.reset(); // reset without calling onChange
+          parser.reset(); // reset without calling onChange
 
-        expect(parser.rawValue).toBe(null);
-        expect(parser.model).toBe(null);
+          expect(parser.rawValue).toBe(null);
+          expect(parser.model).toBe(null);
 
-        parser.field.input.reset(); // reset with calling onChange
+          parser.field.reset(); // reset with calling onChange
 
-        const onChange = parser.options.onChange;
-        const result = onChange.mock.calls.map(([value]: any) => value);
+          const onChange: any = parser.options.onChange;
+          const result = onChange.mock.calls.map(([value]: any) => value);
 
-        expect(result).toEqual([null, null]);
+          expect(result).toEqual([null, null]);
+        }
       }
     }
   });
@@ -67,31 +68,35 @@ describe('parsers/NullParser', () => {
   TestParser.Case({
     case: '2.0',
     description: 'parser.clear()',
-    parser: () => {
-      const model = null;
-      const onChange = jest.fn();
-      const parser = new NullParser({ ...options, model, onChange });
+    given: {
+      parser() {
+        const model = null;
+        const onChange = jest.fn();
+        const parser = new NullParser({ ...options, model, onChange });
 
-      parser.parse();
+        parser.parse();
 
-      return parser;
+        return parser;
+      }
     },
     expected: {
-      clear(fn: Function, parser: any) {
-        expect(parser.rawValue).toBe(null);
-        expect(parser.model).toBe(null);
+      parser: {
+        clear({ parser }: Scope) {
+          expect(parser.rawValue).toBe(null);
+          expect(parser.model).toBe(null);
 
-        parser.clear(); // clear without calling onChange
+          parser.clear(); // clear without calling onChange
 
-        expect(parser.rawValue).toBe(null);
-        expect(parser.model).toBe(null);
+          expect(parser.rawValue).toBe(null);
+          expect(parser.model).toBe(null);
 
-        parser.field.input.clear(); // clear with calling onChange
+          parser.field.clear(); // clear with calling onChange
 
-        const onChange = parser.options.onChange;
-        const result = onChange.mock.calls.map(([value]: any) => value);
+          const onChange: any = parser.options.onChange;
+          const result = onChange.mock.calls.map(([value]: any) => value);
 
-        expect(result).toEqual([null, null]);
+          expect(result).toEqual([null, null]);
+        }
       }
     }
   });

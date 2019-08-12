@@ -1,7 +1,7 @@
-import { Dictionary, Component, ComponentsType, ComponentsDeclaration } from '@/types';
+import { Dict, Component, ComponentsType, ComponentsDeclaration } from '@/types';
 
 export class Components implements ComponentsDeclaration {
-  readonly $: Dictionary<Component>;
+  readonly $: Dict<Component>;
 
   constructor () {
     this.$ = {

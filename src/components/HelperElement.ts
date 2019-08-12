@@ -5,14 +5,15 @@ export const HelperElement: HelperComponent = {
   functional: true,
   render(h, { props }) {
     const field = props.field;
+    const descriptor = props.descriptor;
 
-    if (field.helper.value) {
+    if (descriptor.helper) {
       const tag = field.isRoot ? 'p' : 'span';
       const data = {
-        attrs: field.helper.attrs
+        attrs: descriptor.helperAttrs
       };
 
-      return h(tag, data, field.helper.value);
+      return h(tag, data, descriptor.helper);
     }
 
     return null as any; // render nothing

@@ -1,5 +1,14 @@
 import Vue from 'vue';
-import FormSchema, { GLOBAL, UniqueId, Objects, Components, Groups, Parser } from '@/components/FormSchema';
+
+import FormSchema, {
+  GLOBAL,
+  UniqueId,
+  Objects,
+  Components,
+  Elements,
+  Parser,
+  UIDescriptor
+} from '@/components/FormSchema';
 
 import { mount } from '@vue/test-utils';
 import { JsonSchema } from '@/types/jsonschema';
@@ -7,11 +16,11 @@ import { JsonSchema } from '@/types/jsonschema';
 import { UniqueId as UniqueIdLib } from '@/lib/UniqueId';
 import { Objects as ObjectsLib } from '@/lib/Objects';
 import { Components as ComponentsLib } from '@/lib/Components';
-import { Groups as GroupsLib } from '@/lib/Groups';
+import { Elements as ElementsLib } from '@/lib/Elements';
 import { Parser as ParserLib } from '@/parsers/Parser';
+import { UIDescriptor as UIDescriptorLib } from '@/descriptors/UIDescriptor';
 
 import { NativeElements } from '@/lib/NativeElements';
-import { NativeDescriptor } from '@/lib/NativeDescriptor';
 
 const DEFAULT_ID = 'id-form';
 
@@ -42,10 +51,6 @@ describe('components/FormSchema', () => {
       expect(GLOBAL.Elements).toBe(NativeElements);
     });
 
-    it('should successfully export the GLOBAL.Descriptor library', () => {
-      expect(GLOBAL.Descriptor).toBe(NativeDescriptor);
-    });
-
     it('should successfully export the UniqueId library', () => {
       expect(UniqueId).toBe(UniqueIdLib);
     });
@@ -58,12 +63,16 @@ describe('components/FormSchema', () => {
       expect(Components).toBe(ComponentsLib);
     });
 
-    it('should successfully export the Groups library', () => {
-      expect(Groups).toBe(GroupsLib);
+    it('should successfully export the Elements library', () => {
+      expect(Elements).toBe(ElementsLib);
     });
 
     it('should successfully export the Parser library', () => {
       expect(Parser).toBe(ParserLib);
+    });
+
+    it('should successfully export the UIDescriptor library', () => {
+      expect(UIDescriptor).toBe(UIDescriptorLib);
     });
   });
 
@@ -121,11 +130,11 @@ describe('components/FormSchema', () => {
       expect(vm.components).toBeDefined();
     });
 
-    it('vm.descriptor should be undefined', () => {
+    it('vm.descriptor should be an empty object', () => {
       const wrapper = getWrapper({ schema });
       const vm: any = wrapper.vm;
 
-      expect(vm.descriptor).toBeUndefined();
+      expect(vm.descriptor).toEqual({});
     });
 
     it('vm.fieldId should be defined', () => {
@@ -297,7 +306,7 @@ describe('components/FormSchema', () => {
     const previousKey = vm.key;
 
     vm.update = jest.fn();
-    vm.parser.field.children[0].input.setValue(123);
+    vm.parser.field.children.credit_card.setValue(123);
 
     expect(vm.key).not.toBe(previousKey);
   });

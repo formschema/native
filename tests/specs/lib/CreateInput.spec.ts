@@ -3,10 +3,11 @@ import { CreateInput } from '@/lib/CreateInput';
 const MockData = {
   props: {
     field: {
-      input: {
-        attrs: {},
-        setValue: jest.fn()
-      }
+      attrs: {},
+      setValue: jest.fn()
+    },
+    descriptor: {
+      attrs: {}
     }
   }
 };
@@ -58,7 +59,7 @@ describe('lib/CreateInput', () => {
         }
       });
 
-      const [ [ value ] ] = MockData.props.field.input.setValue.mock.calls;
+      const [ [ value ] ] = MockData.props.field.setValue.mock.calls;
 
       expect(value).toEqual('Hello, World!');
     });

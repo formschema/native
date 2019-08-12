@@ -1,47 +1,51 @@
-import { Objects } from '@/lib/Objects';
 import { UniqueId } from '@/lib/UniqueId';
-import { NativeDescriptor } from '@/lib/NativeDescriptor';
 import { JsonSchema } from '@/types/jsonschema';
+import { Value } from '@/lib/Value';
 
 import {
-  AbstractUISchemaDescriptor,
   ParserOptions,
   Attributes,
-  Dictionary,
+  Dict,
   ParserKind,
   FieldKind,
   IParser,
   UnknowParser,
   Field,
-  UnknowField
+  UnknowField,
+  SchemaDescriptor
 } from '@/types';
 
-const PARSERS: Dictionary<any> = {};
+const PARSERS: Dict<any> = {};
 
 export abstract class Parser<
   TModel,
-  TField extends Field<any, TAttributes, TDescriptor, TModel>,
-  TDescriptor extends AbstractUISchemaDescriptor,
+  TField extends Field<any, TAttributes, TModel>,
+  TDescriptor extends SchemaDescriptor,
   TAttributes extends Attributes = Attributes
-> implements IParser<TModel, TField, TDescriptor> {
+> implements IParser<TModel, TField> {
   readonly id: string;
   readonly isRoot: boolean;
-  readonly isEnumItem: boolean;
   readonly parent?: UnknowParser;
-  readonly root: UnknowParser;
+  kind: FieldKind;
   model: TModel;
   rawValue: TModel;
   readonly field: TField;
-  readonly options: ParserOptions<TModel, TDescriptor>;
-  readonly descriptor: TDescriptor;
+  readonly options: ParserOptions<TModel>;
   readonly schema: JsonSchema;
   readonly attrs: TAttributes;
+  readonly descriptor: TDescriptor;
 
-  static register(type: ParserKind, parserClass: any) {
-    PARSERS[type] = parserClass;
+  static register(kind: ParserKind, parserClass: any) {
+    PARSERS[kind] = parserClass;
   }
 
-  static get(options: ParserOptions<any, any, any>, parent?: UnknowParser): UnknowParser | null {
+  static kind(schema: JsonSchema): FieldKind {
+    return schema.enum
+      ? schema.enum.length > 4 ? 'list' : 'enum'
+      : schema.type;
+  }
+
+  static get(options: ParserOptions<any, any>, parent?: UnknowParser): UnknowParser | null {
     if (typeof options.schema.type === 'undefined') {
       return null;
     }
@@ -50,50 +54,39 @@ export abstract class Parser<
       throw TypeError(`Unsupported schema type: ${JSON.stringify(options.schema.type)}`);
     }
 
-    const descriptor = options.descriptor
-      || options.descriptorConstructor.get(options.schema);
+    const kind = options.descriptor && options.descriptor.kind
+      ? options.descriptor.kind
+      : options.kind;
 
-    const schemaKind = descriptor.kind && PARSERS.hasOwnProperty(descriptor.kind)
-      ? descriptor.kind
-      : NativeDescriptor.kind(options.schema);
+    const parserKind = kind && PARSERS.hasOwnProperty(kind)
+      ? kind
+      : Parser.kind(options.schema);
 
-    const parser = new PARSERS[schemaKind](options, parent);
+    const parser = new PARSERS[parserKind](options, parent);
 
     parser.parse();
 
     return parser;
   }
 
-  constructor(options: ParserOptions<TModel, TDescriptor>, parent?: UnknowParser) {
+  constructor(kind: FieldKind, options: ParserOptions<TModel>, parent?: UnknowParser) {
     this.id = options.id || UniqueId.get(options.name);
     this.parent = parent;
     this.options = options;
-    this.root = parent ? parent.root : this;
     this.isRoot = !parent;
-    this.isEnumItem = !!parent && parent.schema.enum instanceof Array;
     this.schema = options.schema;
+    this.descriptor = options.descriptor || {} as any;
 
-    const parserKind = this.kind;
-    const optionsDescriptor = options.descriptor || {} as unknown as TDescriptor;
-    const descriptorKind = optionsDescriptor.kind || parserKind;
-    const defaultDescriptor = options.descriptorConstructor.get(this.schema, descriptorKind);
-
-    this.descriptor = { ...defaultDescriptor, ...optionsDescriptor };
+    this.kind = kind;
     this.rawValue = this.parseValue(this.initialValue) as TModel;
     this.model = this.parseValue(this.initialValue) as TModel;
-
-    if (optionsDescriptor.kind) {
-      this.descriptor.component = defaultDescriptor.component;
-    }
-
-    this.parseDescriptor();
 
     const self = this;
 
     // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
     this.attrs = {
       id: this.id,
-      type: this.type,
+      type: undefined,
       name: options.name,
       readonly: this.schema.readOnly,
       get required() {
@@ -107,80 +100,39 @@ export abstract class Parser<
        */
       get 'aria-required'() {
         return this.required ? 'true' : undefined;
-      },
-
-      /**
-       * Use the WAI-ARIA aria-labelledby and aria-describedby attributes to
-       * associate instructions with form controls
-       * @see https://www.w3.org/WAI/tutorials/forms/instructions/#providing-instructions-outside-labels
-       */
-      get 'aria-labelledby'() {
-        return self.field.label.attrs.id;
-      },
-      get 'aria-describedby'() {
-        return self.field.helper.attrs.id;
-      },
-
-      /**
-       * Add descriptor attributes
-       */
-      ...this.descriptor.attrs
+      }
     } as TAttributes;
 
     // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
     this.field = {
-      key: options.key || UniqueId.get(options.name),
-      kind: parserKind,
+      key: UniqueId.get(options.id),
+      kind: this.kind,
       name: options.name,
       isRoot: this.isRoot,
       schema: options.schema,
       required: options.required || false,
-      deep: this.isRoot ? 0 : this.root.field.deep + 1,
-      input: {
-        attrs: this.attrs,
-        get value() {
-          return self.model;
-        },
-        setValue: (value, emitChange = true) => {
-          this.setValue(value);
+      deep: this.parent ? this.parent.field.deep + 1 : 0,
+      attrs: this.attrs,
+      get value() {
+        return self.model;
+      },
+      setValue: (value, emitChange = true) => {
+        this.setValue(value);
 
-          if (emitChange) {
-            this.commit();
-          }
-        },
-        commit: () => this.commit(),
-        initialValue: this.initialValue,
-        props: Objects.clone(this.descriptor.props as Dictionary),
-        component: this.descriptor.component || this.defaultComponent || defaultDescriptor.component,
-        reset: () => {
-          this.reset();
-          this.commit();
-        },
-        clear: () => {
-          this.clear();
+        if (emitChange) {
           this.commit();
         }
       },
-      label: {
-        attrs: {
-          get id() {
-            return self.field.label.value ? `${self.attrs.id}-label` : undefined;
-          },
-          get for() {
-            return self.attrs.id;
-          }
-        },
-        value: this.descriptor.label
+      commit: () => this.commit(),
+      initialValue: this.initialValue,
+      reset: () => {
+        this.reset();
+        this.commit();
       },
-      helper: {
-        attrs: {
-          get id() {
-            return self.field.helper.value ? `${self.attrs.id}-helper` : undefined;
-          }
-        },
-        value: this.descriptor.helper
+      clear: () => {
+        this.clear();
+        this.commit();
       },
-      descriptor: this.descriptor,
       parent: parent ? parent.field : undefined,
       get root() {
         return self.root.field;
@@ -189,31 +141,35 @@ export abstract class Parser<
     } as TField;
   }
 
-  get kind(): FieldKind {
+  getKind(): FieldKind {
     return this.schema.type;
   }
 
-  get type(): string | undefined {
-    return undefined;
+  get root() {
+    return this.parent ? this.parent.root : this;
   }
 
   get initialValue(): TModel | unknown {
     return typeof this.options.model === 'undefined'
-      ? this.schema.default
+      ? this.schema.const || this.schema.default
       : this.options.model;
-  }
-
-  get defaultComponent() {
-    return this.descriptor.kind
-      ? this.options.descriptorConstructor.get(this.schema, this.descriptor.kind).component
-      : undefined;
   }
 
   isEmpty(data: unknown = this.model) {
     return typeof data === 'undefined';
   }
 
-  parseValue(data: unknown): TModel | undefined {
+  parseValue(data: unknown): unknown {
+    const type = this.schema.type;
+
+    if (Value.hasOwnProperty(type)) {
+      if (type === 'boolean' && typeof data === 'string') {
+        data = data === 'true';
+      }
+
+      return (Value as any)[type](data);
+    }
+
     return data as any;
   }
 
@@ -244,28 +200,6 @@ export abstract class Parser<
 
     if (typeof this.root.options.requestRender === 'function') {
       this.root.options.requestRender(fields);
-    }
-  }
-
-  parseDescriptor() {
-    if (!this.descriptor.kind) {
-      this.descriptor.kind = this.kind;
-    }
-
-    if (!this.descriptor.hasOwnProperty('label')) {
-      this.descriptor.label = this.schema.title;
-    }
-
-    if (!this.descriptor.hasOwnProperty('helper')) {
-      this.descriptor.helper = this.schema.description;
-    }
-
-    if (!this.descriptor.attrs) {
-      this.descriptor.attrs = {};
-    }
-
-    if (!this.descriptor.props) {
-      this.descriptor.props = {};
     }
   }
 

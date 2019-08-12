@@ -1,4 +1,4 @@
-import { Dictionary } from '@/types';
+import { Dict } from '@/types';
 
 export const Value = {
   null() {
@@ -19,7 +19,7 @@ export const Value = {
 
     return Number.isNaN(value) || Number.isNaN(parsedValue) ? undefined : parsedValue;
   },
-  object(data: unknown): Dictionary {
+  object(data: unknown): Dict {
     return data as any || {};
   },
   string(data: unknown) {

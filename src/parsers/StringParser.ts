@@ -1,9 +1,18 @@
 import { Parser } from '@/parsers/Parser';
-import { FieldKind, Dictionary, ScalarDescriptor, StringField, StringAttributes } from '@/types';
-import { Pattern } from '@/lib/Pattern';
+import { ScalarParser } from '@/parsers/ScalarParser';
 import { Value } from '@/lib/Value';
+import { JsonSchema } from '@/types/jsonschema';
 
-const TypeFormat: Dictionary<string> = {
+import {
+  Dict,
+  FieldKind,
+  StringField,
+  StringAttributes,
+  ParserOptions,
+  UnknowParser
+} from '@/types';
+
+const TypeFormat: Dict<string> = {
   date: 'date',
   'date-time': 'datetime-local',
   email: 'email',
@@ -12,45 +21,51 @@ const TypeFormat: Dictionary<string> = {
   uri: 'url'
 };
 
-export class StringParser extends Parser<string, StringField, ScalarDescriptor, StringAttributes> {
-  get kind(): FieldKind {
-    if (this.isEnumItem) {
-      return 'radio';
+function getKind(schema: JsonSchema) {
+  if (schema.contentMediaType) {
+    const mime = schema.contentMediaType;
+
+    if (mime.startsWith('text/')) {
+      return 'textarea';
     }
 
-    if (this.schema.contentMediaType) {
-      const mime = this.schema.contentMediaType;
-
-      if (mime.startsWith('text/')) {
-        return 'textarea';
-      }
-
-      if (mime.startsWith('image/')) {
-        return 'image';
-      }
-
-      return 'file';
+    if (mime.startsWith('image/')) {
+      return 'image';
     }
 
-    return 'string';
+    return 'file';
   }
 
-  get type() {
-    if (this.kind === 'textarea') {
-      return undefined;
-    }
+  return 'string';
+}
 
-    if (this.isEnumItem) {
-      return 'radio';
-    }
+function getType(kind: FieldKind, schema: JsonSchema) {
+  switch (kind) {
+    case 'file':
+    case 'radio':
+    case 'hidden':
+      return kind;
 
-    if (this.schema.contentMediaType) {
+    case 'image':
       return 'file';
-    }
 
-    return this.schema.format
-      ? TypeFormat[this.schema.format]
-      : 'text';
+    case 'textarea':
+      return undefined;
+
+    default:
+      return schema.format
+        ? TypeFormat[schema.format]
+        : 'text';
+  }
+}
+
+export class StringParser extends ScalarParser<string, StringField, StringAttributes> {
+  constructor(options: ParserOptions<string>, parent?: UnknowParser) {
+    const schema = options.schema;
+    const kind = options.kind || ScalarParser.getKind(schema, parent) || getKind(schema);
+    const type = ScalarParser.getType(kind) || getType(kind, schema);
+
+    super(kind, type, options, parent);
   }
 
   isEmpty(data: unknown = this.model) {
@@ -58,24 +73,24 @@ export class StringParser extends Parser<string, StringField, ScalarDescriptor, 
   }
 
   parse() {
-    Object.defineProperty(this.attrs, 'value', {
-      enumerable: true,
-      configurable: true,
-      get: () => this.model
-    });
-
-    this.attrs.minlength = this.schema.minLength;
-    this.attrs.maxlength = this.schema.maxLength;
-
-    if (this.schema.pattern) {
-      this.attrs.pattern = this.schema.pattern;
-    } else if (this.schema.hasOwnProperty('const')) {
-      this.attrs.pattern = Pattern.escape(`${this.schema.const}`);
-    }
-
     if (this.attrs.type === 'file') {
       this.attrs.accept = this.schema.contentMediaType;
     }
+
+    if (this.attrs.type) {
+      Object.defineProperty(this.attrs, 'value', {
+        enumerable: true,
+        configurable: true,
+        get: () => this.model
+      });
+
+      if (this.schema.pattern) {
+        this.attrs.pattern = this.schema.pattern;
+      }
+    }
+
+    this.attrs.minlength = this.schema.minLength;
+    this.attrs.maxlength = this.schema.maxLength;
 
     this.commit();
   }
@@ -86,3 +101,6 @@ export class StringParser extends Parser<string, StringField, ScalarDescriptor, 
 }
 
 Parser.register('string', StringParser);
+Parser.register('file', StringParser);
+Parser.register('image', StringParser);
+Parser.register('textarea', StringParser);

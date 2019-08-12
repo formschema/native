@@ -2,19 +2,8 @@ import { Parser } from '@/parsers/Parser';
 import { JsonSchema } from '@/types/jsonschema';
 import { Objects } from '@/lib/Objects';
 import { Arrays } from '@/lib/Arrays';
-import { NativeDescriptor } from '@/lib/NativeDescriptor';
 import { Value } from '@/lib/Value';
-
-import {
-  ArrayField,
-  ArrayDescriptor,
-  ParserOptions,
-  AbstractUISchemaDescriptor,
-  FieldKind,
-  ArrayItemField,
-  UnknowParser,
-  DescriptorConstructor
-} from '@/types';
+import { ArrayField, ParserOptions, FieldKind, ArrayItemField, UnknowParser, ArrayDescriptor } from '@/types';
 
 export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
   readonly items: JsonSchema[] = [];
@@ -23,16 +12,17 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
   maxItems?: number;
   max: number = -1;
   count: number = 0;
+  radioIndex: number = 0;
   childrenParsers: UnknowParser[] = [];
 
-  get kind(): FieldKind {
-    return 'array';
+  constructor(options: ParserOptions<any>, parent?: UnknowParser) {
+    super('array', options, parent);
   }
 
   get initialValue(): unknown[] {
-    const value = this.options.model || this.schema.default || [];
+    const value = this.options.model || this.schema.default;
 
-    return [ ...value ];
+    return value instanceof Array ? [ ...value ] : [];
   }
 
   get limit(): number {
@@ -117,70 +107,45 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
     this.childrenParsers.forEach((parser) => parser.clear());
   }
 
-  getChildDescriptor(index: number, schema: JsonSchema, kind?: FieldKind) {
-    const items = this.field.descriptor.items;
-
-    if (items) {
-      const descriptorIndex = items instanceof Array ? items[index] : items;
-
-      if (descriptorIndex instanceof NativeDescriptor) {
-        return descriptorIndex.get(schema, kind);
-      }
-
-      if (descriptorIndex) {
-        return descriptorIndex;
-      }
-    }
-
-    return this.options.descriptorConstructor.get(schema, kind);
-  }
-
-  getChildDescriptorConstructor(index: number): DescriptorConstructor {
-    const items = this.field.descriptor.items;
-
-    if (items) {
-      const itemIndex = items instanceof Array ? items[index] : items;
-
-      if (itemIndex instanceof NativeDescriptor) {
-        return itemIndex;
-      }
-    }
-
-    return this.options.descriptorConstructor;
+  getFieldItemName(name: string) {
+    return this.root.options.bracketedObjectInputName ? `${name}[]` : name;
   }
 
   getFieldItem(itemSchema: JsonSchema, index: number): ArrayItemField | null {
-    const kind: FieldKind | undefined = this.field.uniqueItems ? 'checkbox' : undefined;
-    const itemDescriptor = this.getChildDescriptor(index, itemSchema, kind);
+    const kind: FieldKind | undefined = this.field.uniqueItems
+      ? 'boolean'
+      : Parser.kind(itemSchema);
 
     const itemModel = typeof this.model[index] === 'undefined'
       ? itemSchema.default
       : this.model[index];
 
-    const name = itemDescriptor.kind === 'enum'
-      ? `${this.options.name}-${index}`
-      : this.options.name;
+    const descriptorItem = this.descriptor.items instanceof Array
+      ? this.descriptor.items[index]
+      : this.descriptor.items || { kind };
 
-    const options: ParserOptions<unknown, AbstractUISchemaDescriptor> = {
+    const itemName = this.options.name || itemModel;
+    const name = kind === 'enum' && this.radioIndex++
+      ? `${itemName}-${this.radioIndex}`
+      : itemName;
+
+    const parser = Parser.get({
+      kind: kind,
       schema: itemSchema,
       model: itemModel,
-      descriptor: itemDescriptor,
-      descriptorConstructor: this.getChildDescriptorConstructor(index),
-      bracketedObjectInputName: this.options.bracketedObjectInputName,
       id: `${this.id}-${index}`,
-      name: this.options.bracketedObjectInputName ? `${name}[]` : name
-    };
+      name: this.getFieldItemName(name),
+      descriptor: descriptorItem
+    }, this);
 
     if (this.rawValue.length <= index) {
       this.rawValue.push(undefined);
     }
 
-    const parser = Parser.get(options, this);
-
     if (parser) {
       this.childrenParsers.push(parser);
 
-      if (itemDescriptor.kind === 'checkbox') {
+      if (kind === 'boolean') {
         this.parseCheckboxField(parser, itemModel);
       }
 
@@ -189,7 +154,7 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
 
       // set the onChange option after the parser initialization
       // to prevent first field value emit
-      options.onChange = this.field.sortable
+      parser.options.onChange = this.field.sortable
         ? (value) => {
           this.setFieldValue(parser.field, value);
           this.commit();
@@ -199,7 +164,7 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
           this.commit();
         };
 
-      return parser.field as ArrayItemField;
+      return parser.field;
     }
 
     return null;
@@ -221,7 +186,7 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
 
       Arrays.swap(this.rawValue, from, to);
 
-      this.field.input.setValue(this.rawValue);
+      this.field.setValue(this.rawValue);
       this.requestRender();
 
       return movedField;
@@ -265,41 +230,21 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
       return [ from, to ];
     };
 
-    const buttons = this.descriptor.buttons;
-
     items.forEach((field) => {
       field.buttons = {
-        clear: {
-          ...buttons.clear,
-          type: 'clear',
-          disabled: false,
-          trigger: () => field.input.clear()
-        },
         moveUp: {
-          // CAUTION: Don't use spread notation here (...buttons.moveUp)
-          // to avoid to loose the computed `disabled` behaviour
-          type: 'move-up',
-          label: buttons.moveUp.label,
-          tooltip: buttons.moveUp.tooltip,
           get disabled() {
             return isDisabled(upIndexes(field));
           },
           trigger: () => this.move(...upIndexes(field))
         },
         moveDown: {
-          // CAUTION: Don't use spread notation here (...buttons.moveDown)
-          // to avoid to loose the computed `disabled` behaviour
-          type: 'move-down',
-          label: buttons.moveDown.label,
-          tooltip: buttons.moveDown.tooltip,
           get disabled() {
             return isDisabled(downIndexes(field));
           },
           trigger: () => this.move(...downIndexes(field))
         },
         delete: {
-          ...buttons.delete,
-          type: 'delete',
           disabled: !sortable,
           trigger: () => {
             const index = Arrays.index(items, field);
@@ -307,7 +252,7 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
 
             if (deletedField) {
               this.rawValue.splice(index, 1);
-              this.field.input.setValue(this.rawValue);
+              this.field.setValue(this.rawValue);
 
               this.count--;
 
@@ -342,15 +287,9 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
     this.minItems = this.schema.minItems || (this.field.required ? 1 : 0);
 
     const self = this;
-    const resetField = this.field.input.reset;
-    const button = this.descriptor.buttons.push;
+    const resetField = this.field.reset;
 
     this.field.pushButton = {
-      // CAUTION: Don't use spread notation here (...button.push)
-      // to avoid to loose the computed `disabled` behaviour
-      type: 'push',
-      label: button.label,
-      tooltip: button.tooltip,
       get disabled() {
         return self.count === self.max || self.items.length === 0;
       },
@@ -365,7 +304,7 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
       : this.model.length;
 
     // force render update for ArrayField
-    this.field.input.reset = () => {
+    this.field.reset = () => {
       resetField();
       this.requestRender();
     };
@@ -383,7 +322,6 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
     parser.setValue = (checked: boolean) => {
       parser.rawValue = checked;
       parser.model = checked ? itemModel : undefined;
-      parser.attrs.checked = checked;
     };
 
     parser.setValue(isChecked);

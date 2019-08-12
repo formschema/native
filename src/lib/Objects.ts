@@ -1,11 +1,11 @@
-import { Dictionary } from '@/types';
+import { Dict } from '@/types';
 
 export const Objects = {
   isObject(value: unknown) {
-    return value !== null && typeof value === 'object';
+    return value !== null && typeof value === 'object' && !Array.isArray(value);
   },
 
-  assign<T extends Dictionary = Dictionary<any>>(dest: any, src: T): T {
+  assign<T extends Dict = Dict<any>>(dest: any, src: T): T {
     Object.keys(src).forEach((key) => {
       const value = src[key];
 
@@ -25,11 +25,11 @@ export const Objects = {
     return dest;
   },
 
-  clone<T extends Dictionary = Dictionary<any>>(object: T): T {
+  clone<T extends Dict = Dict<any>>(object: T): T {
     return Objects.assign<T>({}, object);
   },
 
-  isEmpty<T extends Dictionary = Dictionary<any>>(object: T) {
+  isEmpty<T extends Dict = Dict<any>>(object: T) {
     for (const key in object) {
       return false;
     }
@@ -37,7 +37,7 @@ export const Objects = {
     return true;
   },
 
-  clear<T extends Dictionary = Dictionary<any>>(object: T) {
+  clear<T extends Dict = Dict<any>>(object: T) {
     for (const key in object) {
       delete object[key];
     }

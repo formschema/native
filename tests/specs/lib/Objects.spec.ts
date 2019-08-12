@@ -2,13 +2,13 @@ import { Objects } from '@/lib/Objects';
 
 describe('lib/Objects', () => {
   describe('Objects.isObject(value)', () => {
-    [ 'hello', 123, true, undefined, null, () => {} ].forEach((value) => {
+    [ 'hello', 123, true, undefined, null, [], () => {} ].forEach((value) => {
       it(`should return false for '${value}' as scalar value`, () => {
         expect(Objects.isObject(value)).toBeFalsy();
       });
     });
 
-    [ {}, [] ].forEach((value) => {
+    [ {} ].forEach((value) => {
       it(`should return true for '${JSON.stringify(value)}' as non scalar value`, () => {
         expect(Objects.isObject(value)).toBeTruthy();
       });

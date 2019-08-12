@@ -2,56 +2,50 @@ import { Parser } from '@/parsers/Parser';
 import { JsonSchema } from '@/types/jsonschema';
 import { UniqueId } from '@/lib/UniqueId';
 import { Objects } from '@/lib/Objects';
-import { NativeDescriptor } from '@/lib/NativeDescriptor';
 import { Value } from '@/lib/Value';
 
 import {
-  Dictionary,
+  Dict,
   ObjectField,
-  ObjectDescriptor,
   ParserOptions,
-  AbstractUISchemaDescriptor,
   ObjectFieldChild,
-  DescriptorConstructor,
-  FieldKind,
-  UnknowParser
+  UnknowParser,
+  ObjectDescriptor
 } from '@/types';
 
-export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescriptor> {
-  properties: Dictionary<JsonSchema> = {};
-  dependencies: Dictionary<string[]> = {};
-  childrenParsers: Dictionary<UnknowParser> = {};
-  orders: string[] = [];
-  orderedProperties: string[] = [];
+export class ObjectParser extends Parser<Dict, ObjectField, ObjectDescriptor> {
+  properties: Dict<JsonSchema> = {};
+  dependencies: Dict<string[]> = {};
+  childrenParsers: Dict<UnknowParser> = {};
 
-  get kind(): FieldKind {
-    return 'object';
+  constructor(options: ParserOptions<Dict>, parent?: UnknowParser) {
+    super('object', options, parent);
   }
 
-  get initialValue(): Dictionary | unknown {
-    const value = this.options.model || this.schema.default || {};
+  get initialValue(): Dict {
+    const value = this.options.model || this.schema.default;
 
-    return { ...value };
+    return Objects.isObject(value) ? { ...value } as any : {};
   }
 
-  get children(): ObjectFieldChild[] {
+  get children(): Dict<ObjectFieldChild> {
     const name = this.options.name;
+    const fields: Dict<ObjectFieldChild> = {};
+    const descriptorProperties = this.descriptor.properties || {};
     const requiredFields = this.schema.required instanceof Array
       ? this.schema.required
       : [];
 
-    return this.orderedProperties
-      .map((key): { key: string; options: ParserOptions<unknown, AbstractUISchemaDescriptor> } => ({
+    Object.keys(this.properties)
+      .map((key): { key: string; options: ParserOptions<unknown> } => ({
         key,
         options: {
           schema: this.properties[key],
           model: this.model.hasOwnProperty(key) ? this.model[key] : this.properties[key].default,
-          descriptor: this.getChildDescriptor(key),
-          descriptorConstructor: this.getChildDescriptorConstructor(key),
-          bracketedObjectInputName: this.options.bracketedObjectInputName,
           id: `${this.id}-${key}`,
           name: this.getChildName(key, name),
           required: requiredFields.includes(key),
+          descriptor: descriptorProperties[key],
           onChange: (value) => this.setKeyValue(key, value)
         }
       }))
@@ -60,7 +54,7 @@ export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescript
         parser: Parser.get(options, this)
       }))
       .filter(({ parser }) => parser instanceof Parser)
-      .map(({ key, parser }: any) => {
+      .forEach(({ key, parser }: any) => {
         const field = parser.field as ObjectFieldChild;
         const update = parser.options.onChange;
 
@@ -77,8 +71,10 @@ export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescript
           this.updateDependencies(key, parser);
         };
 
-        return field;
+        fields[key] = field;
       });
+
+    return fields;
   }
 
   setKeyValue(key: string, value: unknown) {
@@ -86,7 +82,7 @@ export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescript
     this.model[key] = value;
   }
 
-  isEmpty(data: Dictionary = this.model) {
+  isEmpty(data: Dict = this.model) {
     return Objects.isEmpty(data);
   }
 
@@ -147,7 +143,7 @@ export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescript
 
   getChildName(key: string, name?: string) {
     if (name) {
-      return this.options.bracketedObjectInputName
+      return this.root.options.bracketedObjectInputName
         ? `${name}[${key}]`
         : `${name}.${key}`;
     }
@@ -155,46 +151,12 @@ export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescript
     return key;
   }
 
-  getChildDescriptor(key: string) {
-    const properties = this.field.descriptor.properties;
-
-    if (properties) {
-      const descriptorKey = properties[key];
-
-      if (descriptorKey instanceof NativeDescriptor) {
-        return descriptorKey.get(this.properties[key]);
-      }
-
-      if (descriptorKey) {
-        return descriptorKey;
-      }
-    }
-
-    return this.options.descriptorConstructor.get(this.properties[key]);
-  }
-
-  getChildDescriptorConstructor(key: string): DescriptorConstructor {
-    const properties = this.field.descriptor.properties;
-
-    if (properties) {
-      const propertiesKey = properties[key];
-
-      if (propertiesKey instanceof NativeDescriptor) {
-        return propertiesKey;
-      }
-    }
-
-    return this.options.descriptorConstructor;
-  }
-
   parse() {
     if (this.schema.properties) {
       this.properties = { ...this.schema.properties };
     }
 
-    this.parseOrder();
     this.parseDependencies();
-    this.parseProperties();
 
     this.field.children = this.children;
 
@@ -214,16 +176,6 @@ export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescript
     this.commit();
   }
 
-  parseOrder() {
-    this.orders = this.field.descriptor.order instanceof Array
-      ? this.field.descriptor.order
-      : [];
-
-    if (this.orders.length === 0) {
-      this.orders = Object.keys(this.properties);
-    }
-  }
-
   parseDependencies() {
     const dependencies = this.schema.dependencies;
 
@@ -234,34 +186,13 @@ export class ObjectParser extends Parser<Dictionary, ObjectField, ObjectDescript
         if (dependency instanceof Array) {
           this.dependencies[key] = dependency;
         } else {
-          const indexKey = (this.orders.indexOf(key) + 1) || this.orders.length;
           const properties = dependency.properties || {};
 
           this.dependencies[key] = Object.keys(properties);
 
-          Object.keys(properties).forEach((prop, indexProp) => {
+          Object.keys(properties).forEach((prop) => {
             this.properties[prop] = properties[prop];
-
-            if (!this.orders.includes(prop)) {
-              // insert dependency after its sibling property
-              // if's there is no custum order defined
-              this.orders.splice(indexKey + indexProp, 0, prop);
-            }
           });
-        }
-      });
-    }
-  }
-
-  parseProperties() {
-    const keys = Object.keys(this.properties);
-
-    this.orderedProperties = [ ...this.orders ];
-
-    if (this.orderedProperties.length < keys.length) {
-      keys.forEach((prop) => {
-        if (!this.orderedProperties.includes(prop)) {
-          this.orderedProperties.push(prop);
         }
       });
     }

@@ -225,7 +225,7 @@ are irrelevant:
 </script>
 ```
 
-## Render a Textarea Element
+## Render a Textarea element
 
 Add a `text/*` media types to a string schema to render a Textarea element.
 
@@ -238,7 +238,18 @@ Add a `text/*` media types to a string schema to render a Textarea element.
 }
 ```
 
-## Render an Input File Element
+You can also use a custom descriptor to force the Render to use a Textarea
+element:
+
+**Example descriptor.json**
+
+```json
+{
+  "kind": "textarea"
+}
+```
+
+## Render an Input File element
 
 String schemas with media types not starting with `text/*` are automatically render as Input File elements.
 
@@ -248,6 +259,21 @@ String schemas with media types not starting with `text/*` are automatically ren
 {
   "type": "string",
   "contentMediaType": "image/png"
+}
+```
+
+> There is a list of [MIME types officially registered by the IANA](http://www.iana.org/assignments/media-types/media-types.xhtml), but the set of types supported will be application and operating system dependent. Mozilla Developer Network also maintains a [shorter list of MIME types that are important for the web](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Complete_list_of_MIME_types).
+
+## Render a hidden Input element
+
+String schemas with defined `const` property are automatically render as Input File elements.
+
+**Example schema.json**
+
+```json
+{
+  "type": "string",
+  "const": "value of the hidden input"
 }
 ```
 

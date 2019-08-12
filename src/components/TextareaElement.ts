@@ -6,14 +6,8 @@ export const TextareaElement: TextareaComponent = {
   name: 'TextareaElement',
   functional: true,
   render(h, { data, props, children }) {
-    /**
-     * attributes `type` and `value` are not applicable to a textarea input
-     */
-    delete props.field.input.attrs.type;
-    delete props.field.input.attrs.value;
-
     return h(FieldElement, data, [
-      CreateInput<InputField>(h, 'textarea', data, props.field.input.value),
+      CreateInput<InputField>(h, 'textarea', data, props.field.value),
       ...(children || [])
     ]);
   }

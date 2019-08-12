@@ -1,10 +1,10 @@
 import { mount } from '@vue/test-utils';
 import { TextareaElement } from '@/components/TextareaElement';
-import { StringParser } from '@/parsers/StringParser';
-import { NativeDescriptor } from '@/lib/NativeDescriptor';
-import { NativeElements } from '@/lib/NativeElements';
+import { Options } from '../../lib/Options';
 
-const options: any = {
+const onChangeMock = jest.fn();
+const { context } = Options.get({
+  kind: 'textarea',
   schema: {
     type: 'string',
     title: 'Bio',
@@ -13,28 +13,16 @@ const options: any = {
   model: 'Goku',
   id: 'id-bio',
   name: 'bio',
-  onChange: jest.fn(),
+  onChange: onChangeMock,
   descriptor: {
     kind: 'textarea'
-  },
-  descriptorConstructor: new NativeDescriptor(NativeElements)
-};
-
-const parser = new StringParser(options);
-
-parser.parse();
-
-const context: any = {
-  attrs: parser.field.input.attrs,
-  props: {
-    field: parser.field
   }
-};
+});
 
 describe('components/TextareaElement', () => {
   it('should successfully render component', () => {
     const wrapper = mount(TextareaElement, { context });
-    const expected = '<div data-fs-kind="string" data-fs-type="string" data-fs-field="bio"><label id="id-bio-label" for="id-bio">Bio</label><div data-fs-wrapper="2"><div data-fs-input="string"><textarea id="id-bio" name="bio" aria-labelledby="id-bio-label" aria-describedby="id-bio-helper">Goku</textarea></div><p id="id-bio-helper">Tell us about yourself</p></div></div>';
+    const expected = '<div data-fs-kind="textarea" data-fs-type="textarea" data-fs-field="bio"><label id="id-bio-label" for="id-bio">Bio</label><div data-fs-wrapper="2"><div data-fs-input="textarea"><textarea id="id-bio" name="bio" aria-labelledby="id-bio-label" aria-describedby="id-bio-helper">Goku</textarea></div><p id="id-bio-helper">Tell us about yourself</p></div></div>';
 
     expect(wrapper.html()).toBe(expected);
   });
@@ -43,10 +31,9 @@ describe('components/TextareaElement', () => {
     const wrapper = mount(TextareaElement, { context });
     const input: any = wrapper.find('textarea');
 
-    input.element.value = 'Gohan';
-    input.trigger('input');
+    input.setValue('Gohan');
 
-    const [ [ initialValue ], [ changedValue ] ] = options.onChange.mock.calls;
+    const [ [ initialValue ], [ changedValue ] ] = onChangeMock.mock.calls;
 
     expect(initialValue).toEqual('Goku');
     expect(changedValue).toEqual('Gohan');

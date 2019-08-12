@@ -1,15 +1,13 @@
 import { Parser } from '@/parsers/Parser';
 import { ObjectParser } from '@/parsers/ObjectParser';
-import { Dictionary, ListField, ObjectField, ScalarDescriptor, ParserOptions } from '@/types';
-import { NativeDescriptor } from '@/lib/NativeDescriptor';
-import { NativeElements } from '@/lib/NativeElements';
+import { ListField, ObjectField, ObjectFieldChild, ParserOptions } from '@/types';
 import { JsonSchema } from '@/types/jsonschema';
-import { TestParser } from '../../lib/TestParser';
+import { TestParser, Scope } from '../../lib/TestParser';
 
 import '@/parsers';
 
 describe('parsers/ObjectParser', () => {
-  const options: ParserOptions<any, ScalarDescriptor> = {
+  const options: ParserOptions<any, any> = {
     schema: {
       type: 'object',
       properties: {
@@ -18,101 +16,116 @@ describe('parsers/ObjectParser', () => {
       required: ['name']
     },
     model: { name: 'Jon Snow' },
-    name: 'profile',
-    descriptorConstructor: new NativeDescriptor(NativeElements)
+    name: 'profile'
   };
 
-  const parser = new ObjectParser(options);
-
-  parser.parse();
-
-  it('parser should be an instance of Parser', () => {
-    expect(parser).toBeInstanceOf(Parser);
-  });
-
-  it('parser.kind should have equal to `object`', () => {
-    expect(parser.kind).toBe('object');
-  });
-
-  it('parser.children should be defined', () => {
-    expect(parser.children.length).toBe(1);
-  });
-
-  it('field.input.attrs.required should be undefined', () => {
-    expect(parser.field.input.attrs.required).toBeUndefined();
-  });
-
-  it('field.input.attrs.aria-required should be undefined', () => {
-    expect(parser.field.input.attrs['aria-required']).toBeUndefined();
-  });
-
-  it('field.input.attrs.name should be undefined', () => {
-    expect(parser.field.input.attrs.name).toBeUndefined();
-  });
-
-  it('field.value should be equal to the default value', () => {
-    expect(parser.field.input.value).toEqual({ name: 'Jon Snow' });
-  });
-
-  it('should successfully parse default object value', () => {
-    const options: ParserOptions<any, ScalarDescriptor> = {
-      schema: {
-        type: 'object',
-        properties: {
-          name: { type: 'string' }
+  TestParser.Case({
+    case: '1.0',
+    description: 'basic parsing',
+    given: {
+      parser: new ObjectParser({
+        schema: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' }
+          },
+          required: ['name']
         },
-        default: {
-          name: 'Arya Stark'
+        model: { name: 'Jon Snow' },
+        name: 'profile'
+      })
+    },
+    expected: {
+      parser: {
+        kind: ({ value }: Scope) => expect(value).toBe('object'),
+        children({ value }: Scope) {
+          for (const key in value) {
+            expect(value[key].property).toBe(key);
+            expect(value[key].deep).toBe(1);
+          }
+        },
+        field: {
+          value: ({ value }: Scope) => expect(value).toEqual({ name: 'Jon Snow' }),
+          attrs: {
+            name: ({ value }: Scope) => expect(value).toBeUndefined(),
+            required: ({ value }: Scope) => expect(value).toBeUndefined()
+          },
+          deep: ({ value }: Scope) => expect(value).toBe(0),
+          children({ value }: Scope) {
+            for (const key in value) {
+              expect(value[key].property).toBe(key);
+              expect(value[key].deep).toBe(1);
+            }
+          }
         }
-      },
-      model: undefined,
-      descriptorConstructor: new NativeDescriptor(NativeElements)
-    };
-
-    const parser = new ObjectParser(options);
-
-    parser.parse();
-
-    expect(parser.field.input.value).toEqual({
-      name: 'Arya Stark'
-    });
+      }
+    }
   });
 
-  it('field.value should parse default non object value as an empty model', () => {
-    const options: ParserOptions<any, ScalarDescriptor> = {
-      schema: { type: 'object' },
-      model: undefined,
-      descriptorConstructor: new NativeDescriptor(NativeElements)
-    };
-
-    const parser = new ObjectParser(options);
-
-    parser.parse();
-
-    expect(parser.field.input.value).toEqual({});
+  TestParser.Case({
+    case: '2.0',
+    description: 'should successfully parse default object value',
+    given: {
+      parser: new ObjectParser({
+        schema: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' }
+          },
+          default: {
+            name: 'Arya Stark'
+          }
+        },
+        model: undefined
+      })
+    },
+    expected: {
+      parser: {
+        field: {
+          value: ({ value }: Scope) => expect(value).toEqual({ name: 'Arya Stark' })
+        }
+      }
+    }
   });
 
-  describe('schema with empty schema.properties', () => {
-    const options: ParserOptions<any, ScalarDescriptor> = {
-      schema: {
-        type: 'object',
-        properties: {}
-      },
-      model: {},
-      descriptorConstructor: new NativeDescriptor(NativeElements)
-    };
-
-    const parser = new ObjectParser(options);
-
-    parser.parse();
-
-    it('parser.orderedProperties have equal to an empty array', () => {
-      expect(parser.orderedProperties).toEqual([]);
-    });
+  TestParser.Case({
+    case: '2.1',
+    description: 'field.value should parse default non object value as an empty model',
+    given: {
+      parser: new ObjectParser({
+        schema: { type: 'object' },
+        model: undefined
+      })
+    },
+    expected: {
+      parser: {
+        field: {
+          value: ({ value }: Scope) => expect(value).toEqual({})
+        }
+      }
+    }
   });
+
+  // describe('schema with empty schema.properties', () => {
+  //   const options: ParserOptions<any, any> = {
+  //     schema: {
+  //       type: 'object',
+  //       properties: {}
+  //     },
+  //     model: {}
+  //   };
+
+  //   const parser = new ObjectParser(options);
+
+  //   parser.parse();
+
+  //   it('parser.orderedProperties have equal to an empty array', () => {
+  //     expect(parser.orderedProperties).toEqual([]);
+  //   });
+  // });
 
   describe('schema with empty model', () => {
-    const options: ParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, any> = {
       schema: {
         type: 'object',
         properties: {
@@ -120,8 +133,7 @@ describe('parsers/ObjectParser', () => {
         },
         required: ['name']
       },
-      model: {},
-      descriptorConstructor: new NativeDescriptor(NativeElements)
+      model: {}
     };
 
     const parser = new ObjectParser(options);
@@ -129,12 +141,12 @@ describe('parsers/ObjectParser', () => {
     parser.parse();
 
     it('field.value should be equal to an empty object', () => {
-      expect(parser.field.input.value).toEqual({ name: undefined });
+      expect(parser.field.value).toEqual({ name: undefined });
     });
   });
 
   describe('schema with a defined schema.default', () => {
-    const options: ParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, any> = {
       schema: {
         type: 'object',
         properties: {
@@ -142,8 +154,7 @@ describe('parsers/ObjectParser', () => {
         },
         required: ['name']
       },
-      model: {},
-      descriptorConstructor: new NativeDescriptor(NativeElements)
+      model: {}
     };
 
     const parser = new ObjectParser(options);
@@ -151,61 +162,59 @@ describe('parsers/ObjectParser', () => {
     parser.parse();
 
     it('field.value should be equal to the default defined object', () => {
-      expect(parser.field.input.value).toEqual({ name: 'Goku' });
+      expect(parser.field.value).toEqual({ name: 'Goku' });
     });
   });
 
-  describe('with field.descriptor.order', () => {
-    const options: ParserOptions<any, ScalarDescriptor> = {
-      schema: {
-        type: 'object',
-        properties: {
-          firstName: { type: 'string' },
-          lastName: { type: 'string' },
-          dateBirth: { type: 'string' }
-        }
-      },
-      model: {},
-      descriptorConstructor: new NativeDescriptor(NativeElements)
-    };
+  // describe('with field.descriptor.order', () => {
+  //   const options: ParserOptions<any, any> = {
+  //     schema: {
+  //       type: 'object',
+  //       properties: {
+  //         firstName: { type: 'string' },
+  //         lastName: { type: 'string' },
+  //         dateBirth: { type: 'string' }
+  //       }
+  //     },
+  //     model: {}
+  //   };
 
-    const parser = new ObjectParser(options);
+  //   const parser = new ObjectParser(options);
 
-    parser.field.descriptor.order = ['lastName', 'dateBirth'];
+  //   parser.field.descriptor.order = ['lastName', 'dateBirth'];
 
-    parser.parse();
+  //   parser.parse();
 
-    it('parser.orderedProperties should be equal to an empty array', () => {
-      expect(parser.orderedProperties).toEqual(['lastName', 'dateBirth', 'firstName']);
-    });
-  });
+  //   it('parser.orderedProperties should be equal to an empty array', () => {
+  //     expect(parser.orderedProperties).toEqual(['lastName', 'dateBirth', 'firstName']);
+  //   });
+  // });
 
-  describe('with missing field.descriptor.order', () => {
-    const options: ParserOptions<any, ScalarDescriptor> = {
-      schema: {
-        type: 'object',
-        properties: {
-          firstName: { type: 'string' },
-          lastName: { type: 'string' }
-        }
-      },
-      model: {},
-      descriptorConstructor: new NativeDescriptor(NativeElements)
-    };
+  // describe('with missing field.descriptor.order', () => {
+  //   const options: ParserOptions<any, any> = {
+  //     schema: {
+  //       type: 'object',
+  //       properties: {
+  //         firstName: { type: 'string' },
+  //         lastName: { type: 'string' }
+  //       }
+  //     },
+  //     model: {}
+  //   };
 
-    const parser = new ObjectParser(options);
+  //   const parser = new ObjectParser(options);
 
-    delete parser.field.descriptor.order;
+  //   delete parser.field.descriptor.order;
 
-    parser.parse();
+  //   parser.parse();
 
-    it('parser.orderedProperties should be defined', () => {
-      expect(parser.orderedProperties).toEqual(['firstName', 'lastName']);
-    });
-  });
+  //   it('parser.orderedProperties should be defined', () => {
+  //     expect(parser.orderedProperties).toEqual(['firstName', 'lastName']);
+  //   });
+  // });
 
   describe('with nested object', () => {
-    const options: ParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, any> = {
       schema: {
         type: 'object',
         properties: {
@@ -219,20 +228,19 @@ describe('parsers/ObjectParser', () => {
           dateBirth: { type: 'string' }
         }
       },
-      model: {},
-      descriptorConstructor: new NativeDescriptor(NativeElements)
+      model: {}
     };
 
     const parser = new ObjectParser(options);
 
     parser.parse();
 
-    it('field.children.name should have a defined input.attrs.name', () => {
-      expect(parser.field.children[0].input.attrs.name).toBe('name');
+    it('field.children.name should have a defined attrs.name', () => {
+      expect(parser.field.children.name.attrs.name).toBe('name');
     });
 
     it('field.value should be defined as an empty object with nested properties', () => {
-      expect(parser.field.input.value).toEqual({
+      expect(parser.field.value).toEqual({
         name: {
           firstName: undefined,
           lastName: undefined
@@ -242,9 +250,9 @@ describe('parsers/ObjectParser', () => {
     });
 
     it('field.value should be updated when setting a child model', () => {
-      parser.field.children[1].input.setValue('-8600/01/02');
+      parser.field.children.dateBirth.setValue('-8600/01/02');
 
-      expect(parser.field.input.value).toEqual({
+      expect(parser.field.value).toEqual({
         name: {
           firstName: undefined,
           lastName: undefined
@@ -253,8 +261,8 @@ describe('parsers/ObjectParser', () => {
       });
     });
 
-    it('field.value should be equal to the defined model using field.input.setValue()', () => {
-      parser.field.input.setValue({
+    it('field.value should be equal to the defined model using field.setValue()', () => {
+      parser.field.setValue({
         name: {
           firstName: 'Tyrion',
           lastName: 'Lannister'
@@ -262,7 +270,7 @@ describe('parsers/ObjectParser', () => {
         dateBirth: '-8600/01/01'
       });
 
-      expect(parser.field.input.value).toEqual({
+      expect(parser.field.value).toEqual({
         name: {
           firstName: 'Tyrion',
           lastName: 'Lannister'
@@ -288,40 +296,64 @@ describe('parsers/ObjectParser', () => {
       }
     },
     model: {},
-    descriptorConstructor: new NativeDescriptor(NativeElements),
     bracketedObjectInputName: bracketedObjectInputNameValue
   });
 
   TestParser.Case({
     case: '7.0',
     description: 'field.deep validation',
-    parser: new ObjectParser(options7(true)),
+    given: {
+      parser: new ObjectParser(options7(true))
+    },
     expected: {
-      field: {
-        deep: (value: number) => expect(value).toBe(0),
-        children: (values: ObjectField[]) => values.forEach(({ deep }) => expect(deep).toBe(1))
+      parser: {
+        field: {
+          deep: ({ value }: Scope) => expect(value).toBe(0),
+          children: {
+            name: {
+              deep: ({ value }: Scope) => expect(value).toBe(1),
+              children: {
+                first: {
+                  deep: ({ value }: Scope) => expect(value).toBe(2)
+                },
+                last: {
+                  deep: ({ value }: Scope) => expect(value).toBe(2)
+                }
+              }
+            },
+            dateBirth: {
+              deep: ({ value }: Scope) => expect(value).toBe(1)
+            }
+          }
+        }
       }
     }
   });
 
-  const names = ['name', 'dateBirth'];
-  const nestedNames = ['first', 'last'];
-
   TestParser.Case({
     case: '8.0',
     description: 'nested object with name and bracketedObjectInputName === true',
-    parser: new ObjectParser(options7(true)),
+    given: {
+      parser: new ObjectParser(options7(true))
+    },
     expected: {
-      children(items: ListField[]) {
-        items.forEach(({ kind, name, children }: any, i: number) => {
-          if (kind === 'object') {
-            children.forEach(({ name: nestedName }: any, j: number) => {
-              expect(nestedName).toBe(`user[${names[i]}][${nestedNames[j]}]`);
-            });
-          } else {
-            expect(name).toBe(`user[${names[i]}]`);
+      parser: {
+        children: {
+          name: {
+            name: ({ value }: Scope) => expect(value).toBe('user[name]'),
+            children: {
+              first: {
+                name: ({ value }: Scope) => expect(value).toBe('user[name][first]')
+              },
+              last: {
+                name: ({ value }: Scope) => expect(value).toBe('user[name][last]')
+              }
+            }
+          },
+          dateBirth: {
+            name: ({ value }: Scope) => expect(value).toBe('user[dateBirth]')
           }
-        });
+        }
       }
     }
   });
@@ -329,18 +361,27 @@ describe('parsers/ObjectParser', () => {
   TestParser.Case({
     case: '8.1',
     description: 'nested object with name and bracketedObjectInputName === false',
-    parser: new ObjectParser(options7(false)),
+    given: {
+      parser: new ObjectParser(options7(false))
+    },
     expected: {
-      children(items: ListField[]) {
-        items.forEach(({ kind, name, children }: any, i: number) => {
-          if (kind === 'object') {
-            children.forEach(({ name: nestedName }: any, j: number) => {
-              expect(nestedName).toBe(`user.${names[i]}.${nestedNames[j]}`);
-            });
-          } else {
-            expect(name).toBe(`user.${names[i]}`);
+      parser: {
+        children: {
+          name: {
+            name: ({ value }: Scope) => expect(value).toBe('user.name'),
+            children: {
+              first: {
+                name: ({ value }: Scope) => expect(value).toBe('user.name.first')
+              },
+              last: {
+                name: ({ value }: Scope) => expect(value).toBe('user.name.last')
+              }
+            }
+          },
+          dateBirth: {
+            name: ({ value }: Scope) => expect(value).toBe('user.dateBirth')
           }
-        });
+        }
       }
     }
   });
@@ -348,36 +389,45 @@ describe('parsers/ObjectParser', () => {
   TestParser.Case({
     case: '9.0',
     description: 'isEmpty() with an empty object',
-    parser: new ObjectParser({
-      schema: { type: 'object' },
-      descriptorConstructor: new NativeDescriptor(NativeElements)
-    }),
+    given: {
+      parser: new ObjectParser({
+        schema: { type: 'object' }
+      })
+    },
     expected: {
-      isEmpty: (fn: Function) => expect(fn({})).toBeTruthy()
+      parser: {
+        isEmpty: ({ parser }: Scope) => expect(parser.isEmpty({})).toBeTruthy()
+      }
     }
   });
 
   TestParser.Case({
     case: '9.1',
     description: 'isEmpty() with a non empty object',
-    parser: new ObjectParser({
-      schema: { type: 'object' },
-      descriptorConstructor: new NativeDescriptor(NativeElements)
-    }),
+    given: {
+      parser: new ObjectParser({
+        schema: { type: 'object' }
+      })
+    },
     expected: {
-      isEmpty: (fn: Function) => expect(fn({ x: 12 })).toBeFalsy()
+      parser: {
+        isEmpty: ({ parser }: Scope) => expect(parser.isEmpty({ x: 12 })).toBeFalsy()
+      }
     }
   });
 
   TestParser.Case({
     case: '9.2',
     description: 'isEmpty() with default value',
-    parser: new ObjectParser({
-      schema: { type: 'object', default: { x: 12 } },
-      descriptorConstructor: new NativeDescriptor(NativeElements)
-    }),
+    given: {
+      parser: new ObjectParser({
+        schema: { type: 'object', default: { x: 12 } }
+      })
+    },
     expected: {
-      isEmpty: (fn: Function, parser: ObjectParser) => expect(fn.apply(parser)).toBeFalsy()
+      parser: {
+        isEmpty: ({ parser }: Scope) => expect(parser.isEmpty()).toBeFalsy()
+      }
     }
   });
 
@@ -391,22 +441,25 @@ describe('parsers/ObjectParser', () => {
       dependencies: {
         credit_card: ['billing_address']
       }
-    },
-    descriptorConstructor: new NativeDescriptor(NativeElements)
+    }
   };
 
   TestParser.Case({
     case: '10.0',
     description: 'parseDependencies() with Property Dependencies',
-    parser: new ObjectParser(options100),
+    given: {
+      parser: new ObjectParser(options100)
+    },
     expected: {
-      properties: (value: Dictionary<JsonSchema>, { schema: { properties } }: ObjectParser) => {
-        expect(value).not.toBe(properties);
-        expect(value).toEqual(properties);
-      },
-      dependencies: (value: Dictionary<string[]>, { schema: { dependencies } }: ObjectParser) => {
-        expect(value).not.toBe(dependencies);
-        expect(value).toEqual(dependencies);
+      parser: {
+        properties({ value, parser: { schema: { properties } } }: Scope) {
+          expect(value).not.toBe(properties);
+          expect(value).toEqual(properties);
+        },
+        dependencies({ value, parser: { schema: { dependencies } } }: Scope) {
+          expect(value).not.toBe(dependencies);
+          expect(value).toEqual(dependencies);
+        }
       }
     }
   });
@@ -414,40 +467,43 @@ describe('parsers/ObjectParser', () => {
   TestParser.Case({
     case: '10.1',
     description: 'parseDependencies() with Schema Dependencies',
-    parser: new ObjectParser({
-      schema: {
-        type: 'object',
-        properties: {
-          name: { type: 'string' },
-          credit_card: { type: 'number' }
-        },
-        dependencies: {
-          name: {
-            type: 'object'
+    given: {
+      parser: new ObjectParser({
+        schema: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            credit_card: { type: 'number' }
           },
-          credit_card: {
-            type: 'object',
-            properties: {
-              billing_address: { type: 'string' }
+          dependencies: {
+            name: {
+              type: 'object'
+            },
+            credit_card: {
+              type: 'object',
+              properties: {
+                billing_address: { type: 'string' }
+              }
             }
           }
         }
-      },
-      descriptorConstructor: new NativeDescriptor(NativeElements)
-    }),
+      })
+    },
     expected: {
-      properties(value: Dictionary<JsonSchema>) {
-        expect(value).toEqual({
-          name: { type: 'string' },
-          credit_card: { type: 'number' },
-          billing_address: { type: 'string' }
-        });
-      },
-      dependencies(value: Dictionary<string[]>) {
-        expect(value).toEqual({
-          name: [],
-          credit_card: ['billing_address']
-        });
+      parser: {
+        properties({ value }: Scope) {
+          expect(value).toEqual({
+            name: { type: 'string' },
+            credit_card: { type: 'number' },
+            billing_address: { type: 'string' }
+          });
+        },
+        dependencies({ value }: Scope) {
+          expect(value).toEqual({
+            name: [],
+            credit_card: ['billing_address']
+          });
+        }
       }
     }
   });
@@ -455,11 +511,17 @@ describe('parsers/ObjectParser', () => {
   TestParser.Case({
     case: '11.0',
     description: 'updateDependencies() with Property Dependencies',
-    parser: new ObjectParser(options100),
+    given: {
+      parser: new ObjectParser(options100)
+    },
     expected: {
-      field: {
-        children(values: ObjectField[]) {
-          values.forEach(({ required }) => expect(required).toBeFalsy());
+      parser: {
+        field: {
+          children({ value }: Scope) {
+            for (const key in value) {
+              expect(value[key].required).toBeFalsy();
+            }
+          }
         }
       }
     }
@@ -468,28 +530,33 @@ describe('parsers/ObjectParser', () => {
   TestParser.Case({
     case: '11.1',
     description: 'updateDependencies() with Property Dependencies',
-    parser: () => {
-      const requestRender = jest.fn();
-      const parser = new ObjectParser({ ...options100, requestRender });
+    given: {
+      parser() {
+        const requestRender = jest.fn();
+        const parser = new ObjectParser({ ...options100, requestRender });
 
-      parser.parse();
-      parser.field.children[0].input.setValue(123);
+        parser.parse();
+        parser.field.children.credit_card.setValue(123);
 
-      return parser;
+        return parser;
+      }
     },
     expected: {
-      field: {
-        children(values: ObjectField[], { options }: any) {
-          const [ [ [ creditCardField, billingAddressField ] ] ] = options.requestRender.mock.calls;
+      parser: {
+        field: {
+          children({ parser }: Scope) {
+            const options: any = parser.options;
+            const [ [ [ creditCardField, billingAddressField ] ] ] = options.requestRender.mock.calls;
 
-          expect(options.requestRender).toBeCalled();
+            expect(options.requestRender).toBeCalled();
 
-          expect(creditCardField.name).toBe('credit_card');
-          expect(creditCardField.input.value).toBe(123);
-          expect(creditCardField.required).toBeTruthy();
+            expect(creditCardField.name).toBe('credit_card');
+            expect(creditCardField.value).toBe(123);
+            expect(creditCardField.required).toBeTruthy();
 
-          expect(billingAddressField.name).toBe('billing_address');
-          expect(billingAddressField.required).toBeTruthy();
+            expect(billingAddressField.name).toBe('billing_address');
+            expect(billingAddressField.required).toBeTruthy();
+          }
         }
       }
     }
@@ -498,52 +565,55 @@ describe('parsers/ObjectParser', () => {
   TestParser.Case({
     case: '11.2',
     description: 'updateDependencies() with Bidirectional Property Dependencies',
-    parser: () => {
-      const schema: JsonSchema = {
-        type: 'object',
-        properties: {
-          credit_card: {
-            type: 'number'
+    given: {
+      parser() {
+        const schema: JsonSchema = {
+          type: 'object',
+          properties: {
+            credit_card: {
+              type: 'number'
+            },
+            billing_address: {
+              type: 'string'
+            }
           },
-          billing_address: {
-            type: 'string'
+          dependencies: {
+            credit_card: [
+              'billing_address'
+            ],
+            billing_address: [
+              'credit_card'
+            ]
           }
-        },
-        dependencies: {
-          credit_card: [
-            'billing_address'
-          ],
-          billing_address: [
-            'credit_card'
-          ]
-        }
-      };
+        };
 
-      const requestRender = jest.fn();
-      const descriptorConstructor = new NativeDescriptor(NativeElements);
+        const requestRender = jest.fn();
+        const parser = new ObjectParser({ schema, requestRender });
 
-      const parser = new ObjectParser({ schema, requestRender, descriptorConstructor });
+        parser.parse();
+        parser.field.children.credit_card.setValue(123);
+        parser.field.children.billing_address.setValue('Darling Street');
+        parser.field.children.billing_address.setValue('');
 
-      parser.parse();
-      parser.field.children[0].input.setValue(123);
-      parser.field.children[1].input.setValue('Darling Street');
-      parser.field.children[1].input.setValue('');
-
-      return parser;
+        return parser;
+      }
     },
     expected: {
-      field: {
-        children(values: ObjectField[], { options }: any) {
-          const [ [ [ creditCardField, billingAddressField ] ] ] = options.requestRender.mock.calls;
+      parser: {
+        field: {
+          children({ parser }: Scope) {
+            const options: any = parser.options;
+            const [ [ [ creditCardField, billingAddressField ] ] ] = options.requestRender.mock.calls;
 
-          expect(options.requestRender).toBeCalled();
+            expect(options.requestRender).toBeCalled();
 
-          expect(creditCardField.name).toBe('credit_card');
-          expect(creditCardField.input.value).toBe(123);
+            expect(creditCardField.name).toBe('credit_card');
+            expect(creditCardField.value).toBe(123);
 
-          expect(billingAddressField.name).toBe('billing_address');
-          expect(billingAddressField.input.value).toBe('');
-          expect(billingAddressField.required).toBeTruthy();
+            expect(billingAddressField.name).toBe('billing_address');
+            expect(billingAddressField.value).toBe('');
+            expect(billingAddressField.required).toBeTruthy();
+          }
         }
       }
     }
@@ -552,46 +622,50 @@ describe('parsers/ObjectParser', () => {
   TestParser.Case({
     case: '12.0',
     description: 'parser.reset()',
-    parser: () => {
-      const model = { name: 'arya' };
-      const onChange = jest.fn();
-      const parser = new ObjectParser({ ...options, model, onChange });
+    given: {
+      parser() {
+        const model = { name: 'arya' };
+        const onChange = jest.fn();
+        const parser = new ObjectParser({ ...options, model, onChange });
 
-      parser.parse();
+        parser.parse();
 
-      return parser;
+        return parser;
+      }
     },
     expected: {
-      reset(fn: Function, parser: any) {
-        const onChange = parser.options.onChange;
-        const expected = [
-          { name: 'arya' },
-          { name: 'jon' }
-        ];
+      parser: {
+        reset({ value, parser }: Scope) {
+          const onChange: any = parser.options.onChange;
+          const expected = [
+            { name: 'arya' },
+            { name: 'jon' }
+          ];
 
-        expect(parser.rawValue).toEqual({ name: 'arya' });
-        expect(parser.model).toEqual({ name: 'arya' });
-        expect(onChange.mock.calls.length).toBe(1);
-        expect(onChange.mock.calls[0][0]).toEqual(expected[0]);
+          expect(parser.rawValue).toEqual({ name: 'arya' });
+          expect(parser.model).toEqual({ name: 'arya' });
+          expect(onChange.mock.calls.length).toBe(1);
+          expect(onChange.mock.calls[0][0]).toEqual(expected[0]);
 
-        parser.field.children[0].input.setValue('jon');
+          parser.field.children.name.setValue('jon');
 
-        expect(onChange.mock.calls.length).toBe(2);
-        expect(onChange.mock.calls[1][0]).toEqual(expected[1]);
-        expect(parser.rawValue).toEqual({ name: 'jon' });
-        expect(parser.model).toEqual({ name: 'jon' });
+          expect(onChange.mock.calls.length).toBe(2);
+          expect(onChange.mock.calls[1][0]).toEqual(expected[1]);
+          expect(parser.rawValue).toEqual({ name: 'jon' });
+          expect(parser.model).toEqual({ name: 'jon' });
 
-        parser.reset(); // reset without calling onChange
+          parser.reset(); // reset without calling onChange
 
-        expect(onChange.mock.calls.length).toBe(2);
-        expect(parser.initialValue).toEqual({ name: 'arya' });
-        expect(parser.rawValue).toEqual({ name: 'arya' });
-        expect(parser.model).toEqual({ name: 'arya' });
+          expect(onChange.mock.calls.length).toBe(2);
+          expect(parser.initialValue).toEqual({ name: 'arya' });
+          expect(parser.rawValue).toEqual({ name: 'arya' });
+          expect(parser.model).toEqual({ name: 'arya' });
 
-        parser.field.input.reset(); // reset with calling onChange
+          parser.field.reset(); // reset with calling onChange
 
-        expect(onChange.mock.calls.length).toBe(3);
-        expect(onChange.mock.calls[2][0]).toEqual(expected[0]);
+          expect(onChange.mock.calls.length).toBe(3);
+          expect(onChange.mock.calls[2][0]).toEqual(expected[0]);
+        }
       }
     }
   });
@@ -599,46 +673,50 @@ describe('parsers/ObjectParser', () => {
   TestParser.Case({
     case: '13.0',
     description: 'parser.clear()',
-    parser: () => {
-      const model = { name: 'arya' };
-      const onChange = jest.fn();
-      const parser = new ObjectParser({ ...options, model, onChange });
+    given: {
+      parser() {
+        const model = { name: 'arya' };
+        const onChange = jest.fn();
+        const parser = new ObjectParser({ ...options, model, onChange });
 
-      parser.parse();
+        parser.parse();
 
-      return parser;
+        return parser;
+      }
     },
     expected: {
-      clear(fn: Function, parser: any) {
-        const onChange = parser.options.onChange;
-        const expected = [
-          { name: 'arya' },
-          { name: 'jon' }
-        ];
+      parser: {
+        clear({ value, parser }: Scope) {
+          const onChange: any = parser.options.onChange;
+          const expected = [
+            { name: 'arya' },
+            { name: 'jon' }
+          ];
 
-        expect(parser.rawValue).toEqual({ name: 'arya' });
-        expect(parser.model).toEqual({ name: 'arya' });
-        expect(onChange.mock.calls.length).toBe(1);
-        expect(onChange.mock.calls[0][0]).toEqual(expected[0]);
+          expect(parser.rawValue).toEqual({ name: 'arya' });
+          expect(parser.model).toEqual({ name: 'arya' });
+          expect(onChange.mock.calls.length).toBe(1);
+          expect(onChange.mock.calls[0][0]).toEqual(expected[0]);
 
-        parser.field.children[0].input.setValue('jon');
+          parser.field.children.name.setValue('jon');
 
-        expect(onChange.mock.calls.length).toBe(2);
-        expect(onChange.mock.calls[1][0]).toEqual(expected[1]);
-        expect(parser.rawValue).toEqual({ name: 'jon' });
-        expect(parser.model).toEqual({ name: 'jon' });
+          expect(onChange.mock.calls.length).toBe(2);
+          expect(onChange.mock.calls[1][0]).toEqual(expected[1]);
+          expect(parser.rawValue).toEqual({ name: 'jon' });
+          expect(parser.model).toEqual({ name: 'jon' });
 
-        parser.clear(); // clear without calling onChange
+          parser.clear(); // clear without calling onChange
 
-        expect(onChange.mock.calls.length).toBe(2);
-        expect(parser.initialValue).toEqual({ name: 'arya' });
-        expect(parser.rawValue).toEqual({});
-        expect(parser.model).toEqual({});
+          expect(onChange.mock.calls.length).toBe(2);
+          expect(parser.initialValue).toEqual({ name: 'arya' });
+          expect(parser.rawValue).toEqual({});
+          expect(parser.model).toEqual({});
 
-        parser.field.input.clear(); // clear with calling onChange
+          parser.field.clear(); // clear with calling onChange
 
-        expect(onChange.mock.calls.length).toBe(3);
-        expect(onChange.mock.calls[2][0]).toEqual({});
+          expect(onChange.mock.calls.length).toBe(3);
+          expect(onChange.mock.calls[2][0]).toEqual({});
+        }
       }
     }
   });

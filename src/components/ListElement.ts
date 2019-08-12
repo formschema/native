@@ -6,15 +6,8 @@ export const ListElement: ListComponent = {
   name: 'ListElement',
   functional: true,
   render(h, { data, props }) {
-    const items = [ ...props.field.items ];
-
-    items.unshift({
-      label: props.field.input.props.placeholder,
-      value: '',
-      selected: false
-    });
-
-    const children = items.map(({ label, value, selected }) => {
+    const descriptor = props.descriptor;
+    const children = descriptor.options.map(({ label, value, selected }) => {
       return h('option', { attrs: { value, selected } }, label);
     });
 

@@ -1,11 +1,8 @@
 import { mount } from '@vue/test-utils';
 import { FieldElement } from '@/components/FieldElement';
-import { StringParser } from '@/parsers/StringParser';
-import { Dictionary, ScalarDescriptor, ParserOptions } from '@/types';
-import { NativeDescriptor } from '@/lib/NativeDescriptor';
-import { NativeElements } from '@/lib/NativeElements';
+import { Options } from '../../lib/Options';
 
-const options: ParserOptions<string, ScalarDescriptor> = {
+const { context, descriptor } = Options.get({
   schema: {
     type: 'string',
     pattern: 'arya|jon',
@@ -16,28 +13,15 @@ const options: ParserOptions<string, ScalarDescriptor> = {
   },
   model: 'Goku',
   id: 'id-name',
-  name: 'name',
-  descriptorConstructor: new NativeDescriptor(NativeElements)
+  name: 'name'
+});
+
+const stubs: any = {
+  HelperElement: true
 };
-
-const parser = new StringParser(options);
-
-parser.parse();
 
 describe('components/FieldElement', () => {
   it('should successfully render component', () => {
-    const context: any = {
-      attrs: parser.field.input.attrs,
-      props: {
-        field: parser.field
-      },
-      children: []
-    };
-
-    const stubs: any = {
-      HelperElement: true
-    };
-
     const wrapper = mount(FieldElement, { context, stubs });
     const expected = '<div data-fs-kind="string" data-fs-type="text" data-fs-field="name"><label id="id-name-label" for="id-name">Name</label><div data-fs-wrapper="2"><div data-fs-input="text"></div><p id="id-name-helper">Your full name</p></div></div>';
 
@@ -45,20 +29,8 @@ describe('components/FieldElement', () => {
     expect(wrapper.html()).toBe(expected);
   });
 
-  it('should successfully render component with missing field.input.attrs.type', () => {
-    delete parser.field.input.attrs.type;
-
-    const context: any = {
-      attrs: parser.field.input.attrs,
-      props: {
-        field: parser.field
-      },
-      children: []
-    };
-
-    const stubs: any = {
-      HelperElement: true
-    };
+  it('should successfully render component with missing descriptor.attrs.type', () => {
+    delete descriptor.attrs.type;
 
     const wrapper = mount(FieldElement, { context, stubs });
     const expected = '<div data-fs-kind="string" data-fs-type="string" data-fs-field="name"><label id="id-name-label" for="id-name">Name</label><div data-fs-wrapper="2"><div data-fs-input="string"></div><p id="id-name-helper">Your full name</p></div></div>';

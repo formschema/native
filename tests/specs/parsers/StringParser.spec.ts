@@ -1,20 +1,18 @@
 import { Parser } from '@/parsers/Parser';
 import { StringParser } from '@/parsers/StringParser';
-import { Dictionary, ScalarDescriptor, ParserOptions } from '@/types';
-import { NativeDescriptor } from '@/lib/NativeDescriptor';
-import { NativeElements } from '@/lib/NativeElements';
-import { TestParser } from '../../lib/TestParser';
+import { Dict, ParserOptions } from '@/types';
+import { Options } from '../../lib/Options';
+import { TestParser, Scope } from '../../lib/TestParser';
 
 describe('parsers/StringParser', () => {
-  const options: ParserOptions<string, ScalarDescriptor> = {
+  const options: ParserOptions<string, any> = {
     schema: {
       type: 'string',
       pattern: 'arya|jon',
       minLength: 5,
       maxLength: 15
     },
-    model: 'Goku',
-    descriptorConstructor: new NativeDescriptor(NativeElements)
+    model: 'Goku'
   };
 
   const parser = new StringParser(options);
@@ -29,29 +27,15 @@ describe('parsers/StringParser', () => {
     expect(parser.kind).toBe('string');
   });
 
-  it('parser.type should have equal to `text` string schema', () => {
-    expect(parser.type).toBe('text');
+  it('parser.attrs.type should have equal to `text` string schema', () => {
+    expect(parser.attrs.type).toBe('text');
   });
 
-  it('field.input.attrs.type should be equal to `text`', () => {
-    expect(parser.field.input.attrs.type).toBe('text');
+  it('field.attrs.type should be equal to `text`', () => {
+    expect(parser.field.attrs.type).toBe('text');
   });
 
-  it('parser.type should be equal to `radio` for enum field', () => {
-    const options: ParserOptions<string, ScalarDescriptor> = {
-      schema: { type: 'string' },
-      model: '',
-      descriptorConstructor: new NativeDescriptor(NativeElements)
-    };
-
-    const parser: any = new StringParser(options);
-
-    parser.isEnumItem = true;
-
-    expect(parser.type).toBe('radio');
-  });
-
-  const formatTypes: Dictionary = {
+  const formatTypes: Dict = {
     date: 'date',
     'date-time': 'datetime-local',
     email: 'email',
@@ -63,349 +47,360 @@ describe('parsers/StringParser', () => {
   Object.keys(formatTypes).forEach((format) => {
     const type = formatTypes[format];
 
-    it(`field.input.attrs.type should be equal to '${type}' with schema.format === '${format}'`, () => {
-      const options: ParserOptions<string, ScalarDescriptor> = {
+    it(`field.attrs.type should be equal to '${type}' with schema.format === '${format}'`, () => {
+      const options: ParserOptions<string, any> = {
         schema: { type: 'string', format },
-        model: '',
-        descriptorConstructor: new NativeDescriptor(NativeElements)
+        model: ''
       };
 
       const parser = new StringParser(options);
 
       parser.parse();
 
-      expect(parser.field.input.attrs.type).toBe(type);
+      expect(parser.field.attrs.type).toBe(type);
     });
   });
 
   it('field.value should be equal to the default value', () => {
-    expect(parser.field.input.value).toBe('Goku');
+    expect(parser.field.value).toBe('Goku');
   });
 
-  it('field.input.attrs.value should be equal to field.value', () => {
-    expect(parser.field.input.attrs.value).toBe(parser.field.input.value);
+  it('field.attrs.value should be equal to field.value', () => {
+    expect(parser.field.attrs.value).toBe(parser.field.value);
   });
 
-  it('field.input.attrs.minlength should be equal to schema.minLength', () => {
-    expect(parser.field.input.attrs.minlength).toBe(options.schema.minLength);
+  it('field.attrs.minlength should be equal to schema.minLength', () => {
+    expect(parser.field.attrs.minlength).toBe(options.schema.minLength);
   });
 
-  it('field.input.attrs.maxlength should be equal to schema.maxLength', () => {
-    expect(parser.field.input.attrs.maxlength).toBe(options.schema.maxLength);
+  it('field.attrs.maxlength should be equal to schema.maxLength', () => {
+    expect(parser.field.attrs.maxlength).toBe(options.schema.maxLength);
   });
 
-  it('field.input.attrs.pattern should be equal to schema.pattern', () => {
-    expect(parser.field.input.attrs.pattern).toBe(options.schema.pattern);
-  });
-
-  it('field.input.attrs.pattern should be equal to schema.pattern with provided schema.const', () => {
-    const options: ParserOptions<any, ScalarDescriptor> = {
-      schema: { type: 'string', pattern: 'arya|jon', const: 'arya' },
-      model: undefined,
-      descriptorConstructor: new NativeDescriptor(NativeElements)
-    };
-
-    const parser = new StringParser(options);
-
-    parser.parse();
-
-    expect(parser.field.input.attrs.pattern).toBe(options.schema.pattern);
-  });
-
-  it('field.input.attrs.pattern should be equal to schema.const', () => {
-    const options: ParserOptions<any, ScalarDescriptor> = {
-      schema: { type: 'string', const: 'arya' },
-      model: undefined,
-      descriptorConstructor: new NativeDescriptor(NativeElements)
-    };
-
-    const parser = new StringParser(options);
-
-    parser.parse();
-
-    expect(parser.field.input.attrs.pattern).toBe(options.schema.const);
-  });
-
-  it('field.input.attrs.pattern should be equal to escaped schema.const', () => {
-    const options: ParserOptions<any, ScalarDescriptor> = {
-      schema: { type: 'string', const: 'f(x) = ax + b; a = { 1, 2 }' },
-      model: undefined,
-      descriptorConstructor: new NativeDescriptor(NativeElements)
-    };
-
-    const parser = new StringParser(options);
-
-    parser.parse();
-
-    expect(parser.field.input.attrs.pattern).toBe('f\\(x\\) = ax \\+ b; a = \\{ 1, 2 \\}');
+  it('field.attrs.pattern should be equal to schema.pattern', () => {
+    expect(parser.field.attrs.pattern).toBe(options.schema.pattern);
   });
 
   it('should parse default undefined value as an undefined string', () => {
-    const options: ParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, any> = {
       schema: { type: 'string' },
-      model: undefined,
-      descriptorConstructor: new NativeDescriptor(NativeElements)
+      model: undefined
     };
 
     const parser = new StringParser(options);
 
     parser.parse();
 
-    expect(parser.field.input.value).toBeUndefined();
+    expect(parser.field.value).toBeUndefined();
   });
 
   it('should parse default non string value as a string', () => {
-    const options: ParserOptions<any, ScalarDescriptor> = {
+    const options: ParserOptions<any, any> = {
       schema: { type: 'string' },
-      model: 12,
-      descriptorConstructor: new NativeDescriptor(NativeElements)
+      model: 12
     };
 
     const parser = new StringParser(options);
 
     parser.parse();
 
-    expect(parser.field.input.value).toBe('12');
+    expect(parser.field.value).toBe('12');
   });
 
   TestParser.Case({
-    case: '1.0',
-    description: 'schema.contentMediaType with `text/*`',
-    parser: new StringParser({
-      schema: { type: 'string', contentMediaType: 'text/plain' },
-      model: undefined as any,
-      descriptorConstructor: new NativeDescriptor(NativeElements)
-    }),
-    expected: {
-      kind: (value: string) => expect(value).toBe('textarea'),
-      type: (value: string) => expect(value).toBeUndefined(),
-      attrs: {
-        accept: (value: string) => expect(value).toBeUndefined()
-      },
-      field: {
-        kind(value: string, parser: StringParser) {
-          expect(value).toBe(parser.kind);
-        }
-      },
-      descriptor: {
-        kind(value: string, parser: StringParser) {
-          expect(value).toBe(parser.kind);
-        }
-      }
-    }
-  });
-
-  TestParser.Case({
-    case: '1.1',
-    description: 'schema.contentMediaType with `image/*`',
-    parser: new StringParser({
-      schema: { type: 'string', contentMediaType: 'image/png' },
-      model: undefined as any,
-      descriptorConstructor: new NativeDescriptor(NativeElements)
-    }),
-    expected: {
-      kind: (value: string) => expect(value).toBe('image'),
-      type: (value: string) => expect(value).toBe('file'),
-      attrs: {
-        accept(value: string, { options }: StringParser) {
-          expect(value).toBe(options.schema.contentMediaType);
-        }
-      },
-      field: {
-        kind(value: string, parser: StringParser) {
-          expect(value).toBe(parser.kind);
-        }
-      },
-      descriptor: {
-        kind(value: string, parser: StringParser) {
-          expect(value).toBe(parser.kind);
-        }
-      }
-    }
-  });
-
-  TestParser.Case({
-    case: '1.2',
-    description: 'schema.contentMediaType with custom descriptor.kind',
-    parser: new StringParser({
-      schema: { type: 'string', contentMediaType: 'audio/ogg' },
-      model: undefined as any,
-      descriptor: { kind: 'string' },
-      descriptorConstructor: new NativeDescriptor(NativeElements)
-    }),
-    expected: {
-      kind: (value: string) => expect(value).toBe('file'),
-      type: (value: string) => expect(value).toBe('file'),
-      attrs: {
-        accept(value: string, { options }: StringParser) {
-          expect(value).toBe(options.schema.contentMediaType);
-        }
-      },
-      field: {
-        kind(value: string, parser: StringParser) {
-          expect(value).toBe(parser.kind);
-        }
-      },
-      descriptor: {
-        kind(value: string, parser: any) {
-          expect(value).toBe(parser.options.descriptor.kind);
-          expect(value).not.toBe(parser.kind);
-        }
-      }
-    }
-  });
-
-  TestParser.Case({
-    case: '1.3',
-    description: 'any other values for schema.contentMediaType',
-    parser: new StringParser({
-      schema: { type: 'string', contentMediaType: 'any/mime' },
-      model: undefined as any,
-      descriptorConstructor: new NativeDescriptor(NativeElements)
-    }),
-    expected: {
-      kind: (value: string) => expect(value).toBe('file'),
-      type: (value: string) => expect(value).toBe('file'),
-      attrs: {
-        accept(value: string, { options }: StringParser) {
-          expect(value).toBe(options.schema.contentMediaType);
-        }
-      },
-      field: {
-        kind(value: string, parser: StringParser) {
-          expect(value).toBe(parser.kind);
-        }
-      },
-      descriptor: {
-        kind(value: string, parser: StringParser) {
-          expect(value).toBe(parser.kind);
-        }
-      }
-    }
-  });
-
-  TestParser.Case({
-    case: '2.0',
-    description: 'parser.isEmpty() with non empty string',
-    parser: new StringParser({
-      schema: { type: 'string' },
-      model: undefined as any,
-      descriptorConstructor: new NativeDescriptor(NativeElements)
-    }),
-    expected: {
-      isEmpty: (fn: Function) => expect(fn('non empty')).toBeFalsy()
-    }
-  });
-
-  TestParser.Case({
-    case: '2.1',
-    description: 'parser.isEmpty() with an empty string',
-    parser: new StringParser({
-      schema: { type: 'string' },
-      model: undefined as any,
-      descriptorConstructor: new NativeDescriptor(NativeElements)
-    }),
-    expected: {
-      isEmpty: (fn: Function) => expect(fn('')).toBeTruthy()
-    }
-  });
-
-  TestParser.Case({
-    case: '2.2',
-    description: 'parser.isEmpty() with a non string',
-    parser: new StringParser({
-      schema: { type: 'string' },
-      model: 12 as any,
-      descriptorConstructor: new NativeDescriptor(NativeElements)
-    }),
-    expected: {
-      isEmpty: (fn: Function, parser: StringParser) => expect(fn.apply(parser, [12])).toBeTruthy()
-    }
-  });
-
-  TestParser.Case({
-    case: '2.3',
-    description: 'parser.isEmpty() with default value',
-    parser: new StringParser({
-      schema: { type: 'string' },
-      model: 'hello' as any,
-      descriptorConstructor: new NativeDescriptor(NativeElements)
-    }),
-    expected: {
-      isEmpty: (fn: Function, parser: StringParser) => expect(fn.apply(parser, [])).toBeFalsy()
-    }
-  });
-
-  TestParser.Case({
-    case: '3.0',
-    description: 'parser.reset()',
-    parser: () => {
-      const model = 'arya';
-      const onChange = jest.fn();
-      const parser = new StringParser({ ...options, model, onChange });
-
-      parser.parse();
-
-      return parser;
+    case: '1.0: schema.contentMediaType',
+    description: 'with `text/*`',
+    given: {
+      parser: new StringParser({
+        schema: { type: 'string', contentMediaType: 'text/plain' },
+        model: undefined as any
+      })
     },
     expected: {
-      reset(fn: Function, parser: any) {
-        expect(parser.rawValue).toBe('arya');
-        expect(parser.model).toBe('arya');
+      parser: {
+        kind: ({ value }: Scope) => expect(value).toBe('textarea'),
+        type: ({ value }: Scope) => expect(value).toBeUndefined(),
+        attrs: {
+          accept: ({ value }: Scope) => expect(value).toBeUndefined()
+        },
+        field: {
+          kind({ value, parser }: Scope) {
+            expect(value).toBe(parser.kind);
+          }
+        }
+      },
+      descriptor: {
+        kind({ value, descriptor }: Scope) {
+          expect(value).toBe(descriptor.field.kind);
+        }
+      }
+    }
+  });
 
-        parser.field.input.setValue('jon');
+  TestParser.Case({
+    case: '1.1: schema.contentMediaType',
+    description: 'with `image/*`',
+    given: {
+      parser: new StringParser({
+        schema: { type: 'string', contentMediaType: 'image/png' },
+        model: undefined as any
+      })
+    },
+    expected: {
+      parser: {
+        kind: ({ value }: Scope) => expect(value).toBe('image'),
+        attrs: {
+          type: ({ value }: Scope) => expect(value).toBe('file'),
+          accept({ value, parser: { options } }: Scope) {
+            expect(value).toBe(options.schema.contentMediaType);
+          }
+        },
+        field: {
+          kind({ value, parser }: Scope) {
+            expect(value).toBe(parser.kind);
+          }
+        }
+      },
+      descriptor: {
+        kind({ value, descriptor }: Scope) {
+          expect(value).toBe(descriptor.field.kind);
+        }
+      }
+    }
+  });
 
-        expect(parser.rawValue).toBe('jon');
-        expect(parser.model).toBe('jon');
+  TestParser.Case({
+    case: '1.2: schema.contentMediaType',
+    description: 'with custom descriptor.kind',
+    given: Options.get({
+      schema: { type: 'string', contentMediaType: 'audio/ogg' },
+      model: undefined as any,
+      descriptor: { kind: 'string' }
+    }),
+    expected: {
+      parser: {
+        kind: ({ value }: Scope) => expect(value).toBe('string'),
+        attrs: {
+          type: ({ value }: Scope) => expect(value).toBe('text'),
+          accept: ({ value }: Scope) => expect(value).toBeUndefined()
+        },
+        field: {
+          kind({ value, parser }: Scope) {
+            expect(value).toBe(parser.kind);
+          }
+        }
+      },
+      descriptor: {
+        kind({ value }: Scope) {
+          expect(value).toBe('string');
+        }
+      }
+    }
+  });
 
-        parser.reset(); // reset without calling onChange
+  TestParser.Case({
+    case: '1.3: schema.contentMediaType',
+    description: 'any other values',
+    given: {
+      parser: new StringParser({
+        schema: { type: 'string', contentMediaType: 'any/mime' },
+        model: undefined as any
+      })
+    },
+    expected: {
+      parser: {
+        kind: ({ value }: Scope) => expect(value).toBe('file'),
+        attrs: {
+          type: ({ value }: Scope) => expect(value).toBe('file'),
+          accept({ value, parser: { options } }: Scope) {
+            expect(value).toBe(options.schema.contentMediaType);
+          }
+        },
+        field: {
+          kind({ value, parser }: Scope) {
+            expect(value).toBe(parser.kind);
+          }
+        }
+      },
+      descriptor: {
+        kind({ value, descriptor: { field } }: Scope) {
+          expect(value).toBe(field.kind);
+        }
+      }
+    }
+  });
 
-        expect(parser.rawValue).toBe('arya');
-        expect(parser.model).toBe('arya');
+  TestParser.Case({
+    case: '2.0: schema.const',
+    description: 'with `image/*`',
+    given: {
+      parser: new StringParser({
+        schema: { type: 'string', contentMediaType: 'image/png' },
+        model: undefined as any
+      })
+    },
+    expected: {
+      parser: {
+        attrs: {
+          type: ({ value }: Scope) => expect(value).toBe('file'),
+          accept({ value, parser: { options } }: Scope) {
+            expect(value).toBe(options.schema.contentMediaType);
+          }
+        },
+        field: {
+          kind: ({ value }: Scope) => expect(value).toBe('image')
+        }
+      },
+      descriptor: {
+        kind({ value, descriptor: { field } }: Scope) {
+          expect(value).toBe(field.kind);
+        }
+      }
+    }
+  });
 
-        parser.field.input.reset(); // reset with calling onChange
+  TestParser.Case({
+    case: '3.0: parser.isEmpty()',
+    description: 'with non empty string',
+    given: {
+      parser: new StringParser({
+        schema: { type: 'string' },
+        model: undefined as any
+      })
+    },
+    expected: {
+      parser: {
+        isEmpty: ({ parser }: Scope) => expect(parser.isEmpty('non empty')).toBeFalsy()
+      }
+    }
+  });
 
-        const onChange = parser.options.onChange;
-        const result = onChange.mock.calls.map(([value]: any) => value);
+  TestParser.Case({
+    case: '3.1: parser.isEmpty()',
+    description: 'with an empty string',
+    given: {
+      parser: new StringParser({
+        schema: { type: 'string' },
+        model: undefined as any
+      })
+    },
+    expected: {
+      parser: {
+        isEmpty: ({ parser }: Scope) => expect(parser.isEmpty('')).toBeTruthy()
+      }
+    }
+  });
 
-        expect(result).toEqual(['arya', 'jon', 'arya']);
+  TestParser.Case({
+    case: '3.2: parser.isEmpty()',
+    description: 'with a non string',
+    given: {
+      parser: new StringParser({
+        schema: { type: 'string' },
+        model: 12 as any
+      })
+    },
+    expected: {
+      parser: {
+        isEmpty: ({ parser }: Scope) => expect(parser.isEmpty([12])).toBeTruthy()
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '3.3: parser.isEmpty()',
+    description: 'with default value',
+    given: {
+      parser: new StringParser({
+        schema: { type: 'string' },
+        model: 'hello' as any
+      })
+    },
+    expected: {
+      parser: {
+        isEmpty: ({ parser }: Scope) => expect(parser.isEmpty()).toBeFalsy()
       }
     }
   });
 
   TestParser.Case({
     case: '4.0',
-    description: 'parser.clear()',
-    parser: () => {
-      const model = 'arya';
-      const onChange = jest.fn();
-      const parser = new StringParser({ ...options, model, onChange });
+    description: 'parser.reset()',
+    given: {
+      parser() {
+        const model = 'arya';
+        const onChange = jest.fn();
+        const parser = new StringParser({ ...options, model, onChange });
 
-      parser.parse();
+        parser.parse();
 
-      return parser;
+        return parser;
+      }
     },
     expected: {
-      clear(fn: Function, parser: any) {
-        expect(parser.rawValue).toBe('arya');
-        expect(parser.model).toBe('arya');
+      parser: {
+        reset({ parser }: Scope) {
+          expect(parser.rawValue).toBe('arya');
+          expect(parser.model).toBe('arya');
 
-        parser.field.input.setValue('jon');
+          parser.field.setValue('jon');
 
-        expect(parser.rawValue).toBe('jon');
-        expect(parser.model).toBe('jon');
+          expect(parser.rawValue).toBe('jon');
+          expect(parser.model).toBe('jon');
 
-        parser.clear(); // clear without calling onChange
+          parser.reset(); // reset without calling onChange
 
-        expect(parser.rawValue).toBeUndefined();
-        expect(parser.model).toBeUndefined();
+          expect(parser.rawValue).toBe('arya');
+          expect(parser.model).toBe('arya');
 
-        parser.field.input.clear(); // clear with calling onChange
+          parser.field.reset(); // reset with calling onChange
 
-        const onChange = parser.options.onChange;
-        const result = onChange.mock.calls.map(([value]: any) => value);
+          const onChange: any = parser.options.onChange;
+          const result = onChange.mock.calls.map(([value]: any) => value);
 
-        expect(result).toEqual(['arya', 'jon', undefined]);
+          expect(result).toEqual(['arya', 'jon', 'arya']);
+        }
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '5.0',
+    description: 'parser.clear()',
+    given: {
+      parser() {
+        const model = 'arya';
+        const onChange = jest.fn();
+        const parser = new StringParser({ ...options, model, onChange });
+
+        parser.parse();
+
+        return parser;
+      }
+    },
+    expected: {
+      parser: {
+        clear({ parser }: Scope) {
+          expect(parser.rawValue).toBe('arya');
+          expect(parser.model).toBe('arya');
+
+          parser.field.setValue('jon');
+
+          expect(parser.rawValue).toBe('jon');
+          expect(parser.model).toBe('jon');
+
+          parser.clear(); // clear without calling onChange
+
+          expect(parser.rawValue).toBeUndefined();
+          expect(parser.model).toBeUndefined();
+
+          parser.field.clear(); // clear with calling onChange
+
+          const onChange: any = parser.options.onChange;
+          const result = onChange.mock.calls.map(([value]: any) => value);
+
+          expect(result).toEqual(['arya', 'jon', undefined]);
+        }
       }
     }
   });
