@@ -8,11 +8,11 @@ import { ArrayField, ParserOptions, FieldKind, ArrayItemField, UnknowParser, Arr
 export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
   readonly items: JsonSchema[] = [];
   additionalItems?: JsonSchema;
-  minItems: number = 0;
+  minItems = 0;
   maxItems?: number;
-  max: number = -1;
-  count: number = 0;
-  radioIndex: number = 0;
+  max = -1;
+  count = 0;
+  radioIndex = 0;
   childrenParsers: UnknowParser[] = [];
 
   constructor(options: ParserOptions<any>, parent?: UnknowParser) {

@@ -83,7 +83,6 @@ export abstract class Parser<
 
     const self = this;
 
-    // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
     this.attrs = {
       id: this.id,
       type: undefined,
@@ -103,7 +102,6 @@ export abstract class Parser<
       }
     } as TAttributes;
 
-    // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
     this.field = {
       key: UniqueId.get(options.id),
       kind: this.kind,

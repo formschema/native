@@ -32,6 +32,7 @@ module.exports = {
     '@typescript-eslint/explicit-member-accessibility': 'off',
     '@typescript-eslint/interface-name-prefix': 'off',
     '@typescript-eslint/no-empty-interface': 'off',
+    '@typescript-eslint/no-this-alias': 'off',
     'import/prefer-default-export': 'off',
     'import/no-extraneous-dependencies': 'off',
     'import/no-cycle': 'off',
