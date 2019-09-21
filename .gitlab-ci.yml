@@ -1,4 +1,4 @@
-image: node:current-alpine
+image: node:lts-alpine
 
 stages:
   - test
