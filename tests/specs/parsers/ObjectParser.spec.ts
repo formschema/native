@@ -106,178 +106,196 @@ describe('parsers/ObjectParser', () => {
     }
   });
 
-  // describe('schema with empty schema.properties', () => {
-  //   const options: ParserOptions<any, any> = {
-  //     schema: {
-  //       type: 'object',
-  //       properties: {}
-  //     },
-  //     model: {}
-  //   };
-
-  //   const parser = new ObjectParser(options);
-
-  //   parser.parse();
-
-  //   it('parser.orderedProperties have equal to an empty array', () => {
-  //     expect(parser.orderedProperties).toEqual([]);
-  //   });
-  // });
-
-  describe('schema with empty model', () => {
-    const options: ParserOptions<any, any> = {
-      schema: {
-        type: 'object',
-        properties: {
-          name: { type: 'string' }
-        },
-        required: ['name']
+  TestParser.Case({
+    case: '3.0',
+    description: 'schema with empty schema.properties',
+    given: {
+      parser: new ObjectParser({
+        schema: { type: 'object', properties: {} },
+        model: undefined
+      })
+    },
+    expected: {
+      parser: {
+        properties: ({ value }: Scope) => expect(value).toEqual({}),
+        dependencies: ({ value }: Scope) => expect(value).toEqual({}),
+        childrenParsers: ({ value }: Scope) => expect(value).toEqual({})
       },
-      model: {}
-    };
-
-    const parser = new ObjectParser(options);
-
-    parser.parse();
-
-    it('field.value should be equal to an empty object', () => {
-      expect(parser.field.value).toEqual({ name: undefined });
-    });
+      descriptor: {
+        properties: ({ value }: Scope) => expect(value).toEqual({}),
+        schemaProperties: ({ value }: Scope) => expect(value).toEqual({}),
+        groups: ({ value }: Scope) => expect(value).toEqual({}),
+        order: ({ value }: Scope) => expect(value).toEqual([]),
+        orderedProperties: ({ value }: Scope) => expect(value).toEqual([]),
+        parsedGroups: ({ value }: Scope) => expect(value).toEqual([])
+      }
+    }
   });
 
-  describe('schema with a defined schema.default', () => {
-    const options: ParserOptions<any, any> = {
-      schema: {
-        type: 'object',
-        properties: {
-          name: { type: 'string', default: 'Goku' }
-        },
-        required: ['name']
-      },
-      model: {}
-    };
-
-    const parser = new ObjectParser(options);
-
-    parser.parse();
-
-    it('field.value should be equal to the default defined object', () => {
-      expect(parser.field.value).toEqual({ name: 'Goku' });
-    });
-  });
-
-  // describe('with field.descriptor.order', () => {
-  //   const options: ParserOptions<any, any> = {
-  //     schema: {
-  //       type: 'object',
-  //       properties: {
-  //         firstName: { type: 'string' },
-  //         lastName: { type: 'string' },
-  //         dateBirth: { type: 'string' }
-  //       }
-  //     },
-  //     model: {}
-  //   };
-
-  //   const parser = new ObjectParser(options);
-
-  //   parser.field.descriptor.order = ['lastName', 'dateBirth'];
-
-  //   parser.parse();
-
-  //   it('parser.orderedProperties should be equal to an empty array', () => {
-  //     expect(parser.orderedProperties).toEqual(['lastName', 'dateBirth', 'firstName']);
-  //   });
-  // });
-
-  // describe('with missing field.descriptor.order', () => {
-  //   const options: ParserOptions<any, any> = {
-  //     schema: {
-  //       type: 'object',
-  //       properties: {
-  //         firstName: { type: 'string' },
-  //         lastName: { type: 'string' }
-  //       }
-  //     },
-  //     model: {}
-  //   };
-
-  //   const parser = new ObjectParser(options);
-
-  //   delete parser.field.descriptor.order;
-
-  //   parser.parse();
-
-  //   it('parser.orderedProperties should be defined', () => {
-  //     expect(parser.orderedProperties).toEqual(['firstName', 'lastName']);
-  //   });
-  // });
-
-  describe('with nested object', () => {
-    const options: ParserOptions<any, any> = {
-      schema: {
-        type: 'object',
-        properties: {
-          name: {
-            type: 'object',
-            properties: {
-              firstName: { type: 'string' },
-              lastName: { type: 'string' }
-            }
+  TestParser.Case({
+    case: '4.0',
+    description: 'schema with empty model should have field.value to equal to an empty object',
+    given: {
+      parser: new ObjectParser({
+        schema: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' }
           },
-          dateBirth: { type: 'string' }
+          required: ['name']
+        },
+        model: {}
+      })
+    },
+    expected: {
+      parser: {
+        field: {
+          value: ({ value }: Scope) => expect(value).toEqual({ name: undefined }),
         }
-      },
-      model: {}
-    };
+      }
+    }
+  });
 
-    const parser = new ObjectParser(options);
-
-    parser.parse();
-
-    it('field.children.name should have a defined attrs.name', () => {
-      expect(parser.field.children.name.attrs.name).toBe('name');
-    });
-
-    it('field.value should be defined as an empty object with nested properties', () => {
-      expect(parser.field.value).toEqual({
-        name: {
-          firstName: undefined,
-          lastName: undefined
+  TestParser.Case({
+    case: '4.1',
+    description: 'schema with a defined schema.default should have field.value to equal to the default defined object',
+    given: {
+      parser: new ObjectParser({
+        schema: {
+          type: 'object',
+          properties: {
+            name: { type: 'string', default: 'Goku' }
+          },
+          required: ['name']
         },
-        dateBirth: undefined
-      });
-    });
+        model: {}
+      })
+    },
+    expected: {
+      parser: {
+        field: {
+          value: ({ value }: Scope) => expect(value).toEqual({ name: 'Goku' }),
+        }
+      }
+    }
+  });
 
-    it('field.value should be updated when setting a child model', () => {
-      parser.field.children.dateBirth.setValue('-8600/01/02');
-
-      expect(parser.field.value).toEqual({
-        name: {
-          firstName: undefined,
-          lastName: undefined
+  TestParser.Case({
+    case: '5.0',
+    description: 'with field.descriptor.order, descriptor.orderedProperties should be filled with ordered fields',
+    given: {
+      parser: new ObjectParser({
+        schema: {
+          type: 'object',
+          properties: {
+            firstName: { type: 'string' },
+            lastName: { type: 'string' },
+            dateBirth: { type: 'string' }
+          }
         },
-        dateBirth: '-8600/01/02'
-      });
-    });
+        model: {}
+      }),
+      descriptor: {
+        order: ['lastName', 'dateBirth']
+      }
+    },
+    expected: {
+      descriptor: {
+        orderedProperties: ({ value }: Scope) => expect(value).toEqual(['lastName', 'dateBirth', 'firstName'])
+      }
+    }
+  });
 
-    it('field.value should be equal to the defined model using field.setValue()', () => {
-      parser.field.setValue({
-        name: {
-          firstName: 'Tyrion',
-          lastName: 'Lannister'
+  TestParser.Case({
+    case: '5.1',
+    description: 'with missing field.descriptor.order, descriptor.orderedProperties should be filled with defined fields order',
+    given: {
+      parser: new ObjectParser({
+        schema: {
+          type: 'object',
+          properties: {
+            firstName: { type: 'string' },
+            lastName: { type: 'string' }
+          }
         },
-        dateBirth: '-8600/01/01'
-      });
+        model: {}
+      }),
+      descriptor: {}
+    },
+    expected: {
+      descriptor: {
+        orderedProperties: ({ value }: Scope) => expect(value).toEqual(['firstName', 'lastName'])
+      }
+    }
+  });
 
-      expect(parser.field.value).toEqual({
-        name: {
-          firstName: 'Tyrion',
-          lastName: 'Lannister'
+  TestParser.Case({
+    case: '6.0',
+    description: 'Nested Object',
+    given: {
+      parser: new ObjectParser({
+        schema: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'object',
+              properties: {
+                firstName: { type: 'string' },
+                lastName: { type: 'string' }
+              }
+            },
+            dateBirth: { type: 'string' }
+          }
         },
-        dateBirth: '-8600/01/01'
-      });
-    });
+        model: {}
+      }),
+      descriptor: {}
+    },
+    expected: {
+      parser: {
+        field({ parser }: Scope) {
+          // field.children.name should have a defined attrs.name
+          expect(parser.field.children.name.attrs.name).toBe('name');
+
+          // field.value should be defined as an empty object with nested properties
+          expect(parser.field.value).toEqual({
+            name: {
+              firstName: undefined,
+              lastName: undefined
+            },
+            dateBirth: undefined
+          });
+
+          // field.value should be updated when setting a child model
+          parser.field.children.dateBirth.setValue('-8600/01/02');
+
+          expect(parser.field.value).toEqual({
+            name: {
+              firstName: undefined,
+              lastName: undefined
+            },
+            dateBirth: '-8600/01/02'
+          });
+
+          // field.value should be equal to the defined model using field.setValue()
+          parser.field.setValue({
+            name: {
+              firstName: 'Tyrion',
+              lastName: 'Lannister'
+            },
+            dateBirth: '-8600/01/01'
+          });
+
+          expect(parser.field.value).toEqual({
+            name: {
+              firstName: 'Tyrion',
+              lastName: 'Lannister'
+            },
+            dateBirth: '-8600/01/01'
+          });
+        }
+      }
+    }
   });
 
   const options7: any = (bracketedObjectInputNameValue: boolean) => ({
