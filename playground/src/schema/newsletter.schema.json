@@ -53,6 +53,10 @@
         },
         "minItems": 1
       },
+      "hiddenField": {
+        "type": "string",
+        "default": "Hidden Field Value"
+      },
       "float": {
         "type": "number",
         "title": "Float",

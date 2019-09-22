@@ -48,6 +48,9 @@ export default {
         }
       }
     },
+    hiddenField: {
+      kind: 'hidden'
+    },
     day: {
       label: 'Newsletter Day',
       attrs: {

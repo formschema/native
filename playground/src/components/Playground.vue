@@ -98,7 +98,7 @@
       modelKey: UniqueId.get('model'),
       enableDescriptor: true,
       customSchema: null,
-      schemaKey: 'array',
+      schemaKey: 'object',
       registry: {
         custom: {
           name: 'Custom Schema',

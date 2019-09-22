@@ -36,7 +36,7 @@
           "type": "string",
           "maxLength": 120,
           "title": "Email",
-          "default": "demsking@gmail.com",
+          "default": "jon.snow@got.com",
           "attrs": {
             "type": "email",
             "placeholder": "Your Email",
