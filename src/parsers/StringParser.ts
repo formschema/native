@@ -44,6 +44,7 @@ function getType(kind: FieldKind, schema: JsonSchema) {
     case 'file':
     case 'radio':
     case 'hidden':
+    case 'password':
       return kind;
 
     case 'image':
@@ -101,6 +102,7 @@ export class StringParser extends ScalarParser<string, StringField> {
 }
 
 Parser.register('string', StringParser);
+Parser.register('password', StringParser);
 Parser.register('file', StringParser);
 Parser.register('image', StringParser);
 Parser.register('textarea', StringParser);

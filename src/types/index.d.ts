@@ -17,8 +17,10 @@ export interface Dict<T = unknown> extends Record<string, T> {}
 
 export type Scalar = boolean | number | null | string;
 export type SchemaType = 'object' | 'array' | 'string' | 'number' | 'integer' | 'boolean' | 'null';
-export type ParserKind = SchemaType | 'enum' | 'list' | 'textarea' | 'image' | 'file';
-export type FieldKind = SchemaType | 'enum' | 'radio' | 'list' | 'textarea' | 'checkbox' | 'file' | 'image' | 'hidden';
+export type ParserKind = SchemaType | 'enum' | 'list' | 'textarea' | 'image' | 'file' | 'password';
+export type ScalarKind = 'string' | 'password' | 'number' | 'integer' | 'null' | 'boolean' | 'hidden' | 'textarea' | 'image' | 'file' | 'radio' | 'checkbox';
+export type ItemKind = 'enum' | 'list';
+export type FieldKind = SchemaType | ScalarKind | ItemKind;
 export type ComponentsType = 'form' | FieldKind;
 export type Component = string | VueComponent | AsyncComponent;
 
@@ -115,6 +117,7 @@ export type NullField = Field<'null', NullAttributes, null>;
 export type StringField = Field<'string', StringAttributes, string>;
 export type RadioField = Field<'radio', RadioAttributes, string>;
 export type InputField = BooleanField | NumberField | NullField | StringField | RadioField;
+export type ScalarField = Field<ScalarKind, Attributes, any>;
 export type UnknowField = Field<any, Attributes, any>;
 
 export interface EnumField extends Field<'enum', Attributes> {
@@ -216,7 +219,7 @@ export interface IDescriptor<
   T extends Field<any, any> = UnknowField
 > extends Required<SchemaDescriptor>, DescriptorProperties<T> {}
 
-export interface IScalarDescriptor extends DescriptorProperties<UnknowField>, Required<ScalarDescriptor> {}
+export interface IScalarDescriptor extends DescriptorProperties<ScalarField>, Required<ScalarDescriptor> {}
 
 export interface IObjectDescriptor extends DescriptorProperties<ObjectField>, Required<ObjectDescriptor> {
   readonly children: IObjectChildDescriptor[];
@@ -256,6 +259,8 @@ export interface ListFieldItemDescriptor extends ListItemModel {
   label: string;
 }
 
+export type DescriptorInstance = ScalarDescriptor | EnumDescriptor | ListDescriptor | ObjectDescriptor | ArrayDescriptor;
+
 export interface SchemaDescriptor {
   kind?: FieldKind;
   label?: string;
@@ -269,13 +274,26 @@ export interface SchemaDescriptor {
   };
 }
 
-export interface ScalarDescriptor extends SchemaDescriptor {}
+/**
+ * Describe scalar types like: string, password, number, integer,
+ * boolean, null, hidden field, textarea element, image and file
+ * inputs, radio and checkbox elements
+ */
+export interface ScalarDescriptor extends SchemaDescriptor {
+  kind: ScalarKind;
+}
 
+/**
+ * Use to describe grouped object properties
+ */
 export interface ObjectGroupDescriptor extends SchemaDescriptor {
   label?: string;
   properties: string[];
 }
 
+/**
+ * Describe JSON Schema with type `object`
+ */
 export interface ObjectDescriptor extends SchemaDescriptor {
   properties?: {
     [schemaProperty: string]: DescriptorInstance;
@@ -286,21 +304,42 @@ export interface ObjectDescriptor extends SchemaDescriptor {
   };
 }
 
+/**
+ * Describe JSON Schema with key `enum`
+ */
+export interface ItemsDescriptor extends SchemaDescriptor {
+  kind: ItemKind;
+  items?: {
+    [itemValue: string]: ScalarDescriptor;
+  };
+}
+
+/**
+ * Describe HTML Radio Elements
+ */
+export interface EnumDescriptor extends ItemsDescriptor {
+  kind: 'enum'
+}
+
+/**
+ * Describe HTML Select Element
+ */
+export interface ListDescriptor extends ItemsDescriptor {
+  kind: 'list'
+}
+
+/**
+ * Describe buttons for array schema
+ */
 export interface ButtonDescriptor<T extends Function> extends ActionButton<T> {
   type: string;
   label: string;
   tooltip?: string;
 }
 
-export interface ItemsDescriptor extends SchemaDescriptor {
-  items?: {
-    [itemValue: string]: ScalarDescriptor;
-  };
-}
-
-export interface EnumDescriptor extends ItemsDescriptor {}
-export interface ListDescriptor extends ItemsDescriptor {}
-
+/**
+ * Describe JSON Schema with type `array`
+ */
 export interface ArrayDescriptor extends SchemaDescriptor {
   items?: DescriptorInstance[] | DescriptorInstance;
   pushButton: ButtonDescriptor<ActionPushTrigger>;
@@ -310,8 +349,6 @@ export interface ArrayDescriptor extends SchemaDescriptor {
     delete: ButtonDescriptor<ActionDeleteTrigger>;
   };
 }
-
-export type DescriptorInstance = ScalarDescriptor | EnumDescriptor | ListDescriptor | ObjectDescriptor | ArrayDescriptor;
 
 export interface FormSchemaVue extends Vue {
   // props
@@ -330,10 +367,10 @@ export interface FormSchemaVue extends Vue {
   ref: string;
   initialModel: unknown;
   ready: boolean;
+  parser: IParser<any, UnknowField> | null;
 
   // computed
   fieldId: string;
-  parser: any;
   field: UnknowField | null;
   listeners: Record<string, Function | Function[]>;
 

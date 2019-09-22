@@ -1,10 +1,11 @@
 import { UIDescriptor } from '@/descriptors/UIDescriptor';
-import { UnknowField, IScalarDescriptor } from '@/types';
+import { ScalarField, IScalarDescriptor } from '@/types';
 
-export class ScalarUIDescriptor extends UIDescriptor<UnknowField> implements IScalarDescriptor {
+export class ScalarUIDescriptor extends UIDescriptor<ScalarField> implements IScalarDescriptor {
 }
 
 UIDescriptor.register('string', ScalarUIDescriptor);
+UIDescriptor.register('password', ScalarUIDescriptor);
 UIDescriptor.register('number', ScalarUIDescriptor);
 UIDescriptor.register('integer', ScalarUIDescriptor);
 UIDescriptor.register('boolean', ScalarUIDescriptor);

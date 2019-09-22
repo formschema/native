@@ -4,6 +4,7 @@ const items: any = {
   array: 'ArrayElement',
   boolean: 'StateElement',
   string: 'InputElement',
+  password: 'InputElement',
   file: 'InputElement',
   image: 'InputElement',
   radio: 'StateElement',

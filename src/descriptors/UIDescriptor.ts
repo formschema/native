@@ -15,7 +15,6 @@ import {
 const DESCRIPTORS: Dict<any> = {};
 
 export abstract class UIDescriptor<TField extends UnknowField> implements IDescriptor {
-  readonly kind: FieldKind;
   readonly label: string;
   readonly helper: string;
   readonly field: TField;
@@ -41,7 +40,6 @@ export abstract class UIDescriptor<TField extends UnknowField> implements IDescr
   }
 
   constructor(options: SchemaDescriptor, field: TField, components?: Components) {
-    this.kind = options.kind || field.kind;
     this.field = field;
     this.attrs = options.attrs || {};
     this.props = options.props || {};
@@ -94,5 +92,9 @@ export abstract class UIDescriptor<TField extends UnknowField> implements IDescr
         get: () => this.helperAttrs.id
       }
     });
+  }
+
+  get kind() {
+    return this.field.kind;
   }
 }

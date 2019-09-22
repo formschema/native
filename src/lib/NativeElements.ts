@@ -11,6 +11,7 @@ export const NativeElements = new Components();
 NativeElements.set('array', ArrayElement);
 NativeElements.set('boolean', StateElement);
 NativeElements.set('string', InputElement);
+NativeElements.set('password', InputElement);
 NativeElements.set('file', InputElement);
 NativeElements.set('image', InputElement);
 NativeElements.set('radio', StateElement);

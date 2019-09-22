@@ -11,6 +11,37 @@ Vue component form based on JSON Schema and Native HTML
 
 Core features are not ready and the API could changed. Don't use this in production.
 
+## Table of Contents
+
+- [Status: Alpha](#status-alpha)
+- [Install](#install)
+- [Demo](#demo)
+- [Usage](#usage)
+- [Features](#features)
+- [Supported Keywords](#supported-keywords)
+- [Irrelevant (ignored) Keywords](#irrelevant-ignored-keywords)
+- [FormSchema API](#formschema-api)
+  * [props](#props)
+  * [events](#events)
+  * [methods](#methods)
+- [Working with Async Schema](#working-with-async-schema)
+- [Working with Vue Router](#working-with-vue-router)
+- [Workind with JSON Schema $ref Pointers](#workind-with-json-schema-ref-pointers)
+- [Render Form Elements](#render-form-elements)
+  * [Textarea](#textarea)
+  * [File Input](#file-input)
+  * [Hidden Input](#hidden-input)
+  * [Password Input](#password-input)
+  * [Multiple Checkbox](#multiple-checkbox)
+  * [Grouped Radio](#grouped-radio)
+  * [Select Input](#select-input)
+  * [Array Inputs](#array-inputs)
+  * [Regex Input](#regex-input)
+- [Custom Form Elements](#custom-form-elements)
+- [Descriptor Interface](#descriptor-interface)
+- [Contributing](#contributing)
+- [License](#license)
+
 ## Install
 
 ```sh
@@ -195,7 +226,9 @@ are irrelevant:
 </script>
 ```
 
-## Working with Async Schema and Vue Router
+## Working with Vue Router
+
+Load an async schema on the `beforeRouterEnter` hook:
 
 ```html
 <template>
@@ -225,11 +258,40 @@ are irrelevant:
 </script>
 ```
 
-## Render a Textarea element
+## Workind with JSON Schema $ref Pointers
+
+To load a JSON Schema with `$ref` pointers, you need to install an additional dependency to resolve them:
+
+```js
+import $RefParser from 'json-schema-ref-parser';
+import FormSchema from '@formschema/native';
+import schemaWithPointers from './schema/with-pointers.json';
+
+export default {
+  components: { FormSchema },
+  data: () => ({
+    schema: {}
+  }),
+  created () {
+    $RefParser.dereference(schemaWithPointers)
+      .then((schema) => {
+        // `schema` is the resolved schema that contains your entire JSON
+        // Schema, including referenced files, combined into a single object
+        this.schema = schema;
+      });
+  }
+}
+```
+
+See [json-schema-ref-parser documentation page](https://www.npmjs.com/package/json-schema-ref-parser) for more details.
+
+## Render Form Elements
+
+### Textarea
 
 Add a `text/*` media types to a string schema to render a Textarea element.
 
-**Example schema.json**
+**schema.json**
 
 ```json
 {
@@ -238,10 +300,10 @@ Add a `text/*` media types to a string schema to render a Textarea element.
 }
 ```
 
-You can also use a custom descriptor to force the Render to use a Textarea
+You can also use a descriptor to force the Render to use a Textarea
 element:
 
-**Example descriptor.json**
+**descriptor.json**
 
 ```json
 {
@@ -249,11 +311,11 @@ element:
 }
 ```
 
-## Render an Input File element
+### File Input
 
 String schemas with media types not starting with `text/*` are automatically render as Input File elements.
 
-**Example schema.json**
+**schema.json**
 
 ```json
 {
@@ -262,13 +324,16 @@ String schemas with media types not starting with `text/*` are automatically ren
 }
 ```
 
-> There is a list of [MIME types officially registered by the IANA](http://www.iana.org/assignments/media-types/media-types.xhtml), but the set of types supported will be application and operating system dependent. Mozilla Developer Network also maintains a [shorter list of MIME types that are important for the web](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Complete_list_of_MIME_types).
+> There is a list of [MIME types officially registered by the IANA](http://www.iana.org/assignments/media-types/media-types.xhtml),
+  but the set of types supported will be application and operating system
+  dependent. Mozilla Developer Network also maintains a
+  [shorter list of MIME types that are important for the web](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Complete_list_of_MIME_types).
 
-## Render a hidden Input element
+### Hidden Input
 
 String schemas with defined `const` property are automatically render as Input File elements.
 
-**Example schema.json**
+**schema.json**
 
 ```json
 {
@@ -277,11 +342,42 @@ String schemas with defined `const` property are automatically render as Input F
 }
 ```
 
-## Multiple Checkbox elements
+You can also use a descriptor to force the Render to use a hidden HTML input
+element:
+
+**descriptor.json**
+
+```json
+{
+  "kind": "hidden"
+}
+```
+
+### Password Input
+
+String schemas with a descriptor's kind `password` are used to render Input Password elements.
+
+**schema.json**
+
+```json
+{
+  "type": "string"
+}
+```
+
+**descriptor.json**
+
+```json
+{
+  "kind": "password"
+}
+```
+
+### Multiple Checkbox
 
 To define multiple checkbox, use the [JSON Schema keyword `anyOf`](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.27):
 
-**Example schema.json**
+**schema.json**
 
 ```json
 {
@@ -298,28 +394,76 @@ To define multiple checkbox, use the [JSON Schema keyword `anyOf`](http://json-s
 }
 ```
 
-## Grouped Radio elements
+### Grouped Radio
 
-To group radio elements, use the [JSON Schema keyword `enum`](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.23):
+To group radio elements, use the [JSON Schema keyword `enum`](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.23)
+with a `enum` descriptor:
+
+**schema.json**
+
+```json
+{
+  "type": "string",
+  "enum": [
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+    "sunday"
+  ]
+}
+```
+
+**descriptor.json**
+
+```json
+{
+  "kind": "enum",
+  "items": {
+    "monday": { "label": "Monday" },
+    "tuesday": { "label": "Tuesday" },
+    "wednesday": { "label": "Wednesday" },
+    "thursday": { "label": "Thursday" },
+    "friday": { "label": "Friday" },
+    "saturday": { "label": "Saturday" },
+    "sunday": { "label": "Sunday" }
+  }
+}
+```
+
+### Select Input
+
+To group HTML Select element, use the [JSON Schema keyword `enum`](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.23)
+with a `list` descriptor:
 
 **Example schema.json**
 
 ```json
 {
-  "type": "object",
-  "properties": {
-    "groupedRadio": {
-      "type": "string",
-      "enum": [
-        "daily",
-        "promotion"
-      ]
-    }
-  }
+  "type": "string",
+  "enum": [
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thruday",
+    "friday",
+    "saturday",
+    "sunday"
+  ]
 }
 ```
 
-## Array Inputs Elements
+**Example descriptor.json**
+
+```json
+{
+  "kind": "list"
+}
+```
+
+### Array Inputs
 
 To render a [array field](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4), define your schema like:
 
@@ -327,61 +471,28 @@ To render a [array field](http://json-schema.org/latest/json-schema-validation.h
 
 ```json
 {
-  "type": "object",
-  "properties": {
-    "arrayInput": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    }
+  "type": "array",
+  "items": {
+    "type": "string"
   }
 }
 ```
 
 `FormSchema` will render a text input by adding a button to add more inputs.
 
-## Regex Inputs
+### Regex Input
 
-To render a [regex input](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.3.3), define your schema like:
+To render a [regex input](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.3.3),
+define your schema like:
 
 **Example schema.json**
 
 ```json
 {
-  "type": "object",
-  "properties": {
-    "regexInput": {
-      "type": "string",
-      "pattern": "[a-e]+"
-    }
-  }
+  "type": "string",
+  "pattern": "[a-e]+"
 }
 ```
-
-## JSON Schema $ref Pointers
-
-To load a JSON Schema with `$ref` pointers, you need to install an additional dependency to resolve them:
-
-```js
-import $RefParser from 'json-schema-ref-parser';
-import FormSchema from '@formschema/native';
-import schemaWithPointers from './schema/with-pointers.json';
-
-export default {
-  created () {
-    $RefParser.dereference(schemaWithPointers)
-      .then((schema) => {
-        // `schema` is the resolved schema that contains your entire JSON
-        // Schema, including referenced files, combined into a single object
-        this.schema = schema;
-      });
-  },
-  components: { FormSchema }
-}
-```
-
-See [json-schema-ref-parser documentation page](https://www.npmjs.com/package/json-schema-ref-parser) for more details.
 
 ## Custom Form Elements
 
@@ -439,6 +550,107 @@ See the file [NativeElements.ts](https://gitlab.com/formschema/native/blob/maste
 
 - Definition: https://gitlab.com/formschema/components/elementui/blob/master/lib/ElementUIComponents.js
 - Usage: https://gitlab.com/formschema/components/elementui/blob/master/playground/src/components/Subscription.vue
+
+## Descriptor Interface
+
+```ts
+export type SchemaType = 'object' | 'array' | 'string' | 'number' | 'integer' | 'boolean' | 'null';
+export type ScalarKind = 'string' | 'password' | 'number' | 'integer' | 'null' | 'boolean' | 'hidden' | 'textarea' | 'image' | 'file' | 'radio' | 'checkbox';
+export type ItemKind = 'enum' | 'list';
+export type FieldKind = SchemaType | ScalarKind | ItemKind;
+export type Component = string | VueComponent | AsyncComponent;
+
+export type DescriptorInstance = ScalarDescriptor | EnumDescriptor | ListDescriptor | ObjectDescriptor | ArrayDescriptor;
+
+export interface SchemaDescriptor {
+  kind?: FieldKind;
+  label?: string;
+  helper?: string;
+  component?: Component;
+  attrs?: {
+    [attr: string]: unknown;
+  };
+  props?: {
+    [prop: string]: unknown;
+  };
+}
+
+/**
+ * Describe scalar types like: string, password, number, integer,
+ * boolean, null, hidden field, textarea element, image and file
+ * inputs, radio and checkbox elements
+ */
+export interface ScalarDescriptor extends SchemaDescriptor {
+  kind: ScalarKind;
+}
+
+/**
+ * Use to describe grouped object properties
+ */
+export interface ObjectGroupDescriptor extends SchemaDescriptor {
+  label?: string;
+  properties: string[];
+}
+
+/**
+ * Describe JSON Schema with type `object`
+ */
+export interface ObjectDescriptor extends SchemaDescriptor {
+  properties?: {
+    [schemaProperty: string]: DescriptorInstance;
+  };
+  order?: string[];
+  groups?: {
+    [groupId: string]: ObjectGroupDescriptor;
+  };
+}
+
+/**
+ * Describe JSON Schema with key `enum`
+ */
+export interface ItemsDescriptor extends SchemaDescriptor {
+  kind: ItemKind;
+  items?: {
+    [itemValue: string]: ScalarDescriptor;
+  };
+}
+
+/**
+ * Describe HTML Radio Elements
+ */
+export interface EnumDescriptor extends ItemsDescriptor {
+  kind: 'enum'
+}
+
+/**
+ * Describe HTML Select Element
+ */
+export interface ListDescriptor extends ItemsDescriptor {
+  kind: 'list'
+}
+
+/**
+ * Describe buttons for array schema
+ */
+export interface ButtonDescriptor<T extends Function> extends ActionButton<T> {
+  type: string;
+  label: string;
+  tooltip?: string;
+}
+
+/**
+ * Describe JSON Schema with type `array`
+ */
+export interface ArrayDescriptor extends SchemaDescriptor {
+  items?: DescriptorInstance[] | DescriptorInstance;
+  pushButton: ButtonDescriptor<ActionPushTrigger>;
+  buttons: {
+    moveUp: ButtonDescriptor<ActionMoveTrigger>;
+    moveDown: ButtonDescriptor<ActionMoveTrigger>;
+    delete: ButtonDescriptor<ActionDeleteTrigger>;
+  };
+}
+```
 
 ## Contributing
 
