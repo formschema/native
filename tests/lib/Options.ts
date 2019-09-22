@@ -19,17 +19,14 @@ export interface Context {
 export interface GetResult {
   context: Context;
   parser: UnknowParser;
+  field: UnknowField;
   descriptor: IDescriptor;
   schema: any;
   options: any;
 }
 
 export const Options = {
-  get({ descriptor: descriptorOptions = {}, ...options }: GetOptions): GetResult {
-    if (descriptorOptions.kind) {
-      options.kind = descriptorOptions.kind;
-    }
-
+  get(options: GetOptions): GetResult {
     const parser = Parser.get(options);
 
     if (parser === null) {
@@ -37,7 +34,7 @@ export const Options = {
     }
 
     const field = parser.field;
-    const descriptor = UIDescriptor.get(descriptorOptions, field);
+    const descriptor = parser.descriptor;
 
     const context = {
       props: { field, descriptor }
@@ -45,6 +42,6 @@ export const Options = {
 
     const schema = options.schema as any;
 
-    return { context, parser, schema, descriptor, options };
+    return { context, parser, schema, descriptor, options, field };
   }
 };

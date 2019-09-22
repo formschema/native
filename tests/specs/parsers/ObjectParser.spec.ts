@@ -4,8 +4,6 @@ import { ListField, ObjectField, ObjectFieldChild, ParserOptions } from '@/types
 import { JsonSchema } from '@/types/jsonschema';
 import { TestParser, Scope } from '../../lib/TestParser';
 
-import '@/parsers';
-
 describe('parsers/ObjectParser', () => {
   const options: ParserOptions<any, any> = {
     schema: {
@@ -119,15 +117,15 @@ describe('parsers/ObjectParser', () => {
       parser: {
         properties: ({ value }: Scope) => expect(value).toEqual({}),
         dependencies: ({ value }: Scope) => expect(value).toEqual({}),
-        childrenParsers: ({ value }: Scope) => expect(value).toEqual({})
-      },
-      descriptor: {
-        properties: ({ value }: Scope) => expect(value).toEqual({}),
-        schemaProperties: ({ value }: Scope) => expect(value).toEqual({}),
-        groups: ({ value }: Scope) => expect(value).toEqual({}),
-        order: ({ value }: Scope) => expect(value).toEqual([]),
-        orderedProperties: ({ value }: Scope) => expect(value).toEqual([]),
-        parsedGroups: ({ value }: Scope) => expect(value).toEqual([])
+        childrenParsers: ({ value }: Scope) => expect(value).toEqual({}),
+        descriptor: {
+          properties: ({ value }: Scope) => expect(value).toEqual({}),
+          schemaProperties: ({ value }: Scope) => expect(value).toEqual({}),
+          groups: ({ value }: Scope) => expect(value).toEqual({}),
+          order: ({ value }: Scope) => expect(value).toEqual([]),
+          orderedProperties: ({ value }: Scope) => expect(value).toEqual([]),
+          parsedGroups: ({ value }: Scope) => expect(value).toEqual([])
+        }
       }
     }
   });
@@ -193,15 +191,17 @@ describe('parsers/ObjectParser', () => {
             dateBirth: { type: 'string' }
           }
         },
-        model: {}
-      }),
-      descriptor: {
-        order: ['lastName', 'dateBirth']
-      }
+        model: {},
+        descriptor: {
+          order: ['lastName', 'dateBirth']
+        }
+      })
     },
     expected: {
-      descriptor: {
-        orderedProperties: ({ value }: Scope) => expect(value).toEqual(['lastName', 'dateBirth', 'firstName'])
+      parser: {
+        descriptor: {
+          orderedProperties: ({ value }: Scope) => expect(value).toEqual(['lastName', 'dateBirth', 'firstName'])
+        }
       }
     }
   });
@@ -218,13 +218,15 @@ describe('parsers/ObjectParser', () => {
             lastName: { type: 'string' }
           }
         },
-        model: {}
-      }),
-      descriptor: {}
+        model: {},
+        descriptor: {}
+      })
     },
     expected: {
-      descriptor: {
-        orderedProperties: ({ value }: Scope) => expect(value).toEqual(['firstName', 'lastName'])
+      parser: {
+        descriptor: {
+          orderedProperties: ({ value }: Scope) => expect(value).toEqual(['firstName', 'lastName'])
+        }
       }
     }
   });
@@ -247,9 +249,9 @@ describe('parsers/ObjectParser', () => {
             dateBirth: { type: 'string' }
           }
         },
-        model: {}
-      }),
-      descriptor: {}
+        model: {},
+        descriptor: {}
+      })
     },
     expected: {
       parser: {
@@ -268,10 +270,11 @@ describe('parsers/ObjectParser', () => {
 
           // field.value should be updated when setting a child model
           parser.field.children.dateBirth.setValue('-8600/01/02');
+          parser.field.children.name.children.firstName.setValue('Jon');
 
           expect(parser.field.value).toEqual({
             name: {
-              firstName: undefined,
+              firstName: 'Jon',
               lastName: undefined
             },
             dateBirth: '-8600/01/02'

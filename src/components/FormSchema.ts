@@ -107,32 +107,29 @@ const FormSchema: FormSchemaComponent = {
     key: undefined,
     ref: UniqueId.get('formschema'),
     initialModel: undefined,
-    ready: false
+    ready: false,
+    parser: null
   }),
   computed: {
     fieldId() {
       return `${this.id}-field`;
     },
-    parser() {
-      return Parser.get({
+    options() {
+      return {
         schema: this.schema,
         model: this.initialModel,
         name: this.name,
         id: this.fieldId,
         required: true,
         descriptor: this.descriptor,
+        components: this.components || NativeElementsLib,
         bracketedObjectInputName: this.bracketedArrayInputName,
         onChange: this.emitInputEvent,
         requestRender: this.update
-      });
+      };
     },
     field() {
       return this.parser instanceof Parser ? this.parser.field : null;
-    },
-    uiDescriptor() {
-      return this.field
-        ? UIDescriptor.get(this.descriptor, this.field, this.components)
-        : null;
     },
     listeners(): Record<string, Function | Function[]> {
       const on: any = { ...this.$listeners };
@@ -159,25 +156,31 @@ const FormSchema: FormSchemaComponent = {
         this.initialModel = this.clone(this.value);
       },
       immediate: true
+    },
+    options: {
+      handler(options) {
+        this.parser = Parser.get(options);
+      },
+      immediate: true
     }
   },
   render(createElement) {
-    if (this.field === null || this.uiDescriptor === null || this.ready === false) {
+    if (this.field === null || this.ready === false) {
       return null as any; // nothing to render
     }
 
     const attrs = {
-      ...this.descriptor.attrs,
+      ...this.field.attrs,
       disabled: this.disabled
     };
 
     const props = {
       field: this.field,
-      descriptor: this.uiDescriptor
+      descriptor: this.parser.descriptor
     };
 
     const key = this.key || this.field.key;
-    const element = createElement(this.uiDescriptor.component, { key, attrs, props });
+    const element = createElement(this.parser.descriptor.component, { key, attrs, props });
     const nodes = [ element ];
 
     if (this.$slots.default) {

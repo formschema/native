@@ -30,6 +30,7 @@ export interface Attributes {
   required: boolean;
   disabled?: boolean;
   'aria-required'?: 'true';
+  [key: string]: any;
 }
 
 export interface AriaAttributes extends Attributes {
@@ -81,9 +82,10 @@ export interface StringAttributes extends InputAttributes {
 
 export interface Field<
   TKind extends FieldKind,
-  TAttributes = Attributes,
+  TAttributes extends Attributes = Attributes,
   TModel = any
 > {
+  id: string;
   key: string;
   kind: TKind;
   name?: string;
@@ -103,7 +105,10 @@ export interface Field<
   requestRender: () => void;
 }
 
-export type BooleanField = Field<'boolean', CheckboxAttributes, boolean>;
+export interface BooleanField extends Field<'boolean', CheckboxAttributes, boolean> {
+  toggle: () => void;
+}
+
 export type CheckboxField = Field<'checkbox', CheckboxAttributes, unknown>;
 export type NumberField = Field<'number', NumberAttributes, number>;
 export type NullField = Field<'null', NullAttributes, null>;
@@ -157,15 +162,20 @@ export interface ObjectField extends Field<'object', Attributes, Dict> {
   children: Dict<ObjectFieldChild>;
 }
 
-export interface ParserOptions<TModel, TField extends Field<any, any> = UnknowField> {
-  readonly kind?: FieldKind;
+export interface ParserOptions<
+  TModel,
+  TField extends Field<any, any, any> = UnknowField,
+  TDescriptor extends SchemaDescriptor = SchemaDescriptor
+> {
+  kind?: FieldKind;
   readonly key?: string;
   readonly schema: JsonSchema;
   readonly model?: TModel;
   readonly name?: string;
   readonly id?: string;
   readonly required?: boolean;
-  readonly descriptor?: SchemaDescriptor;
+  readonly descriptor?: TDescriptor;
+  components?: ComponentsDeclaration;
   readonly bracketedObjectInputName?: boolean;
   onChange?: (value: TModel, field: TField) => void;
   requestRender?: (updatedFields: TField[]) => void;
@@ -179,7 +189,7 @@ export interface IParser<
 > {
   readonly id: string;
   readonly isRoot: boolean;
-  readonly options: ParserOptions<TModel>;
+  readonly options: ParserOptions<TModel, TField>;
   readonly parent?: UnknowParser;
   readonly root: UnknowParser;
   readonly initialValue: TModel | unknown;
@@ -188,6 +198,7 @@ export interface IParser<
   readonly kind: string;
   readonly field: TField;
   readonly schema: JsonSchema;
+  readonly descriptor: IDescriptor;
   parse: () => void;
   reset: () => void;
   clear: () => void;
@@ -324,7 +335,6 @@ export interface FormSchemaVue extends Vue {
   fieldId: string;
   parser: any;
   field: UnknowField | null;
-  uiDescriptor: IDescriptor | null;
   listeners: Record<string, Function | Function[]>;
 
   // methods

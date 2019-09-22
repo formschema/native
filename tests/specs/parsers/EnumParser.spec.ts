@@ -138,18 +138,18 @@ describe('parsers/EnumParser', () => {
           type: 'string',
           enum: ['jon', 'arya']
         },
-        model: 'jon'
-      }),
-      descriptor: {
-        items: {
-          jon: {
-            label: 'Jon Snow'
-          },
-          arya: {
-            label: 'Arya Stark'
+        model: 'jon',
+        descriptor: {
+          items: {
+            jon: {
+              label: 'Jon Snow'
+            },
+            arya: {
+              label: 'Arya Stark'
+            }
           }
         }
-      }
+      })
     },
     expected: {
       parser: {
@@ -170,23 +170,23 @@ describe('parsers/EnumParser', () => {
               value: ({ value }: Scope) => expect(value).toBe('arya')
             }
           ]
+        },
+        descriptor: {
+          children: [
+            {
+              label: ({ value }: Scope) => expect(value).toBe('Jon Snow'),
+              field: {
+                value: ({ value }: Scope) => expect(value).toBe('jon')
+              }
+            },
+            {
+              label: ({ value }: Scope) => expect(value).toBe('Arya Stark'),
+              field: {
+                value: ({ value }: Scope) => expect(value).toBe('arya')
+              }
+            }
+          ]
         }
-      },
-      descriptor: {
-        children: [
-          {
-            label: ({ value }: Scope) => expect(value).toBe('Jon Snow'),
-            field: {
-              value: ({ value }: Scope) => expect(value).toBe('jon')
-            }
-          },
-          {
-            label: ({ value }: Scope) => expect(value).toBe('Arya Stark'),
-            field: {
-              value: ({ value }: Scope) => expect(value).toBe('arya')
-            }
-          }
-        ]
       }
     }
   });

@@ -16,7 +16,7 @@ describe('components/HelperElement', () => {
     const wrapper = mount(HelperElement, { context });
     const expected = '<p id="name-helper">Your full name</p>';
 
-    expect(wrapper.html()).toBe(expected);
+    expect(wrapper.html()).toMatchSnapshot(expected);
   });
 
   it('should successfully render component for non root field', () => {
@@ -34,7 +34,7 @@ describe('components/HelperElement', () => {
     const wrapper = mount(HelperElement, { context });
     const expected = '<span id="name-helper">Your full name</span>';
 
-    expect(wrapper.html()).toBe(expected);
+    expect(wrapper.html()).toMatchSnapshot(expected);
   });
 
   it('should render nothing with missing field.descriptor.description', () => {

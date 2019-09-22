@@ -1,9 +1,9 @@
 import { Parser } from '@/parsers/Parser';
 import { ScalarParser } from '@/parsers/ScalarParser';
-import { NullField, NullAttributes, UnknowParser, ParserOptions } from '@/types';
+import { NullField, UnknowParser, ParserOptions, ScalarDescriptor } from '@/types';
 
-export class NullParser extends ScalarParser<null, NullField, NullAttributes> {
-  constructor(options: ParserOptions<null>, parent?: UnknowParser) {
+export class NullParser extends ScalarParser<null, NullField> {
+  constructor(options: ParserOptions<null, NullField, ScalarDescriptor>, parent?: UnknowParser) {
     const schema = options.schema;
     const kind = ScalarParser.getKind(schema, parent) || 'hidden';
     const type = ScalarParser.getType(kind) || 'hidden';
@@ -12,7 +12,7 @@ export class NullParser extends ScalarParser<null, NullField, NullAttributes> {
   }
 
   parse() {
-    this.attrs.value = '\u0000';
+    this.field.attrs.value = '\u0000';
 
     this.commit();
   }

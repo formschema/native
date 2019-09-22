@@ -15,10 +15,11 @@ module.exports = {
     '/node_modules/'
   ],
   moduleNameMapper: {
+    '^@/types': '<rootDir>/src/types/index.d.ts',
     '^@/(.*)$': '<rootDir>/src/$1'
   },
   snapshotSerializers: [
-    'jest-serializer-vue'
+    '<rootDir>/node_modules/jest-serializer-vue'
   ],
   testMatch: [
     '**/tests/specs/**/*.spec.ts'

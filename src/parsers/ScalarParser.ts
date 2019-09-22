@@ -1,20 +1,20 @@
 import { Parser } from '@/parsers/Parser';
 import { JsonSchema } from '@/types/jsonschema';
 
+import { ScalarUIDescriptor } from '@/descriptors/ScalarUIDescriptor';
+
 import {
   Field,
   FieldKind,
-  Attributes,
-  ScalarDescriptor,
   ParserOptions,
-  UnknowParser
+  UnknowParser,
+  ScalarDescriptor
 } from '@/types';
 
 export abstract class ScalarParser <
   TModel,
-  TField extends Field<any, TAttributes, TModel>,
-  TAttributes extends Attributes = Attributes
-> extends Parser<TModel, TField, ScalarDescriptor, TAttributes> {
+  TField extends Field<any, any, TModel>
+> extends Parser<TModel, TField, ScalarUIDescriptor> {
   static getKind(schema: JsonSchema, parent?: UnknowParser): FieldKind | null {
     if (parent && parent.schema.enum instanceof Array) {
       return 'radio';
@@ -35,9 +35,14 @@ export abstract class ScalarParser <
     return null;
   }
 
-  constructor(kind: FieldKind, type: string | undefined, options: ParserOptions<TModel>, parent?: UnknowParser) {
+  constructor(
+    kind: FieldKind,
+    type: string | undefined,
+    options: ParserOptions<TModel, TField, ScalarDescriptor>,
+    parent?: UnknowParser
+  ) {
     super(kind, options, parent);
 
-    this.attrs.type = type;
+    this.field.attrs.type = type;
   }
 }

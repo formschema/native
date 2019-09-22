@@ -1,23 +1,21 @@
-import { Dict, IParser, SchemaDescriptor, IDescriptor } from '@/types';
+import { Dict, IParser, IDescriptor } from '@/types';
 import { Parser } from '@/parsers/Parser';
-import { UIDescriptor } from '@/descriptors/UIDescriptor';
 
 import '@/parsers';
 import '@/descriptors';
 
 type TParser = IParser<any>;
 
-type Given<P, D extends SchemaDescriptor = SchemaDescriptor> = {
-  parser: P;
-  descriptor?: D;
+type Given<P> = {
+  parser: P
 };
 
 type ExpectedCall = (scope: Scope) => void;
 
-type TestCaseOptions<D extends SchemaDescriptor = SchemaDescriptor> = {
+type TestCaseOptions = {
   case: string;
   description?: string;
-  given: Given<TParser | (() => TParser), D>;
+  given: Given<TParser | (() => TParser) | any>;
   expected: {
     parser?: Dict<ExpectedCall | any>;
     descriptor?: Dict<ExpectedCall | any>;
@@ -29,21 +27,32 @@ export interface Scope<
   D extends IDescriptor = IDescriptor
 > {
   value: any;
-  parser: P;
-  descriptor: D;
+  parser: Required<P>;
+  options: any;
+  field: any;
+  schema: any;
+  descriptor: Required<D>;
   given: Required<Given<P>>;
 };
 
-function toEqual(parser: any, prefix: string, actual: any, expected: Dict<any>, o: string, given: any) {
+function toEqual(parser: any, prefix: string, actual: any, expected: Dict<any>, given: any) {
   Object.keys(expected).forEach((key) => {
     if (typeof expected[key] === 'function') {
       it(`${prefix}.${key} validation should be succeed`, () => {
-        const result = expected[key]({ value: actual[key], [o]: parser, given }) !== false;
+        const result = expected[key]({
+          value: actual[key],
+          parser: parser,
+          options: parser.options,
+          field: parser.field,
+          schema: parser.schema,
+          descriptor: parser.descriptor,
+          given
+        }) !== false;
 
         expect(result).toBeTruthy();
       });
     } else if (typeof expected[key] === 'object' && expected[key] !== null) {
-      toEqual(parser, `${prefix}.${key}`, actual[key], expected[key], o, given);
+      toEqual(parser, `${prefix}.${key}`, actual[key], expected[key], given);
     } else {
       it(`${prefix}.${key} should be equal to ${JSON.stringify(expected[key])}`, () => {
         expect(actual[key]).toEqual(expected[key]);
@@ -53,8 +62,21 @@ function toEqual(parser: any, prefix: string, actual: any, expected: Dict<any>, 
 }
 
 export const TestParser = {
-  Case({ description, given, expected, ...args }: TestCaseOptions<any>) {
-    const p = typeof given.parser === 'function' ? given.parser() : given.parser;
+  Case({ description, given, expected, ...args }: TestCaseOptions) {
+    const p = typeof given.parser === 'function'
+      ? given.parser()
+      : given.parser instanceof Parser
+        ? given.parser
+        : Parser.get(given.parser as any);
+
+    if (!p) {
+      return;
+    }
+
+    if (typeof given.parser !== 'function' && !given.parser.options.descriptor) {
+      (given.parser.options as any).descriptor = {};
+    }
+
     const schema = JSON.stringify(p.options.schema);
     const model = p.options.model === undefined
       ? p.options.model
@@ -67,20 +89,8 @@ export const TestParser = {
         p.parse();
       }
 
-      given.parser = p;
-
       if (expected.parser) {
-        toEqual(p, 'parser', p, expected.parser, 'parser', given);
-      }
-
-      if (expected.descriptor) {
-        if (!given.descriptor) {
-          given.descriptor = {};
-        }
-
-        const d = UIDescriptor.get(given.descriptor, p.field);
-
-        toEqual(d, 'descriptor', d, expected.descriptor, 'descriptor', given);
+        toEqual(p, 'parser', p, expected.parser, given);
       }
     });
   }

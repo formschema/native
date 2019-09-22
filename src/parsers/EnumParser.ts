@@ -2,6 +2,8 @@ import { Parser } from '@/parsers/Parser';
 import { UniqueId } from '@/lib/UniqueId';
 import { JsonSchema } from '@/types/jsonschema';
 
+import { EnumUIDescriptor } from '@/descriptors/EnumUIDescriptor';
+
 import {
   EnumField,
   ParserOptions,
@@ -10,10 +12,10 @@ import {
   EnumDescriptor
 } from '@/types';
 
-export class EnumParser extends Parser<unknown, EnumField, EnumDescriptor> {
+export class EnumParser extends Parser<unknown, EnumField, EnumUIDescriptor> {
   childrenParsers: UnknowParser[] = [];
 
-  constructor(options: ParserOptions<unknown>, parent?: UnknowParser) {
+  constructor(options: ParserOptions<unknown, EnumField, EnumDescriptor>, parent?: UnknowParser) {
     super('enum', options, parent);
   }
 
@@ -41,11 +43,12 @@ export class EnumParser extends Parser<unknown, EnumField, EnumDescriptor> {
         const item: any = itemSchema.default;
 
         const parser = Parser.get({
-          schema: itemSchema,
-          model: itemSchema.default,
           id: `${radioId}-${UniqueId.parse(item)}`,
           name: radioName,
-          descriptor: descriptorItems[item]
+          schema: itemSchema,
+          model: itemSchema.default,
+          descriptor: descriptorItems[item],
+          components: this.root.options.components
         }, this);
 
         if (parser) {

@@ -2,9 +2,10 @@ import { UniqueId } from '@/lib/UniqueId';
 import { JsonSchema } from '@/types/jsonschema';
 import { Value } from '@/lib/Value';
 
+import { UIDescriptor } from '@/descriptors/UIDescriptor';
+
 import {
   ParserOptions,
-  Attributes,
   Dict,
   ParserKind,
   FieldKind,
@@ -12,16 +13,15 @@ import {
   UnknowParser,
   Field,
   UnknowField,
-  SchemaDescriptor
+  IDescriptor
 } from '@/types';
 
 const PARSERS: Dict<any> = {};
 
 export abstract class Parser<
   TModel,
-  TField extends Field<any, TAttributes, TModel>,
-  TDescriptor extends SchemaDescriptor,
-  TAttributes extends Attributes = Attributes
+  TField extends Field<any, any, TModel>,
+  TDescriptor extends IDescriptor
 > implements IParser<TModel, TField> {
   readonly id: string;
   readonly isRoot: boolean;
@@ -32,7 +32,6 @@ export abstract class Parser<
   readonly field: TField;
   readonly options: ParserOptions<TModel>;
   readonly schema: JsonSchema;
-  readonly attrs: TAttributes;
   readonly descriptor: TDescriptor;
 
   static register(kind: ParserKind, parserClass: any) {
@@ -45,7 +44,7 @@ export abstract class Parser<
       : schema.type;
   }
 
-  static get(options: ParserOptions<any, any>, parent?: UnknowParser): UnknowParser | null {
+  static get(options: ParserOptions<any>, parent?: UnknowParser): UnknowParser | null {
     if (typeof options.schema.type === 'undefined') {
       return null;
     }
@@ -62,6 +61,10 @@ export abstract class Parser<
       ? kind
       : Parser.kind(options.schema);
 
+    if (kind) {
+      options.kind = kind;
+    }
+
     const parser = new PARSERS[parserKind](options, parent);
 
     parser.parse();
@@ -69,13 +72,12 @@ export abstract class Parser<
     return parser;
   }
 
-  constructor(kind: FieldKind, options: ParserOptions<TModel>, parent?: UnknowParser) {
+  constructor(kind: FieldKind, options: ParserOptions<any, any>, parent?: UnknowParser) {
     this.id = options.id || UniqueId.get(options.name);
     this.parent = parent;
     this.options = options;
     this.isRoot = !parent;
     this.schema = options.schema;
-    this.descriptor = options.descriptor || {} as any;
 
     this.kind = kind;
     this.rawValue = this.parseValue(this.initialValue) as TModel;
@@ -83,26 +85,8 @@ export abstract class Parser<
 
     const self = this;
 
-    this.attrs = {
-      id: this.id,
-      type: undefined,
-      name: options.name,
-      readonly: this.schema.readOnly,
-      get required() {
-        return self.field.required;
-      },
-
-      /**
-       * Add support with web browsers that don’t communicate the required
-       * attribute to assistive technology
-       * @see https://www.w3.org/WAI/tutorials/forms/validation/#validating-required-input
-       */
-      get 'aria-required'() {
-        return this.required ? 'true' : undefined;
-      }
-    } as TAttributes;
-
     this.field = {
+      id: this.id,
       key: UniqueId.get(options.id),
       kind: this.kind,
       name: options.name,
@@ -110,7 +94,24 @@ export abstract class Parser<
       schema: options.schema,
       required: options.required || false,
       deep: this.parent ? this.parent.field.deep + 1 : 0,
-      attrs: this.attrs,
+      attrs: {
+        id: this.id,
+        type: undefined,
+        name: options.name,
+        readonly: this.schema.readOnly,
+        get required() {
+          return self.field.required;
+        },
+
+        /**
+         * Add support with web browsers that don’t communicate the required
+         * attribute to assistive technology
+         * @see https://www.w3.org/WAI/tutorials/forms/validation/#validating-required-input
+         */
+        get 'aria-required'() {
+          return this.required ? 'true' : undefined;
+        }
+      },
       get value() {
         return self.model;
       },
@@ -137,6 +138,8 @@ export abstract class Parser<
       },
       requestRender: () => this.requestRender()
     } as TField;
+
+    this.descriptor = UIDescriptor.get(options.descriptor || {}, this.field, options.components) as any;
   }
 
   get root() {

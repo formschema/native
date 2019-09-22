@@ -22,11 +22,11 @@ describe('parsers/ScalarParser', () => {
               kind: ({ value }: Scope) => expect(value).toBe('radio')
             }
           ]
-        }
-      },
-      descriptor: {
-        kind({ value, descriptor: { field } }: Scope) {
-          expect(value).toBe(field.kind);
+        },
+        descriptor: {
+          kind({ value, parser: { field } }: Scope) {
+            expect(value).toBe(field.kind);
+          }
         }
       }
     }
@@ -42,16 +42,16 @@ describe('parsers/ScalarParser', () => {
     expected: {
       parser: {
         kind: ({ value }: Scope) => expect(value).toBe('hidden'),
-        attrs: {
-          type: ({ value }: Scope) => expect(value).toBe('hidden')
-        },
         field: {
-          kind: ({ value }: Scope) => expect(value).toBe('hidden')
-        }
-      },
-      descriptor: {
-        kind({ value, descriptor: { field } }: Scope) {
-          expect(value).toBe(field.kind);
+          kind: ({ value }: Scope) => expect(value).toBe('hidden'),
+          attrs: {
+            type: ({ value }: Scope) => expect(value).toBe('hidden')
+          }
+        },
+        descriptor: {
+          kind({ value, parser: { field } }: Scope) {
+            expect(value).toBe(field.kind);
+          }
         }
       }
     }
@@ -69,11 +69,11 @@ describe('parsers/ScalarParser', () => {
         kind: ({ value }: Scope) => expect(value).toBe('string'),
         field: {
           kind: ({ value }: Scope) => expect(value).toBe('string')
-        }
-      },
-      descriptor: {
-        kind({ value, descriptor: { field } }: Scope) {
-          expect(value).toBe(field.kind);
+        },
+        descriptor: {
+          kind({ value, parser: { field } }: Scope) {
+            expect(value).toBe(field.kind);
+          }
         }
       }
     }
@@ -113,8 +113,10 @@ describe('parsers/ScalarParser', () => {
     }),
     expected: {
       parser: {
-        attrs: {
-          type: ({ value }: Scope) => expect(value).toBe('text')
+        field: {
+          attrs: {
+            type: ({ value }: Scope) => expect(value).toBe('text')
+          }
         }
       }
     }

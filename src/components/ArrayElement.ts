@@ -41,7 +41,7 @@ export const ArrayElement: ArrayComponent = {
         }
 
         return h(descriptor.component, {
-          attrs: descriptor.attrs,
+          attrs: field.attrs,
           props: { field, descriptor }
         }, buttonsWrapper);
       });

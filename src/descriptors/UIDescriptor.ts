@@ -14,7 +14,7 @@ import {
 
 const DESCRIPTORS: Dict<any> = {};
 
-export abstract class UIDescriptor<TField extends Readonly<UnknowField>> implements IDescriptor {
+export abstract class UIDescriptor<TField extends UnknowField> implements IDescriptor {
   readonly kind: FieldKind;
   readonly label: string;
   readonly helper: string;
@@ -40,16 +40,17 @@ export abstract class UIDescriptor<TField extends Readonly<UnknowField>> impleme
     return new DESCRIPTORS[field.kind](options, field, components);
   }
 
-  constructor(options: SchemaDescriptor, field: TField, components: Components) {
-    this.kind = field.kind;
+  constructor(options: SchemaDescriptor, field: TField, components?: Components) {
+    this.kind = options.kind || field.kind;
     this.field = field;
+    this.attrs = options.attrs || {};
     this.props = options.props || {};
     this.components = components || NativeElements;
     this.component = options.component || this.components.get(this.kind) || NativeElements.get(this.kind);
 
-    this.attrs = options.attrs
-      ? { ...field.attrs, ...options.attrs }
-      : { ...field.attrs };
+    for (const key in this.attrs) {
+      this.field.attrs[key] = this.attrs[key];
+    }
 
     this.label = options.hasOwnProperty('label')
       ? options.label || ''
@@ -63,16 +64,16 @@ export abstract class UIDescriptor<TField extends Readonly<UnknowField>> impleme
 
     this.labelAttrs = {
       get id() {
-        return self.label ? `${self.attrs.id}-label` : undefined;
+        return self.label ? `${field.attrs.id}-label` : undefined;
       },
       get for() {
-        return self.attrs.id;
+        return field.attrs.id;
       }
     };
 
     this.helperAttrs = {
       get id() {
-        return self.helper ? `${self.attrs.id}-helper` : undefined;
+        return self.helper ? `${field.attrs.id}-helper` : undefined;
       }
     };
 
@@ -81,7 +82,7 @@ export abstract class UIDescriptor<TField extends Readonly<UnknowField>> impleme
      * associate instructions with form controls
      * @see https://www.w3.org/WAI/tutorials/forms/instructions/#providing-instructions-outside-labels
      */
-    Object.defineProperties(this.attrs, {
+    Object.defineProperties(this.field.attrs, {
       'aria-labelledby': {
         enumerable: true,
         configurable: true,

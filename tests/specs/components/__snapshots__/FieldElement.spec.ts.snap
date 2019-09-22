@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components/FieldElement should successfully render component with missing field.attrs.type: <div data-fs-kind="string" data-fs-type="string" data-fs-field="name"><label id="id-name-label" for="id-name">Name</label><div data-fs-wrapper="2"><div data-fs-input="string"></div><p id="id-name-helper">Your full name</p></div></div> 1`] = `
+<div data-fs-kind="string" data-fs-type="string" data-fs-field="name"><label id="id-name-label" for="id-name">Name</label>
+  <div data-fs-wrapper="2">
+    <div data-fs-input="string"></div>
+    <p id="id-name-helper">Your full name</p>
+  </div>
+</div>
+`;
+
+exports[`components/FieldElement should successfully render component: <div data-fs-kind="string" data-fs-type="text" data-fs-field="name"><label id="id-name-label" for="id-name">Name</label><div data-fs-wrapper="2"><div data-fs-input="text"></div><p id="id-name-helper">Your full name</p></div></div> 1`] = `
+<div data-fs-kind="string" data-fs-type="text" data-fs-field="name"><label id="id-name-label" for="id-name">Name</label>
+  <div data-fs-wrapper="2">
+    <div data-fs-input="text"></div>
+    <p id="id-name-helper">Your full name</p>
+  </div>
+</div>
+`;

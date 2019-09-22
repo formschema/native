@@ -3,10 +3,12 @@ import { Parser } from '@/parsers/Parser';
 import { Dict, ObjectField, StringField, UnknowParser, ParserOptions, ScalarDescriptor, ObjectDescriptor } from '@/types';
 import { Objects } from '@/lib/Objects';
 import { JsonSchema } from '@/types/jsonschema';
+import { ScalarUIDescriptor } from '@/descriptors/ScalarUIDescriptor';
+import { ObjectUIDescriptor } from '@/descriptors/ObjectUIDescriptor';
 import { Options } from '../../lib/Options';
 import { TestParser, Scope } from '../../lib/TestParser';
 
-class FakeParser extends Parser<any, StringField, ScalarDescriptor> {
+class FakeParser extends Parser<any, StringField, ScalarUIDescriptor> {
   constructor(options: ParserOptions<any>, parent?: UnknowParser) {
     super('string', options, parent);
   }
@@ -14,7 +16,7 @@ class FakeParser extends Parser<any, StringField, ScalarDescriptor> {
   parse() {}
 }
 
-class ObjectFakeParser extends Parser<Dict, ObjectField, ObjectDescriptor> {
+class ObjectFakeParser extends Parser<Dict, ObjectField, ObjectUIDescriptor> {
   constructor(options: ParserOptions<Dict>, parent?: UnknowParser) {
     super('object', options, parent);
   }
@@ -26,7 +28,7 @@ class ObjectFakeParser extends Parser<Dict, ObjectField, ObjectDescriptor> {
   parse() {}
 }
 
-class InputFakeParser extends Parser<string, StringField, ScalarDescriptor> {
+class InputFakeParser extends Parser<string, StringField, ScalarUIDescriptor> {
   constructor(options: ParserOptions<string>, parent?: UnknowParser) {
     super('string', options, parent);
   }
@@ -50,7 +52,7 @@ const ParserValidator = {
     schema: ({ value, parser: { options } }: Scope) => expect(value).toBe(options.schema),
     model: ({ value, parser: { initialValue } }: Scope<FakeParser>) => expect(value).toBe(initialValue),
     rawValue: ({ value, parser: { initialValue } }: Scope<FakeParser>) => expect(value).toBe(initialValue),
-    kind: ({ value, parser: { schema } }: Scope) => expect(value).toBe(schema.type),
+    kind: ({ value, schema }: Scope) => expect(value).toBe(schema.type),
     id: ({ value }: Scope) => expect(typeof value).toBe('string'),
     initialValue: ({ value, parser: { options, schema } }: Scope) => [schema.default, options.model].includes(value),
     field: {
@@ -66,9 +68,9 @@ const ParserValidator = {
         id: ({ value, parser }: Scope) => expect(value).toBe(parser.id),
         type: ({ value }: Scope) => expect(value).toBeUndefined(),
         name: ({ value, parser: { options } }: Scope) => expect(value).toBe(options.name),
-        readonly: ({ value, parser: { schema } }: Scope) => expect(value).toBe(schema.readOnly),
-        required: ({ value, parser: { field } }: Scope) => expect(value).toBe(field.required),
-        'aria-required': ({ value, parser: { field } }: Scope) => expect(value).toBe(field.required ? 'true' : undefined)
+        readonly: ({ value, schema }: Scope) => expect(value).toBe(schema.readOnly),
+        required: ({ value, field }: Scope) => expect(value).toBe(field.required),
+        'aria-required': ({ value, field }: Scope) => expect(value).toBe(field.required ? 'true' : undefined)
       },
       value: ({ value, parser }: Scope) => expect(value).toBe(parser.model),
       setValue: ({ value }: Scope) => expect(value).toBeInstanceOf(Function),
@@ -76,26 +78,26 @@ const ParserValidator = {
       reset: ({ value }: Scope) => expect(value).toBeInstanceOf(Function),
       clear: ({ value }: Scope) => expect(value).toBeInstanceOf(Function),
       requestRender: ({ value }: Scope) => expect(value).toBeInstanceOf(Function)
-    }
-  },
-  descriptor: {
-    attrs: {
-      'aria-labelledby': ({ value, descriptor: { labelAttrs } }: Scope) => expect(value).toBe(labelAttrs.id),
-      'aria-describedby': ({ value, descriptor: { helperAttrs } }: Scope) => expect(value).toBe(helperAttrs.id)
     },
-    label({ value, given: { descriptor, parser: { options } } }: Scope) {
-      expect(value).toBe(descriptor.label || options.schema.title || '');
-    },
-    helper({ value, given: { descriptor, parser: { options } } }: Scope) {
-      expect(value).toBe(descriptor.helper || options.schema.description || '');
-    },
-    component: ({ value }: Scope) => expect(value).toBeDefined(),
-    labelAttrs: {
-      id: ({ value }: Scope) => typeof value === 'undefined' || expect(value.endsWith('-label')).toBeTruthy(),
-      for: ({ value, descriptor: { field } }: Scope) => expect(value).toBe(field.attrs.id)
-    },
-    helperAttrs: {
-      id: ({ value }: Scope) => typeof value === 'undefined' || expect(value.endsWith('-helper')).toBeTruthy()
+    descriptor: {
+      attrs: {
+        'aria-labelledby': ({ value, descriptor: { labelAttrs } }: Scope) => expect(value).toBe(labelAttrs.id),
+        'aria-describedby': ({ value, descriptor: { helperAttrs } }: Scope) => expect(value).toBe(helperAttrs.id)
+      },
+      label({ value, options, schema }: Scope) {
+        expect(value).toBe(options.descriptor.label || schema.title || '');
+      },
+      helper({ value, options, schema }: Scope) {
+        expect(value).toBe(options.descriptor.helper || schema.description || '');
+      },
+      component: ({ value }: Scope) => expect(value).toBeDefined(),
+      labelAttrs: {
+        id: ({ value }: Scope) => typeof value === 'undefined' || expect(value.endsWith('-label')).toBeTruthy(),
+        for: ({ value, field }: Scope) => expect(value).toBe(field.attrs.id)
+      },
+      helperAttrs: {
+        id: ({ value }: Scope) => typeof value === 'undefined' || expect(value.endsWith('-helper')).toBeTruthy()
+      }
     }
   }
 };

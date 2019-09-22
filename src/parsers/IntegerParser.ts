@@ -7,13 +7,13 @@ export class IntegerParser extends NumberParser {
     if (this.schema.hasOwnProperty('exclusiveMinimum')) {
       const exclusiveMinimum = this.schema.exclusiveMinimum as number;
 
-      this.attrs.min = exclusiveMinimum + 1;
+      this.field.attrs.min = exclusiveMinimum + 1;
     }
 
     if (this.schema.hasOwnProperty('exclusiveMaximum')) {
       const exclusiveMaximum = this.schema.exclusiveMaximum as number;
 
-      this.attrs.max = exclusiveMaximum - 1;
+      this.field.attrs.max = exclusiveMaximum - 1;
     }
   }
 

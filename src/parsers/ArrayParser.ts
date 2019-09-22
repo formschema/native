@@ -4,8 +4,9 @@ import { Objects } from '@/lib/Objects';
 import { Arrays } from '@/lib/Arrays';
 import { Value } from '@/lib/Value';
 import { ArrayField, ParserOptions, FieldKind, ArrayItemField, UnknowParser, ArrayDescriptor } from '@/types';
+import { ArrayUIDescriptor } from '@/descriptors/ArrayUIDescriptor';
 
-export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
+export class ArrayParser extends Parser<any, ArrayField, ArrayUIDescriptor> {
   readonly items: JsonSchema[] = [];
   additionalItems?: JsonSchema;
   minItems = 0;
@@ -15,7 +16,7 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
   radioIndex = 0;
   childrenParsers: UnknowParser[] = [];
 
-  constructor(options: ParserOptions<any>, parent?: UnknowParser) {
+  constructor(options: ParserOptions<any, ArrayField, ArrayDescriptor>, parent?: UnknowParser) {
     super('array', options, parent);
   }
 
@@ -135,7 +136,8 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
       model: itemModel,
       id: `${this.id}-${index}`,
       name: this.getFieldItemName(name),
-      descriptor: descriptorItem
+      descriptor: descriptorItem,
+      components: this.root.options.components
     }, this);
 
     if (this.rawValue.length <= index) {
@@ -317,7 +319,7 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayDescriptor> {
   parseCheckboxField(parser: any, itemModel: unknown) {
     const isChecked = this.initialValue.includes(itemModel);
 
-    parser.attrs.type = 'checkbox';
+    parser.field.attrs.type = 'checkbox';
 
     parser.setValue = (checked: boolean) => {
       parser.rawValue = checked;

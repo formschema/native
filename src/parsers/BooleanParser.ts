@@ -1,10 +1,10 @@
 import { Parser } from '@/parsers/Parser';
 import { ScalarParser } from '@/parsers/ScalarParser';
-import { BooleanField, CheckboxAttributes, ParserOptions, UnknowParser } from '@/types';
+import { BooleanField, ParserOptions, UnknowParser, ScalarDescriptor } from '@/types';
 import { Value } from '@/lib/Value';
 
-export class BooleanParser extends ScalarParser<boolean, BooleanField, CheckboxAttributes> {
-  constructor(options: ParserOptions<boolean>, parent?: UnknowParser) {
+export class BooleanParser extends ScalarParser<boolean, BooleanField> {
+  constructor(options: ParserOptions<boolean, BooleanField, ScalarDescriptor>, parent?: UnknowParser) {
     const schema = options.schema;
     const kind = options.kind || ScalarParser.getKind(schema, parent) || 'boolean';
     const type = ScalarParser.getType(kind) || 'checkbox';
@@ -17,12 +17,16 @@ export class BooleanParser extends ScalarParser<boolean, BooleanField, CheckboxA
   }
 
   parse() {
-    if (this.attrs.type !== 'radio') {
-      Object.defineProperty(this.attrs, 'checked', {
+    if (this.field.attrs.type !== 'radio') {
+      Object.defineProperty(this.field.attrs, 'checked', {
         enumerable: true,
         get: () => !!this.model
       });
     }
+
+    this.field.toggle = () => {
+      this.field.setValue(!this.model);
+    };
 
     this.commit();
   }

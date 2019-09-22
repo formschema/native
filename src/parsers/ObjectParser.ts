@@ -4,21 +4,15 @@ import { UniqueId } from '@/lib/UniqueId';
 import { Objects } from '@/lib/Objects';
 import { Value } from '@/lib/Value';
 
-import {
-  Dict,
-  ObjectField,
-  ParserOptions,
-  ObjectFieldChild,
-  UnknowParser,
-  ObjectDescriptor
-} from '@/types';
+import { Dict, ObjectField, ParserOptions, ObjectFieldChild, UnknowParser, ObjectDescriptor } from '@/types';
+import { ObjectUIDescriptor } from '@/descriptors/ObjectUIDescriptor';
 
-export class ObjectParser extends Parser<Dict, ObjectField, ObjectDescriptor> {
+export class ObjectParser extends Parser<Dict, ObjectField, ObjectUIDescriptor> {
   properties: Dict<JsonSchema> = {};
   dependencies: Dict<string[]> = {};
   childrenParsers: Dict<UnknowParser> = {};
 
-  constructor(options: ParserOptions<Dict>, parent?: UnknowParser) {
+  constructor(options: ParserOptions<Dict, ObjectField, ObjectDescriptor>, parent?: UnknowParser) {
     super('object', options, parent);
   }
 
@@ -46,6 +40,7 @@ export class ObjectParser extends Parser<Dict, ObjectField, ObjectDescriptor> {
           name: this.getChildName(key, name),
           required: requiredFields.includes(key),
           descriptor: descriptorProperties[key],
+          components: this.root.options.components,
           onChange: (value) => this.setKeyValue(key, value)
         }
       }))
@@ -163,14 +158,14 @@ export class ObjectParser extends Parser<Dict, ObjectField, ObjectDescriptor> {
     /**
      * attributes `required` and `aria-required` are not applicable here
      */
-    delete this.attrs.required;
-    delete this.attrs['aria-required'];
+    delete this.field.attrs.required;
+    delete this.field.attrs['aria-required'];
 
     if (this.isRoot) {
       /**
        * attribute `name` is not applicable here
        */
-      delete this.attrs.name;
+      delete this.field.attrs.name;
     }
 
     this.commit();

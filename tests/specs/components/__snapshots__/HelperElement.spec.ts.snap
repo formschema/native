@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components/HelperElement should successfully render component for non root field: <span id="name-helper">Your full name</span> 1`] = `<span id="name-helper">Your full name</span>`;
+
+exports[`components/HelperElement should successfully render component: <p id="name-helper">Your full name</p> 1`] = `<p id="name-helper">Your full name</p>`;

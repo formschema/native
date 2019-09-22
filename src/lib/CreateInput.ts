@@ -9,13 +9,14 @@ export const CreateInput = <T extends Field<any>>(
   event: 'input' | 'change' = 'input'
 ) => {
   const props = data.props as ElementProps<T, IScalarDescriptor>;
-  const key = props.field.key;
-  const attrs = props.descriptor.attrs;
-  const on = {
-    [event]({ target }: InputEvent) {
-      props.field.setValue(target.value);
-    }
-  };
 
-  return h(tag, { key, attrs, on }, children);
+  return h(tag, {
+    key: props.field.key,
+    attrs: props.field.attrs,
+    on: {
+      [event]({ target }: InputEvent) {
+        props.field.setValue(target.value);
+      }
+    }
+  }, children);
 };

@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components/FormSchema should successfully render component with a default slot: <form id="id-form"><div data-fs-kind="string" data-fs-type="text" data-fs-required="true"><label id="id-form-field-label" for="id-form-field">String</label><div data-fs-wrapper="2"><div data-fs-input="text"><input id="id-form-field" type="text" required="required" aria-required="true" aria-labelledby="id-form-field-label" aria-describedby="id-form-field-helper"></div><p id="id-form-field-helper">A String</p></div></div>checking...</form> 1`] = `
+<form id="id-form">
+  <div data-fs-kind="string" data-fs-type="text" data-fs-required="true"><label id="id-form-field-label" for="id-form-field">String</label>
+    <div data-fs-wrapper="2">
+      <div data-fs-input="text"><input id="id-form-field" type="text" required="required" aria-required="true" aria-labelledby="id-form-field-label" aria-describedby="id-form-field-helper"></div>
+      <p id="id-form-field-helper">A String</p>
+    </div>
+  </div>checking...
+</form>
+`;
+
+exports[`components/FormSchema should successfully render component with only a scalar schema: <form id="id-form"><div data-fs-kind="string" data-fs-type="text" data-fs-required="true"><label id="id-form-field-label" for="id-form-field">String</label><div data-fs-wrapper="2"><div data-fs-input="text"><input id="id-form-field" type="text" required="required" aria-required="true" aria-labelledby="id-form-field-label" aria-describedby="id-form-field-helper"></div><p id="id-form-field-helper">A String</p></div></div></form> 1`] = `
+<form id="id-form">
+  <div data-fs-kind="string" data-fs-type="text" data-fs-required="true"><label id="id-form-field-label" for="id-form-field">String</label>
+    <div data-fs-wrapper="2">
+      <div data-fs-input="text"><input id="id-form-field" type="text" required="required" aria-required="true" aria-labelledby="id-form-field-label" aria-describedby="id-form-field-helper"></div>
+      <p id="id-form-field-helper">A String</p>
+    </div>
+  </div>
+</form>
+`;

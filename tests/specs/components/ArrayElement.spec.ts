@@ -56,7 +56,7 @@ describe('components/ArrayElement', () => {
     const wrapper = mount(ArrayElement, { context });
     const expected = '<fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper"><legend id="id-characters-label" for="id-characters">Characters</legend><p id="id-characters-helper">Your characters</p><div data-fs-kind="string" data-fs-type="text" data-fs-field="characters"><label for="id-characters-0"></label><div data-fs-input="text"><input id="id-characters-0" type="text" name="characters"><div data-fs-buttons="3"><button type="button" disabled="disabled">↑</button><button type="button" disabled="disabled">↓</button><button type="button">-</button></div></div></div><button type="button" data-fs-button="push">+</button></fieldset>';
 
-    expect(wrapper.html()).toBe(expected);
+    expect(wrapper.html()).toMatchSnapshot(expected);
   });
 
   it('should successfully render component with an array schema with a defined model', () => {
@@ -77,7 +77,7 @@ describe('components/ArrayElement', () => {
     const wrapper = mount(ArrayElement, { context });
     const expected = '<fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper"><legend id="id-characters-label" for="id-characters">Characters</legend><p id="id-characters-helper">Your characters</p><div data-fs-kind="string" data-fs-type="text" data-fs-field="characters"><label for="id-characters-0"></label><div data-fs-input="text"><input id="id-characters-0" type="text" name="characters" value="Goku"><div data-fs-buttons="3"><button type="button" disabled="disabled">↑</button><button type="button">↓</button><button type="button">-</button></div></div></div><div data-fs-kind="string" data-fs-type="text" data-fs-field="characters"><label for="id-characters-1"></label><div data-fs-input="text"><input id="id-characters-1" type="text" name="characters" value="Freezer"><div data-fs-buttons="3"><button type="button">↑</button><button type="button" disabled="disabled">↓</button><button type="button">-</button></div></div></div><button type="button" data-fs-button="push">+</button></fieldset>';
 
-    expect(wrapper.html()).toBe(expected);
+    expect(wrapper.html()).toMatchSnapshot(expected);
   });
 
   it('clicking to the push button should successfully trigger the options.onChange callback', () => {

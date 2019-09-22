@@ -2,8 +2,6 @@ import { ArrayField } from '@/types';
 import { ArrayParser } from '@/parsers/ArrayParser';
 import { TestParser, Scope } from '../../lib/TestParser';
 
-import '@/parsers';
-
 describe('parsers/ArrayParser', () => {
   TestParser.Case({
     case: '0',

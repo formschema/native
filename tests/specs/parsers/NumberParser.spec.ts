@@ -26,12 +26,8 @@ describe('parsers/NumberParser', () => {
     expect(parser.kind).toBe('number');
   });
 
-  it('parser.attrs.type should have equal to `number` number schema', () => {
-    expect(parser.attrs.type).toBe('number');
-  });
-
-  it('field.attrs.type should be equal to parser.attrs.type', () => {
-    expect(parser.field.attrs.type).toBe(parser.attrs.type);
+  it('field.attrs.type should have equal to `number` number schema', () => {
+    expect(parser.field.attrs.type).toBe('number');
   });
 
   it('field.attrs.min should be equal to schema.minimum', () => {

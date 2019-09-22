@@ -24,7 +24,7 @@ describe('components/TextareaElement', () => {
     const wrapper = mount(TextareaElement, { context });
     const expected = '<div data-fs-kind="textarea" data-fs-type="textarea" data-fs-field="bio"><label id="id-bio-label" for="id-bio">Bio</label><div data-fs-wrapper="2"><div data-fs-input="textarea"><textarea id="id-bio" name="bio" aria-labelledby="id-bio-label" aria-describedby="id-bio-helper">Goku</textarea></div><p id="id-bio-helper">Tell us about yourself</p></div></div>';
 
-    expect(wrapper.html()).toBe(expected);
+    expect(wrapper.html()).toMatchSnapshot(expected);
   });
 
   it('should successfully emit input event', () => {

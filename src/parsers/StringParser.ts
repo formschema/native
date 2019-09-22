@@ -7,9 +7,9 @@ import {
   Dict,
   FieldKind,
   StringField,
-  StringAttributes,
   ParserOptions,
-  UnknowParser
+  UnknowParser,
+  ScalarDescriptor
 } from '@/types';
 
 const TypeFormat: Dict<string> = {
@@ -59,8 +59,8 @@ function getType(kind: FieldKind, schema: JsonSchema) {
   }
 }
 
-export class StringParser extends ScalarParser<string, StringField, StringAttributes> {
-  constructor(options: ParserOptions<string>, parent?: UnknowParser) {
+export class StringParser extends ScalarParser<string, StringField> {
+  constructor(options: ParserOptions<string, StringField, ScalarDescriptor>, parent?: UnknowParser) {
     const schema = options.schema;
     const kind = options.kind || ScalarParser.getKind(schema, parent) || getKind(schema);
     const type = ScalarParser.getType(kind) || getType(kind, schema);
@@ -73,24 +73,24 @@ export class StringParser extends ScalarParser<string, StringField, StringAttrib
   }
 
   parse() {
-    if (this.attrs.type === 'file') {
-      this.attrs.accept = this.schema.contentMediaType;
+    if (this.field.attrs.type === 'file') {
+      this.field.attrs.accept = this.schema.contentMediaType;
     }
 
-    if (this.attrs.type) {
-      Object.defineProperty(this.attrs, 'value', {
+    if (this.field.attrs.type) {
+      Object.defineProperty(this.field.attrs, 'value', {
         enumerable: true,
         configurable: true,
         get: () => this.model
       });
 
       if (this.schema.pattern) {
-        this.attrs.pattern = this.schema.pattern;
+        this.field.attrs.pattern = this.schema.pattern;
       }
     }
 
-    this.attrs.minlength = this.schema.minLength;
-    this.attrs.maxlength = this.schema.maxLength;
+    this.field.attrs.minlength = this.schema.minLength;
+    this.field.attrs.maxlength = this.schema.maxLength;
 
     this.commit();
   }

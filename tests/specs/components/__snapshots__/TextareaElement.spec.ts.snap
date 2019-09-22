@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components/TextareaElement should successfully render component: <div data-fs-kind="textarea" data-fs-type="textarea" data-fs-field="bio"><label id="id-bio-label" for="id-bio">Bio</label><div data-fs-wrapper="2"><div data-fs-input="textarea"><textarea id="id-bio" name="bio" aria-labelledby="id-bio-label" aria-describedby="id-bio-helper">Goku</textarea></div><p id="id-bio-helper">Tell us about yourself</p></div></div> 1`] = `
+<div data-fs-kind="textarea" data-fs-type="textarea" data-fs-field="bio"><label id="id-bio-label" for="id-bio">Bio</label>
+  <div data-fs-wrapper="2">
+    <div data-fs-input="textarea"><textarea id="id-bio" name="bio" aria-labelledby="id-bio-label" aria-describedby="id-bio-helper">Goku</textarea></div>
+    <p id="id-bio-helper">Tell us about yourself</p>
+  </div>
+</div>
+`;

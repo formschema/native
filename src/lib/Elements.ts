@@ -5,7 +5,7 @@ export const Elements = {
   renderChildren: (h: CreateElement, descriptor: IObjectDescriptor, children: IObjectChildDescriptor[]) => {
     return children.map((childDescriptor) => h(childDescriptor.component, {
       key: childDescriptor.field.key,
-      attrs: descriptor.attrs,
+      attrs: childDescriptor.field.attrs,
       props: {
         field: childDescriptor.field,
         descriptor: childDescriptor
