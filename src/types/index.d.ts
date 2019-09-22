@@ -18,7 +18,8 @@ export interface Dict<T = unknown> extends Record<string, T> {}
 export type Scalar = boolean | number | null | string;
 export type SchemaType = 'object' | 'array' | 'string' | 'number' | 'integer' | 'boolean' | 'null';
 export type ParserKind = SchemaType | 'enum' | 'list' | 'textarea' | 'image' | 'file' | 'password';
-export type ScalarKind = 'string' | 'password' | 'number' | 'integer' | 'null' | 'boolean' | 'hidden' | 'textarea' | 'image' | 'file' | 'radio' | 'checkbox';
+export type ScalarKind = 'string' | 'password' | 'number' | 'integer' | 'null' | 'boolean'
+| 'hidden' | 'textarea' | 'image' | 'file' | 'radio' | 'checkbox';
 export type ItemKind = 'enum' | 'list';
 export type FieldKind = SchemaType | ScalarKind | ItemKind;
 export type ComponentsType = 'form' | FieldKind;
@@ -318,14 +319,14 @@ export interface ItemsDescriptor extends SchemaDescriptor {
  * Describe HTML Radio Elements
  */
 export interface EnumDescriptor extends ItemsDescriptor {
-  kind: 'enum'
+  kind: 'enum';
 }
 
 /**
  * Describe HTML Select Element
  */
 export interface ListDescriptor extends ItemsDescriptor {
-  kind: 'list'
+  kind: 'list';
 }
 
 /**
