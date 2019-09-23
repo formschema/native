@@ -511,11 +511,13 @@ FormSchema use a `<fieldset>` element to group inputs of a object JSON Schema:
     "lastname": {
       "type": "string"
     }
-  }
+  },
+  "required": ["firstname"]
 }
 ```
 
-Use descriptor to set labels and helpers:
+Use descriptor to set labels and helpers. You can also change the order of
+properties for the rendering:
 
 **descriptor.json**
 
@@ -530,7 +532,8 @@ Use descriptor to set labels and helpers:
       "label": "Last Name",
       "helper": "Your last name"
     }
-  }
+  },
+  "order": ["lastname", "firstname"]
 }
 ```
 
