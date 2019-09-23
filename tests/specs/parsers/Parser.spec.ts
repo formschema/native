@@ -1,10 +1,9 @@
-import { Component } from 'vue';
+/* eslint-disable max-classes-per-file */
+/* eslint-disable class-methods-use-this */
+/* eslint-disable @typescript-eslint/no-empty-function */
+
 import { Parser } from '@/parsers/Parser';
-import { Dict, ObjectField, StringField, UnknowParser, ParserOptions, ScalarDescriptor, ObjectDescriptor } from '@/types';
-import { Objects } from '@/lib/Objects';
-import { JsonSchema } from '@/types/jsonschema';
-import { ScalarUIDescriptor } from '@/descriptors/ScalarUIDescriptor';
-import { ObjectUIDescriptor } from '@/descriptors/ObjectUIDescriptor';
+import { Dict, ObjectField, StringField, UnknowParser, ParserOptions } from '@/types';
 import { Options } from '../../lib/Options';
 import { TestParser, Scope } from '../../lib/TestParser';
 
@@ -54,16 +53,16 @@ const ParserValidator = {
     rawValue: ({ value, parser: { initialValue } }: Scope<FakeParser>) => expect(value).toBe(initialValue),
     kind: ({ value, schema }: Scope) => expect(value).toBe(schema.type),
     id: ({ value }: Scope) => expect(typeof value).toBe('string'),
-    initialValue: ({ value, parser: { options, schema } }: Scope) => [schema.default, options.model].includes(value),
+    initialValue: ({ value, parser: { options, schema } }: Scope) => [ schema.default, options.model ].includes(value),
     field: {
       kind: ({ value, parser }: Scope) => expect(value).toBe(parser.kind),
       name: ({ value, parser }: Scope) => expect(value).toBe(parser.options.name),
       isRoot: ({ value, parser }: Scope) => expect(value).toBe(parser.isRoot),
       schema: ({ value, parser: { options } }: Scope) => expect(value).toBe(options.schema),
       required: ({ value, parser }: Scope) => expect(value).toBe(parser.options.required || false),
-      parent: ({ value, parser }: Scope) => parser.parent ? expect(value).toBe(parser.parent.field) : expect(value).toBeUndefined(),
+      parent: ({ value, parser }: Scope) => (parser.parent ? expect(value).toBe(parser.parent.field) : expect(value).toBeUndefined()),
       root: ({ value, parser }: Scope) => expect(value).toBe(parser.root.field),
-      deep: ({ value, parser }: Scope) => parser.field.parent ? expect(value).toBe(parser.field.parent.deep + 1) : expect(value).toBe(0),
+      deep: ({ value, parser }: Scope) => (parser.field.parent ? expect(value).toBe(parser.field.parent.deep + 1) : expect(value).toBe(0)),
       attrs: {
         id: ({ value, parser }: Scope) => expect(value).toBe(parser.id),
         type: ({ value }: Scope) => expect(value).toBeUndefined(),
@@ -134,13 +133,6 @@ describe('parsers/Parser', () => {
     it('Parser.get() should successfully return the registered parser with its parent', () => {
       Parser.register('object', ObjectFakeParser);
       Parser.register('string', InputFakeParser);
-
-      const schema: JsonSchema = {
-        type: 'object',
-        properties: {
-          name: { type: 'string' }
-        }
-      };
 
       const options: any = {
         schema: {
@@ -287,7 +279,7 @@ describe('parsers/Parser', () => {
     given: Options.get({
       schema: {
         type: 'number',
-        enum: [1, 2, 3, 4]
+        enum: [ 1, 2, 3, 4 ]
       }
     }),
     expected: {
@@ -303,7 +295,7 @@ describe('parsers/Parser', () => {
     given: Options.get({
       schema: {
         type: 'number',
-        enum: [1, 2, 3, 4, 5]
+        enum: [ 1, 2, 3, 4, 5 ]
       }
     }),
     expected: {
@@ -320,7 +312,7 @@ describe('parsers/Parser', () => {
       kind: 'list',
       schema: {
         type: 'boolean',
-        enum: [true, false]
+        enum: [ true, false ]
       }
     }),
     expected: {
@@ -429,14 +421,14 @@ describe('parsers/Parser', () => {
 
             // calling requestRender() with arguments without
             // updated the field.key value have no effect
-            parser.requestRender([parser.field]);
+            parser.requestRender([ parser.field ]);
             expect(parser.field.key).toEqual(oldFieldKey);
 
 
             // calling requestRender() with arguments after
             // updated the field.key value have no effect
             parser.field.key = 'random-key';
-            parser.requestRender([parser.field]);
+            parser.requestRender([ parser.field ]);
             expect(parser.field.key).not.toEqual(oldFieldKey);
 
             oldFieldKey = parser.field.key;
@@ -468,7 +460,7 @@ describe('parsers/Parser', () => {
         const parser = new FakeParser({ ...options10, requestRender });
 
         parser.parse();
-        parser.requestRender([parser.field]);
+        parser.requestRender([ parser.field ]);
 
         return parser;
       }
@@ -514,10 +506,10 @@ describe('parsers/Parser', () => {
 
           parser.field.reset(); // reset with calling onChange
 
-          const onChange: any = parser.options.onChange;
-          const result = onChange.mock.calls.map(([value]: any) => value);
+          const { onChange } = parser.options;
+          const result = onChange.mock.calls.map(([ value ]: any) => value);
 
-          expect(result).toEqual(['jon', 'arya']);
+          expect(result).toEqual([ 'jon', 'arya' ]);
         }
       }
     }
@@ -555,10 +547,10 @@ describe('parsers/Parser', () => {
 
           parser.field.clear(); // clear with calling onChange
 
-          const onChange: any = parser.options.onChange;
-          const result = onChange.mock.calls.map(([value]: any) => value);
+          const { onChange } = parser.options;
+          const result = onChange.mock.calls.map(([ value ]: any) => value);
 
-          expect(result).toEqual(['jon', undefined]);
+          expect(result).toEqual([ 'jon', undefined ]);
         }
       }
     }

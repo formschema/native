@@ -51,7 +51,7 @@ describe('lib/CreateInput', () => {
 
       CreateInput(h, 'input', MockData);
 
-      const [ [ tag, data ] ] = h.mock.calls;
+      const [ [ /* tag */, data ] ] = h.mock.calls;
 
       data.on.input({
         target: {

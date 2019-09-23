@@ -4,7 +4,7 @@ import { UniqueId } from '@/lib/UniqueId';
 import { Objects } from '@/lib/Objects';
 import { Value } from '@/lib/Value';
 
-import { Dict, ObjectField, ParserOptions, ObjectFieldChild, UnknowParser, ObjectDescriptor } from '@/types';
+import { Dict, ObjectField, ParserOptions, ObjectFieldChild, UnknowParser, ObjectDescriptor, UnknowField } from '@/types';
 import { ObjectUIDescriptor } from '@/descriptors/ObjectUIDescriptor';
 
 export class ObjectParser extends Parser<Dict, ObjectField, ObjectUIDescriptor> {
@@ -31,7 +31,7 @@ export class ObjectParser extends Parser<Dict, ObjectField, ObjectUIDescriptor> 
       : [];
 
     Object.keys(this.properties)
-      .map((key): { key: string; options: ParserOptions<unknown> } => ({
+      .map((key): { key: string; options: ParserOptions<unknown, UnknowField> } => ({
         key,
         options: {
           schema: this.properties[key],

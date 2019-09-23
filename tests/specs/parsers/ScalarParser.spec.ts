@@ -8,7 +8,7 @@ describe('parsers/ScalarParser', () => {
     given: Options.get({
       schema: {
         type: 'string',
-        enum: ['arya']
+        enum: [ 'arya' ]
       },
       model: undefined as any
     }),
@@ -85,7 +85,7 @@ describe('parsers/ScalarParser', () => {
     given: Options.get({
       schema: {
         type: 'string',
-        enum: ['arya']
+        enum: [ 'arya' ]
       },
       model: undefined as any
     }),

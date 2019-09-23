@@ -9,7 +9,7 @@ const { context } = Options.get({
     type: 'string',
     title: 'Character',
     description: 'Your character',
-    enum: ['goku', 'freezer']
+    enum: [ 'goku', 'freezer' ]
   },
   model: 'freezer',
   id: 'id-character',
@@ -53,7 +53,7 @@ describe('components/ListElement', () => {
       kind: 'list',
       schema: {
         type: 'number',
-        enum: [1, 2, 3]
+        enum: [ 1, 2, 3 ]
       },
       model: 2,
       onChange: onChangeMock
@@ -76,7 +76,7 @@ describe('components/ListElement', () => {
       kind: 'list',
       schema: {
         type: 'boolean',
-        enum: [true, false]
+        enum: [ true, false ]
       },
       model: true,
       id: 'id',
@@ -100,7 +100,7 @@ describe('components/ListElement', () => {
       kind: 'list',
       schema: {
         type: 'null',
-        enum: [null, null]
+        enum: [ null, null ]
       },
       model: null,
       id: 'id',
@@ -127,7 +127,7 @@ describe('components/ListElement', () => {
       kind: 'list',
       schema: {
         type: 'string',
-        enum: ['goku', 'freezer']
+        enum: [ 'goku', 'freezer' ]
       },
       model: 'goku',
       onChange: jest.fn()

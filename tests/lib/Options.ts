@@ -1,13 +1,19 @@
 import { Parser } from '@/parsers/Parser';
-import { UIDescriptor } from '@/descriptors/UIDescriptor';
-import { ParserOptions, DescriptorInstance, UnknowField, IDescriptor, UnknowParser } from '@/types';
+
+import {
+  ParserOptions,
+  DescriptorInstance,
+  UnknowField,
+  IDescriptor,
+  UnknowParser
+} from '@/types';
 
 import '@/parsers';
 import '@/descriptors';
 
 export interface GetOptions extends ParserOptions<any> {
   descriptor?: DescriptorInstance;
-};
+}
 
 export interface Context {
   props: {
@@ -33,8 +39,8 @@ export const Options = {
       throw new Error('Parser cannot be null');
     }
 
-    const field = parser.field;
-    const descriptor = parser.descriptor;
+    const { field } = parser;
+    const { descriptor } = parser;
 
     const context = {
       props: { field, descriptor }
@@ -42,6 +48,8 @@ export const Options = {
 
     const schema = options.schema as any;
 
-    return { context, parser, schema, descriptor, options, field };
+    return {
+      context, parser, schema, descriptor, options, field
+    };
   }
 };

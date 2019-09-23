@@ -30,7 +30,7 @@ export abstract class Parser<
   model: TModel;
   rawValue: TModel;
   readonly field: TField;
-  readonly options: ParserOptions<TModel>;
+  readonly options: ParserOptions<TModel, TField>;
   readonly schema: JsonSchema;
   readonly descriptor: TDescriptor;
 
@@ -44,7 +44,7 @@ export abstract class Parser<
       : schema.type;
   }
 
-  static get(options: ParserOptions<any>, parent?: UnknowParser): UnknowParser | null {
+  static get(options: ParserOptions<any, any>, parent?: UnknowParser): UnknowParser | null {
     if (typeof options.schema.type === 'undefined') {
       return null;
     }
@@ -72,7 +72,7 @@ export abstract class Parser<
     return parser;
   }
 
-  constructor(kind: FieldKind, options: ParserOptions<any, any>, parent?: UnknowParser) {
+  constructor(kind: FieldKind, options: ParserOptions<TModel, TField>, parent?: UnknowParser) {
     this.id = options.id || UniqueId.get(options.name);
     this.parent = parent;
     this.options = options;

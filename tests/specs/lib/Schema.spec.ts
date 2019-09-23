@@ -19,7 +19,7 @@ describe('lib/Schema', () => {
       });
     });
 
-    it(`should validate empty schema {} as non scalar schema`, () => {
+    it('should validate empty schema {} as non scalar schema', () => {
       expect(Schema.isScalar({} as any)).toBe(false);
     });
   });

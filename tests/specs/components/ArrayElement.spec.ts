@@ -29,7 +29,7 @@ describe('components/ArrayElement', () => {
         title: 'Empty array',
         description: 'Your characters'
       },
-      model: ['freezer']
+      model: [ 'freezer' ]
     });
 
     const wrapper = mount(ArrayElement, { context });
@@ -71,7 +71,7 @@ describe('components/ArrayElement', () => {
         maxItems: 3,
         items: { type: 'string' }
       },
-      model: ['Goku', 'Freezer']
+      model: [ 'Goku', 'Freezer' ]
     });
 
     const wrapper = mount(ArrayElement, { context });
@@ -92,17 +92,17 @@ describe('components/ArrayElement', () => {
         maxItems: 3,
         items: { type: 'string' }
       },
-      model: ['Goku', 'Freezer']
+      model: [ 'Goku', 'Freezer' ]
     });
 
     const wrapper = mount(ArrayElement, { context });
     const button = wrapper.find('button[data-fs-button=push]');
 
-    expect(parser.rawValue).toEqual(['Goku', 'Freezer']);
+    expect(parser.rawValue).toEqual([ 'Goku', 'Freezer' ]);
 
     button.trigger('click');
 
-    expect(parser.rawValue).toEqual(['Goku', 'Freezer', undefined]);
+    expect(parser.rawValue).toEqual([ 'Goku', 'Freezer', undefined ]);
   });
 
   describe('should successfully render enum array schema', () => {
@@ -116,11 +116,11 @@ describe('components/ArrayElement', () => {
         description: 'Your favorite characters',
         items: {
           type: 'string',
-          enum: ['Goku', 'Gohan', 'Vegeta', 'Picolo']
+          enum: [ 'Goku', 'Gohan', 'Vegeta', 'Picolo' ]
         },
         uniqueItems: true
       },
-      model: ['Goku', 'Picolo'],
+      model: [ 'Goku', 'Picolo' ],
       onChange: onChangeMock
     });
 
@@ -139,16 +139,17 @@ describe('components/ArrayElement', () => {
     it('should have right initial model', () => {
       const [ [ initialValue ] ] = onChangeMock.mock.calls;
 
-      expect(initialValue).toEqual(['Goku', 'Picolo']);
+      expect(initialValue).toEqual([ 'Goku', 'Picolo' ]);
       expect(onChangeMock.mock.calls.length).toBe(1);
     });
 
     it('should have updated model after interaction', () => {
       inputs.at(1).setChecked(true);
 
+      // eslint-disable-next-line no-empty-pattern
       const [ [], [ changedValue ] ] = onChangeMock.mock.calls;
 
-      expect(changedValue).toEqual(['Goku', 'Gohan', 'Picolo']);
+      expect(changedValue).toEqual([ 'Goku', 'Gohan', 'Picolo' ]);
       expect(onChangeMock.mock.calls.length).toBe(2);
     });
   });

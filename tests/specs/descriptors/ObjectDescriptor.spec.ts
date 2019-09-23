@@ -1,7 +1,4 @@
-import { Parser } from '@/parsers/Parser';
 import { ObjectParser } from '@/parsers/ObjectParser';
-import { ListField, ObjectField, ObjectFieldChild, ParserOptions } from '@/types';
-import { JsonSchema } from '@/types/jsonschema';
 import { TestParser, Scope } from '../../lib/TestParser';
 
 describe('descriptors/ObjectDescriptor', () => {
@@ -15,7 +12,7 @@ describe('descriptors/ObjectDescriptor', () => {
           properties: {
             name: { type: 'string' }
           },
-          required: ['name']
+          required: [ 'name' ]
         },
         model: { name: 'Jon Snow' },
         name: 'profile'

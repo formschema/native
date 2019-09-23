@@ -131,10 +131,10 @@ describe('parsers/NumberParser', () => {
 
           parser.field.reset(); // reset with calling onChange
 
-          const onChange: any = parser.options.onChange;
-          const result = onChange.mock.calls.map(([value]: any) => value);
+          const { onChange } = parser.options;
+          const result = onChange.mock.calls.map(([ value ]: any) => value);
 
-          expect(result).toEqual([2.1, 1.1, 2.1]);
+          expect(result).toEqual([ 2.1, 1.1, 2.1 ]);
         }
       }
     }
@@ -172,10 +172,10 @@ describe('parsers/NumberParser', () => {
 
           parser.field.clear(); // clear with calling onChange
 
-          const onChange: any = parser.options.onChange;
-          const result = onChange.mock.calls.map(([value]: any) => value);
+          const { onChange } = parser.options;
+          const result = onChange.mock.calls.map(([ value ]: any) => value);
 
-          expect(result).toEqual([2.1, 1.1, undefined]);
+          expect(result).toEqual([ 2.1, 1.1, undefined ]);
         }
       }
     }

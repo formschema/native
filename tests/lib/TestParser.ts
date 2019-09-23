@@ -7,7 +7,7 @@ import '@/descriptors';
 type TParser = IParser<any>;
 
 type Given<P> = {
-  parser: P
+  parser: P;
 };
 
 type ExpectedCall = (scope: Scope) => void;
@@ -33,7 +33,7 @@ export interface Scope<
   schema: any;
   descriptor: Required<D>;
   given: Required<Given<P>>;
-};
+}
 
 function toEqual(parser: any, prefix: string, actual: any, expected: Dict<any>, given: any) {
   Object.keys(expected).forEach((key) => {
@@ -41,7 +41,7 @@ function toEqual(parser: any, prefix: string, actual: any, expected: Dict<any>, 
       it(`${prefix}.${key} validation should be succeed`, () => {
         const result = expected[key]({
           value: actual[key],
-          parser: parser,
+          parser,
           options: parser.options,
           field: parser.field,
           schema: parser.schema,
@@ -62,7 +62,9 @@ function toEqual(parser: any, prefix: string, actual: any, expected: Dict<any>, 
 }
 
 export const TestParser = {
-  Case({ description, given, expected, ...args }: TestCaseOptions) {
+  Case({
+    description, given, expected, ...args
+  }: TestCaseOptions) {
     const p = typeof given.parser === 'function'
       ? given.parser()
       : given.parser instanceof Parser
@@ -94,4 +96,4 @@ export const TestParser = {
       }
     });
   }
-}
+};

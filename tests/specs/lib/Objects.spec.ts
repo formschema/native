@@ -17,11 +17,17 @@ describe('lib/Objects', () => {
 
   describe('Objects.assign(dest, src)', () => {
     it('should successfully merge src object to the dest object', () => {
-      const F = function F() {};
+      const F = function F() { return 0; };
 
-      const src = { a: 1, c: 2, e: { x: 1 }, d: [ 1 ], f: { g: 1 }, F };
-      const dest = { a: 0, b: 1, e: { y: 2 }, d: [ 2, 3 ] };
-      const expected = { a: 1, b: 1, c: 2, e: { x: 1, y: 2 }, d: [ 1 ], f: { g: 1 }, F };
+      const src = {
+        a: 1, c: 2, e: { x: 1 }, d: [ 1 ], f: { g: 1 }, F
+      };
+      const dest = {
+        a: 0, b: 1, e: { y: 2 }, d: [ 2, 3 ]
+      };
+      const expected = {
+        a: 1, b: 1, c: 2, e: { x: 1, y: 2 }, d: [ 1 ], f: { g: 1 }, F
+      };
 
       Objects.assign(dest, src);
 
@@ -31,10 +37,14 @@ describe('lib/Objects', () => {
 
   describe('Objects.clone(object)', () => {
     it('should successfully clone object', () => {
-      const F = function F() {};
+      const F = function F() { return 0; };
 
-      const src = { a: 1, c: 2, e: { x: 1 }, d: [ 1 ], f: { g: 1 }, F };
-      const expected = { a: 1, c: 2, e: { x: 1 }, d: [ 1 ], f: { g: 1 }, F };
+      const src = {
+        a: 1, c: 2, e: { x: 1 }, d: [ 1 ], f: { g: 1 }, F
+      };
+      const expected = {
+        a: 1, c: 2, e: { x: 1 }, d: [ 1 ], f: { g: 1 }, F
+      };
       const result = Objects.clone(src);
 
       expect(result).toEqual(expected);
@@ -47,8 +57,10 @@ describe('lib/Objects', () => {
     });
 
     it('should return false with a non empty object', () => {
-      const F = function F() {};
-      const object = { a: 1, c: 2, e: { x: 1 }, d: [ 1 ], f: { g: 1 }, F };
+      const F = function F() { return 0; };
+      const object = {
+        a: 1, c: 2, e: { x: 1 }, d: [ 1 ], f: { g: 1 }, F
+      };
 
       expect(Objects.isEmpty(object)).toBe(false);
     });
@@ -64,8 +76,10 @@ describe('lib/Objects', () => {
     });
 
     it('should delete all properties', () => {
-      const F = function F() {};
-      const object = { a: 1, c: 2, e: { x: 1 }, d: [ 1 ], f: { g: 1 }, F };
+      const F = function F() { return 0; };
+      const object = {
+        a: 1, c: 2, e: { x: 1 }, d: [ 1 ], f: { g: 1 }, F
+      };
 
       Objects.clear(object);
 

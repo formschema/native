@@ -1,4 +1,3 @@
-import { Parser } from '@/parsers/Parser';
 import { ListParser } from '@/parsers/ListParser';
 import { Options } from '../../lib/Options';
 import { TestParser, Scope } from '../../lib/TestParser';
@@ -11,7 +10,7 @@ describe('parsers/ListParser', () => {
       parser: new ListParser({
         schema: {
           type: 'string',
-          enum: ['jon', 'arya']
+          enum: [ 'jon', 'arya' ]
         },
         model: 'arya'
       })
@@ -63,7 +62,7 @@ describe('parsers/ListParser', () => {
     given: Options.get({
       schema: {
         type: 'string',
-        enum: ['jon', 'arya']
+        enum: [ 'jon', 'arya' ]
       },
       model: 'arya',
       descriptor: {
@@ -86,7 +85,7 @@ describe('parsers/ListParser', () => {
       parser: new ListParser({
         schema: {
           type: 'boolean',
-          enum: [true, false]
+          enum: [ true, false ]
         },
         model: true
       })
@@ -136,7 +135,7 @@ describe('parsers/ListParser', () => {
       parser: new ListParser({
         schema: {
           type: 'null',
-          enum: [null, null]
+          enum: [ null, null ]
         },
         model: null
       })
@@ -186,7 +185,7 @@ describe('parsers/ListParser', () => {
       parser: new ListParser({
         schema: {
           type: 'string',
-          enum: ['jon', 'arya']
+          enum: [ 'jon', 'arya' ]
         },
         model: undefined,
         descriptor: {
@@ -355,7 +354,7 @@ describe('parsers/ListParser', () => {
       parser: new ListParser({
         schema: {
           type: 'string',
-          enum: ['jon', 'arya'],
+          enum: [ 'jon', 'arya' ],
           default: 'jon'
         },
         model: undefined
@@ -373,7 +372,7 @@ describe('parsers/ListParser', () => {
     description: 'field.value should parse default undefined as an undefined model',
     given: {
       parser: new ListParser({
-        schema: { type: 'string', enum: ['jon', 'arya'] },
+        schema: { type: 'string', enum: [ 'jon', 'arya' ] },
         model: undefined
       })
     },

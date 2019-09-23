@@ -1,6 +1,4 @@
-import { Parser } from '@/parsers/Parser';
 import { EnumParser } from '@/parsers/EnumParser';
-import { ListUIDescriptor } from '@/descriptors/ListUIDescriptor';
 import { ParserOptions } from '@/types';
 import { TestParser, Scope } from '../../lib/TestParser';
 
@@ -10,14 +8,10 @@ describe('parsers/EnumParser', () => {
   const options: ParserOptions<unknown, any> = {
     schema: {
       type: 'string',
-      enum: ['jon', 'arya', 'bran', 'ned']
+      enum: [ 'jon', 'arya', 'bran', 'ned' ]
     },
     model: 'jon'
   };
-
-  const parser = new EnumParser(options);
-
-  parser.parse();
 
   TestParser.Case({
     case: '1.0',
@@ -26,7 +20,7 @@ describe('parsers/EnumParser', () => {
       parser: new EnumParser({
         schema: {
           type: 'string',
-          enum: ['jon', 'arya', 'bran', 'ned']
+          enum: [ 'jon', 'arya', 'bran', 'ned' ]
         },
         model: 'jon'
       })
@@ -36,16 +30,16 @@ describe('parsers/EnumParser', () => {
         kind: ({ value }: Scope) => expect(value).toBe('enum'),
         field: {
           value: 'jon',
-          children({ value }: Scope) {
+          children({ parser }: Scope) {
             // children should be defined
             const models = parser.field.children.map(({ value }) => value);
 
-            expect(models).toEqual(['jon', 'arya', 'bran', 'ned']);
+            expect(models).toEqual([ 'jon', 'arya', 'bran', 'ned' ]);
 
             // children's field.attrs.checked should be defined
             const checkStates = parser.field.children.map(({ attrs }) => attrs.checked);
 
-            expect(checkStates).toEqual([true, false, false, false]);
+            expect(checkStates).toEqual([ true, false, false, false ]);
           },
           setValue({ parser }: Scope<EnumParser>) {
             // field.value should be equal to the updated value using field.setValue()
@@ -57,7 +51,7 @@ describe('parsers/EnumParser', () => {
 
             const checkStates = parser.field.children.map(({ attrs }) => attrs.checked);
 
-            expect(checkStates).toEqual([false, false, true, false]);
+            expect(checkStates).toEqual([ false, false, true, false ]);
 
             // field.value should be updated when a child is checked
             const childField: any = parser.field.children.slice(-1).pop();
@@ -77,7 +71,7 @@ describe('parsers/EnumParser', () => {
       parser: new EnumParser({
         schema: {
           type: 'string',
-          enum: ['jon', 'arya', 'tyrion'],
+          enum: [ 'jon', 'arya', 'tyrion' ],
           default: 'arya'
         },
         model: undefined
@@ -98,7 +92,7 @@ describe('parsers/EnumParser', () => {
     description: 'field.value should parse default undefined as an undefined model',
     given: {
       parser: new EnumParser({
-        schema: { type: 'string', enum: ['jon', 'arya'] },
+        schema: { type: 'string', enum: [ 'jon', 'arya' ] },
         model: undefined
       })
     },
@@ -136,7 +130,7 @@ describe('parsers/EnumParser', () => {
       parser: new EnumParser({
         schema: {
           type: 'string',
-          enum: ['jon', 'arya']
+          enum: [ 'jon', 'arya' ]
         },
         model: 'jon',
         descriptor: {
@@ -208,7 +202,7 @@ describe('parsers/EnumParser', () => {
     expected: {
       parser: {
         reset({ parser }: Scope) {
-          const onChange: any = parser.options.onChange;
+          const { onChange } = parser.options;
           const expected = [
             'arya',
             'jon'
@@ -259,7 +253,7 @@ describe('parsers/EnumParser', () => {
     expected: {
       parser: {
         clear({ parser }: Scope) {
-          const onChange: any = parser.options.onChange;
+          const { onChange } = parser.options;
 
           expect(parser.rawValue).toEqual('arya');
           expect(parser.model).toEqual('arya');

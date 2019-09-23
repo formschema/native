@@ -1,6 +1,7 @@
-import { Parser } from '@/parsers/Parser';
+/* eslint-disable @typescript-eslint/camelcase */
+
 import { ObjectParser } from '@/parsers/ObjectParser';
-import { ListField, ObjectField, ObjectFieldChild, ParserOptions } from '@/types';
+import { ParserOptions } from '@/types';
 import { JsonSchema } from '@/types/jsonschema';
 import { TestParser, Scope } from '../../lib/TestParser';
 
@@ -11,7 +12,7 @@ describe('parsers/ObjectParser', () => {
       properties: {
         name: { type: 'string' }
       },
-      required: ['name']
+      required: [ 'name' ]
     },
     model: { name: 'Jon Snow' },
     name: 'profile'
@@ -27,7 +28,7 @@ describe('parsers/ObjectParser', () => {
           properties: {
             name: { type: 'string' }
           },
-          required: ['name']
+          required: [ 'name' ]
         },
         model: { name: 'Jon Snow' },
         name: 'profile'
@@ -140,7 +141,7 @@ describe('parsers/ObjectParser', () => {
           properties: {
             name: { type: 'string' }
           },
-          required: ['name']
+          required: [ 'name' ]
         },
         model: {}
       })
@@ -148,7 +149,7 @@ describe('parsers/ObjectParser', () => {
     expected: {
       parser: {
         field: {
-          value: ({ value }: Scope) => expect(value).toEqual({ name: undefined }),
+          value: ({ value }: Scope) => expect(value).toEqual({ name: undefined })
         }
       }
     }
@@ -164,7 +165,7 @@ describe('parsers/ObjectParser', () => {
           properties: {
             name: { type: 'string', default: 'Goku' }
           },
-          required: ['name']
+          required: [ 'name' ]
         },
         model: {}
       })
@@ -172,7 +173,7 @@ describe('parsers/ObjectParser', () => {
     expected: {
       parser: {
         field: {
-          value: ({ value }: Scope) => expect(value).toEqual({ name: 'Goku' }),
+          value: ({ value }: Scope) => expect(value).toEqual({ name: 'Goku' })
         }
       }
     }
@@ -193,14 +194,14 @@ describe('parsers/ObjectParser', () => {
         },
         model: {},
         descriptor: {
-          order: ['lastName', 'dateBirth']
+          order: [ 'lastName', 'dateBirth' ]
         }
       })
     },
     expected: {
       parser: {
         descriptor: {
-          orderedProperties: ({ value }: Scope) => expect(value).toEqual(['lastName', 'dateBirth', 'firstName'])
+          orderedProperties: ({ value }: Scope) => expect(value).toEqual([ 'lastName', 'dateBirth', 'firstName' ])
         }
       }
     }
@@ -225,7 +226,7 @@ describe('parsers/ObjectParser', () => {
     expected: {
       parser: {
         descriptor: {
-          orderedProperties: ({ value }: Scope) => expect(value).toEqual(['firstName', 'lastName'])
+          orderedProperties: ({ value }: Scope) => expect(value).toEqual([ 'firstName', 'lastName' ])
         }
       }
     }
@@ -460,7 +461,7 @@ describe('parsers/ObjectParser', () => {
         billing_address: { type: 'string' }
       },
       dependencies: {
-        credit_card: ['billing_address']
+        credit_card: [ 'billing_address' ]
       }
     }
   };
@@ -522,7 +523,7 @@ describe('parsers/ObjectParser', () => {
         dependencies({ value }: Scope) {
           expect(value).toEqual({
             name: [],
-            credit_card: ['billing_address']
+            credit_card: [ 'billing_address' ]
           });
         }
       }
@@ -566,7 +567,7 @@ describe('parsers/ObjectParser', () => {
       parser: {
         field: {
           children({ parser }: Scope) {
-            const options: any = parser.options;
+            const { options } = parser;
             const [ [ [ creditCardField, billingAddressField ] ] ] = options.requestRender.mock.calls;
 
             expect(options.requestRender).toBeCalled();
@@ -623,7 +624,7 @@ describe('parsers/ObjectParser', () => {
       parser: {
         field: {
           children({ parser }: Scope) {
-            const options: any = parser.options;
+            const { options } = parser;
             const [ [ [ creditCardField, billingAddressField ] ] ] = options.requestRender.mock.calls;
 
             expect(options.requestRender).toBeCalled();
@@ -656,8 +657,8 @@ describe('parsers/ObjectParser', () => {
     },
     expected: {
       parser: {
-        reset({ value, parser }: Scope) {
-          const onChange: any = parser.options.onChange;
+        reset({ parser }: Scope) {
+          const { onChange } = parser.options;
           const expected = [
             { name: 'arya' },
             { name: 'jon' }
@@ -707,8 +708,8 @@ describe('parsers/ObjectParser', () => {
     },
     expected: {
       parser: {
-        clear({ value, parser }: Scope) {
-          const onChange: any = parser.options.onChange;
+        clear({ parser }: Scope) {
+          const { onChange } = parser.options;
           const expected = [
             { name: 'arya' },
             { name: 'jon' }

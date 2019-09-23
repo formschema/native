@@ -1,4 +1,8 @@
+/* eslint-disable @typescript-eslint/camelcase */
+
 import Vue from 'vue';
+
+import { mount } from '@vue/test-utils';
 
 import FormSchema, {
   GLOBAL,
@@ -10,7 +14,6 @@ import FormSchema, {
   UIDescriptor
 } from '@/components/FormSchema';
 
-import { mount } from '@vue/test-utils';
 import { JsonSchema } from '@/types/jsonschema';
 
 import { UniqueId as UniqueIdLib } from '@/lib/UniqueId';
@@ -25,7 +28,9 @@ import { NativeElements } from '@/lib/NativeElements';
 const DEFAULT_ID = 'id-form';
 
 function getWrapper(options: any) {
-  const { id = DEFAULT_ID, schema, value, children, ...props }: any = options;
+  const {
+    id = DEFAULT_ID, schema, value, children, ...props
+  }: any = options;
 
   return mount({
     functional: true,
@@ -79,7 +84,7 @@ describe('components/FormSchema', () => {
   describe('props/computed', () => {
     it('should have setted schema', (done) => {
       const wrapper = getWrapper({ schema });
-      const vm: any = wrapper.vm;
+      const { vm } = wrapper;
 
       Vue.nextTick(() => {
         expect(vm.schema).toBe(schema);
@@ -89,7 +94,7 @@ describe('components/FormSchema', () => {
 
     it('vm.id should be defined', () => {
       const wrapper = getWrapper({ schema });
-      const vm: any = wrapper.vm;
+      const { vm } = wrapper;
 
       expect(vm.id).toBeDefined();
     });
@@ -97,49 +102,49 @@ describe('components/FormSchema', () => {
     it('vm.name should be defined', () => {
       const name = 'string';
       const wrapper = getWrapper({ schema, name });
-      const vm: any = wrapper.vm;
+      const { vm } = wrapper;
 
       expect(vm.name).toBeDefined();
     });
 
     it('vm.bracketedObjectInputName should be defined', () => {
       const wrapper = getWrapper({ schema });
-      const vm: any = wrapper.vm;
+      const { vm } = wrapper;
 
       expect(vm.bracketedObjectInputName).toBeTruthy();
     });
 
     it('vm.search should be defined', () => {
       const wrapper = getWrapper({ schema });
-      const vm: any = wrapper.vm;
+      const { vm } = wrapper;
 
       expect(vm.search).toBeFalsy();
     });
 
     it('vm.disabled should be defined', () => {
       const wrapper = getWrapper({ schema });
-      const vm: any = wrapper.vm;
+      const { vm } = wrapper;
 
       expect(vm.disabled).toBeFalsy();
     });
 
     it('vm.components should be defined', () => {
       const wrapper = getWrapper({ schema });
-      const vm: any = wrapper.vm;
+      const { vm } = wrapper;
 
       expect(vm.components).toBeDefined();
     });
 
     it('vm.descriptor should be an empty object', () => {
       const wrapper = getWrapper({ schema });
-      const vm: any = wrapper.vm;
+      const { vm } = wrapper;
 
       expect(vm.descriptor).toEqual({});
     });
 
     it('vm.fieldId should be defined', () => {
       const wrapper = getWrapper({ schema });
-      const vm: any = wrapper.vm;
+      const { vm } = wrapper;
 
       expect(vm.fieldId).toBeDefined();
     });
@@ -148,7 +153,7 @@ describe('components/FormSchema', () => {
   describe('should successfully render component', () => {
     it('as an undefined VNode when before the nextTick', () => {
       const wrapper = getWrapper({ schema });
-      const vm: any = wrapper.vm;
+      const { vm } = wrapper;
 
       expect(vm.ready).toBeFalsy();
       expect(wrapper.html()).toBeUndefined();
@@ -159,7 +164,7 @@ describe('components/FormSchema', () => {
       const expected = '<form id="id-form"><div data-fs-kind="string" data-fs-type="text" data-fs-required="true"><label id="id-form-field-label" for="id-form-field">String</label><div data-fs-wrapper="2"><div data-fs-input="text"><input id="id-form-field" type="text" required="required" aria-required="true" aria-labelledby="id-form-field-label" aria-describedby="id-form-field-helper"></div><p id="id-form-field-helper">A String</p></div></div></form>';
 
       return Vue.nextTick().then(() => {
-        const vm: any = wrapper.vm;
+        const { vm } = wrapper;
 
         expect(vm.ready).toBeTruthy();
         expect(wrapper.html()).toBe(expected);
@@ -169,16 +174,16 @@ describe('components/FormSchema', () => {
     it('should emit an input event with an undefined model', () => {
       const wrapper = getWrapper({ schema });
 
-      expect(Object.keys(wrapper.emitted())).toEqual(['input']);
-      expect(wrapper.emitted().input).toEqual([[undefined]]);
+      expect(Object.keys(wrapper.emitted())).toEqual([ 'input' ]);
+      expect(wrapper.emitted().input).toEqual([ [ undefined ] ]);
     });
 
     it('should emit an input event with a defined model', () => {
       const value = 'gohan';
       const wrapper = getWrapper({ schema, value });
 
-      expect(Object.keys(wrapper.emitted())).toEqual(['input']);
-      expect(wrapper.emitted().input).toEqual([[value]]);
+      expect(Object.keys(wrapper.emitted())).toEqual([ 'input' ]);
+      expect(wrapper.emitted().input).toEqual([ [ value ] ]);
     });
 
     it('as an undefined VNode with an undefined schema.type', () => {
@@ -188,7 +193,7 @@ describe('components/FormSchema', () => {
     });
 
     it('with a default slot', () => {
-      const children = 'checking...'
+      const children = 'checking...';
       const wrapper = getWrapper({ schema, children });
       const expected = '<form id="id-form"><div data-fs-kind="string" data-fs-type="text" data-fs-required="true"><label id="id-form-field-label" for="id-form-field">String</label><div data-fs-wrapper="2"><div data-fs-input="text"><input id="id-form-field" type="text" required="required" aria-required="true" aria-labelledby="id-form-field-label" aria-describedby="id-form-field-helper"></div><p id="id-form-field-helper">A String</p></div></div>checking...</form>';
 
@@ -247,7 +252,7 @@ describe('components/FormSchema', () => {
 
     it('should successfully clone a scalar value', () => {
       Vue.nextTick(() => {
-        const vm: any = wrapper.find('form').vm;
+        const { vm } = wrapper.find('form');
 
         expect(vm.clone(12)).toBe(12);
       });
@@ -255,19 +260,19 @@ describe('components/FormSchema', () => {
 
     it('should successfully clone an array value', () => {
       Vue.nextTick(() => {
-        const vm: any = wrapper.find('form').vm;
+        const { vm } = wrapper.find('form');
 
-        expect(vm.clone([12])).toEqual([12]);
-        expect(vm.clone([12]) !== [12]).toBeTruthy();
+        expect(vm.clone([ 12 ])).toEqual([ 12 ]);
+        expect(vm.clone([ 12 ]) !== [ 12 ]).toBeTruthy();
       });
     });
 
     it('should successfully clone an object value', () => {
       Vue.nextTick(() => {
-        const vm: any = wrapper.find('form').vm;
+        const { vm } = wrapper.find('form');
 
-        expect(vm.clone({a:12})).toEqual({a:12});
-        expect(vm.clone({a:12}) !== {a:12}).toBeTruthy();
+        expect(vm.clone({ a: 12 })).toEqual({ a: 12 });
+        expect(vm.clone({ a: 12 }) !== { a: 12 }).toBeTruthy();
       });
     });
   });
@@ -276,7 +281,7 @@ describe('components/FormSchema', () => {
     const wrapper = getWrapper({ schema });
 
     Vue.nextTick(() => {
-      const vm: any = wrapper.find('form').vm;
+      const { vm } = wrapper.find('form');
 
       expect(vm.form()).toBeDefined();
       done();
@@ -302,7 +307,7 @@ describe('components/FormSchema', () => {
     };
 
     const wrapper = getWrapper({ schema });
-    const vm: any = wrapper.vm;
+    const { vm } = wrapper;
     const previousKey = vm.key;
 
     vm.update = jest.fn();

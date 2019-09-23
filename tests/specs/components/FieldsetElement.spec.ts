@@ -9,7 +9,7 @@ describe('components/FieldsetElement', () => {
         type: 'string',
         title: 'Character',
         description: 'Your character',
-        enum: ['goku', 'freezer']
+        enum: [ 'goku', 'freezer' ]
       },
       model: 'freezer',
       id: 'id-character',
@@ -38,7 +38,7 @@ describe('components/FieldsetElement', () => {
     const { context } = Options.get({
       schema: {
         type: 'string',
-        enum: ['goku', 'freezer']
+        enum: [ 'goku', 'freezer' ]
       },
       model: undefined,
       id: 'id-character',
@@ -55,7 +55,7 @@ describe('components/FieldsetElement', () => {
     const { context, options } = Options.get({
       schema: {
         type: 'string',
-        enum: ['goku', 'freezer']
+        enum: [ 'goku', 'freezer' ]
       },
       model: 'freezer',
       onChange: jest.fn()

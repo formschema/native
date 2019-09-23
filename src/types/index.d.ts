@@ -168,7 +168,7 @@ export interface ObjectField extends Field<'object', Attributes, Dict> {
 
 export interface ParserOptions<
   TModel,
-  TField extends Field<any, any, any> = UnknowField,
+  TField extends Field<any, any, TModel>,
   TDescriptor extends SchemaDescriptor = SchemaDescriptor
 > {
   kind?: FieldKind;
@@ -182,7 +182,7 @@ export interface ParserOptions<
   components?: ComponentsDeclaration;
   readonly bracketedObjectInputName?: boolean;
   onChange?: (value: TModel, field: TField) => void;
-  requestRender?: (updatedFields: TField[]) => void;
+  requestRender?: (updatedFields: Field<any, any, TModel>[]) => void;
 }
 
 export type UnknowParser = IParser<any>;

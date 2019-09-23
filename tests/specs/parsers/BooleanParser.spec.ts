@@ -22,7 +22,7 @@ describe('parsers/BooleanParser', () => {
   });
 
   it('parser.field.attrs.checked should be falsy', () => {
-    expect(parser.field.attrs.checked).toBeFalsy;
+    expect(parser.field.attrs.checked).toBeFalsy();
   });
 
   it('field.value should be falsy', () => {
@@ -160,10 +160,10 @@ describe('parsers/BooleanParser', () => {
 
           parser.field.reset(); // reset with calling onChange()
 
-          const onChange: any = parser.options.onChange;
-          const result = onChange.mock.calls.map(([value]: any) => value);
+          const { onChange } = parser.options;
+          const result = onChange.mock.calls.map(([ value ]: any) => value);
 
-          expect(result).toEqual([true, false, true]);
+          expect(result).toEqual([ true, false, true ]);
         }
       }
     }
@@ -181,7 +181,7 @@ describe('parsers/BooleanParser', () => {
         parser.parse();
 
         return parser;
-      },
+      }
     },
     expected: {
       parser: {
@@ -201,10 +201,10 @@ describe('parsers/BooleanParser', () => {
 
           parser.field.clear(); // clear with calling onChange()
 
-          const onChange: any = parser.options.onChange;
-          const result = onChange.mock.calls.map(([value]: any) => value);
+          const { onChange } = parser.options;
+          const result = onChange.mock.calls.map(([ value ]: any) => value);
 
-          expect(result).toEqual([false, true, false]);
+          expect(result).toEqual([ false, true, false ]);
         }
       }
     }

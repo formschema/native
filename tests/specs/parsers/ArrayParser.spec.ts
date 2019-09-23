@@ -1,4 +1,3 @@
-import { ArrayField } from '@/types';
 import { ArrayParser } from '@/parsers/ArrayParser';
 import { TestParser, Scope } from '../../lib/TestParser';
 
@@ -58,16 +57,16 @@ describe('parsers/ArrayParser', () => {
         schema: {
           type: 'array',
           items: { type: 'string' },
-          default: ['arya']
+          default: [ 'arya' ]
         },
         model: undefined
       })
     },
     expected: {
       parser: {
-        initialValue: ['arya'],
-        model: ['arya'],
-        rawValue: ['arya'],
+        initialValue: [ 'arya' ],
+        model: [ 'arya' ],
+        rawValue: [ 'arya' ],
         field: {
           sortable: true
         }
@@ -90,8 +89,8 @@ describe('parsers/ArrayParser', () => {
     expected: {
       parser: {
         initialValue: [],
-        model: ['tyrion'],
-        rawValue: ['tyrion']
+        model: [ 'tyrion' ],
+        rawValue: [ 'tyrion' ]
       }
     }
   });
@@ -112,7 +111,7 @@ describe('parsers/ArrayParser', () => {
       parser: {
         initialValue: [],
         model: [],
-        rawValue: [undefined]
+        rawValue: [ undefined ]
       }
     }
   });
@@ -122,7 +121,7 @@ describe('parsers/ArrayParser', () => {
     given: {
       parser: new ArrayParser({
         schema: { type: 'array' },
-        model: [12]
+        model: [ 12 ]
       })
     },
     expected: {
@@ -135,8 +134,8 @@ describe('parsers/ArrayParser', () => {
         get count() {
           return this.rawValue.length;
         },
-        model: [12],
-        rawValue: [12],
+        model: [ 12 ],
+        rawValue: [ 12 ],
         limit: 0,
         children: [],
         field: {
@@ -166,14 +165,14 @@ describe('parsers/ArrayParser', () => {
     },
     expected: {
       parser: {
-        items: [{ type: 'string' }],
+        items: [ { type: 'string' } ],
         additionalItems: undefined,
         minItems: 1,
         maxItems: undefined,
         max: 1,
         count: 1,
         model: [],
-        rawValue: [undefined],
+        rawValue: [ undefined ],
         limit: 1,
         children({ value }: Scope) {
           expect(value.length).toBe(this.limit);
@@ -219,7 +218,7 @@ describe('parsers/ArrayParser', () => {
         },
         count: 1,
         model: [],
-        rawValue: [undefined],
+        rawValue: [ undefined ],
         get limit() {
           return this.count;
         },
@@ -252,7 +251,7 @@ describe('parsers/ArrayParser', () => {
       parser: {
         count: 2,
         model: [],
-        rawValue: [undefined, undefined],
+        rawValue: [ undefined, undefined ],
         get limit() {
           return this.count;
         },
@@ -288,7 +287,7 @@ describe('parsers/ArrayParser', () => {
       parser: {
         count: 2,
         model: [],
-        rawValue: [undefined, undefined],
+        rawValue: [ undefined, undefined ],
         get limit() {
           return this.count;
         },
@@ -307,10 +306,10 @@ describe('parsers/ArrayParser', () => {
   const options5: any = {
     schema: {
       type: 'array',
-      items: { type: 'string', enum: ['a', 'b', 'c', 'd'] },
+      items: { type: 'string', enum: [ 'a', 'b', 'c', 'd' ] },
       uniqueItems: true
     },
-    model: ['b', 'd']
+    model: [ 'b', 'd' ]
   };
 
   TestParser.Case({
@@ -332,8 +331,8 @@ describe('parsers/ArrayParser', () => {
         maxItems: 4,
         max: 4,
         count: 4,
-        model: ['b', 'd'],
-        rawValue: [undefined, 'b', undefined, 'd'],
+        model: [ 'b', 'd' ],
+        rawValue: [ undefined, 'b', undefined, 'd' ],
         limit: 4,
         children: ({ value }: Scope) => expect(value.length).toBe(4),
         field: {
@@ -406,8 +405,8 @@ describe('parsers/ArrayParser', () => {
     },
     expected: {
       parser: {
-        model: ['a', 'b', 'd'],
-        rawValue: ['a', 'b', undefined, 'd']
+        model: [ 'a', 'b', 'd' ],
+        rawValue: [ 'a', 'b', undefined, 'd' ]
       }
     }
   });
@@ -423,7 +422,7 @@ describe('parsers/ArrayParser', () => {
           minItems: 3,
           maxItems: 4
         },
-        model: ['a', 'd']
+        model: [ 'a', 'd' ]
       })
     },
     expected: {
@@ -436,8 +435,8 @@ describe('parsers/ArrayParser', () => {
         maxItems: 4,
         max: 4,
         count: 3,
-        model: ['a', 'd'],
-        rawValue: ['a', 'd', undefined],
+        model: [ 'a', 'd' ],
+        rawValue: [ 'a', 'd', undefined ],
         limit({ value }: Scope) {
           expect(value).toBe(this.count);
         },
@@ -464,7 +463,7 @@ describe('parsers/ArrayParser', () => {
           ],
           additionalItems: { type: 'number' }
         },
-        model: ['a', 12]
+        model: [ 'a', 12 ]
       })
     },
     expected: {
@@ -479,8 +478,8 @@ describe('parsers/ArrayParser', () => {
         count() {
           return this.rawValue.length;
         },
-        model: ['a', 12],
-        rawValue: ['a', 12],
+        model: [ 'a', 12 ],
+        rawValue: [ 'a', 12 ],
         limit({ value }: Scope) {
           expect(value).toBe(this.items.length);
         },
@@ -510,7 +509,7 @@ describe('parsers/ArrayParser', () => {
           ],
           additionalItems: { type: undefined } as any
         },
-        model: ['a', 12]
+        model: [ 'a', 12 ]
       })
     },
     expected: {
@@ -532,7 +531,7 @@ describe('parsers/ArrayParser', () => {
       type: 'array',
       items: { type: 'string' }
     },
-    model: ['a', 12],
+    model: [ 'a', 12 ],
     bracketedObjectInputName: bracketedObjectInputNameValue
   });
 
@@ -591,7 +590,7 @@ describe('parsers/ArrayParser', () => {
     },
     expected: {
       parser: {
-        isEmpty: ({ parser }: Scope) => expect(parser.isEmpty([1])).toBeFalsy()
+        isEmpty: ({ parser }: Scope) => expect(parser.isEmpty([ 1 ])).toBeFalsy()
       }
     }
   });
@@ -601,7 +600,7 @@ describe('parsers/ArrayParser', () => {
     description: 'isEmpty() with default value',
     given: {
       parser: new ArrayParser({
-        schema: { type: 'array', default: [2] }
+        schema: { type: 'array', default: [ 2 ] }
       })
     },
     expected: {
@@ -634,7 +633,7 @@ describe('parsers/ArrayParser', () => {
     description: 'parser.reset()',
     given: {
       parser() {
-        const model = ['arya'];
+        const model = [ 'arya' ];
         const onChange = jest.fn();
         const parser = new ArrayParser({ ...options4, model, onChange });
 
@@ -646,14 +645,14 @@ describe('parsers/ArrayParser', () => {
     expected: {
       parser: {
         reset({ parser }: Scope) {
-          const onChange: any = parser.options.onChange;
+          const { onChange } = parser.options;
           const expected = [
-            ['arya'],
-            ['jon']
+            [ 'arya' ],
+            [ 'jon' ]
           ];
 
-          expect(parser.rawValue).toEqual(['arya']);
-          expect(parser.model).toEqual(['arya']);
+          expect(parser.rawValue).toEqual([ 'arya' ]);
+          expect(parser.model).toEqual([ 'arya' ]);
           expect(onChange.mock.calls.length).toBe(1);
           expect(onChange.mock.calls[0][0]).toEqual(expected[0]);
 
@@ -661,15 +660,15 @@ describe('parsers/ArrayParser', () => {
 
           expect(onChange.mock.calls.length).toBe(2);
           expect(onChange.mock.calls[1][0]).toEqual(expected[1]);
-          expect(parser.rawValue).toEqual(['jon']);
-          expect(parser.model).toEqual(['jon']);
+          expect(parser.rawValue).toEqual([ 'jon' ]);
+          expect(parser.model).toEqual([ 'jon' ]);
 
           parser.reset(); // reset without calling onChange
 
           expect(onChange.mock.calls.length).toBe(2);
-          expect(parser.initialValue).toEqual(['arya']);
-          expect(parser.rawValue).toEqual(['arya']);
-          expect(parser.model).toEqual(['arya']);
+          expect(parser.initialValue).toEqual([ 'arya' ]);
+          expect(parser.rawValue).toEqual([ 'arya' ]);
+          expect(parser.model).toEqual([ 'arya' ]);
 
           parser.field.reset(); // reset with calling onChange
 
@@ -685,7 +684,7 @@ describe('parsers/ArrayParser', () => {
     description: 'parser.clear()',
     given: {
       parser() {
-        const model = ['arya'];
+        const model = [ 'arya' ];
         const onChange = jest.fn();
         const parser = new ArrayParser({ ...options4, model, onChange });
 
@@ -697,14 +696,14 @@ describe('parsers/ArrayParser', () => {
     expected: {
       parser: {
         clear({ parser }: Scope) {
-          const onChange: any = parser.options.onChange;
+          const { onChange } = parser.options;
           const expected = [
-            ['arya'],
-            ['jon']
+            [ 'arya' ],
+            [ 'jon' ]
           ];
 
-          expect(parser.rawValue).toEqual(['arya']);
-          expect(parser.model).toEqual(['arya']);
+          expect(parser.rawValue).toEqual([ 'arya' ]);
+          expect(parser.model).toEqual([ 'arya' ]);
           expect(onChange.mock.calls.length).toBe(1);
           expect(onChange.mock.calls[0][0]).toEqual(expected[0]);
 
@@ -712,14 +711,14 @@ describe('parsers/ArrayParser', () => {
 
           expect(onChange.mock.calls.length).toBe(2);
           expect(onChange.mock.calls[1][0]).toEqual(expected[1]);
-          expect(parser.rawValue).toEqual(['jon']);
-          expect(parser.model).toEqual(['jon']);
+          expect(parser.rawValue).toEqual([ 'jon' ]);
+          expect(parser.model).toEqual([ 'jon' ]);
 
           parser.clear(); // clear without calling onChange
 
           expect(onChange.mock.calls.length).toBe(2);
-          expect(parser.initialValue).toEqual(['arya']);
-          expect(parser.rawValue).toEqual([undefined]);
+          expect(parser.initialValue).toEqual([ 'arya' ]);
+          expect(parser.rawValue).toEqual([ undefined ]);
           expect(parser.model).toEqual([]);
 
           parser.field.clear(); // clear with calling onChange

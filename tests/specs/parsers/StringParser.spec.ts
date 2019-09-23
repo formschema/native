@@ -302,7 +302,7 @@ describe('parsers/StringParser', () => {
     },
     expected: {
       parser: {
-        isEmpty: ({ parser }: Scope) => expect(parser.isEmpty([12])).toBeTruthy()
+        isEmpty: ({ parser }: Scope) => expect(parser.isEmpty([ 12 ])).toBeTruthy()
       }
     }
   });
@@ -355,10 +355,10 @@ describe('parsers/StringParser', () => {
 
           parser.field.reset(); // reset with calling onChange
 
-          const onChange: any = parser.options.onChange;
-          const result = onChange.mock.calls.map(([value]: any) => value);
+          const { onChange } = parser.options;
+          const result = onChange.mock.calls.map(([ value ]: any) => value);
 
-          expect(result).toEqual(['arya', 'jon', 'arya']);
+          expect(result).toEqual([ 'arya', 'jon', 'arya' ]);
         }
       }
     }
@@ -396,10 +396,10 @@ describe('parsers/StringParser', () => {
 
           parser.field.clear(); // clear with calling onChange
 
-          const onChange: any = parser.options.onChange;
-          const result = onChange.mock.calls.map(([value]: any) => value);
+          const { onChange } = parser.options;
+          const result = onChange.mock.calls.map(([ value ]: any) => value);
 
-          expect(result).toEqual(['arya', 'jon', undefined]);
+          expect(result).toEqual([ 'arya', 'jon', undefined ]);
         }
       }
     }
