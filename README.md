@@ -25,20 +25,17 @@ Core features are not ready and the API could changed. Don't use this in product
   * [events](#events)
   * [methods](#methods)
 - [Working with Async Schema](#working-with-async-schema)
-- [Working with Vue Router](#working-with-vue-router)
+- [Working with Async Schema and Vue Router](#working-with-async-schema-and-vue-router)
+- [Render a Textarea element](#render-a-textarea-element)
+- [Render an Input File element](#render-an-input-file-element)
+- [Render a Hidden Input Element](#render-a-hidden-input-element)
+- [Multiple Checkbox Elements](#multiple-checkbox-elements)
+- [Render Radio Elements](#render-radio-elements)
+- [Render a Select Element](#render-a-select-element)
+- [Render Array Inputs Elements](#render-array-inputs-elements)
+- [Render Regex Inputs](#render-regex-inputs)
 - [Workind with JSON Schema $ref Pointers](#workind-with-json-schema-ref-pointers)
-- [Render Form Elements](#render-form-elements)
-  * [Textarea](#textarea)
-  * [File Input](#file-input)
-  * [Hidden Input](#hidden-input)
-  * [Password Input](#password-input)
-  * [Multiple Checkbox](#multiple-checkbox)
-  * [Grouped Radio](#grouped-radio)
-  * [Select Input](#select-input)
-  * [Array Inputs](#array-inputs)
-  * [Regex Input](#regex-input)
 - [Custom Form Elements](#custom-form-elements)
-- [Descriptor Interface](#descriptor-interface)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -438,7 +435,7 @@ with a `enum` descriptor:
 To group HTML Select element, use the [JSON Schema keyword `enum`](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.23)
 with a `list` descriptor:
 
-**Example schema.json**
+**schema.json**
 
 ```json
 {
@@ -455,7 +452,7 @@ with a `list` descriptor:
 }
 ```
 
-**Example descriptor.json**
+**descriptor.json**
 
 ```json
 {
@@ -463,11 +460,11 @@ with a `list` descriptor:
 }
 ```
 
-### Array Inputs
+### Array Input
 
 To render a [array field](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4), define your schema like:
 
-**Example schema.json**
+**schema.json**
 
 ```json
 {
@@ -485,12 +482,51 @@ To render a [array field](http://json-schema.org/latest/json-schema-validation.h
 To render a [regex input](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.3.3),
 define your schema like:
 
-**Example schema.json**
+**schema.json**
 
 ```json
 {
   "type": "string",
   "pattern": "[a-e]+"
+}
+```
+
+### Fieldset Element
+
+FormSchema use a `<fieldset>` element to group inputs of a object JSON Schema:
+
+**schema.json**
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "firstname": {
+      "type": "string"
+    },
+    "lastname": {
+      "type": "string"
+    }
+  }
+}
+```
+
+Use descriptor to set labels and helpers:
+
+**descriptor.json**
+
+```json
+{
+  "properties": {
+    "firstname": {
+      "label": "First Name",
+      "helper": "Your first name"
+    },
+    "lastname": {
+      "label": "Last Name",
+      "helper": "Your last name"
+    }
+  }
 }
 ```
 
