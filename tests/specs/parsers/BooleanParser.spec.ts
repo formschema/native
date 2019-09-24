@@ -1,41 +1,33 @@
-import { Parser } from '@/parsers/Parser';
 import { BooleanParser } from '@/parsers/BooleanParser';
-import { ParserOptions } from '@/types';
 import { TestParser, Scope } from '../../lib/TestParser';
 
 describe('parsers/BooleanParser', () => {
-  const options: ParserOptions<any, any> = {
-    schema: { type: 'boolean' },
-    model: undefined
-  };
-
-  const parser = new BooleanParser(options);
-
-  parser.parse();
-
-  it('parser should be an instance of Parser', () => {
-    expect(parser).toBeInstanceOf(Parser);
-  });
-
-  it('parser.field.attrs.type should equal to checkbox', () => {
-    expect(parser.field.attrs.type).toBe('checkbox');
-  });
-
-  it('parser.field.attrs.checked should be falsy', () => {
-    expect(parser.field.attrs.checked).toBeFalsy();
-  });
-
-  it('field.value should be falsy', () => {
-    expect(parser.field.value).toBeFalsy();
+  TestParser.Case({
+    case: '0.0',
+    given: {
+      parser: new BooleanParser({
+        schema: { type: 'boolean' },
+        model: undefined
+      })
+    },
+    expected: {
+      parser: {
+        field: {
+          attrs: {
+            type: ({ value }: Scope) => expect(value).toBe('checkbox'),
+            checked: ({ value }: Scope) => expect(value).toBeFalsy()
+          },
+          value: ({ value }: Scope) => expect(value).toBeFalsy()
+        }
+      }
+    }
   });
 
   it('should successfully parse default truthy boolean value', () => {
-    const options: ParserOptions<any, any> = {
+    const parser = new BooleanParser({
       schema: { type: 'boolean' },
       model: true
-    };
-
-    const parser = new BooleanParser(options);
+    });
 
     parser.parse();
 
@@ -43,12 +35,10 @@ describe('parsers/BooleanParser', () => {
   });
 
   it('field.value should successfully parse default falsy boolean value', () => {
-    const options: ParserOptions<any, any> = {
+    const parser = new BooleanParser({
       schema: { type: 'boolean' },
       model: false
-    };
-
-    const parser = new BooleanParser(options);
+    });
 
     parser.parse();
 
@@ -56,12 +46,10 @@ describe('parsers/BooleanParser', () => {
   });
 
   it('field.value should parse default non boolean value as a falsy model', () => {
-    const options: ParserOptions<any, any> = {
+    const parser = new BooleanParser({
       schema: { type: 'boolean' },
-      model: 12
-    };
-
-    const parser = new BooleanParser(options);
+      model: 12 as any
+    });
 
     parser.parse();
 
@@ -132,15 +120,11 @@ describe('parsers/BooleanParser', () => {
     case: '2.0',
     description: 'parser.reset()',
     given: {
-      parser() {
-        const model = true;
-        const onChange = jest.fn();
-        const parser = new BooleanParser({ ...options, model, onChange });
-
-        parser.parse();
-
-        return parser;
-      }
+      parser: new BooleanParser({
+        schema: { type: 'boolean' },
+        model: true,
+        onChange: jest.fn()
+      })
     },
     expected: {
       parser: {
@@ -173,15 +157,11 @@ describe('parsers/BooleanParser', () => {
     case: '3.0',
     description: 'parser.clear()',
     given: {
-      parser() {
-        const model = false;
-        const onChange = jest.fn();
-        const parser = new BooleanParser({ ...options, model, onChange });
-
-        parser.parse();
-
-        return parser;
-      }
+      parser: new BooleanParser({
+        schema: { type: 'boolean' },
+        model: false,
+        onChange: jest.fn()
+      })
     },
     expected: {
       parser: {

@@ -168,8 +168,8 @@ export interface ObjectField extends Field<'object', Attributes, Dict> {
 
 export interface ParserOptions<
   TModel,
-  TField extends Field<any, any, TModel>,
-  TDescriptor extends SchemaDescriptor = SchemaDescriptor
+  TField extends Field<any, any, TModel> = UnknowField,
+  TDescriptor extends Descriptor = Descriptor
 > {
   kind?: FieldKind;
   readonly key?: string;
@@ -218,7 +218,7 @@ export interface DescriptorProperties<TField extends Field<any, any>> {
 
 export interface IDescriptor<
   T extends Field<any, any> = UnknowField
-> extends Required<SchemaDescriptor>, DescriptorProperties<T> {}
+> extends Required<Descriptor>, DescriptorProperties<T> {}
 
 export interface IScalarDescriptor extends DescriptorProperties<ScalarField>, Required<ScalarDescriptor> {}
 
@@ -262,8 +262,8 @@ export interface ListFieldItemDescriptor extends ListItemModel {
 
 export type DescriptorInstance = ScalarDescriptor | EnumDescriptor | ListDescriptor | ObjectDescriptor | ArrayDescriptor;
 
-export interface SchemaDescriptor {
-  kind?: FieldKind;
+export interface Descriptor<TKind extends FieldKind = FieldKind> {
+  kind?: TKind;
   label?: string;
   helper?: string;
   component?: Component;
@@ -280,22 +280,20 @@ export interface SchemaDescriptor {
  * boolean, null, hidden field, textarea element, image and file
  * inputs, radio and checkbox elements
  */
-export interface ScalarDescriptor extends SchemaDescriptor {
-  kind: ScalarKind;
+export interface ScalarDescriptor extends Descriptor<ScalarKind> {
 }
 
 /**
  * Use to describe grouped object properties
  */
-export interface ObjectGroupDescriptor extends SchemaDescriptor {
-  label?: string;
+export interface ObjectGroupDescriptor extends Descriptor {
   properties: string[];
 }
 
 /**
  * Describe JSON Schema with type `object`
  */
-export interface ObjectDescriptor extends SchemaDescriptor {
+export interface ObjectDescriptor extends Descriptor {
   properties?: {
     [schemaProperty: string]: DescriptorInstance;
   };
@@ -308,8 +306,7 @@ export interface ObjectDescriptor extends SchemaDescriptor {
 /**
  * Describe JSON Schema with key `enum`
  */
-export interface ItemsDescriptor extends SchemaDescriptor {
-  kind: ItemKind;
+export interface ItemsDescriptor<TKind extends ItemKind> extends Descriptor<TKind> {
   items?: {
     [itemValue: string]: ScalarDescriptor;
   };
@@ -318,15 +315,13 @@ export interface ItemsDescriptor extends SchemaDescriptor {
 /**
  * Describe HTML Radio Elements
  */
-export interface EnumDescriptor extends ItemsDescriptor {
-  kind: 'enum';
+export interface EnumDescriptor extends ItemsDescriptor<'enum'> {
 }
 
 /**
  * Describe HTML Select Element
  */
-export interface ListDescriptor extends ItemsDescriptor {
-  kind: 'list';
+export interface ListDescriptor extends ItemsDescriptor<'list'> {
 }
 
 /**
@@ -341,7 +336,7 @@ export interface ButtonDescriptor<T extends Function> extends ActionButton<T> {
 /**
  * Describe JSON Schema with type `array`
  */
-export interface ArrayDescriptor extends SchemaDescriptor {
+export interface ArrayDescriptor extends Descriptor {
   items?: DescriptorInstance[] | DescriptorInstance;
   pushButton: ButtonDescriptor<ActionPushTrigger>;
   buttons: {

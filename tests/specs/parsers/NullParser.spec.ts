@@ -1,47 +1,37 @@
-import { Parser } from '@/parsers/Parser';
 import { NullParser } from '@/parsers/NullParser';
-import { ParserOptions } from '@/types';
 import { TestParser, Scope } from '../../lib/TestParser';
 
 describe('parsers/NullParser', () => {
-  const options: ParserOptions<any, any> = {
-    schema: { type: 'null' },
-    model: undefined
-  };
-
-  const parser = new NullParser(options);
-
-  parser.parse();
-
-  it('parser should be an instance of Parser', () => {
-    expect(parser).toBeInstanceOf(Parser);
-  });
-
-  it('should have type === hidden', () => {
-    expect(parser.field.attrs.type).toBe('hidden');
-  });
-
-  it('should have value === \u0000', () => {
-    expect(parser.field.attrs.value).toBe('\u0000');
-  });
-
-  it('field.value should be equal to null', () => {
-    expect(parser.field.value).toBe(null);
+  TestParser.Case({
+    case: '0.0',
+    given: {
+      parser: new NullParser({
+        schema: { type: 'null' },
+        model: undefined
+      })
+    },
+    expected: {
+      parser: {
+        field: {
+          attrs: {
+            type: ({ value }: Scope) => expect(value).toBe('hidden'),
+            value: ({ value }: Scope) => expect(value).toBe('\u0000')
+          },
+          value: ({ value }: Scope) => expect(value).toBeNull()
+        }
+      }
+    }
   });
 
   TestParser.Case({
     case: '1.0',
     description: 'parser.reset()',
     given: {
-      parser() {
-        const model = null;
-        const onChange = jest.fn();
-        const parser = new NullParser({ ...options, model, onChange });
-
-        parser.parse();
-
-        return parser;
-      }
+      parser: new NullParser({
+        schema: { type: 'null' },
+        model: null,
+        onChange: jest.fn()
+      })
     },
     expected: {
       parser: {
@@ -69,15 +59,11 @@ describe('parsers/NullParser', () => {
     case: '2.0',
     description: 'parser.clear()',
     given: {
-      parser() {
-        const model = null;
-        const onChange = jest.fn();
-        const parser = new NullParser({ ...options, model, onChange });
-
-        parser.parse();
-
-        return parser;
-      }
+      parser: new NullParser({
+        schema: { type: 'null' },
+        model: null,
+        onChange: jest.fn()
+      })
     },
     expected: {
       parser: {

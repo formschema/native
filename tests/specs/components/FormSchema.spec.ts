@@ -27,7 +27,7 @@ import { NativeElements } from '@/lib/NativeElements';
 
 const DEFAULT_ID = 'id-form';
 
-function getWrapper(options: any) {
+function getWrapper(options: any): any {
   const {
     id = DEFAULT_ID, schema, value, children, ...props
   }: any = options;

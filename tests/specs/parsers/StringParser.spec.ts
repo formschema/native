@@ -1,41 +1,39 @@
-import { Parser } from '@/parsers/Parser';
 import { StringParser } from '@/parsers/StringParser';
-import { Dict, ParserOptions } from '@/types';
-import { Options } from '../../lib/Options';
 import { TestParser, Scope } from '../../lib/TestParser';
 
 describe('parsers/StringParser', () => {
-  const options: ParserOptions<string, any> = {
-    schema: {
-      type: 'string',
-      pattern: 'arya|jon',
-      minLength: 5,
-      maxLength: 15
+  TestParser.Case({
+    case: '0.0',
+    description: 'parser.clear()',
+    given: {
+      parser: new StringParser({
+        schema: {
+          type: 'string',
+          pattern: 'arya|jon',
+          minLength: 5,
+          maxLength: 15
+        },
+        model: 'arya'
+      })
     },
-    model: 'Goku'
-  };
-
-  const parser = new StringParser(options);
-
-  parser.parse();
-
-  it('parser should be an instance of Parser', () => {
-    expect(parser).toBeInstanceOf(Parser);
+    expected: {
+      parser: {
+        kind: ({ value }: Scope) => expect(value).toBe('string'),
+        field: {
+          attrs: {
+            type: ({ value }: Scope) => expect(value).toBe('text'),
+            minlength: ({ value, options }: Scope) => expect(value).toBe(options.schema.minLength),
+            maxlength: ({ value, options }: Scope) => expect(value).toBe(options.schema.maxLength),
+            pattern: ({ value, options }: Scope) => expect(value).toBe(options.schema.pattern),
+            value: ({ value, options }: Scope) => expect(value).toBe(`${options.model}`)
+          },
+          value: ({ value, options }: Scope) => expect(value).toBe(options.model)
+        }
+      }
+    }
   });
 
-  it('parser.kind should have equal to `string` for non enum field', () => {
-    expect(parser.kind).toBe('string');
-  });
-
-  it('field.attrs.type should have equal to `text` string schema', () => {
-    expect(parser.field.attrs.type).toBe('text');
-  });
-
-  it('field.attrs.type should be equal to `text`', () => {
-    expect(parser.field.attrs.type).toBe('text');
-  });
-
-  const formatTypes: Dict = {
+  const formatTypes: Record<string, string> = {
     date: 'date',
     'date-time': 'datetime-local',
     email: 'email',
@@ -48,12 +46,10 @@ describe('parsers/StringParser', () => {
     const type = formatTypes[format];
 
     it(`field.attrs.type should be equal to '${type}' with schema.format === '${format}'`, () => {
-      const options: ParserOptions<string, any> = {
+      const parser = new StringParser({
         schema: { type: 'string', format },
         model: ''
-      };
-
-      const parser = new StringParser(options);
+      });
 
       parser.parse();
 
@@ -61,33 +57,11 @@ describe('parsers/StringParser', () => {
     });
   });
 
-  it('field.value should be equal to the default value', () => {
-    expect(parser.field.value).toBe('Goku');
-  });
-
-  it('field.attrs.value should be equal to field.value', () => {
-    expect(parser.field.attrs.value).toBe(parser.field.value);
-  });
-
-  it('field.attrs.minlength should be equal to schema.minLength', () => {
-    expect(parser.field.attrs.minlength).toBe(options.schema.minLength);
-  });
-
-  it('field.attrs.maxlength should be equal to schema.maxLength', () => {
-    expect(parser.field.attrs.maxlength).toBe(options.schema.maxLength);
-  });
-
-  it('field.attrs.pattern should be equal to schema.pattern', () => {
-    expect(parser.field.attrs.pattern).toBe(options.schema.pattern);
-  });
-
   it('should parse default undefined value as an undefined string', () => {
-    const options: ParserOptions<any, any> = {
+    const parser = new StringParser({
       schema: { type: 'string' },
       model: undefined
-    };
-
-    const parser = new StringParser(options);
+    });
 
     parser.parse();
 
@@ -95,12 +69,10 @@ describe('parsers/StringParser', () => {
   });
 
   it('should parse default non string value as a string', () => {
-    const options: ParserOptions<any, any> = {
+    const parser = new StringParser({
       schema: { type: 'string' },
-      model: 12
-    };
-
-    const parser = new StringParser(options);
+      model: 12 as any
+    });
 
     parser.parse();
 
@@ -172,11 +144,16 @@ describe('parsers/StringParser', () => {
   TestParser.Case({
     case: '1.2: schema.contentMediaType',
     description: 'with custom descriptor.kind',
-    given: Options.get({
-      schema: { type: 'string', contentMediaType: 'audio/ogg' },
-      model: undefined as any,
-      descriptor: { kind: 'string' }
-    }),
+    given: {
+      parser: new StringParser({
+        schema: { type: 'string', contentMediaType: 'audio/ogg' },
+        model: undefined as any,
+        descriptor: { kind: 'string' },
+        get kind() {
+          return this.descriptor.kind;
+        }
+      })
+    },
     expected: {
       parser: {
         kind: ({ value }: Scope) => expect(value).toBe('string'),
@@ -327,15 +304,16 @@ describe('parsers/StringParser', () => {
     case: '4.0',
     description: 'parser.reset()',
     given: {
-      parser() {
-        const model = 'arya';
-        const onChange = jest.fn();
-        const parser = new StringParser({ ...options, model, onChange });
-
-        parser.parse();
-
-        return parser;
-      }
+      parser: new StringParser({
+        schema: {
+          type: 'string',
+          pattern: 'arya|jon',
+          minLength: 5,
+          maxLength: 15
+        },
+        model: 'arya',
+        onChange: jest.fn()
+      })
     },
     expected: {
       parser: {
@@ -368,15 +346,16 @@ describe('parsers/StringParser', () => {
     case: '5.0',
     description: 'parser.clear()',
     given: {
-      parser() {
-        const model = 'arya';
-        const onChange = jest.fn();
-        const parser = new StringParser({ ...options, model, onChange });
-
-        parser.parse();
-
-        return parser;
-      }
+      parser: new StringParser({
+        schema: {
+          type: 'string',
+          pattern: 'arya|jon',
+          minLength: 5,
+          maxLength: 15
+        },
+        model: 'arya',
+        onChange: jest.fn()
+      })
     },
     expected: {
       parser: {

@@ -11,7 +11,7 @@ import {
 import '@/parsers';
 import '@/descriptors';
 
-export interface GetOptions extends ParserOptions<any> {
+export interface GetOptions extends ParserOptions<any, any> {
   descriptor?: DescriptorInstance;
 }
 

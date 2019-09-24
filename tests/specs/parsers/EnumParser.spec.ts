@@ -1,18 +1,9 @@
 import { EnumParser } from '@/parsers/EnumParser';
-import { ParserOptions } from '@/types';
 import { TestParser, Scope } from '../../lib/TestParser';
 
 import '@/parsers';
 
 describe('parsers/EnumParser', () => {
-  const options: ParserOptions<unknown, any> = {
-    schema: {
-      type: 'string',
-      enum: [ 'jon', 'arya', 'bran', 'ned' ]
-    },
-    model: 'jon'
-  };
-
   TestParser.Case({
     case: '1.0',
     description: 'parser.reset()',
@@ -32,12 +23,12 @@ describe('parsers/EnumParser', () => {
           value: 'jon',
           children({ parser }: Scope) {
             // children should be defined
-            const models = parser.field.children.map(({ value }) => value);
+            const models = parser.field.children.map(({ value }: any) => value);
 
             expect(models).toEqual([ 'jon', 'arya', 'bran', 'ned' ]);
 
             // children's field.attrs.checked should be defined
-            const checkStates = parser.field.children.map(({ attrs }) => attrs.checked);
+            const checkStates = parser.field.children.map(({ attrs }: any) => attrs.checked);
 
             expect(checkStates).toEqual([ true, false, false, false ]);
           },
@@ -49,7 +40,7 @@ describe('parsers/EnumParser', () => {
             // field.attrs.checked should be updated when using field.setValue()
             parser.field.setValue('bran');
 
-            const checkStates = parser.field.children.map(({ attrs }) => attrs.checked);
+            const checkStates = parser.field.children.map(({ attrs }: any) => attrs.checked);
 
             expect(checkStates).toEqual([ false, false, true, false ]);
 
@@ -189,15 +180,14 @@ describe('parsers/EnumParser', () => {
     case: '3.0',
     description: 'parser.reset()',
     given: {
-      parser() {
-        const model = 'arya';
-        const onChange = jest.fn();
-        const parser = new EnumParser({ ...options, model, onChange });
-
-        parser.parse();
-
-        return parser;
-      }
+      parser: new EnumParser({
+        schema: {
+          type: 'string',
+          enum: [ 'jon', 'arya', 'bran', 'ned' ]
+        },
+        model: 'arya',
+        onChange: jest.fn()
+      })
     },
     expected: {
       parser: {
@@ -240,15 +230,14 @@ describe('parsers/EnumParser', () => {
     case: '4.0',
     description: 'parser.clear()',
     given: {
-      parser() {
-        const model = 'arya';
-        const onChange = jest.fn();
-        const parser = new EnumParser({ ...options, model, onChange });
-
-        parser.parse();
-
-        return parser;
-      }
+      parser: new EnumParser({
+        schema: {
+          type: 'string',
+          enum: [ 'jon', 'arya', 'bran', 'ned' ]
+        },
+        model: 'arya',
+        onChange: jest.fn()
+      })
     },
     expected: {
       parser: {

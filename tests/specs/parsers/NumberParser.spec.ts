@@ -1,62 +1,43 @@
-import { Parser } from '@/parsers/Parser';
 import { NumberParser } from '@/parsers/NumberParser';
-import { ParserOptions } from '@/types';
 import { TestParser, Scope } from '../../lib/TestParser';
 
 describe('parsers/NumberParser', () => {
-  const options: ParserOptions<any, any> = {
-    schema: {
-      type: 'number',
-      minimum: 0,
-      maximum: 10,
-      multipleOf: 2
+  TestParser.Case({
+    case: '0.0',
+    description: 'parser.reset()',
+    given: {
+      parser: new NumberParser({
+        schema: {
+          type: 'number',
+          minimum: 0,
+          maximum: 10,
+          multipleOf: 2
+        },
+        model: 2.0
+      })
     },
-    model: 2.0
-  };
-
-  const parser = new NumberParser(options);
-
-  parser.parse();
-
-  it('parser should be an instance of Parser', () => {
-    expect(parser).toBeInstanceOf(Parser);
-  });
-
-  it('parser.kind should have equal to `number` for number schema', () => {
-    expect(parser.kind).toBe('number');
-  });
-
-  it('field.attrs.type should have equal to `number` number schema', () => {
-    expect(parser.field.attrs.type).toBe('number');
-  });
-
-  it('field.attrs.min should be equal to schema.minimum', () => {
-    expect(parser.field.attrs.min).toBe(options.schema.minimum);
-  });
-
-  it('field.attrs.max should be equal to schema.maximum', () => {
-    expect(parser.field.attrs.max).toBe(options.schema.maximum);
-  });
-
-  it('field.attrs.step should be equal to schema.multipleOf', () => {
-    expect(parser.field.attrs.step).toBe(options.schema.multipleOf);
-  });
-
-  it('field.value should be equal to the default value', () => {
-    expect(parser.field.value).toBe(2.0);
-  });
-
-  it('this.field.attrs.value should be equal to field.value', () => {
-    expect(parser.field.attrs.value).toBe('2');
+    expected: {
+      parser: {
+        kind: ({ value }: Scope) => expect(value).toBe('number'),
+        field: {
+          attrs: {
+            type: ({ value }: Scope) => expect(value).toBe('number'),
+            min: ({ value, options }: Scope) => expect(value).toBe(options.schema.minimum),
+            max: ({ value, options }: Scope) => expect(value).toBe(options.schema.maximum),
+            step: ({ value, options }: Scope) => expect(value).toBe(options.schema.multipleOf),
+            value: ({ value, options }: Scope) => expect(value).toBe(`${options.model}`)
+          },
+          value: ({ value, options }: Scope) => expect(value).toBe(options.model)
+        }
+      }
+    }
   });
 
   it('should successfully parse default number value', () => {
-    const options: ParserOptions<any, any> = {
+    const parser = new NumberParser({
       schema: { type: 'number' },
       model: 3.1
-    };
-
-    const parser = new NumberParser(options);
+    });
 
     parser.parse();
 
@@ -64,12 +45,10 @@ describe('parsers/NumberParser', () => {
   });
 
   it('field.value should parse default non number value as an undefined model', () => {
-    const options: ParserOptions<any, any> = {
+    const parser = new NumberParser({
       schema: { type: 'number' },
       model: undefined
-    };
-
-    const parser = new NumberParser(options);
+    });
 
     parser.parse();
 
@@ -77,16 +56,14 @@ describe('parsers/NumberParser', () => {
   });
 
   describe('exclusiveMinimum/exclusiveMaximum', () => {
-    const options: ParserOptions<any, any> = {
+    const parser = new NumberParser({
       schema: {
         type: 'number',
         exclusiveMinimum: 0,
         exclusiveMaximum: 10
       },
       model: 0
-    };
-
-    const parser = new NumberParser(options);
+    });
 
     parser.parse();
 
@@ -103,15 +80,16 @@ describe('parsers/NumberParser', () => {
     case: '1.0',
     description: 'parser.reset()',
     given: {
-      parser() {
-        const model = 2.1;
-        const onChange = jest.fn();
-        const parser = new NumberParser({ ...options, model, onChange });
-
-        parser.parse();
-
-        return parser;
-      }
+      parser: new NumberParser({
+        schema: {
+          type: 'number',
+          minimum: 0,
+          maximum: 10,
+          multipleOf: 2
+        },
+        model: 2.1,
+        onChange: jest.fn()
+      })
     },
     expected: {
       parser: {
@@ -144,15 +122,16 @@ describe('parsers/NumberParser', () => {
     case: '2.0',
     description: 'parser.clear()',
     given: {
-      parser() {
-        const model = 2.1;
-        const onChange = jest.fn();
-        const parser = new NumberParser({ ...options, model, onChange });
-
-        parser.parse();
-
-        return parser;
-      }
+      parser: new NumberParser({
+        schema: {
+          type: 'number',
+          minimum: 0,
+          maximum: 10,
+          multipleOf: 2
+        },
+        model: 2.1,
+        onChange: jest.fn()
+      })
     },
     expected: {
       parser: {

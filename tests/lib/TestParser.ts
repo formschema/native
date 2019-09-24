@@ -27,7 +27,7 @@ export interface Scope<
   D extends IDescriptor = IDescriptor
 > {
   value: any;
-  parser: Required<P>;
+  parser: any;
   options: any;
   field: any;
   schema: any;

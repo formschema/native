@@ -1,58 +1,41 @@
-import { Parser } from '@/parsers/Parser';
 import { IntegerParser } from '@/parsers/IntegerParser';
-import { ParserOptions } from '@/types';
 import { TestParser, Scope } from '../../lib/TestParser';
 
 describe('parsers/IntegerParser', () => {
-  const options: ParserOptions<any, any> = {
-    schema: {
-      type: 'integer',
-      minimum: 0,
-      maximum: 10,
-      multipleOf: 2
+  TestParser.Case({
+    case: '0.0',
+    given: {
+      parser: new IntegerParser({
+        schema: {
+          type: 'integer',
+          minimum: 0,
+          maximum: 10,
+          multipleOf: 2
+        },
+        model: 2
+      })
     },
-    model: 2
-  };
-
-  const parser = new IntegerParser(options);
-
-  parser.parse();
-
-  it('parser should be an instance of Parser', () => {
-    expect(parser).toBeInstanceOf(Parser);
-  });
-
-  it('parser.kind should have equal to `integer` for integer schema', () => {
-    expect(parser.kind).toBe('integer');
-  });
-
-  it('field.attrs.type should have equal to `number` integer schema', () => {
-    expect(parser.field.attrs.type).toBe('number');
-  });
-
-  it('field.attrs.min should be equal to schema.minimum', () => {
-    expect(parser.field.attrs.min).toBe(options.schema.minimum);
-  });
-
-  it('field.attrs.max should be equal to schema.maximum', () => {
-    expect(parser.field.attrs.max).toBe(options.schema.maximum);
-  });
-
-  it('field.value should be equal to the default value', () => {
-    expect(parser.field.value).toBe(2);
-  });
-
-  it('this.field.attrs.value should be equal to field.value', () => {
-    expect(parser.field.attrs.value).toBe('2');
+    expected: {
+      parser: {
+        kind: ({ value }: Scope) => expect(value).toBe('integer'),
+        field: {
+          attrs: {
+            type: ({ value }: Scope) => expect(value).toBe('number'),
+            min: ({ value, options }: Scope) => expect(value).toBe(options.schema.minimum),
+            max: ({ value, options }: Scope) => expect(value).toBe(options.schema.maximum),
+            value: ({ value, options }: Scope) => expect(value).toBe(`${options.model}`)
+          },
+          value: ({ value, options }: Scope) => expect(value).toBe(options.model)
+        }
+      }
+    }
   });
 
   it('should successfully parse default integer value', () => {
-    const options: ParserOptions<any, any> = {
+    const parser = new IntegerParser({
       schema: { type: 'integer' },
       model: 3
-    };
-
-    const parser = new IntegerParser(options);
+    });
 
     parser.parse();
 
@@ -60,12 +43,10 @@ describe('parsers/IntegerParser', () => {
   });
 
   it('field.value should parse default non integer value as an undefined model', () => {
-    const options: ParserOptions<any, any> = {
+    const parser = new IntegerParser({
       schema: { type: 'integer' },
       model: undefined
-    };
-
-    const parser = new IntegerParser(options);
+    });
 
     parser.parse();
 
@@ -73,16 +54,14 @@ describe('parsers/IntegerParser', () => {
   });
 
   describe('exclusiveMinimum/exclusiveMaximum', () => {
-    const options: ParserOptions<any, any> = {
+    const parser = new IntegerParser({
       schema: {
         type: 'integer',
         exclusiveMinimum: 0,
         exclusiveMaximum: 10
       },
       model: 0
-    };
-
-    const parser = new IntegerParser(options);
+    });
 
     parser.parse();
 
@@ -99,15 +78,16 @@ describe('parsers/IntegerParser', () => {
     case: '1.0',
     description: 'parser.reset()',
     given: {
-      parser() {
-        const model = 2;
-        const onChange = jest.fn();
-        const parser = new IntegerParser({ ...options, model, onChange });
-
-        parser.parse();
-
-        return parser;
-      }
+      parser: new IntegerParser({
+        schema: {
+          type: 'integer',
+          minimum: 0,
+          maximum: 10,
+          multipleOf: 2
+        },
+        model: 2,
+        onChange: jest.fn()
+      })
     },
     expected: {
       parser: {
@@ -140,15 +120,16 @@ describe('parsers/IntegerParser', () => {
     case: '2.0',
     description: 'parser.clear()',
     given: {
-      parser() {
-        const model = 2;
-        const onChange = jest.fn();
-        const parser = new IntegerParser({ ...options, model, onChange });
-
-        parser.parse();
-
-        return parser;
-      }
+      parser: new IntegerParser({
+        schema: {
+          type: 'integer',
+          minimum: 0,
+          maximum: 10,
+          multipleOf: 2
+        },
+        model: 2,
+        onChange: jest.fn()
+      })
     },
     expected: {
       parser: {

@@ -4,11 +4,14 @@
 
 import { Parser } from '@/parsers/Parser';
 import { Dict, ObjectField, StringField, UnknowParser, ParserOptions } from '@/types';
+import { ScalarUIDescriptor } from '@/descriptors/ScalarUIDescriptor';
+import { ObjectUIDescriptor } from '@/descriptors/ObjectUIDescriptor';
+
 import { Options } from '../../lib/Options';
 import { TestParser, Scope } from '../../lib/TestParser';
 
 class FakeParser extends Parser<any, StringField, ScalarUIDescriptor> {
-  constructor(options: ParserOptions<any>, parent?: UnknowParser) {
+  constructor(options: ParserOptions<any, any>, parent?: UnknowParser) {
     super('string', options, parent);
   }
 
@@ -16,7 +19,7 @@ class FakeParser extends Parser<any, StringField, ScalarUIDescriptor> {
 }
 
 class ObjectFakeParser extends Parser<Dict, ObjectField, ObjectUIDescriptor> {
-  constructor(options: ParserOptions<Dict>, parent?: UnknowParser) {
+  constructor(options: ParserOptions<Dict, any>, parent?: UnknowParser) {
     super('object', options, parent);
   }
 
@@ -28,7 +31,7 @@ class ObjectFakeParser extends Parser<Dict, ObjectField, ObjectUIDescriptor> {
 }
 
 class InputFakeParser extends Parser<string, StringField, ScalarUIDescriptor> {
-  constructor(options: ParserOptions<string>, parent?: UnknowParser) {
+  constructor(options: ParserOptions<string, any>, parent?: UnknowParser) {
     super('string', options, parent);
   }
 
@@ -478,15 +481,11 @@ describe('parsers/Parser', () => {
     case: '5.0',
     description: 'parser.reset()',
     given: {
-      parser() {
-        const model = 'arya';
-        const onChange = jest.fn();
-        const parser = new FakeParser({ ...options10, model, onChange });
-
-        parser.parse();
-
-        return parser;
-      }
+      parser: new FakeParser({
+        ...options10,
+        model: 'arya',
+        onChange: jest.fn()
+      })
     },
     expected: {
       parser: {
@@ -519,15 +518,11 @@ describe('parsers/Parser', () => {
     case: '6.0',
     description: 'parser.clear()',
     given: {
-      parser() {
-        const model = 'arya';
-        const onChange = jest.fn();
-        const parser = new FakeParser({ ...options10, model, onChange });
-
-        parser.parse();
-
-        return parser;
-      }
+      parser: new FakeParser({
+        ...options10,
+        model: 'arya',
+        onChange: jest.fn()
+      })
     },
     expected: {
       parser: {
