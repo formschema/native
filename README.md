@@ -39,6 +39,7 @@ Core features are not ready and the API could changed. Don't use this in product
   * [Regex Input](#regex-input)
   * [Fieldset Element](#fieldset-element)
 - [Custom Form Elements](#custom-form-elements)
+- [Translate Labels](#translate-labels)
 - [Descriptor Interface](#descriptor-interface)
 - [Contributing](#contributing)
 - [License](#license)
@@ -593,6 +594,81 @@ See the file [NativeElements.ts](https://gitlab.com/formschema/native/blob/maste
 
 - Definition: https://gitlab.com/formschema/components/elementui/blob/master/lib/ElementUIComponents.js
 - Usage: https://gitlab.com/formschema/components/elementui/blob/master/playground/src/components/Subscription.vue
+
+## Translate Labels
+
+The simple way to translate labels without change the JSON Schema file is to
+use a descriptor.
+
+Here an example with [Vue I18n](https://kazupon.github.io/vue-i18n):
+
+```html
+<template>
+  <FormSchema v-model="model" :schema="schema" :descriptor="descriptor"/>
+</template>
+
+<script>
+  import FormSchema from '@formschema/native';
+
+  export default {
+    data: () => ({
+      schema: {
+        type: 'object',
+        properties: {
+          firstname: {
+            type: 'string'
+          },
+          lastname: {
+            type: 'string'
+          }
+        }
+      },
+      model: {}
+    }),
+    computed: {
+      descriptor() {
+        properties: {
+          firstname: {
+            label: this.$t('firstname.label'),
+            helper: this.$t('firstname.helper')
+          },
+          lastname: {
+            label: this.$t('lastname.label'),
+            helper: this.$t('lastname.helper')
+          }
+        }
+      }
+    },
+    // `i18n` option, setup locale info for component
+    // see https://kazupon.github.io/vue-i18n/guide/component.html
+    i18n: {
+      messages: {
+        en: {
+          firstname: {
+            label: 'First Name',
+            helper: 'Your First Name'
+          },
+          lastname: {
+            label: 'Last Name',
+            helper: 'Your Last Name'
+          }
+        },
+        fr: {
+          firstname: {
+            label: 'Prénom',
+            helper: 'Votre prénom'
+          },
+          lastname: {
+            label: 'Nom',
+            helper: 'Votre nom'
+          }
+        }
+      }
+    },
+    components: { FormSchema }
+  };
+</script>
+```
 
 ## Descriptor Interface
 
