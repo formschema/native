@@ -367,7 +367,6 @@ export interface FormSchemaVue extends Vue {
 
   // computed
   fieldId: string;
-  field: UnknowField | null;
   listeners: Record<string, Function | Function[]>;
 
   // methods

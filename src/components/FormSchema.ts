@@ -128,17 +128,14 @@ const FormSchema: FormSchemaComponent = {
         requestRender: this.update
       };
     },
-    field() {
-      return this.parser instanceof Parser ? this.parser.field : null;
-    },
     listeners(): Record<string, Function | Function[]> {
       const on: any = { ...this.$listeners };
 
       on.reset = on.reset ? [ on.reset ] : [];
 
       on.reset.unshift(() => {
-        if (this.field) {
-          this.field.reset();
+        if (this.parser) {
+          this.parser.field.reset();
         }
       });
 
@@ -165,21 +162,21 @@ const FormSchema: FormSchemaComponent = {
     }
   },
   render(createElement) {
-    if (this.field === null || this.ready === false) {
+    if (this.parser === null || this.ready === false) {
       return null as any; // nothing to render
     }
 
     const attrs = {
-      ...this.field.attrs,
+      ...this.parser.field.attrs,
       disabled: this.disabled
     };
 
     const props = {
-      field: this.field,
+      field: this.parser.field,
       descriptor: this.parser.descriptor
     };
 
-    const key = this.key || this.field.key;
+    const key = this.key || this.parser.field.key;
     const element = createElement(this.parser.descriptor.component, { key, attrs, props });
     const nodes = [ element ];
 
