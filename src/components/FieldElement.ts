@@ -38,6 +38,16 @@ export const FieldElement: FieldComponent = {
       nodes.push(helperNode);
     }
 
+    if (field.messages.length) {
+      const MessageElement = descriptor.components.get('message');
+
+      field.messages.forEach(({ text, type = 3 }) => {
+        nodes.push(h(MessageElement, {
+          props: { text, type }
+        }, text));
+      });
+    }
+
     const wrapperElement = nodes.length === 1
       ? nodes
       : h('div', {

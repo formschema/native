@@ -5,7 +5,7 @@ export const CreateInput = <T extends Field<any>>(
   h: CreateElement,
   tag: string,
   data: VNodeData,
-  children: VNodeChildren = [],
+  children: VNodeChildren | number = [],
   event: 'input' | 'change' = 'input'
 ) => {
   const props = data.props as ElementProps<T, IScalarDescriptor>;
@@ -18,5 +18,5 @@ export const CreateInput = <T extends Field<any>>(
         props.field.setValue(target.value);
       }
     }
-  }, children);
+  }, children as any);
 };

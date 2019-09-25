@@ -8,7 +8,7 @@ exports[`components/ListElement should successfully render component: <div data-
         <option value="goku">Goku</option>
         <option value="freezer" selected="selected">Freezer</option>
       </select></div>
-    <p id="id-character-helper">Your character</p>
+    <p id="id-character-helper" data-fs-helper="true">Your character</p>
   </div>
 </div>
 `;

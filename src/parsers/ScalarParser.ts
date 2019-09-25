@@ -1,20 +1,20 @@
 import { Parser } from '@/parsers/Parser';
 import { JsonSchema } from '@/types/jsonschema';
 
+import { Pattern } from '@/lib/Pattern';
 import { ScalarUIDescriptor } from '@/descriptors/ScalarUIDescriptor';
 
 import {
-  Field,
   FieldKind,
+  ScalarField,
   ParserOptions,
   UnknowParser,
   ScalarDescriptor
 } from '@/types';
-import { Pattern } from '@/lib/Pattern';
 
 export abstract class ScalarParser <
   TModel,
-  TField extends Field<any, any, TModel>
+  TField extends ScalarField
 > extends Parser<TModel, TField, ScalarUIDescriptor> {
   static getKind(schema: JsonSchema, parent?: UnknowParser): FieldKind | null {
     if (parent && parent.schema.enum instanceof Array) {
@@ -43,6 +43,7 @@ export abstract class ScalarParser <
   ) {
     super(kind, options, parent);
 
+    this.field.hasChildren = false;
     this.field.attrs.type = type;
   }
 

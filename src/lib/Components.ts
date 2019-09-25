@@ -6,6 +6,7 @@ export class Components implements ComponentsDeclaration {
   constructor () {
     this.$ = {
       form: 'form',
+      message: 'div',
       default: 'input'
     };
   }

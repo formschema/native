@@ -33,9 +33,13 @@
                 <input type="checkbox" v-model="enableDescriptor" @change="updateRenderKey">
                 <span>Enable Descriptor</span>
               </label>
+              <label>
+                <input type="checkbox" v-model="enableCustomValidation" @change="toggleCustomValidation">
+                <span>AJV Validation</span>
+              </label>
             </div>
             <div ref="form" class="playground__top__rendering__viewport__card" :key="renderKey">
-              <FormSchema v-bind="props" v-model="model" @input="generateCode" @submit.prevent>
+              <FormSchema v-bind="props" v-model="model" @input="onInput" @submit.prevent>
                 <div class="playground__top__rendering__viewport__card__buttons">
                   <button type="submit">Submit</button>
                   <button type="reset">Reset</button>
@@ -66,6 +70,8 @@
   import '@/styles/Prism.css';
 
   import { html } from 'js-beautify';
+
+  import Ajv from 'ajv';
   import $RefParser from 'json-schema-ref-parser';
 
   import PrismEditor from 'vue-prism-editor';
@@ -97,6 +103,8 @@
       renderKey: UniqueId.get('code'),
       modelKey: UniqueId.get('model'),
       enableDescriptor: true,
+      enableCustomValidation: true,
+      ajv: new Ajv({ allErrors: true }),
       customSchema: null,
       schemaKey: 'object',
       registry: {
@@ -169,10 +177,14 @@
           schema: this.dereferencedSchema,
           search: this.search,
           disabled: this.disabled,
+          validator: this.enableCustomValidation ? this.validator : undefined,
           descriptor: this.enableDescriptor
             ? this.registry[this.schemaKey].descriptor
             : undefined
         };
+      },
+      validate() {
+        return this.ajv.compile(this.dereferencedSchema);
       }
     },
     watch: {
@@ -207,8 +219,32 @@
           });
         }, 300);
       },
+      onInput() {
+        this.generateCode();
+        console.warn(this.model);
+      },
+      validator(data, field) {
+        field.clearMessages(true);
+
+        if (!this.validate(this.model)) {
+          this.validate.errors.forEach(({ dataPath, message }) => {
+            const errorField = field.hasChildren
+              ? field.getField(dataPath) || field
+              : field;
+
+            errorField.addMessage(message, 3);
+          });
+
+          return false;
+        }
+
+        return true;
+      },
       updateRenderKey() {
         this.renderKey = UniqueId.get('code');
+      },
+      toggleCustomValidation({ target: { checked } }) {
+        console.warn(checked)
       }
     }
   }
@@ -316,9 +352,6 @@
                   width: 100%
                   padding: 0 0 2px
 
-              span // helper
-                color: rgba(0, 0, 0, .6)
-
               input, textarea, select
                 display: block
 
@@ -364,6 +397,28 @@
     select
       & > option[value=""]:first-child
         color: #666
+
+  [data-fs-helper]
+    color: rgba(0, 0, 0, .6)
+
+  [data-fs-message]
+    //
+
+  // Message Info
+  [data-fs-message='0']
+    color: inherit
+
+  // Message Success
+  [data-fs-message='1']
+    color: green
+
+  // Message Warning
+  [data-fs-message='2']
+    color: orange
+
+  // Message Error
+  [data-fs-message='3']
+    color: red
 
   [data-fs-input="object"]
     & > [data-fs-kind]

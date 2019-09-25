@@ -13,14 +13,15 @@ import {
   UnknowParser,
   Field,
   UnknowField,
-  IDescriptor
+  IDescriptor,
+  Message
 } from '@/types';
 
 const PARSERS: Dict<any> = {};
 
 export abstract class Parser<
   TModel,
-  TField extends Field<any, any, TModel>,
+  TField extends Field<any, any, any>,
   TDescriptor extends IDescriptor
 > implements IParser<TModel, TField> {
   readonly id: string;
@@ -123,6 +124,7 @@ export abstract class Parser<
         }
       },
       commit: () => this.commit(),
+      hasChildren: false,
       initialValue: this.initialValue,
       reset: () => {
         this.reset();
@@ -136,7 +138,14 @@ export abstract class Parser<
       get root() {
         return self.root.field;
       },
-      requestRender: () => this.requestRender()
+      messages: [] as Required<Message>[],
+      requestRender: () => this.requestRender(),
+      addMessage(text, type = 3) {
+        this.messages.push({ text, type });
+      },
+      clearMessages() {
+        this.messages.splice(0);
+      }
     } as TField;
 
     this.descriptor = UIDescriptor.get(options.descriptor || {}, this.field, options.components) as any;

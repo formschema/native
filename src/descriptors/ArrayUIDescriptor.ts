@@ -41,7 +41,7 @@ export class ArrayUIDescriptor extends UIDescriptor<ArrayField> implements IArra
   }
 
   get children(): IArrayChildDescriptor[] {
-    return this.field.children
+    return this.field.childrenList
       .map((field, index) => this.getDescriptor(index))
       .map((descriptor) => {
         if (!this.field.uniqueItems && this.field.sortable) {

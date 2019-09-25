@@ -39,6 +39,7 @@ Core features are not ready and the API could changed. Don't use this in product
   * [Regex Input](#regex-input)
   * [Fieldset Element](#fieldset-element)
 - [Custom Form Elements](#custom-form-elements)
+- [Data Validation](#data-validation)
 - [Translate Labels](#translate-labels)
 - [Descriptor Interface](#descriptor-interface)
 - [Contributing](#contributing)
@@ -591,6 +592,84 @@ See the file [NativeElements.ts](https://gitlab.com/formschema/native/blob/maste
 
 - Definition: https://gitlab.com/formschema/components/elementui/blob/master/lib/ElementUIComponents.js
 - Usage: https://gitlab.com/formschema/components/elementui/blob/master/playground/src/components/Subscription.vue
+
+## Data Validation
+
+By default, FormSchema uses basic HTML5 validation by applying validation
+attributes on inputs. This is enough for simple schema, but you will need to
+dedicated JSON Schema validator if you want to validate complex schema.
+
+Bellow an example with the popular [AJV](https://www.npmjs.com/package/ajv)
+validator:
+
+```html
+<template>
+  <FormSchema v-model="model" :schema="schema" :validator="validator"/>
+</template>
+
+<script>
+  import Ajv from 'ajv';
+  import FormSchema from '@formschema/native';
+
+  export default {
+    data: () => ({
+      schema: {
+        type: 'object',
+        properties: {
+          username: {
+            type: 'string',
+            minLength: 5
+          },
+          password: {
+            type: 'string',
+            minLength: 6
+          }
+        },
+        required: ['username', 'password']
+      },
+      model: {},
+      ajv: new Ajv({ allErrors: true })
+    }),
+    computed: {
+      validate() {
+        return this.ajv.compile(this.schema);
+      }
+    },
+    methods: {
+      validator(data, field) {
+        // Clear all messages
+        field.clearMessages(true);
+
+        if (!this.validate(this.model)) {
+          this.validate.errors.forEach(({ dataPath, message }) => {
+            const errorField = field.hasChildren
+              ? field.getField(dataPath) || field
+              : field;
+
+            /**
+             * Add a message to `errorField`.
+             * The first argument is the message string
+             * and the second one the message type:
+             *    0 - Message Info
+             *    1 - Message Success
+             *    2 - Message Warning
+             *    3 - Message Error
+             */
+            errorField.addMessage(message, 3);
+          });
+
+          // Return `false` to cancel the `input` event
+          return false;
+        }
+
+        // Return `true` to trigger the `input` event
+        return true;
+      }
+    },
+    components: { FormSchema }
+  };
+</script>
+```
 
 ## Translate Labels
 

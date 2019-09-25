@@ -5,7 +5,8 @@ describe('lib/Components', () => {
     const components = new Components();
     const expected = {
       form: 'form',
-      default: 'input'
+      default: 'input',
+      message: 'div'
     };
 
     expect(components.$).toEqual(expected);

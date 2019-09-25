@@ -14,7 +14,8 @@ const items: any = {
   integer: 'InputElement',
   object: 'FieldsetElement',
   list: 'ListElement',
-  textarea: 'TextareaElement'
+  textarea: 'TextareaElement',
+  message: 'MessageElement'
 };
 
 describe('lib/NativeElements', () => {

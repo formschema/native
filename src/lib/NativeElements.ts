@@ -5,6 +5,7 @@ import { ArrayElement } from '@/components/ArrayElement';
 import { FieldsetElement } from '@/components/FieldsetElement';
 import { ListElement } from '@/components/ListElement';
 import { TextareaElement } from '@/components/TextareaElement';
+import { MessageElement } from '@/components/Message';
 
 export const NativeElements = new Components();
 
@@ -22,3 +23,4 @@ NativeElements.set('integer', InputElement);
 NativeElements.set('object', FieldsetElement);
 NativeElements.set('list', ListElement);
 NativeElements.set('textarea', TextareaElement);
+NativeElements.set('message', MessageElement);

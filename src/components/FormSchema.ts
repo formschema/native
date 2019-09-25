@@ -101,6 +101,19 @@ const FormSchema: FormSchemaComponent = {
     descriptor: {
       type: Object,
       default: () => ({})
+    },
+
+    /**
+     * The validator function to use to validate data before to emit the
+     * `input` event.
+     *
+     * @param {any} data - Changed data
+     * @param {Field} field - Field
+     * @return {boolean} Return `true` if validation success and `false` otherwise
+     */
+    validator: {
+      type: Function,
+      default: null
     }
   },
   data: () => ({
@@ -221,7 +234,13 @@ const FormSchema: FormSchemaComponent = {
     /**
      * @private
      */
-    emitInputEvent(value: unknown) {
+    emitInputEvent(value: unknown, field) {
+      if (this.ready && this.validator) {
+        if (!this.validator(value, field)) {
+          return;
+        }
+      }
+
       /**
        * Fired synchronously when the value of an element is changed.
        */

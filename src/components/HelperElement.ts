@@ -10,7 +10,10 @@ export const HelperElement: HelperComponent = {
     if (descriptor.helper) {
       const tag = field.isRoot ? 'p' : 'span';
       const data = {
-        attrs: descriptor.helperAttrs
+        attrs: {
+          ...descriptor.helperAttrs,
+          'data-fs-helper': true
+        }
       };
 
       return h(tag, data, descriptor.helper);

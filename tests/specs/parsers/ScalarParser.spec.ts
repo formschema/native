@@ -17,11 +17,11 @@ describe('parsers/ScalarParser', () => {
         kind: ({ value }: Scope) => expect(value).toBe('enum'),
         field: {
           kind: ({ value }: Scope) => expect(value).toBe('enum'),
-          children: [
-            {
+          children: {
+            arya: {
               kind: ({ value }: Scope) => expect(value).toBe('radio')
             }
-          ]
+          }
         },
         descriptor: {
           kind({ value, parser: { field } }: Scope) {
@@ -93,13 +93,13 @@ describe('parsers/ScalarParser', () => {
     expected: {
       parser: {
         field: {
-          children: [
-            {
+          children: {
+            arya: {
               attrs: {
                 type: ({ value }: Scope) => expect(value).toBe('radio')
               }
             }
-          ]
+          }
         }
       }
     }

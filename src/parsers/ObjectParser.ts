@@ -1,4 +1,5 @@
 import { Parser } from '@/parsers/Parser';
+import { SetParser } from '@/parsers/SetParser';
 import { JsonSchema } from '@/types/jsonschema';
 import { UniqueId } from '@/lib/UniqueId';
 import { Objects } from '@/lib/Objects';
@@ -7,7 +8,7 @@ import { Value } from '@/lib/Value';
 import { Dict, ObjectField, ParserOptions, ObjectFieldChild, UnknowParser, ObjectDescriptor, UnknowField } from '@/types';
 import { ObjectUIDescriptor } from '@/descriptors/ObjectUIDescriptor';
 
-export class ObjectParser extends Parser<Dict, ObjectField, ObjectUIDescriptor> {
+export class ObjectParser extends SetParser<Dict, ObjectField, ObjectUIDescriptor> {
   properties: Dict<JsonSchema> = {};
   dependencies: Dict<string[]> = {};
   childrenParsers: Dict<UnknowParser> = {};

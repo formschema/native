@@ -1,4 +1,4 @@
-import { Parser } from '@/parsers/Parser';
+import { SetParser } from '@/parsers/SetParser';
 import { JsonSchema } from '@/types/jsonschema';
 import { Objects } from '@/lib/Objects';
 import { Arrays } from '@/lib/Arrays';
@@ -6,7 +6,7 @@ import { Value } from '@/lib/Value';
 import { ArrayField, ParserOptions, FieldKind, ArrayItemField, UnknowParser, ArrayDescriptor } from '@/types';
 import { ArrayUIDescriptor } from '@/descriptors/ArrayUIDescriptor';
 
-export class ArrayParser extends Parser<any, ArrayField, ArrayUIDescriptor> {
+export class ArrayParser extends SetParser<any, ArrayField, ArrayUIDescriptor> {
   readonly items: JsonSchema[] = [];
   additionalItems?: JsonSchema;
   minItems = 0;
@@ -115,7 +115,7 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayUIDescriptor> {
   getFieldItem(itemSchema: JsonSchema, index: number): ArrayItemField | null {
     const kind: FieldKind | undefined = this.field.uniqueItems
       ? 'boolean'
-      : Parser.kind(itemSchema);
+      : SetParser.kind(itemSchema);
 
     const itemModel = typeof this.model[index] === 'undefined'
       ? itemSchema.default
@@ -130,7 +130,7 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayUIDescriptor> {
       ? `${itemName}-${this.radioIndex}`
       : itemName;
 
-    const parser = Parser.get({
+    const parser = SetParser.get({
       kind: kind,
       schema: itemSchema,
       model: itemModel,
@@ -181,7 +181,7 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayUIDescriptor> {
   }
 
   move(from: number, to: number) {
-    const items = this.field.children;
+    const items = this.field.childrenList;
 
     if (items[from] && items[to]) {
       const movedField = Arrays.swap<ArrayItemField>(items, from, to);
@@ -209,7 +209,11 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayUIDescriptor> {
     const sortable = this.field.sortable;
     const items = this.children;
 
-    this.field.children = items;
+    this.field.children = {};
+
+    items.forEach((item, i) => {
+      this.field.children[i] = item;
+    });
 
     // apply array's model
     this.setValue(this.rawValue);
@@ -379,4 +383,4 @@ export class ArrayParser extends Parser<any, ArrayField, ArrayUIDescriptor> {
   }
 }
 
-Parser.register('array', ArrayParser);
+SetParser.register('array', ArrayParser);

@@ -338,7 +338,7 @@ describe('parsers/ArrayParser', () => {
         field: {
           required: false,
           uniqueItems: true,
-          children: ({ value: [ field0 ] }: Scope) => {
+          childrenList: ({ value: [ field0 ] }: Scope) => {
             // expect(field0.descriptor.kind).toBe('checkbox');
             expect(field0.attrs.type).toBe('checkbox');
           },
@@ -620,7 +620,7 @@ describe('parsers/ArrayParser', () => {
       parser: {
         field: {
           deep: ({ value }: Scope) => expect(value).toBe(0),
-          children({ value }: Scope) {
+          childrenList({ value }: Scope) {
             value.forEach(({ deep }: any) => expect(deep).toBe(1));
           }
         }
@@ -656,7 +656,7 @@ describe('parsers/ArrayParser', () => {
           expect(onChange.mock.calls.length).toBe(1);
           expect(onChange.mock.calls[0][0]).toEqual(expected[0]);
 
-          parser.field.children[0].setValue('jon');
+          parser.field.childrenList[0].setValue('jon');
 
           expect(onChange.mock.calls.length).toBe(2);
           expect(onChange.mock.calls[1][0]).toEqual(expected[1]);
@@ -707,7 +707,7 @@ describe('parsers/ArrayParser', () => {
           expect(onChange.mock.calls.length).toBe(1);
           expect(onChange.mock.calls[0][0]).toEqual(expected[0]);
 
-          parser.field.children[0].setValue('jon');
+          parser.field.childrenList[0].setValue('jon');
 
           expect(onChange.mock.calls.length).toBe(2);
           expect(onChange.mock.calls[1][0]).toEqual(expected[1]);

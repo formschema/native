@@ -23,12 +23,12 @@ describe('parsers/EnumParser', () => {
           value: 'jon',
           children({ parser }: Scope) {
             // children should be defined
-            const models = parser.field.children.map(({ value }: any) => value);
+            const models = Object.keys(parser.field.children);
 
             expect(models).toEqual([ 'jon', 'arya', 'bran', 'ned' ]);
 
             // children's field.attrs.checked should be defined
-            const checkStates = parser.field.children.map(({ attrs }: any) => attrs.checked);
+            const checkStates = models.map((key) => parser.field.children[key].attrs.checked);
 
             expect(checkStates).toEqual([ true, false, false, false ]);
           },
@@ -40,12 +40,13 @@ describe('parsers/EnumParser', () => {
             // field.attrs.checked should be updated when using field.setValue()
             parser.field.setValue('bran');
 
-            const checkStates = parser.field.children.map(({ attrs }: any) => attrs.checked);
+            const models = Object.keys(parser.field.children);
+            const checkStates = models.map((key) => parser.field.children[key].attrs.checked);
 
             expect(checkStates).toEqual([ false, false, true, false ]);
 
             // field.value should be updated when a child is checked
-            const childField: any = parser.field.children.slice(-1).pop();
+            const childField: any = parser.field.children[models.slice(-1).pop() as any];
 
             childField.setValue(childField.value);
             expect(parser.field.value).toBe('ned');
@@ -108,7 +109,7 @@ describe('parsers/EnumParser', () => {
     expected: {
       parser: {
         field: {
-          children: ({ value }: Scope) => expect(value).toEqual([])
+          children: ({ value }: Scope) => expect(value).toEqual({})
         }
       }
     }
@@ -138,23 +139,23 @@ describe('parsers/EnumParser', () => {
     },
     expected: {
       parser: {
-        children: [
-          {
+        children: {
+          jon: {
             value: ({ value }: Scope) => expect(value).toBe('jon')
           },
-          {
+          arya: {
             value: ({ value }: Scope) => expect(value).toBe('arya')
           }
-        ],
+        },
         field: {
-          children: [
-            {
+          children: {
+            jon: {
               value: ({ value }: Scope) => expect(value).toBe('jon')
             },
-            {
+            arya: {
               value: ({ value }: Scope) => expect(value).toBe('arya')
             }
-          ]
+          }
         },
         descriptor: {
           children: [
@@ -203,7 +204,7 @@ describe('parsers/EnumParser', () => {
           expect(onChange.mock.calls.length).toBe(1);
           expect(onChange.mock.calls[0][0]).toEqual(expected[0]);
 
-          parser.field.children[0].setValue(true);
+          parser.field.children.jon.setValue(true);
 
           expect(onChange.mock.calls.length).toBe(2);
           expect(onChange.mock.calls[1][0]).toEqual(expected[1]);
@@ -249,7 +250,7 @@ describe('parsers/EnumParser', () => {
           expect(onChange.mock.calls.length).toBe(1);
           expect(onChange.mock.calls[0][0]).toEqual('arya');
 
-          parser.field.children[0].setValue(true);
+          parser.field.children.jon.setValue(true);
 
           expect(onChange.mock.calls.length).toBe(2);
           expect(onChange.mock.calls[1][0]).toEqual('jon');

@@ -5,6 +5,8 @@ import { ListUIDescriptor } from '@/descriptors/ListUIDescriptor';
 export class ListParser extends Parser<unknown, ListField, ListUIDescriptor> {
   constructor(options: ParserOptions<unknown, ListField, ListDescriptor>, parent?: UnknowParser) {
     super('list', options, parent);
+
+    this.field.hasChildren = false;
   }
 
   get items(): ListItemModel[] {

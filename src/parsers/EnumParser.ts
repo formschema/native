@@ -1,4 +1,4 @@
-import { Parser } from '@/parsers/Parser';
+import { SetParser } from '@/parsers/SetParser';
 import { UniqueId } from '@/lib/UniqueId';
 import { JsonSchema } from '@/types/jsonschema';
 
@@ -9,19 +9,20 @@ import {
   ParserOptions,
   RadioField,
   UnknowParser,
-  EnumDescriptor
+  EnumDescriptor,
+  Dict
 } from '@/types';
 
-export class EnumParser extends Parser<unknown, EnumField, EnumUIDescriptor> {
+export class EnumParser extends SetParser<unknown, EnumField, EnumUIDescriptor> {
   childrenParsers: UnknowParser[] = [];
 
   constructor(options: ParserOptions<unknown, EnumField, EnumDescriptor>, parent?: UnknowParser) {
     super('enum', options, parent);
   }
 
-  get children(): RadioField[] {
+  get children(): Dict<RadioField> {
     if (!Array.isArray(this.schema.enum)) {
-      return [];
+      return {};
     }
 
     const radioId = this.options.id || UniqueId.get();
@@ -42,7 +43,7 @@ export class EnumParser extends Parser<unknown, EnumField, EnumUIDescriptor> {
       .reduce((fields, itemSchema) => {
         const item: any = itemSchema.default;
 
-        const parser = Parser.get({
+        const parser = SetParser.get({
           id: `${radioId}-${UniqueId.parse(item)}`,
           name: radioName,
           schema: itemSchema,
@@ -63,12 +64,12 @@ export class EnumParser extends Parser<unknown, EnumField, EnumUIDescriptor> {
             this.commit();
           };
 
-          fields.push(parser.field);
+          fields[itemSchema.default as any] = parser.field;
           this.childrenParsers.push(parser);
         }
 
         return fields;
-      }, [] as RadioField[]);
+      }, {} as Dict<RadioField>);
   }
 
   setValue(value: unknown) {
@@ -87,9 +88,11 @@ export class EnumParser extends Parser<unknown, EnumField, EnumUIDescriptor> {
   }
 
   updateInputsState() {
-    this.field.children.forEach(({ attrs, value }) => {
-      attrs.checked = value === this.model;
-    });
+    for (const key in this.field.children) {
+      const item = this.field.children[key];
+
+      item.attrs.checked = item.value === this.model;
+    }
   }
 
   parse() {
@@ -100,4 +103,4 @@ export class EnumParser extends Parser<unknown, EnumField, EnumUIDescriptor> {
   }
 }
 
-Parser.register('enum', EnumParser);
+SetParser.register('enum', EnumParser);

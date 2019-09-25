@@ -9,7 +9,8 @@ import {
   Component,
   HelperAttributes,
   LabelAttributes,
-  Descriptor
+  Descriptor,
+  ComponentsDeclaration
 } from '@/types';
 
 const DESCRIPTORS: Dict<any> = {};
@@ -23,7 +24,7 @@ export abstract class UIDescriptor<TField extends UnknowField> implements IDescr
   readonly attrs: Dict<any>;
   readonly labelAttrs: LabelAttributes;
   readonly helperAttrs: HelperAttributes;
-  readonly components: Components;
+  readonly components: ComponentsDeclaration;
 
   static register(kind: FieldKind, parserClass: any) {
     DESCRIPTORS[kind] = parserClass;
