@@ -34,7 +34,7 @@
                 <span>Enable Descriptor</span>
               </label>
               <label>
-                <input type="checkbox" v-model="enableCustomValidation" @change="toggleCustomValidation">
+                <input type="checkbox" v-model="enableCustomValidation">
                 <span>AJV Validation</span>
               </label>
             </div>
@@ -221,7 +221,6 @@
       },
       onInput() {
         this.generateCode();
-        console.warn(this.model);
       },
       validator(data, field) {
         field.clearMessages(true);
@@ -242,9 +241,6 @@
       },
       updateRenderKey() {
         this.renderKey = UniqueId.get('code');
-      },
-      toggleCustomValidation({ target: { checked } }) {
-        console.warn(checked)
       }
     }
   }
