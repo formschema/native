@@ -42,8 +42,6 @@ function getKind(schema: JsonSchema) {
 function getType(kind: FieldKind, schema: JsonSchema) {
   switch (kind) {
     case 'file':
-    case 'radio':
-    case 'hidden':
     case 'password':
       return kind;
 
@@ -74,6 +72,8 @@ export class StringParser extends ScalarParser<string, StringField> {
   }
 
   parse() {
+    super.parse();
+
     if (this.field.attrs.type === 'file') {
       this.field.attrs.accept = this.schema.contentMediaType;
     }

@@ -110,9 +110,10 @@
         "type": "boolean",
         "title": "Agree",
         "description": "You agree to receive occasional updates.",
-        "default": false
+        "default": false,
+        "const": true
       }
     },
     "additionalProperties": false,
-    "required": ["name", "email", "lists", "aList", "int", "agree"]
+    "required": ["name", "email", "agree"]
   }

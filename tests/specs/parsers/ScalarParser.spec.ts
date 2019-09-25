@@ -34,18 +34,19 @@ describe('parsers/ScalarParser', () => {
 
   TestParser.Case({
     case: '1.2: ScalarParser.getKind()',
-    description: 'should return kind `hidden` with schema.const',
+    description: 'should convert schema.const to field.attrs.pattern',
     given: Options.get({
-      schema: { type: 'string', const: 'hello' },
+      schema: { type: 'string', const: 'hello?' },
       model: undefined as any
     }),
     expected: {
       parser: {
-        kind: ({ value }: Scope) => expect(value).toBe('hidden'),
+        kind: ({ value }: Scope) => expect(value).toBe('string'),
         field: {
-          kind: ({ value }: Scope) => expect(value).toBe('hidden'),
+          kind: ({ value }: Scope) => expect(value).toBe('string'),
           attrs: {
-            type: ({ value }: Scope) => expect(value).toBe('hidden')
+            type: ({ value }: Scope) => expect(value).toBe('text'),
+            pattern: ({ value }: Scope) => expect(value).toBe('hello\\?')
           }
         },
         descriptor: {

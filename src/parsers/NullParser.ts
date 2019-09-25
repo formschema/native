@@ -12,6 +12,8 @@ export class NullParser extends ScalarParser<null, NullField> {
   }
 
   parse() {
+    super.parse();
+
     this.field.attrs.value = '\u0000';
 
     this.commit();

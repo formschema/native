@@ -10,6 +10,7 @@ import {
   UnknowParser,
   ScalarDescriptor
 } from '@/types';
+import { Pattern } from '@/lib/Pattern';
 
 export abstract class ScalarParser <
   TModel,
@@ -20,19 +21,18 @@ export abstract class ScalarParser <
       return 'radio';
     }
 
-    if (schema.const) {
-      return 'hidden';
-    }
-
     return null;
   }
 
   static getType(kind: FieldKind): string | null {
-    if (kind === 'radio') {
-      return kind;
-    }
+    switch (kind) {
+      case 'radio':
+      case 'hidden':
+        return kind;
 
-    return null;
+      default:
+        return null;
+    }
   }
 
   constructor(
@@ -44,5 +44,11 @@ export abstract class ScalarParser <
     super(kind, options, parent);
 
     this.field.attrs.type = type;
+  }
+
+  parse() {
+    if (this.schema.const) {
+      this.field.attrs.pattern = Pattern.escape(`${this.schema.const}`);
+    }
   }
 }

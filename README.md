@@ -293,7 +293,7 @@ See [json-schema-ref-parser documentation page](https://www.npmjs.com/package/js
 
 Add a `text/*` media types to a string schema to render a Textarea element.
 
-**schema.json**
+**Example schema.json**
 
 ```json
 {
@@ -305,7 +305,7 @@ Add a `text/*` media types to a string schema to render a Textarea element.
 You can also use a descriptor to force the Render to use a Textarea
 element:
 
-**descriptor.json**
+**Example descriptor.json**
 
 ```json
 {
@@ -317,7 +317,7 @@ element:
 
 String schemas with media types not starting with `text/*` are automatically render as Input File elements.
 
-**schema.json**
+**Example schema.json**
 
 ```json
 {
@@ -333,21 +333,17 @@ String schemas with media types not starting with `text/*` are automatically ren
 
 ### Hidden Input
 
-String schemas with defined `const` property are automatically render as Input File elements.
+Schemas with descriptor's kind `hidden` are render as hidden input elements.
 
-**schema.json**
+**Example schema.json**
 
 ```json
 {
-  "type": "string",
-  "const": "value of the hidden input"
+  "type": "string"
 }
 ```
 
-You can also use a descriptor to force the Render to use a hidden HTML input
-element:
-
-**descriptor.json**
+**Example descriptor.json**
 
 ```json
 {
@@ -357,9 +353,10 @@ element:
 
 ### Password Input
 
-String schemas with a descriptor's kind `password` are used to render Input Password elements.
+String schemas with a descriptor's kind `password` are used to render Input
+Password elements.
 
-**schema.json**
+**Example schema.json**
 
 ```json
 {
@@ -367,7 +364,7 @@ String schemas with a descriptor's kind `password` are used to render Input Pass
 }
 ```
 
-**descriptor.json**
+**Example descriptor.json**
 
 ```json
 {
@@ -379,7 +376,7 @@ String schemas with a descriptor's kind `password` are used to render Input Pass
 
 To define multiple checkbox, use the [JSON Schema keyword `anyOf`](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.27):
 
-**schema.json**
+**Example schema.json**
 
 ```json
 {
@@ -401,7 +398,7 @@ To define multiple checkbox, use the [JSON Schema keyword `anyOf`](http://json-s
 To group radio elements, use the [JSON Schema keyword `enum`](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.23)
 with a `enum` descriptor:
 
-**schema.json**
+**Example schema.json**
 
 ```json
 {
@@ -418,7 +415,7 @@ with a `enum` descriptor:
 }
 ```
 
-**descriptor.json**
+**Example descriptor.json**
 
 ```json
 {
@@ -440,7 +437,7 @@ with a `enum` descriptor:
 To group HTML Select element, use the [JSON Schema keyword `enum`](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.23)
 with a `list` descriptor:
 
-**schema.json**
+**Example schema.json**
 
 ```json
 {
@@ -457,7 +454,7 @@ with a `list` descriptor:
 }
 ```
 
-**descriptor.json**
+**Example descriptor.json**
 
 ```json
 {
@@ -469,7 +466,7 @@ with a `list` descriptor:
 
 To render a [array field](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4), define your schema like:
 
-**schema.json**
+**Example schema.json**
 
 ```json
 {
@@ -487,7 +484,7 @@ To render a [array field](http://json-schema.org/latest/json-schema-validation.h
 To render a [regex input](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.3.3),
 define your schema like:
 
-**schema.json**
+**Example schema.json**
 
 ```json
 {
@@ -500,7 +497,7 @@ define your schema like:
 
 FormSchema use a `<fieldset>` element to group inputs of a object JSON Schema:
 
-**schema.json**
+**Example schema.json**
 
 ```json
 {
@@ -520,7 +517,7 @@ FormSchema use a `<fieldset>` element to group inputs of a object JSON Schema:
 Use descriptor to set labels and helpers. You can also change the order of
 properties for the rendering:
 
-**descriptor.json**
+**Example descriptor.json**
 
 ```json
 {
