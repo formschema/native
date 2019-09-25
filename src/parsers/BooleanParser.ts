@@ -13,7 +13,7 @@ export class BooleanParser extends ScalarParser<boolean, BooleanField> {
   }
 
   isEmpty(data: unknown = this.model) {
-    return data !== true;
+    return typeof data !== 'boolean';
   }
 
   parse() {

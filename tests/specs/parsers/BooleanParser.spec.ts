@@ -81,7 +81,7 @@ describe('parsers/BooleanParser', () => {
     },
     expected: {
       parser: {
-        isEmpty: ({ parser }: Scope) => expect(parser.isEmpty(false)).toBeTruthy()
+        isEmpty: ({ parser }: Scope) => expect(parser.isEmpty(false)).toBeFalsy()
       }
     }
   });
@@ -112,6 +112,21 @@ describe('parsers/BooleanParser', () => {
     expected: {
       parser: {
         isEmpty: ({ parser }: Scope) => expect(parser.isEmpty()).toBeFalsy()
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '1.4',
+    description: 'isEmpty() with non boolean value',
+    given: {
+      parser: new BooleanParser({
+        schema: { type: 'boolean' }
+      })
+    },
+    expected: {
+      parser: {
+        isEmpty: ({ parser }: Scope) => expect(parser.isEmpty(null)).toBeTruthy()
       }
     }
   });
