@@ -103,7 +103,7 @@
       renderKey: UniqueId.get('code'),
       modelKey: UniqueId.get('model'),
       enableDescriptor: true,
-      enableCustomValidation: true,
+      enableCustomValidation: false,
       ajv: new Ajv({ allErrors: true }),
       customSchema: null,
       schemaKey: 'object',
