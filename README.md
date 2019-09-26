@@ -620,7 +620,15 @@ interface Field {
   readonly value: any;
   readonly hasChildren: boolean;
   readonly messages: Message[];
+
+  /**
+   * @param {string} path - The path of the requested field.
+   *                        It's formated as JavaScript property access
+   *                        notation (e.g., ".prop.propArray[1].subProp")
+   */
   getField?: (path: string) => Field | null;
+
+  // Message handling
   addMessage: (message: string, type: MessageType = MessageError) => void;
   clearMessages: (recursive?: boolean) => void;
 }
