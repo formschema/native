@@ -645,7 +645,9 @@ Bellow a basic example with the popular
 
 ```html
 <template>
-  <FormSchema v-model="model" :schema="schema" :validator="validator"/>
+  <FormSchema v-model="model" :schema="schema" :validator="validator" @submit.prevent="onSubmit">
+    <button type="submit">Submit</button>
+  </FormSchema>
 </template>
 
 <script>
