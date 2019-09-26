@@ -25,8 +25,14 @@ export const Objects = {
     return dest;
   },
 
-  clone<T extends Dict = Dict<any>>(object: T): T {
-    return Objects.assign<T>({}, object);
+  clone(value: any) {
+    if (Objects.isObject(value)) {
+      const object = value instanceof Array ? [] : {};
+
+      return Objects.assign(object, value as any);
+    }
+
+    return value;
   },
 
   isEmpty<T extends Dict = Dict<any>>(object: T) {

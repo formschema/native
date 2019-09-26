@@ -247,36 +247,6 @@ describe('components/FormSchema', () => {
     });
   });
 
-  describe('vm.clone(value)', () => {
-    const wrapper = getWrapper({ schema });
-
-    it('should successfully clone a scalar value', () => {
-      Vue.nextTick(() => {
-        const { vm } = wrapper.find('form');
-
-        expect(vm.clone(12)).toBe(12);
-      });
-    });
-
-    it('should successfully clone an array value', () => {
-      Vue.nextTick(() => {
-        const { vm } = wrapper.find('form');
-
-        expect(vm.clone([ 12 ])).toEqual([ 12 ]);
-        expect(vm.clone([ 12 ]) !== [ 12 ]).toBeTruthy();
-      });
-    });
-
-    it('should successfully clone an object value', () => {
-      Vue.nextTick(() => {
-        const { vm } = wrapper.find('form');
-
-        expect(vm.clone({ a: 12 })).toEqual({ a: 12 });
-        expect(vm.clone({ a: 12 }) !== { a: 12 }).toBeTruthy();
-      });
-    });
-  });
-
   it('vm.form() should be return a defined VNode', (done) => {
     const wrapper = getWrapper({ schema });
 

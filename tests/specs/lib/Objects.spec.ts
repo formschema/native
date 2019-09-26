@@ -42,12 +42,36 @@ describe('lib/Objects', () => {
       const src = {
         a: 1, c: 2, e: { x: 1 }, d: [ 1 ], f: { g: 1 }, F
       };
+
       const expected = {
         a: 1, c: 2, e: { x: 1 }, d: [ 1 ], f: { g: 1 }, F
       };
+
       const result = Objects.clone(src);
 
+      expect(result).not.toBe(expected);
       expect(result).toEqual(expected);
+    });
+
+    it('should successfully clone array', () => {
+      const src = [
+        { x: 1 },
+        { y: 2 }
+      ];
+
+      const expected = [
+        { x: 1 },
+        { y: 2 }
+      ];
+
+      const result = Objects.clone(src);
+
+      expect(result).not.toBe(expected);
+      expect(result).toEqual(expected);
+    });
+
+    it('should successfully clone scalar value', () => {
+      expect(Objects.clone(12)).toBe(12);
     });
   });
 

@@ -163,7 +163,7 @@ const FormSchema: FormSchemaComponent = {
     schema: {
       handler() {
         this.ready = false;
-        this.initialModel = this.clone(this.value);
+        this.initialModel = Objects.clone(this.value as any);
       },
       immediate: true
     },
@@ -209,19 +209,6 @@ const FormSchema: FormSchemaComponent = {
     }, nodes);
   },
   methods: {
-    /**
-     * @private
-     */
-    clone(value): unknown {
-      if (Objects.isObject(value)) {
-        const object = value instanceof Array ? [] : {};
-
-        return Objects.assign(object, value as any);
-      }
-
-      return value;
-    },
-
     /**
      * Get the HTML form reference.
      *
