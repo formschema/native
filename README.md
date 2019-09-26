@@ -41,7 +41,7 @@ Core features are not ready and the API could changed. Don't use this in product
 - [Custom Form Elements](#custom-form-elements)
 - [Data Validation](#data-validation)
   * [Native HTML5 Validation](#native-html5-validation)
-  * [Custom Validator API](#custom-validator-api)
+  * [Custom Validation API](#custom-validation-api)
   * [Custom Validation with AJV](#custom-validation-with-ajv)
   * [Disable Native HTML5 Validation](#disable-native-html5-validation)
 - [Translate Labels](#translate-labels)
@@ -605,7 +605,7 @@ By default, FormSchema uses basic HTML5 validation by applying validation
 attributes on inputs. This is enough for simple schema, but you will need to
 dedicated JSON Schema validator if you want to validate complex schema.
 
-### Custom Validator API
+### Custom Validation API
 
 ```ts
 /**
@@ -615,11 +615,12 @@ dedicated JSON Schema validator if you want to validate complex schema.
  * @return {boolean} Return `true` to accept changes and perform the `input` event,
  *                   or `false` to cancel the `input` event.
  */
-type validator: (data: any, field: Field) => boolean;
+type validator = (data: any, field: Field) => boolean;
 
 interface Field {
-  hasChildren: boolean;
-  readonly messages: Required<Message>[];
+  readonly hasChildren: boolean;
+  readonly messages: Message[];
+  getField?: (path: string) => UnknowField | null;
   addMessage: (message: string, type: MessageType = MessageError) => void;
   clearMessages: (recursive?: boolean) => void;
 }
@@ -632,7 +633,7 @@ type MessageError = 3;
 type MessageType = MessageInfo | MessageSuccess | MessageWarining | MessageError;
 
 interface Message {
-  type?: MessageType;
+  type: MessageType;
   text: string;
 }
 ```
