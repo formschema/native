@@ -40,6 +40,8 @@ Core features are not ready and the API could changed. Don't use this in product
   * [Fieldset Element](#fieldset-element)
 - [Custom Form Elements](#custom-form-elements)
 - [Data Validation](#data-validation)
+  * [Complex Validation with AJV](#complex-validation-with-ajv)
+  * [Disable Native HTML5 Validation](#disable-native-html5-validation)
 - [Translate Labels](#translate-labels)
 - [Descriptor Interface](#descriptor-interface)
 - [Contributing](#contributing)
@@ -715,7 +717,6 @@ Disable the form validation constraints could be useful when implementing a
   </FormSchema>
 </template>
 ```
-
 
 ## Translate Labels
 
