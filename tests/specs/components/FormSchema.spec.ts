@@ -207,7 +207,7 @@ describe('components/FormSchema', () => {
       return Vue.nextTick().then(() => expect(wrapper.html()).toMatchSnapshot(expected));
     });
 
-    it('with only a non scalar schema', (done) => {
+    it('with a non scalar schema', (done) => {
       const objectSchema = {
         type: 'object',
         properties: {
@@ -236,12 +236,18 @@ describe('components/FormSchema', () => {
     });
 
     it('with { schema, disabled }', (done) => {
-      const disabled = true;
-      const wrapper = getWrapper({ schema, disabled });
-      const expected = { id: 'id-form' };
+      const objectSchema = {
+        type: 'object',
+        properties: {
+          string: schema
+        }
+      };
+
+      const wrapper = getWrapper({ schema: objectSchema, disabled: true });
+      const expected = '<form id="id-form"><fieldset id="id-form-field" disabled="disabled"><div data-fs-kind="string" data-fs-type="text" data-fs-field="string"><label id="id-form-field-string-label" for="id-form-field-string">String</label><div data-fs-wrapper="2"><div data-fs-input="text"><input id="id-form-field-string" type="text" name="string" aria-labelledby="id-form-field-string-label" aria-describedby="id-form-field-string-helper"></div><span id="id-form-field-string-helper" data-fs-helper="true">A String</span></div></div></fieldset></form>';
 
       Vue.nextTick(() => {
-        expect(wrapper.attributes()).toEqual(expected);
+        expect(wrapper.html()).toMatchSnapshot(expected);
         done();
       });
     });
