@@ -620,7 +620,7 @@ type validator = (data: any, field: Field) => boolean;
 interface Field {
   readonly hasChildren: boolean;
   readonly messages: Message[];
-  getField?: (path: string) => UnknowField | null;
+  getField?: (path: string) => Field | null;
   addMessage: (message: string, type: MessageType = MessageError) => void;
   clearMessages: (recursive?: boolean) => void;
 }
