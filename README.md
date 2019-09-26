@@ -40,7 +40,9 @@ Core features are not ready and the API could changed. Don't use this in product
   * [Fieldset Element](#fieldset-element)
 - [Custom Form Elements](#custom-form-elements)
 - [Data Validation](#data-validation)
-  * [Complex Validation with AJV](#complex-validation-with-ajv)
+  * [Native HTML5 Validation](#native-html5-validation)
+  * [Custom Validator API](#custom-validator-api)
+  * [Custom Validation with AJV](#custom-validation-with-ajv)
   * [Disable Native HTML5 Validation](#disable-native-html5-validation)
 - [Translate Labels](#translate-labels)
 - [Descriptor Interface](#descriptor-interface)
@@ -597,11 +599,45 @@ See the file [NativeElements.ts](https://gitlab.com/formschema/native/blob/maste
 
 ## Data Validation
 
+### Native HTML5 Validation
+
 By default, FormSchema uses basic HTML5 validation by applying validation
 attributes on inputs. This is enough for simple schema, but you will need to
 dedicated JSON Schema validator if you want to validate complex schema.
 
-### Complex Validation with AJV
+### Custom Validator API
+
+```ts
+/**
+ * FormSchema prop to set to enable custom validation
+ * @param {any} data - The data to validate
+ * @param {Field} field - The field that requests validation
+ * @return {boolean} Return `true` to accept changes and perform the `input` event,
+ *                   or `false` to cancel the `input` event.
+ */
+type validator: (data: any, field: Field) => boolean;
+
+interface Field {
+  hasChildren: boolean;
+  readonly messages: Required<Message>[];
+  addMessage: (message: string, type: MessageType = MessageError) => void;
+  clearMessages: (recursive?: boolean) => void;
+}
+
+type MessageInfo = 0;
+type MessageSuccess = 1;
+type MessageWarining = 2;
+type MessageError = 3;
+
+type MessageType = MessageInfo | MessageSuccess | MessageWarining | MessageError;
+
+interface Message {
+  type?: MessageType;
+  text: string;
+}
+```
+
+### Custom Validation with AJV
 
 Bellow a basic example with the popular
 [AJV](https://www.npmjs.com/package/ajv) validator:
