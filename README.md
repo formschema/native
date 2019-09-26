@@ -599,8 +599,10 @@ By default, FormSchema uses basic HTML5 validation by applying validation
 attributes on inputs. This is enough for simple schema, but you will need to
 dedicated JSON Schema validator if you want to validate complex schema.
 
-Bellow an example with the popular [AJV](https://www.npmjs.com/package/ajv)
-validator:
+### Complex Validation with AJV
+
+Bellow a basic example with the popular
+[AJV](https://www.npmjs.com/package/ajv) validator:
 
 ```html
 <template>
@@ -670,6 +672,50 @@ validator:
   };
 </script>
 ```
+
+### Disable Native HTML5 Validation
+
+Since FormSchema use the native HTML Form element, attributes `novalidate` and
+`formvalidate` can be used to disable form validation as it described in the
+[W3C specification](https://dev.w3.org/html5/spec-LC/association-of-controls-and-forms.html#attr-fs-novalidate):
+
+> If present, they indicate that the form is not to be validated during
+  submission.<br>
+  The **no-validate state** of an element is true if the element is a
+  [submit button](https://dev.w3.org/html5/spec-LC/forms.html#concept-submit-button)
+  and the element's `formnovalidate` attribute is present, or if the element's
+  [form owner](https://dev.w3.org/html5/spec-LC/association-of-controls-and-forms.html#form-owner)'s
+  `novalidate` attribute is present, and `false` otherwise.
+
+**Example: Disable Form Validation using `novalidate`**
+
+```html
+<template>
+  <FormSchema v-model="model" :schema="schema" novalidate>
+    <button type="submit">Submit</button>
+  </FormSchema>
+</template>
+```
+
+**Usecase: Implement Save, Cancel and Submit**
+
+Disable the form validation constraints could be useful when implementing a
+*save* feature to the form:
+
+- The user should be able to save their progress even though they haven't fully entered the data in the form
+- The user should be able to cancel the saved form data
+- The user should be able to submit form data with validation
+
+```html
+<template>
+  <FormSchema v-model="model" :schema="schema" action="/api/blog/post" method="post">
+    <input type="submit" name="submit" value="Submit">
+    <input type="submit" formnovalidate name="save" value="Save">
+    <input type="submit" formnovalidate name="cancel" value="Cancel">
+  </FormSchema>
+</template>
+```
+
 
 ## Translate Labels
 
