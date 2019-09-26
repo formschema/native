@@ -407,7 +407,7 @@ export interface FormSchemaVue extends Vue {
   disabled: boolean;
   components: ComponentsDeclaration;
   descriptor: DescriptorInstance | IDescriptor;
-  validator: (data: any, field: UnknowField) => boolean;
+  validator: (field: UnknowField) => boolean;
 
   // data
   key: string;
@@ -469,6 +469,10 @@ export interface ComponentsDeclaration {
 export interface ElementProps<T extends Field<any>, D extends IDescriptor> {
   field: T;
   descriptor: D;
+}
+
+export interface SubmitEvent extends Event {
+  field: UnknowField;
 }
 
 export type ArrayButtonComponent = FunctionalComponentOptions<ButtonDescriptor<Function>>;

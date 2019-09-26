@@ -1,5 +1,5 @@
 import { VNode } from 'vue';
-import { FormSchemaComponent } from '@/types';
+import { FormSchemaComponent, SubmitEvent } from '@/types';
 import { UniqueId as UniqueIdLib } from '@/lib/UniqueId';
 import { Objects as ObjectsLib } from '@/lib/Objects';
 import { Components as ComponentsLib } from '@/lib/Components';
@@ -107,8 +107,7 @@ const FormSchema: FormSchemaComponent = {
      * The validator function to use to validate data before to emit the
      * `input` event.
      *
-     * @param {any} data - Changed data
-     * @param {Field} field - Field
+     * @param {Field} field - The field that requests validation. Use `field.value` to get the field value for validation
      * @return {boolean} Return `true` if validation success and `false` otherwise
      */
     validator: {
@@ -151,6 +150,18 @@ const FormSchema: FormSchemaComponent = {
           this.parser.field.reset();
         }
       });
+
+      if (on.submit) {
+        const onsubmit = on.submit;
+
+        on.submit = (event: SubmitEvent) => {
+          if (this.parser) {
+            event.field = this.parser.field;
+          }
+
+          return onsubmit(event);
+        };
+      }
 
       // remove the injected vue's input event
       // to prevent vue errors on the submit event
@@ -223,7 +234,9 @@ const FormSchema: FormSchemaComponent = {
      */
     emitInputEvent(value: unknown, field) {
       if (this.ready && this.validator) {
-        if (!this.validator(value, field)) {
+        if (!this.validator(field)) {
+          this.ready = true;
+
           return;
         }
       }

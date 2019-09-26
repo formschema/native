@@ -610,14 +610,14 @@ dedicated JSON Schema validator if you want to validate complex schema.
 ```ts
 /**
  * FormSchema prop to set to enable custom validation
- * @param {any} data - The data to validate
  * @param {Field} field - The field that requests validation
  * @return {boolean} Return `true` to accept changes and perform the `input` event,
  *                   or `false` to cancel the `input` event.
  */
-type validator = (data: any, field: Field) => boolean;
+type validator = (field: Field) => boolean;
 
 interface Field {
+  readonly value: any;
   readonly hasChildren: boolean;
   readonly messages: Message[];
   getField?: (path: string) => Field | null;
@@ -677,6 +677,11 @@ Bellow a basic example with the popular
       }
     },
     methods: {
+      onSubmit({ field }) {
+        if (field && this.validator(field)) {
+          // validation success, submit code here
+        }
+      },
       validator(data, field) {
         // Clear all messages
         field.clearMessages(true);

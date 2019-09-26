@@ -39,7 +39,7 @@
               </label>
             </div>
             <div ref="form" class="playground__top__rendering__viewport__card" :key="renderKey">
-              <FormSchema v-bind="props" v-model="model" @input="onInput" @submit.prevent>
+              <FormSchema v-bind="props" v-model="model" :novalidate="enableCustomValidation" @input="onInput" @submit.prevent="onSubmit">
                 <div class="playground__top__rendering__viewport__card__buttons">
                   <button type="submit">Submit</button>
                   <button type="reset">Reset</button>
@@ -222,10 +222,18 @@
       onInput() {
         this.generateCode();
       },
-      validator(data, field) {
+      onSubmit({ field }) {
+        if (this.enableCustomValidation && field && !this.validator(field)) {
+          return;
+        }
+
+        // submit code here
+        alert('Submited');
+      },
+      validator(field) {
         field.clearMessages(true);
 
-        if (!this.validate(this.model)) {
+        if (!this.validate(field.value)) {
           this.validate.errors.forEach(({ dataPath, message }) => {
             const errorField = field.hasChildren
               ? field.getField(dataPath) || field
