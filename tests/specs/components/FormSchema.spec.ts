@@ -167,7 +167,7 @@ describe('components/FormSchema', () => {
         const { vm } = wrapper;
 
         expect(vm.ready).toBeTruthy();
-        expect(wrapper.html()).toBe(expected);
+        expect(wrapper.html()).toMatchSnapshot(expected);
       });
     });
 

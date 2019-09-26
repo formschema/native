@@ -17,7 +17,7 @@ export const FieldsetElement: FieldsetComponent = {
       return h(FieldElement, data, nodes);
     }
 
-    const attrs = props.field.attrs;
+    const attrs = { ...props.field.attrs, ...(data.attrs || {}) };
     const helper = h(HelperElement, data);
 
     if (helper.tag) {

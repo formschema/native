@@ -17,7 +17,7 @@ describe('components/ArrayElement', () => {
     const wrapper = mount(ArrayElement, { context });
     const expected = '<fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper"><legend id="id-characters-label" for="id-characters">Empty array</legend><p id="id-characters-helper" data-fs-helper="true">Your characters</p><button type="button" disabled="disabled" data-fs-button="push">+</button></fieldset>';
 
-    expect(wrapper.html()).toBe(expected);
+    expect(wrapper.html()).toMatchSnapshot(expected);
   });
 
   it('should successfully render component with an empty array with a defined model', () => {
@@ -35,7 +35,7 @@ describe('components/ArrayElement', () => {
     const wrapper = mount(ArrayElement, { context });
     const expected = '<fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper"><legend id="id-characters-label" for="id-characters">Empty array</legend><p id="id-characters-helper" data-fs-helper="true">Your characters</p><button type="button" disabled="disabled" data-fs-button="push">+</button></fieldset>';
 
-    expect(wrapper.html()).toBe(expected);
+    expect(wrapper.html()).toMatchSnapshot(expected);
   });
 
   it('should successfully render component with an array schema with an empty model', () => {

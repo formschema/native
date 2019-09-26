@@ -28,3 +28,17 @@ exports[`components/ArrayElement should successfully render component with an ar
   </div><button type="button" data-fs-button="push">+</button>
 </fieldset>
 `;
+
+exports[`components/ArrayElement should successfully render component with an empty array with a defined model: <fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper"><legend id="id-characters-label" for="id-characters">Empty array</legend><p id="id-characters-helper" data-fs-helper="true">Your characters</p><button type="button" disabled="disabled" data-fs-button="push">+</button></fieldset> 1`] = `
+<fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper">
+  <legend id="id-characters-label" for="id-characters">Empty array</legend>
+  <p id="id-characters-helper" data-fs-helper="true">Your characters</p><button type="button" disabled="disabled" data-fs-button="push">+</button>
+</fieldset>
+`;
+
+exports[`components/ArrayElement should successfully render component with an empty array: <fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper"><legend id="id-characters-label" for="id-characters">Empty array</legend><p id="id-characters-helper" data-fs-helper="true">Your characters</p><button type="button" disabled="disabled" data-fs-button="push">+</button></fieldset> 1`] = `
+<fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper">
+  <legend id="id-characters-label" for="id-characters">Empty array</legend>
+  <p id="id-characters-helper" data-fs-helper="true">Your characters</p><button type="button" disabled="disabled" data-fs-button="push">+</button>
+</fieldset>
+`;
