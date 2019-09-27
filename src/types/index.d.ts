@@ -158,6 +158,12 @@ export interface SetField<
   hasChildren: true;
   children: Dict<TChildField>;
   childrenList: TChildField[];
+
+  /**
+   * @param {string} path - The path of the requested field.
+   *                        It's formated as JavaScript property access
+   *                        notation (e.g., ".prop.propArray[1].subProp")
+   */
   getField: (path: string) => UnknowField | null;
 }
 
