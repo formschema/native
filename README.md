@@ -38,13 +38,15 @@ Core features are not ready and the API could changed. Don't use this in product
   * [Array Input](#array-input)
   * [Regex Input](#regex-input)
   * [Fieldset Element](#fieldset-element)
-- [Custom Form Elements](#custom-form-elements)
 - [Data Validation](#data-validation)
   * [Native HTML5 Validation](#native-html5-validation)
   * [Custom Validation API](#custom-validation-api)
   * [Custom Validation with AJV](#custom-validation-with-ajv)
   * [Disable Native HTML5 Validation](#disable-native-html5-validation)
 - [Translate Labels](#translate-labels)
+- [Custom Form Elements](#custom-form-elements)
+  * [Elements API](#elements-api)
+  * [Custom Elements Example](#custom-elements-example)
 - [Descriptor Interface](#descriptor-interface)
 - [Contributing](#contributing)
 - [License](#license)
@@ -540,63 +542,6 @@ properties for the rendering:
 }
 ```
 
-## Custom Form Elements
-
-To define custom elements for rendering, you need to use the `Components` class and the `components` prop:
-
-```js
-// MyCustomElements.js
-
-import { Components } from '@formschela/native';
-import { InputElement } from '@/components/InputElement';
-import { ArrayElement } from '@/components/ArrayElement';
-import { FieldsetElement } from '@/components/FieldsetElement';
-import { ListElement } from '@/components/ListElement';
-import { TextareaElement } from '@/components/TextareaElement';
-import { StateElement } from '@/components/StateElement';
-
-export const MyCustomElements = new Components();
-
-MyCustomElements.set('array', ArrayElement);
-MyCustomElements.set('string', InputElement);
-MyCustomElements.set('boolean', StateElement);
-MyCustomElements.set('radio', StateElement);
-MyCustomElements.set('checkbox', StateElement);
-MyCustomElements.set('enum', FieldsetElement);
-MyCustomElements.set('number', InputElement);
-MyCustomElements.set('integer', InputElement);
-MyCustomElements.set('object', FieldsetElement);
-MyCustomElements.set('list', ListElement);
-MyCustomElements.set('textarea', TextareaElement);
-```
-
-See the file [NativeElements.ts](https://gitlab.com/formschema/native/blob/master/src/lib/NativeElements.ts) for an example.
-
-```html
-<template>
-  <FormSchema v-model="model" :schema="schema" :components="components"/>
-</template>
-
-<script>
-  import FormSchema from '@formschema/native'
-  import { MyCustomElements } from './MyCustomElements'
-
-  export default {
-    data: () => ({
-      schema: { /* ... */ },
-      components: MyCustomElements,
-      model: {}
-    }),
-    components: { FormSchema }
-  }
-</script>
-```
-
-[**ElementUI Example**](https://gitlab.com/formschema/components/elementui)
-
-- Definition: https://gitlab.com/formschema/components/elementui/blob/master/lib/ElementUIComponents.js
-- Usage: https://gitlab.com/formschema/components/elementui/blob/master/playground/src/components/Subscription.vue
-
 ## Data Validation
 
 ### Native HTML5 Validation
@@ -648,12 +593,12 @@ interface Message {
 
 ### Custom Validation with AJV
 
-Bellow a basic example with the popular
-[AJV](https://www.npmjs.com/package/ajv) validator:
+Bellow a basic example with the popular [AJV](https://www.npmjs.com/package/ajv)
+validator:
 
 ```html
 <template>
-  <FormSchema v-model="model" :schema="schema" :validator="validator" @submit.prevent="onSubmit">
+  <FormSchema v-model="model" v-bind="{ schema, validator }" @submit.prevent="onSubmit">
     <button type="submit">Submit</button>
   </FormSchema>
 </template>
@@ -844,6 +789,94 @@ Here an example with [Vue I18n](https://kazupon.github.io/vue-i18n):
   };
 </script>
 ```
+
+## Custom Form Elements
+
+### Elements API
+
+```ts
+type SchemaType = 'object' | 'array' | 'string' | 'number' | 'integer' | 'boolean' | 'null';
+type ScalarKind = 'string' | 'password' | 'number' | 'integer' | 'null' | 'boolean' | 'hidden' | 'textarea' | 'image' | 'file' | 'radio' | 'checkbox';
+type ItemKind = 'enum' | 'list';
+type ComponentsType = 'form' | 'message' | SchemaType | ScalarKind | ItemKind;
+type Component = string | VueComponent | AsyncComponent;
+
+interface IComponents {
+  set(kind: ComponentsType, component: Component): void;
+  get(kind: ComponentsType): Component;
+}
+```
+
+### Custom Elements Example
+
+To define custom elements, you need to use the `NativeComponents` class and the
+`components` prop:
+
+```js
+// MyCustomComponents.js
+
+// First, import the base class Components from `@formschema/native` package
+import { NativeComponents } from '@formschema/native';
+
+// Then declare your custom components as functional components
+import { InputElement } from '@/components/InputElement';
+import { StateElement } from '@/components/StateElement';
+import { ArrayElement } from '@/components/ArrayElement';
+import { FieldsetElement } from '@/components/FieldsetElement';
+import { ListElement } from '@/components/ListElement';
+import { TextareaElement } from '@/components/TextareaElement';
+import { MessageElement } from '@/components/Message';
+
+// Finaly, extend the NativeComponents class and define override it
+export class MyCustomComponents extends NativeComponents {
+  constructor() {
+    super();
+
+    this.set('array', ArrayElement);
+    this.set('boolean', StateElement);
+    this.set('string', InputElement);
+    this.set('password', InputElement);
+    this.set('file', InputElement);
+    this.set('image', InputElement);
+    this.set('radio', StateElement);
+    this.set('checkbox', StateElement);
+    this.set('enum', FieldsetElement);
+    this.set('number', InputElement);
+    this.set('integer', InputElement);
+    this.set('object', FieldsetElement);
+    this.set('list', ListElement);
+    this.set('textarea', TextareaElement);
+    this.set('message', MessageElement);
+  }
+}
+```
+
+> See the file [NativeComponents.ts](https://gitlab.com/formschema/native/blob/master/src/lib/NativeComponents.ts) for an example.
+
+```html
+<template>
+  <FormSchema v-model="model" :schema="schema" :components="components"/>
+</template>
+
+<script>
+  import FormSchema from '@formschema/native'
+  import { MyCustomComponents } from './MyCustomComponents'
+
+  export default {
+    data: () => ({
+      schema: { /* ... */ },
+      components: new MyCustomComponents(),
+      model: {}
+    }),
+    components: { FormSchema }
+  }
+</script>
+```
+
+[**ElementUI Example**](https://gitlab.com/formschema/components/elementui)
+
+- Definition: https://gitlab.com/formschema/components/elementui/blob/master/lib/ElementUIComponents.js
+- Usage: https://gitlab.com/formschema/components/elementui/blob/master/playground/src/components/Subscription.vue
 
 ## Descriptor Interface
 

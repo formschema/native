@@ -6,6 +6,7 @@ import { Components as ComponentsLib } from '@/lib/Components';
 import { Elements as ElementsLib } from '@/lib/Elements';
 import { Parser as ParserLib } from '@/parsers/Parser';
 import { NativeElements as NativeElementsLib } from '@/lib/NativeElements';
+import { NativeComponents as NativeComponentsLib } from '@/lib/NativeComponents';
 import { UIDescriptor as UIDescriptorLib } from '@/descriptors/UIDescriptor';
 
 import '@/parsers';
@@ -21,7 +22,7 @@ export const Components = ComponentsLib;
 export const Elements = ElementsLib;
 export const Parser = ParserLib;
 export const UIDescriptor = UIDescriptorLib;
-export const NativeElements = NativeElementsLib;
+export const NativeComponents = NativeComponentsLib;
 
 const FormSchema: FormSchemaComponent = {
   name: 'FormSchema',
@@ -134,7 +135,7 @@ const FormSchema: FormSchemaComponent = {
         id: this.fieldId,
         required: true,
         descriptor: this.descriptor,
-        components: this.components || NativeElementsLib,
+        components: this.components,
         bracketedObjectInputName: this.bracketedArrayInputName,
         onChange: this.emitInputEvent,
         requestRender: this.update

@@ -11,7 +11,8 @@ import FormSchema, {
   Components,
   Elements,
   Parser,
-  UIDescriptor
+  UIDescriptor,
+  NativeComponents
 } from '@/components/FormSchema';
 
 import { JsonSchema } from '@/types/jsonschema';
@@ -19,6 +20,7 @@ import { JsonSchema } from '@/types/jsonschema';
 import { UniqueId as UniqueIdLib } from '@/lib/UniqueId';
 import { Objects as ObjectsLib } from '@/lib/Objects';
 import { Components as ComponentsLib } from '@/lib/Components';
+import { NativeComponents as NativeComponentsLib } from '@/lib/NativeComponents';
 import { Elements as ElementsLib } from '@/lib/Elements';
 import { Parser as ParserLib } from '@/parsers/Parser';
 import { UIDescriptor as UIDescriptorLib } from '@/descriptors/UIDescriptor';
@@ -66,6 +68,10 @@ describe('components/FormSchema', () => {
 
     it('should successfully export the Components library', () => {
       expect(Components).toBe(ComponentsLib);
+    });
+
+    it('should successfully export the NativeComponents library', () => {
+      expect(NativeComponents).toBe(NativeComponentsLib);
     });
 
     it('should successfully export the Elements library', () => {

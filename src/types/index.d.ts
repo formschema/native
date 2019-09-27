@@ -225,7 +225,7 @@ export interface ParserOptions<
   readonly id?: string;
   readonly required?: boolean;
   readonly descriptor?: TDescriptor;
-  components?: ComponentsDeclaration;
+  components?: IComponents;
   readonly bracketedObjectInputName?: boolean;
   onChange?: (value: TModel, field: TField) => void;
   requestRender?: (updatedFields: Field<any, any, TModel>[]) => void;
@@ -266,7 +266,7 @@ export interface DescriptorProperties<TField extends Field<any, any>> {
   readonly field: TField;
   readonly labelAttrs: LabelAttributes;
   readonly helperAttrs: HelperAttributes;
-  readonly components: ComponentsDeclaration;
+  readonly components: IComponents;
 }
 
 export interface IDescriptor<
@@ -402,6 +402,17 @@ export interface ArrayDescriptor extends Descriptor {
   };
 }
 
+/**
+ * Custom Components API
+ */
+export interface IComponents {
+  set(kind: ComponentsType, component: Component): void;
+  get(kind: ComponentsType): Component;
+}
+
+/**
+ * FormSchema API
+ */
 export interface FormSchemaVue extends Vue {
   // props
   schema: JsonSchema;
@@ -411,7 +422,7 @@ export interface FormSchemaVue extends Vue {
   bracketedArrayInputName: boolean;
   search: boolean;
   disabled: boolean;
-  components: ComponentsDeclaration;
+  components: IComponents;
   descriptor: DescriptorInstance | IDescriptor;
   validator: (field: UnknowField) => boolean;
 
@@ -464,12 +475,6 @@ export type WatchHandler<V extends Vue, T> = (this: V, val: T, oldVal: T) => voi
 
 export interface WatchOptionsWithHandler<V extends Vue, T> extends WatchOptions {
   handler: WatchHandler<V, T>;
-}
-
-export interface ComponentsDeclaration {
-  readonly $: Dict<Component>;
-  set(kind: ComponentsType, component: Component): void;
-  get(kind: ComponentsType): Component;
 }
 
 export interface ElementProps<T extends Field<any>, D extends IDescriptor> {

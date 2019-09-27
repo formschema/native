@@ -1,6 +1,6 @@
-import { Dict, Component, ComponentsType, ComponentsDeclaration } from '@/types';
+import { Dict, Component, ComponentsType, IComponents } from '@/types';
 
-export class Components implements ComponentsDeclaration {
+export class Components implements IComponents {
   readonly $: Dict<Component>;
 
   constructor () {

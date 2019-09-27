@@ -1,5 +1,4 @@
 import { NativeElements } from '@/lib/NativeElements';
-import { Components } from '@/lib/Components';
 
 import {
   Dict,
@@ -10,7 +9,7 @@ import {
   HelperAttributes,
   LabelAttributes,
   Descriptor,
-  ComponentsDeclaration
+  IComponents
 } from '@/types';
 
 const DESCRIPTORS: Dict<any> = {};
@@ -24,7 +23,7 @@ export abstract class UIDescriptor<TField extends UnknowField> implements IDescr
   readonly attrs: Dict<any>;
   readonly labelAttrs: LabelAttributes;
   readonly helperAttrs: HelperAttributes;
-  readonly components: ComponentsDeclaration;
+  readonly components: IComponents;
 
   static register(kind: FieldKind, parserClass: any) {
     DESCRIPTORS[kind] = parserClass;
@@ -32,7 +31,7 @@ export abstract class UIDescriptor<TField extends UnknowField> implements IDescr
 
   static get<
     T extends Descriptor = Descriptor
-  >(options: T, field: Readonly<UnknowField>, components?: Components): IDescriptor {
+  >(options: T, field: Readonly<UnknowField>, components?: IComponents): IDescriptor {
     if (!DESCRIPTORS.hasOwnProperty(field.kind)) {
       throw new TypeError(`Unknow descriptor kind '${field.kind}'`);
     }
@@ -40,7 +39,7 @@ export abstract class UIDescriptor<TField extends UnknowField> implements IDescr
     return new DESCRIPTORS[field.kind](options, field, components);
   }
 
-  constructor(options: Descriptor, field: TField, components?: Components) {
+  constructor(options: Descriptor, field: TField, components?: IComponents) {
     this.field = field;
     this.attrs = options.attrs || {};
     this.props = options.props || {};
