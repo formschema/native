@@ -76,9 +76,7 @@ export default {
       }
     },
     password: {
-      attrs: {
-        type: 'password'
-      }
+      kind: 'password'
     },
     frequence: {
       items: {

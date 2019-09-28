@@ -1,8 +1,8 @@
-import { CreateElement } from 'vue';
-import { IObjectDescriptor, IObjectChildDescriptor } from '@/types';
+import { CreateElement, VNode } from 'vue';
+import { IObjectDescriptor, IObjectChildDescriptor, IDescriptor } from '@/types';
 
 export const Elements = {
-  renderChildren: (h: CreateElement, descriptor: IObjectDescriptor, children: IObjectChildDescriptor[]) => {
+  renderChildren(h: CreateElement, descriptor: IObjectDescriptor, children: IObjectChildDescriptor[]) {
     return children.map((childDescriptor) => h(childDescriptor.component, {
       key: childDescriptor.field.key,
       attrs: childDescriptor.field.attrs,
@@ -13,7 +13,7 @@ export const Elements = {
     }));
   },
 
-  renderGroups: (h: CreateElement, descriptor: IObjectDescriptor) => {
+  renderGroups(h: CreateElement, descriptor: IObjectDescriptor) {
     return descriptor.childrenGroups.map(({ id, label, children }) => {
       const childrenNodes = Elements.renderChildren(h, descriptor, children);
       const nodes = [
@@ -37,6 +37,20 @@ export const Elements = {
           'data-fs-group': id
         }
       }, nodes);
+    });
+  },
+
+  renderMessages(h: CreateElement, descriptor: IDescriptor, nodes: VNode[], renderAtTop = false) {
+    descriptor.field.messages.forEach(({ text, type = 3 }) => {
+      const messageNode = h(descriptor.components.get('message'), {
+        props: { text, type }
+      }, text);
+
+      if (renderAtTop) {
+        nodes.unshift(messageNode);
+      } else {
+        nodes.push(messageNode);
+      }
     });
   }
 };

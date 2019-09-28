@@ -1,17 +1,18 @@
 import { HelperElement } from '@/components/HelperElement';
 import { Dict, FieldComponent } from '@/types';
+import { Elements } from '@/lib/Elements';
 
 export const FieldElement: FieldComponent = {
   name: 'FieldElement',
   functional: true,
   render(h, { data, props, children }) {
     const field = props.field;
-    const descriptor = props.descriptor;
 
     if (field.kind === 'hidden') {
       return children;
     }
 
+    const descriptor = props.descriptor;
     const type = field.attrs.type || field.kind;
     const attrs: Dict = {
       'data-fs-kind': field.kind,
@@ -38,15 +39,7 @@ export const FieldElement: FieldComponent = {
       nodes.push(helperNode);
     }
 
-    if (field.messages.length) {
-      const MessageElement = descriptor.components.get('message');
-
-      field.messages.forEach(({ text, type = 3 }) => {
-        nodes.push(h(MessageElement, {
-          props: { text, type }
-        }, text));
-      });
-    }
+    Elements.renderMessages(h, descriptor, nodes);
 
     const wrapperElement = nodes.length === 1
       ? nodes

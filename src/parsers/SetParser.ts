@@ -7,8 +7,18 @@ import {
   SetField,
   SetDescriptor,
   ISetParser,
-  UnknowField
+  UnknowField,
+  UnknowSetField
 } from '@/types';
+
+const RE_ARRAY_PATH = /(.+)?\[(\d+)\]$/;
+
+function getFieldByIndex(field: UnknowSetField, index: string) {
+  const parsedIndex = Number.parseInt(index, 10);
+  const indexField = field.childrenList[parsedIndex];
+
+  return indexField || null;
+}
 
 export abstract class SetParser<
   TModel,
@@ -38,16 +48,39 @@ export abstract class SetParser<
     });
 
     this.field.getField = (path) => {
-      const paths = path.substring(1).split('.');
-      let children = this.field.children;
-      let foundField = null;
+      const formatedPath = path[0] === '.' ? path.substring(1) : path;
 
-      for (const currentPath of paths) {
+      if (!formatedPath) {
+        return this.field;
+      }
+
+      const paths = formatedPath.split('.');
+      let children = this.field.children;
+      let foundField: UnknowField | null = null;
+
+      for (let currentPath of paths) {
+        const match = RE_ARRAY_PATH.exec(currentPath);
+
+        if (match) {
+          if (match[1]) {
+            currentPath = match[1];
+          } else {
+            // case path === '[index]'
+            foundField = foundField || this.field;
+
+            return getFieldByIndex(foundField as UnknowSetField, match[2]);
+          }
+        }
+
         for (const key in children) {
           if (key === currentPath) {
             foundField = children[key];
 
-            if (foundField.hasChildren) {
+            if (match) {
+              foundField = getFieldByIndex(foundField as UnknowSetField, match[2]);
+            }
+
+            if (foundField && foundField.hasChildren) {
               children = (foundField as any).children;
 
               break;

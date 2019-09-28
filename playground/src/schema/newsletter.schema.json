@@ -49,7 +49,8 @@
         "title": "Custom array of strings",
         "type": "array",
         "items": {
-          "type": "string"
+          "type": "string",
+          "minLength": 3
         },
         "minItems": 1
       },

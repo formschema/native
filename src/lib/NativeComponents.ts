@@ -5,7 +5,7 @@ import { ArrayElement } from '@/components/ArrayElement';
 import { FieldsetElement } from '@/components/FieldsetElement';
 import { ListElement } from '@/components/ListElement';
 import { TextareaElement } from '@/components/TextareaElement';
-import { MessageElement } from '@/components/Message';
+import { MessageElement } from '@/components/MessageElement';
 
 export class NativeComponents extends Components {
   constructor() {

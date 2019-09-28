@@ -550,4 +550,29 @@ describe('parsers/Parser', () => {
       }
     }
   });
+
+  TestParser.Case({
+    case: '7.0',
+    description: 'Messages',
+    given: {
+      parser: new FakeParser(options10)
+    },
+    expected: {
+      parser: {
+        addMessage({ field }: Scope) {
+          field.addMessage('with default type');
+          field.addMessage('without default type', 1);
+
+          expect(field.messages).toEqual([
+            { text: 'with default type', type: 3 },
+            { text: 'without default type', type: 1 }
+          ]);
+
+          field.clearMessages();
+
+          expect(field.messages).toEqual([]);
+        }
+      }
+    }
+  });
 });

@@ -31,6 +31,8 @@ export const FieldsetElement: FieldsetComponent = {
       nodes.unshift(legend);
     }
 
+    Elements.renderMessages(h, descriptor, nodes, props.field.isRoot);
+
     return h('fieldset', { attrs }, nodes);
   }
 };

@@ -117,7 +117,7 @@ describe('parsers/ArrayParser', () => {
   });
 
   TestParser.Case({
-    case: '2',
+    case: '2.0',
     given: {
       parser: new ArrayParser({
         schema: { type: 'array' },
@@ -142,6 +142,62 @@ describe('parsers/ArrayParser', () => {
           uniqueItems: undefined,
           pushButton: {
             disabled: true
+          }
+        }
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '2.1',
+    description: 'field.getField()',
+    given: {
+      parser: new ArrayParser({
+        schema: {
+          type: 'array',
+          items: {
+            type: 'string'
+          }
+        },
+        model: [ 'Stark', 'Targaryen' ]
+      })
+    },
+    expected: {
+      parser: {
+        field: {
+          getField({ value, field }: Scope) {
+            expect(value('.[]')).toBeNull();
+            expect(value('.[0]')).toBe(field.childrenList[0]);
+            expect(value('.[1]')).toBe(field.childrenList[1]);
+            expect(value('.[3]')).toBeNull();
+          }
+        }
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '2.2',
+    description: 'field.getField()',
+    given: {
+      parser: new ArrayParser({
+        schema: {
+          type: 'array',
+          items: {
+            type: 'string'
+          }
+        },
+        model: []
+      })
+    },
+    expected: {
+      parser: {
+        field: {
+          getField({ value, field }: Scope) {
+            expect(value('')).toBe(field);
+            expect(value('.')).toBe(field);
+            expect(value('.unexsisting')).toBeNull();
+            expect(value('.[0]')).toBeNull();
           }
         }
       }

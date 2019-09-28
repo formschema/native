@@ -55,6 +55,48 @@ describe('parsers/ObjectParser', () => {
               expect(value[key].property).toBe(key);
               expect(value[key].deep).toBe(1);
             }
+          },
+          getField({ value, field }: Scope) {
+            expect(value('.name')).toBe(field.children.name);
+            expect(value('.unexisting')).toBeNull();
+          }
+        }
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '1.1',
+    description: 'Object with array',
+    given: {
+      parser: new ObjectParser({
+        schema: {
+          type: 'object',
+          properties: {
+            lastName: { type: 'string' },
+            firstName: {
+              type: 'array',
+              items: {
+                type: 'string'
+              }
+            }
+          }
+        },
+        model: {
+          lastName: 'Jon',
+          firstName: [ 'Stark', 'Targaryen' ]
+        }
+      })
+    },
+    expected: {
+      parser: {
+        field: {
+          getField({ value, field }: Scope) {
+            expect(value('.lastName')).toBe(field.children.lastName);
+            expect(value('.firstName')).toBe(field.children.firstName);
+            expect(value('.firstName[0]')).toBe(field.children.firstName.childrenList[0]);
+            expect(value('.firstName[1]')).toBe(field.children.firstName.childrenList[1]);
+            expect(value('.firstName[3]')).toBeNull();
           }
         }
       }
@@ -297,6 +339,40 @@ describe('parsers/ObjectParser', () => {
             },
             dateBirth: '-8600/01/01'
           });
+        }
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '6.1',
+    description: 'Nested Object',
+    given: {
+      parser: new ObjectParser({
+        schema: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'object',
+              properties: {
+                firstName: { type: 'string' },
+                lastName: { type: 'string' }
+              }
+            },
+            dateBirth: { type: 'string' }
+          }
+        },
+        model: {},
+        descriptor: {}
+      })
+    },
+    expected: {
+      parser: {
+        field: {
+          getField({ value, field }: Scope) {
+            expect(value('.name')).toBe(field.children.name);
+            expect(value('.name.children.firstName')).toBe(field.children.name.children.firstName);
+          }
         }
       }
     }
@@ -738,6 +814,107 @@ describe('parsers/ObjectParser', () => {
 
           expect(onChange.mock.calls.length).toBe(3);
           expect(onChange.mock.calls[2][0]).toEqual({});
+        }
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '14.0',
+    description: 'Messages with root field',
+    given: {
+      parser: new ObjectParser({
+        schema: {
+          type: 'object',
+          properties: {
+            firstName: { type: 'string' },
+            lastName: { type: 'string' }
+          }
+        }
+      })
+    },
+    expected: {
+      parser: {
+        addMessage({ field }: Scope) {
+          field.addMessage('with default type');
+          field.addMessage('without default type', 1);
+
+          expect(field.messages).toEqual([
+            { text: 'with default type', type: 3 },
+            { text: 'without default type', type: 1 }
+          ]);
+
+          field.clearMessages();
+          expect(field.messages).toEqual([]);
+        }
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '14.1',
+    description: 'Messages with non root field',
+    given: {
+      parser: new ObjectParser({
+        schema: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'object',
+              properties: {
+                firstName: { type: 'string' },
+                lastName: { type: 'string' }
+              }
+            }
+          }
+        }
+      })
+    },
+    expected: {
+      parser: {
+        addMessage({ field }: Scope) {
+          field.children.name.children.firstName.addMessage('message from nested field', 1);
+
+          expect(field.children.name.children.firstName.messages).toEqual([
+            { text: 'message from nested field', type: 1 }
+          ]);
+
+          field.children.name.children.firstName.clearMessages();
+          expect(field.children.name.children.firstName.messages).toEqual([]);
+        }
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '14.2',
+    description: 'should clear messages recursively',
+    given: {
+      parser: new ObjectParser({
+        schema: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'object',
+              properties: {
+                firstName: { type: 'string' },
+                lastName: { type: 'string' }
+              }
+            }
+          }
+        }
+      })
+    },
+    expected: {
+      parser: {
+        addMessage({ field }: Scope) {
+          field.addMessage('with default type');
+          field.children.name.children.firstName.addMessage('message from nested field', 1);
+
+          field.clearMessages(true);
+
+          expect(field.messages).toEqual([]);
+          expect(field.children.name.children.firstName.messages).toEqual([]);
         }
       }
     }
