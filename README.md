@@ -6,7 +6,6 @@ Vue component form based on JSON Schema and Native HTML
 
 ## Table of Contents
 
-- [Status: Alpha](#status-alpha)
 - [Install](#install)
 - [Demo](#demo)
 - [Usage](#usage)
@@ -20,6 +19,12 @@ Vue component form based on JSON Schema and Native HTML
 - [Working with Async Schema](#working-with-async-schema)
 - [Working with Vue Router](#working-with-vue-router)
 - [Workind with JSON Schema $ref Pointers](#workind-with-json-schema-ref-pointers)
+- [Data Validation](#data-validation)
+  * [Native HTML5 Validation](#native-html5-validation)
+  * [Custom Validation API](#custom-validation-api)
+  * [Custom Validation with AJV](#custom-validation-with-ajv)
+  * [Disable Native HTML5 Validation](#disable-native-html5-validation)
+- [Translate Labels](#translate-labels)
 - [Render Form Elements](#render-form-elements)
   * [Textarea](#textarea)
   * [File Input](#file-input)
@@ -31,12 +36,6 @@ Vue component form based on JSON Schema and Native HTML
   * [Array Input](#array-input)
   * [Regex Input](#regex-input)
   * [Fieldset Element](#fieldset-element)
-- [Data Validation](#data-validation)
-  * [Native HTML5 Validation](#native-html5-validation)
-  * [Custom Validation API](#custom-validation-api)
-  * [Custom Validation with AJV](#custom-validation-with-ajv)
-  * [Disable Native HTML5 Validation](#disable-native-html5-validation)
-- [Translate Labels](#translate-labels)
 - [Custom Form Elements](#custom-form-elements)
   * [Elements API](#elements-api)
   * [Custom Elements Example](#custom-elements-example)
