@@ -27,6 +27,12 @@ Core features are not ready and the API could changed. Don't use this in product
 - [Working with Async Schema](#working-with-async-schema)
 - [Working with Vue Router](#working-with-vue-router)
 - [Workind with JSON Schema $ref Pointers](#workind-with-json-schema-ref-pointers)
+- [Data Validation](#data-validation)
+  * [Native HTML5 Validation](#native-html5-validation)
+  * [Custom Validation API](#custom-validation-api)
+  * [Custom Validation with AJV](#custom-validation-with-ajv)
+  * [Disable Native HTML5 Validation](#disable-native-html5-validation)
+- [Translate Labels](#translate-labels)
 - [Render Form Elements](#render-form-elements)
   * [Textarea](#textarea)
   * [File Input](#file-input)
@@ -38,12 +44,6 @@ Core features are not ready and the API could changed. Don't use this in product
   * [Array Input](#array-input)
   * [Regex Input](#regex-input)
   * [Fieldset Element](#fieldset-element)
-- [Data Validation](#data-validation)
-  * [Native HTML5 Validation](#native-html5-validation)
-  * [Custom Validation API](#custom-validation-api)
-  * [Custom Validation with AJV](#custom-validation-with-ajv)
-  * [Disable Native HTML5 Validation](#disable-native-html5-validation)
-- [Translate Labels](#translate-labels)
 - [Custom Form Elements](#custom-form-elements)
   * [Elements API](#elements-api)
   * [Custom Elements Example](#custom-elements-example)
@@ -294,254 +294,6 @@ export default {
 
 See [json-schema-ref-parser documentation page](https://www.npmjs.com/package/json-schema-ref-parser) for more details.
 
-## Render Form Elements
-
-### Textarea
-
-Add a `text/*` media types to a string schema to render a Textarea element.
-
-**Example schema.json**
-
-```json
-{
-  "type": "string",
-  "contentMediaType": "text/plain"
-}
-```
-
-You can also use a descriptor to force the Render to use a Textarea
-element:
-
-**Example descriptor.json**
-
-```json
-{
-  "kind": "textarea"
-}
-```
-
-### File Input
-
-String schemas with media types not starting with `text/*` are automatically render as Input File elements.
-
-**Example schema.json**
-
-```json
-{
-  "type": "string",
-  "contentMediaType": "image/png"
-}
-```
-
-> There is a list of [MIME types officially registered by the IANA](http://www.iana.org/assignments/media-types/media-types.xhtml),
-  but the set of types supported will be application and operating system
-  dependent. Mozilla Developer Network also maintains a
-  [shorter list of MIME types that are important for the web](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Complete_list_of_MIME_types).
-
-### Hidden Input
-
-Schemas with descriptor's kind `hidden` are render as hidden input elements.
-
-**Example schema.json**
-
-```json
-{
-  "type": "string"
-}
-```
-
-**Example descriptor.json**
-
-```json
-{
-  "kind": "hidden"
-}
-```
-
-### Password Input
-
-String schemas with a descriptor's kind `password` are used to render Input
-Password elements.
-
-**Example schema.json**
-
-```json
-{
-  "type": "string"
-}
-```
-
-**Example descriptor.json**
-
-```json
-{
-  "kind": "password"
-}
-```
-
-### Multiple Checkbox
-
-To define multiple checkbox, use the [JSON Schema keyword `anyOf`](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.27):
-
-**Example schema.json**
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "multipleCheckbox": {
-      "type": "array",
-      "anyOf": [
-        "daily",
-        "promotion"
-      ]
-    }
-  }
-}
-```
-
-### Grouped Radio
-
-To group radio elements, use the [JSON Schema keyword `enum`](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.23)
-with a `enum` descriptor:
-
-**Example schema.json**
-
-```json
-{
-  "type": "string",
-  "enum": [
-    "monday",
-    "tuesday",
-    "wednesday",
-    "thursday",
-    "friday",
-    "saturday",
-    "sunday"
-  ]
-}
-```
-
-**Example descriptor.json**
-
-```json
-{
-  "kind": "enum",
-  "items": {
-    "monday": { "label": "Monday" },
-    "tuesday": { "label": "Tuesday" },
-    "wednesday": { "label": "Wednesday" },
-    "thursday": { "label": "Thursday" },
-    "friday": { "label": "Friday" },
-    "saturday": { "label": "Saturday" },
-    "sunday": { "label": "Sunday" }
-  }
-}
-```
-
-### Select Input
-
-To group HTML Select element, use the [JSON Schema keyword `enum`](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.23)
-with a `list` descriptor:
-
-**Example schema.json**
-
-```json
-{
-  "type": "string",
-  "enum": [
-    "monday",
-    "tuesday",
-    "wednesday",
-    "thruday",
-    "friday",
-    "saturday",
-    "sunday"
-  ]
-}
-```
-
-**Example descriptor.json**
-
-```json
-{
-  "kind": "list"
-}
-```
-
-### Array Input
-
-To render a [array field](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4), define your schema like:
-
-**Example schema.json**
-
-```json
-{
-  "type": "array",
-  "items": {
-    "type": "string"
-  }
-}
-```
-
-`FormSchema` will render a text input by adding a button to add more inputs.
-
-### Regex Input
-
-To render a [regex input](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.3.3),
-define your schema like:
-
-**Example schema.json**
-
-```json
-{
-  "type": "string",
-  "pattern": "[a-e]+"
-}
-```
-
-### Fieldset Element
-
-FormSchema use a `<fieldset>` element to group inputs of a object JSON Schema:
-
-**Example schema.json**
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "firstname": {
-      "type": "string"
-    },
-    "lastname": {
-      "type": "string"
-    }
-  },
-  "required": ["firstname"]
-}
-```
-
-Use descriptor to set labels and helpers. You can also change the order of
-properties for the rendering:
-
-**Example descriptor.json**
-
-```json
-{
-  "properties": {
-    "firstname": {
-      "label": "First Name",
-      "helper": "Your first name"
-    },
-    "lastname": {
-      "label": "Last Name",
-      "helper": "Your last name"
-    }
-  },
-  "order": ["lastname", "firstname"]
-}
-```
-
 ## Data Validation
 
 ### Native HTML5 Validation
@@ -788,6 +540,254 @@ Here an example with [Vue I18n](https://kazupon.github.io/vue-i18n):
     components: { FormSchema }
   };
 </script>
+```
+
+## Render Form Elements
+
+### Textarea
+
+Add a `text/*` media types to a string schema to render a Textarea element.
+
+**Example schema.json**
+
+```json
+{
+  "type": "string",
+  "contentMediaType": "text/plain"
+}
+```
+
+You can also use a descriptor to force the Render to use a Textarea
+element:
+
+**Example descriptor.json**
+
+```json
+{
+  "kind": "textarea"
+}
+```
+
+### File Input
+
+String schemas with media types not starting with `text/*` are automatically render as Input File elements.
+
+**Example schema.json**
+
+```json
+{
+  "type": "string",
+  "contentMediaType": "image/png"
+}
+```
+
+> There is a list of [MIME types officially registered by the IANA](http://www.iana.org/assignments/media-types/media-types.xhtml),
+  but the set of types supported will be application and operating system
+  dependent. Mozilla Developer Network also maintains a
+  [shorter list of MIME types that are important for the web](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Complete_list_of_MIME_types).
+
+### Hidden Input
+
+Schemas with descriptor's kind `hidden` are render as hidden input elements.
+
+**Example schema.json**
+
+```json
+{
+  "type": "string"
+}
+```
+
+**Example descriptor.json**
+
+```json
+{
+  "kind": "hidden"
+}
+```
+
+### Password Input
+
+String schemas with a descriptor's kind `password` are used to render Input
+Password elements.
+
+**Example schema.json**
+
+```json
+{
+  "type": "string"
+}
+```
+
+**Example descriptor.json**
+
+```json
+{
+  "kind": "password"
+}
+```
+
+### Multiple Checkbox
+
+To define multiple checkbox, use the [JSON Schema keyword `anyOf`](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.27):
+
+**Example schema.json**
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "multipleCheckbox": {
+      "type": "array",
+      "anyOf": [
+        "daily",
+        "promotion"
+      ]
+    }
+  }
+}
+```
+
+### Grouped Radio
+
+To group radio elements, use the [JSON Schema keyword `enum`](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.23)
+with a `enum` descriptor:
+
+**Example schema.json**
+
+```json
+{
+  "type": "string",
+  "enum": [
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+    "sunday"
+  ]
+}
+```
+
+**Example descriptor.json**
+
+```json
+{
+  "kind": "enum",
+  "items": {
+    "monday": { "label": "Monday" },
+    "tuesday": { "label": "Tuesday" },
+    "wednesday": { "label": "Wednesday" },
+    "thursday": { "label": "Thursday" },
+    "friday": { "label": "Friday" },
+    "saturday": { "label": "Saturday" },
+    "sunday": { "label": "Sunday" }
+  }
+}
+```
+
+### Select Input
+
+To group HTML Select element, use the [JSON Schema keyword `enum`](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.23)
+with a `list` descriptor:
+
+**Example schema.json**
+
+```json
+{
+  "type": "string",
+  "enum": [
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thruday",
+    "friday",
+    "saturday",
+    "sunday"
+  ]
+}
+```
+
+**Example descriptor.json**
+
+```json
+{
+  "kind": "list"
+}
+```
+
+### Array Input
+
+To render a [array field](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4), define your schema like:
+
+**Example schema.json**
+
+```json
+{
+  "type": "array",
+  "items": {
+    "type": "string"
+  }
+}
+```
+
+`FormSchema` will render a text input by adding a button to add more inputs.
+
+### Regex Input
+
+To render a [regex input](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.3.3),
+define your schema like:
+
+**Example schema.json**
+
+```json
+{
+  "type": "string",
+  "pattern": "[a-e]+"
+}
+```
+
+### Fieldset Element
+
+FormSchema use a `<fieldset>` element to group inputs of a object JSON Schema:
+
+**Example schema.json**
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "firstname": {
+      "type": "string"
+    },
+    "lastname": {
+      "type": "string"
+    }
+  },
+  "required": ["firstname"]
+}
+```
+
+Use descriptor to set labels and helpers. You can also change the order of
+properties for the rendering:
+
+**Example descriptor.json**
+
+```json
+{
+  "properties": {
+    "firstname": {
+      "label": "First Name",
+      "helper": "Your first name"
+    },
+    "lastname": {
+      "label": "Last Name",
+      "helper": "Your last name"
+    }
+  },
+  "order": ["lastname", "firstname"]
+}
 ```
 
 ## Custom Form Elements
