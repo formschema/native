@@ -35,7 +35,7 @@ security scan:
     # --production flag
     - npm i -g npm
     - npm audit --production
-  allow_failure: true
+  allow_failure: false
 
 rollup build:
   stage: build
