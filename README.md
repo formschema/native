@@ -4,13 +4,6 @@ Vue component form based on JSON Schema and Native HTML
 
 [![npm](https://img.shields.io/npm/v/@formschema/native.svg)](https://www.npmjs.com/package/@formschema/native) [![Build status](https://gitlab.com/formschema/native/badges/master/build.svg)](https://gitlab.com/formschema/native/pipelines) [![Test coverage](https://gitlab.com/formschema/native/badges/master/coverage.svg)](https://gitlab.com/formschema/native/-/jobs)
 
-> This is the branch for @formschema/native 2.0 Alpha, not ready for production.
-  For the 1x version, please switch to the [v1](https://gitlab.com/formschema/native/tree/v1) branch.
-
-## Status: Alpha
-
-Core features are not ready and the API could changed. Don't use this in production.
-
 ## Table of Contents
 
 - [Status: Alpha](#status-alpha)
@@ -27,12 +20,6 @@ Core features are not ready and the API could changed. Don't use this in product
 - [Working with Async Schema](#working-with-async-schema)
 - [Working with Vue Router](#working-with-vue-router)
 - [Workind with JSON Schema $ref Pointers](#workind-with-json-schema-ref-pointers)
-- [Data Validation](#data-validation)
-  * [Native HTML5 Validation](#native-html5-validation)
-  * [Custom Validation API](#custom-validation-api)
-  * [Custom Validation with AJV](#custom-validation-with-ajv)
-  * [Disable Native HTML5 Validation](#disable-native-html5-validation)
-- [Translate Labels](#translate-labels)
 - [Render Form Elements](#render-form-elements)
   * [Textarea](#textarea)
   * [File Input](#file-input)
@@ -44,6 +31,12 @@ Core features are not ready and the API could changed. Don't use this in product
   * [Array Input](#array-input)
   * [Regex Input](#regex-input)
   * [Fieldset Element](#fieldset-element)
+- [Data Validation](#data-validation)
+  * [Native HTML5 Validation](#native-html5-validation)
+  * [Custom Validation API](#custom-validation-api)
+  * [Custom Validation with AJV](#custom-validation-with-ajv)
+  * [Disable Native HTML5 Validation](#disable-native-html5-validation)
+- [Translate Labels](#translate-labels)
 - [Custom Form Elements](#custom-form-elements)
   * [Elements API](#elements-api)
   * [Custom Elements Example](#custom-elements-example)
