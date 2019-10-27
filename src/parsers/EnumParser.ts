@@ -97,6 +97,7 @@ export class EnumParser extends SetParser<unknown, EnumField, EnumUIDescriptor> 
 
   parse() {
     this.field.children = this.children;
+    this.field.childrenList = Object.values(this.field.children);
 
     this.updateInputsState();
     this.commit();

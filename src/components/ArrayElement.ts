@@ -35,6 +35,7 @@ export const ArrayElement: ArrayComponent = {
           }
         }, [
           h(descriptor.component, {
+            key: field.key,
             props: { field, descriptor }
           }),
           buttonsWrapper
@@ -42,7 +43,8 @@ export const ArrayElement: ArrayComponent = {
       }
 
       return h(descriptor.component, {
-        attrs: field.attrs,
+        key: field.key,
+        attrs: descriptor.attrs,
         props: { field, descriptor }
       }, buttonsWrapper);
     });

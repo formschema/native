@@ -155,6 +155,7 @@ export class ObjectParser extends SetParser<Dict, ObjectField, ObjectUIDescripto
     this.parseDependencies();
 
     this.field.children = this.children;
+    this.field.childrenList = Object.values(this.field.children);
 
     /**
      * attributes `required` and `aria-required` are not applicable here

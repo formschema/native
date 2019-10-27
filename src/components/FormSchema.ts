@@ -201,7 +201,7 @@ const FormSchema: FormSchemaComponent = {
       descriptor: this.parser.descriptor
     };
 
-    const key = this.key || this.parser.field.key;
+    const key = this.key;
     const element = createElement(this.parser.descriptor.component, { key, attrs, props });
     const nodes = [ element ];
 

@@ -42,11 +42,6 @@ export abstract class SetParser<
       }
     };
 
-    Object.defineProperty(this.field, 'childrenList', {
-      enumerable: true,
-      get: () => Object.values(this.field.children)
-    });
-
     this.field.getField = (path) => {
       const formatedPath = path[0] === '.' ? path.substring(1) : path;
 

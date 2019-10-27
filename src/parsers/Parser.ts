@@ -199,12 +199,12 @@ export abstract class Parser<
   }
 
   requestRender(fields?: UnknowField[]) {
-    if (!fields) {
-      this.field.key = UniqueId.get(this.options.name);
-      fields = [ this.field ];
-    }
-
     if (typeof this.root.options.requestRender === 'function') {
+      if (!fields) {
+        this.field.key = UniqueId.get(this.options.name);
+        fields = [ this.field ];
+      }
+
       this.root.options.requestRender(fields);
     }
   }

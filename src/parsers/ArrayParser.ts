@@ -5,6 +5,7 @@ import { Arrays } from '@/lib/Arrays';
 import { Value } from '@/lib/Value';
 import { ArrayField, ParserOptions, FieldKind, ArrayItemField, UnknowParser, ArrayDescriptor } from '@/types';
 import { ArrayUIDescriptor } from '@/descriptors/ArrayUIDescriptor';
+import { UniqueId } from '@/lib/UniqueId';
 
 export class ArrayParser extends SetParser<any, ArrayField, ArrayUIDescriptor> {
   readonly items: JsonSchema[] = [];
@@ -188,8 +189,10 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayUIDescriptor> {
 
       Arrays.swap(this.rawValue, from, to);
 
+      items[from].key = UniqueId.get(items[from].name);
+      items[to].key = UniqueId.get(items[to].name);
+
       this.field.setValue(this.rawValue);
-      this.requestRender();
 
       return movedField;
     }
@@ -210,6 +213,7 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayUIDescriptor> {
     const items = this.children;
 
     this.field.children = {};
+    this.field.childrenList = items;
 
     items.forEach((item, i) => {
       this.field.children[i] = item;
