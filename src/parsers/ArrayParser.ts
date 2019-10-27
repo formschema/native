@@ -5,7 +5,6 @@ import { Arrays } from '@/lib/Arrays';
 import { Value } from '@/lib/Value';
 import { ArrayField, ParserOptions, FieldKind, ArrayItemField, UnknowParser, ArrayDescriptor } from '@/types';
 import { ArrayUIDescriptor } from '@/descriptors/ArrayUIDescriptor';
-import { UniqueId } from '@/lib/UniqueId';
 
 export class ArrayParser extends SetParser<any, ArrayField, ArrayUIDescriptor> {
   readonly items: JsonSchema[] = [];
@@ -189,15 +188,62 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayUIDescriptor> {
 
       Arrays.swap(this.rawValue, from, to);
 
-      items[from].key = UniqueId.get(items[from].name);
-      items[to].key = UniqueId.get(items[to].name);
-
       this.field.setValue(this.rawValue);
+      this.parse();
 
       return movedField;
     }
 
     return undefined;
+  }
+
+  isDisabled([ from, to ]: [ number, number ]) {
+    return !this.field.sortable || !this.field.childrenList[from] || !this.field.childrenList[to];
+  }
+
+  upIndexes(itemField: ArrayItemField): [ number, number ] {
+    const from = Arrays.index(this.field.childrenList, itemField);
+    const to = from - 1;
+
+    return [ from, to ];
+  }
+
+  downIndexes(itemField: ArrayItemField): [ number, number ] {
+    const from = Arrays.index(this.field.childrenList, itemField);
+    const to = from + 1;
+
+    return [ from, to ];
+  }
+
+  setButtons(itemField: ArrayItemField) {
+    itemField.buttons = {
+      moveUp: {
+        disabled: this.isDisabled(this.upIndexes(itemField)),
+        trigger: () => this.move(...this.upIndexes(itemField))
+      },
+      moveDown: {
+        disabled: this.isDisabled(this.downIndexes(itemField)),
+        trigger: () => this.move(...this.downIndexes(itemField))
+      },
+      delete: {
+        disabled: !this.field.sortable,
+        trigger: () => {
+          const index = Arrays.index(this.field.childrenList, itemField);
+          const deletedField = this.field.childrenList.splice(index, 1).pop();
+
+          if (deletedField) {
+            this.rawValue.splice(index, 1);
+            this.field.setValue(this.rawValue);
+
+            this.count--;
+
+            this.requestRender();
+          }
+
+          return deletedField;
+        }
+      }
+    };
   }
 
   setCount(value: number) {
@@ -209,71 +255,17 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayUIDescriptor> {
 
     this.childrenParsers.splice(0);
 
-    const sortable = this.field.sortable;
-    const items = this.children;
-
     this.field.children = {};
-    this.field.childrenList = items;
+    this.field.childrenList = this.children;
 
-    items.forEach((item, i) => {
+    this.field.childrenList.forEach((item, i) => {
       this.field.children[i] = item;
     });
 
     // apply array's model
     this.setValue(this.rawValue);
 
-    const isDisabled = ([ from, to ]: [ number, number ]) => {
-      return !sortable || !items[from] || !items[to];
-    };
-
-    const upIndexes = (field: ArrayItemField): [ number, number ] => {
-      const from = Arrays.index(items, field);
-      const to = from - 1;
-
-      return [ from, to ];
-    };
-
-    const downIndexes = (field: ArrayItemField): [ number, number ] => {
-      const from = Arrays.index(items, field);
-      const to = from + 1;
-
-      return [ from, to ];
-    };
-
-    items.forEach((field) => {
-      field.buttons = {
-        moveUp: {
-          get disabled() {
-            return isDisabled(upIndexes(field));
-          },
-          trigger: () => this.move(...upIndexes(field))
-        },
-        moveDown: {
-          get disabled() {
-            return isDisabled(downIndexes(field));
-          },
-          trigger: () => this.move(...downIndexes(field))
-        },
-        delete: {
-          disabled: !sortable,
-          trigger: () => {
-            const index = Arrays.index(items, field);
-            const deletedField = items.splice(index, 1).pop();
-
-            if (deletedField) {
-              this.rawValue.splice(index, 1);
-              this.field.setValue(this.rawValue);
-
-              this.count--;
-
-              this.requestRender();
-            }
-
-            return deletedField;
-          }
-        }
-      };
-    });
+    this.field.childrenList.forEach((itemField) => this.setButtons(itemField));
   }
 
   parse() {

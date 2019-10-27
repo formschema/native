@@ -2,7 +2,11 @@ import { Dict } from '@/types';
 
 export const Objects = {
   isObject(value: unknown) {
-    return value !== null && typeof value === 'object' && !Array.isArray(value);
+    return Objects.isGenericObject(value) && !Array.isArray(value);
+  },
+
+  isGenericObject(value: unknown) {
+    return value !== null && typeof value === 'object';
   },
 
   assign<T extends Dict = Dict<any>>(dest: any, src: T): T {
@@ -47,5 +51,27 @@ export const Objects = {
     for (const key in object) {
       delete object[key];
     }
+  },
+
+  assignProperties(...objects: Record<string, any>[]) {
+    const result: Record<string, any> = {};
+
+    objects.reverse().forEach((object) => {
+      for (const key in object) {
+        if (result.hasOwnProperty(key)) {
+          continue;
+        }
+
+        const descriptor = Object.getOwnPropertyDescriptor(object, key);
+
+        if (descriptor) {
+          Object.defineProperty(result, key, descriptor);
+        } else {
+          result[key] = undefined;
+        }
+      }
+    });
+
+    return result;
   }
 };

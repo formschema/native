@@ -185,7 +185,7 @@ export type ActionMoveTrigger = () => ArrayItemField | undefined;
 export type ActionDeleteTrigger = () => ArrayItemField | undefined;
 
 export interface ActionButton<T extends Function> {
-  readonly disabled: boolean;
+  disabled: boolean;
   trigger: T;
 }
 

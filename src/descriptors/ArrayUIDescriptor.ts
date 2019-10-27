@@ -11,23 +11,39 @@ import {
   IArrayChildDescriptor
 } from '@/types';
 
+function parseActionButton(type: string, button: any, descriptor: any): any {
+  const itemField = descriptor.field;
+  const defaultButton = itemField.buttons[type] || {};
+
+  return {
+    type,
+    label: button.label || defaultButton.label,
+    trigger: button.trigger || defaultButton.trigger,
+    get disabled() {
+      return button.disabled || defaultButton.disabled || false;
+    }
+  };
+}
+
+const BUTTONS: any = {
+  moveUp: {
+    label: '↑',
+    tooltip: undefined
+  },
+  moveDown: {
+    label: '↓',
+    tooltip: undefined
+  },
+  delete: {
+    label: '-',
+    tooltip: undefined
+  }
+};
+
 export class ArrayUIDescriptor extends UIDescriptor<ArrayField> implements IArrayDescriptor {
   items: DescriptorInstance[] | DescriptorInstance = [];
   pushButton: ButtonDescriptor<ActionPushTrigger> = {} as any;
-  buttons: any = {
-    moveUp: {
-      label: '↑',
-      tooltip: undefined
-    },
-    moveDown: {
-      label: '↓',
-      tooltip: undefined
-    },
-    delete: {
-      label: '-',
-      tooltip: undefined
-    }
-  };
+  buttons: any = {};
 
   constructor(options: ArrayDescriptor, field: Readonly<ArrayField>, components: Components) {
     super(options, field, components);
@@ -45,21 +61,8 @@ export class ArrayUIDescriptor extends UIDescriptor<ArrayField> implements IArra
       .map((field, index) => this.getDescriptor(index))
       .map((descriptor) => {
         if (!this.field.uniqueItems && this.field.sortable) {
-          const buttons = this.buttons as any;
-
-          descriptor.buttons = Object.keys(buttons).map((type) => {
-            const dynamicField = descriptor.field as any;
-            const fieldButtons = descriptor.field.buttons as any;
-            const fieldButton = fieldButtons[type] || {};
-            const button = { ...buttons[type], ...fieldButton };
-
-            if (!button.hasOwnProperty('trigger')) {
-              button.trigger = typeof dynamicField[type] === 'function'
-                ? () => dynamicField[type]()
-                : () => {};
-            }
-
-            return button;
+          descriptor.buttons = Object.keys(this.buttons).map((type) => {
+            return parseActionButton(type, this.buttons[type], descriptor);
           });
         }
 
@@ -68,16 +71,15 @@ export class ArrayUIDescriptor extends UIDescriptor<ArrayField> implements IArra
   }
 
   parseButtons(options: ArrayDescriptor) {
-    if (options.buttons) {
-      const buttons: any = options.buttons;
+    const buttons: any = options.buttons || BUTTONS;
 
-      for (const type in buttons) {
-        if (type === 'push') {
-          this.pushButton = { ...buttons[type] };
-        } else {
-          this.buttons[type] = { ...buttons[type] };
-          this.buttons[type].type = type;
-        }
+    for (const type in buttons) {
+      if (type === 'push') {
+        const label = '+';
+
+        this.pushButton = { label, ...buttons[type], type };
+      } else {
+        this.buttons[type] = { ...(BUTTONS[type] || {}), ...buttons[type], type };
       }
     }
   }
