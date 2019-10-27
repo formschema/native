@@ -16,11 +16,11 @@ export class ArrayUIDescriptor extends UIDescriptor<ArrayField> implements IArra
   pushButton: ButtonDescriptor<ActionPushTrigger> = {} as any;
   buttons: any = {
     moveUp: {
-      label: '&#x2191;',
+      label: '↑',
       tooltip: undefined
     },
     moveDown: {
-      label: '&#x2193;',
+      label: '↓',
       tooltip: undefined
     },
     delete: {

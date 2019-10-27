@@ -1,6 +1,5 @@
 import { VNode } from 'vue';
 import { ArrayComponent } from '@/types';
-import { ArrayButton } from '@/components/ArrayButton';
 import { FieldElement } from '@/components/FieldElement';
 import { FieldsetElement } from '@/components/FieldsetElement';
 
@@ -8,13 +7,16 @@ export const ArrayElement: ArrayComponent = {
   name: 'ArrayElement',
   functional: true,
   render(h, { data, props }) {
+    const ArrayButtonElement = props.descriptor.components.get('button');
     const nodes: any = props.descriptor.children.map((descriptor) => {
       const field = descriptor.field;
       const buttonsWrapper: VNode[] = [];
 
       if (!props.field.uniqueItems && props.field.sortable) {
-        const buttonsNodes = descriptor.buttons.map((button) => h(ArrayButton, {
-          props: button
+        const buttonsNodes = descriptor.buttons.map((button) => h(ArrayButtonElement, {
+          props: {
+            button, field, descriptor
+          }
         }));
 
         buttonsWrapper.push(h('div', {
@@ -46,8 +48,12 @@ export const ArrayElement: ArrayComponent = {
     });
 
     if (!props.field.uniqueItems) {
-      nodes.push(h(ArrayButton, {
-        props: props.descriptor.pushButton
+      nodes.push(h(ArrayButtonElement, {
+        props: {
+          button: props.descriptor.pushButton,
+          field: props.field,
+          descriptor: props.descriptor
+        }
       }));
     }
 

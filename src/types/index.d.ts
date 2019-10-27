@@ -22,7 +22,7 @@ export type ScalarKind = 'string' | 'password' | 'number' | 'integer' | 'null' |
 | 'hidden' | 'textarea' | 'image' | 'file' | 'radio' | 'checkbox';
 export type ItemKind = 'enum' | 'list';
 export type FieldKind = SchemaType | ScalarKind | ItemKind;
-export type ComponentsType = 'form' | 'message' | FieldKind;
+export type ComponentsType = 'form' | 'message' | 'button' | FieldKind;
 export type Component = string | VueComponent | AsyncComponent;
 
 export interface Attributes {
@@ -486,7 +486,11 @@ export interface SubmitEvent extends Event {
   field: UnknowField;
 }
 
-export type ArrayButtonComponent = FunctionalComponentOptions<ButtonDescriptor<Function>>;
+export interface ButtonElementProps extends ElementProps<UnknowField, IDescriptor> {
+  button: ButtonDescriptor<Function>;
+}
+
+export type ArrayButtonComponent = FunctionalComponentOptions<ButtonElementProps>;
 export type MessageComponent = FunctionalComponentOptions<Required<Message>>;
 export type ArrayComponent = FunctionalComponentOptions<ElementProps<ArrayField, IArrayDescriptor>>;
 export type BooleanComponent = FunctionalComponentOptions<ElementProps<BooleanField, IScalarDescriptor>>;
