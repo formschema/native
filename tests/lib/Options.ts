@@ -18,7 +18,6 @@ export interface GetOptions extends ParserOptions<any, any> {
 export interface Context {
   props: {
     field: UnknowField;
-    descriptor: IUIDescriptor;
   };
 }
 
@@ -43,7 +42,7 @@ export const Options = {
     const { descriptor } = field;
 
     const context = {
-      props: { field, descriptor }
+      props: { field }
     };
 
     const schema = options.schema as any;

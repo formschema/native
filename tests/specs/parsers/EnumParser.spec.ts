@@ -155,23 +155,17 @@ describe('parsers/EnumParser', () => {
             arya: {
               value: ({ value }: Scope) => expect(value).toBe('arya')
             }
+          },
+          descriptor: {
+            children: [
+              {
+                label: ({ value }: Scope) => expect(value).toBe('Jon Snow')
+              },
+              {
+                label: ({ value }: Scope) => expect(value).toBe('Arya Stark')
+              }
+            ]
           }
-        },
-        descriptor: {
-          children: [
-            {
-              label: ({ value }: Scope) => expect(value).toBe('Jon Snow'),
-              field: {
-                value: ({ value }: Scope) => expect(value).toBe('jon')
-              }
-            },
-            {
-              label: ({ value }: Scope) => expect(value).toBe('Arya Stark'),
-              field: {
-                value: ({ value }: Scope) => expect(value).toBe('arya')
-              }
-            }
-          ]
         }
       }
     }

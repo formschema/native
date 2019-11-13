@@ -98,11 +98,11 @@ describe('parsers/StringParser', () => {
           },
           attrs: {
             accept: ({ value }: Scope) => expect(value).toBeUndefined()
-          }
-        },
-        descriptor: {
-          kind({ value, field }: Scope) {
-            expect(value).toBe(field.kind);
+          },
+          descriptor: {
+            kind({ value, field }: Scope) {
+              expect(value).toBe(field.kind);
+            }
           }
         }
       }
@@ -130,11 +130,11 @@ describe('parsers/StringParser', () => {
             accept({ value, parser: { options } }: Scope) {
               expect(value).toBe(options.schema.contentMediaType);
             }
-          }
-        },
-        descriptor: {
-          kind({ value, parser }: Scope) {
-            expect(value).toBe(parser.field.kind);
+          },
+          descriptor: {
+            kind({ value, parser }: Scope) {
+              expect(value).toBe(parser.field.kind);
+            }
           }
         }
       }
@@ -164,11 +164,11 @@ describe('parsers/StringParser', () => {
           attrs: {
             type: ({ value }: Scope) => expect(value).toBe('text'),
             accept: ({ value }: Scope) => expect(value).toBeUndefined()
-          }
-        },
-        descriptor: {
-          kind({ value }: Scope) {
-            expect(value).toBe('string');
+          },
+          descriptor: {
+            kind({ value }: Scope) {
+              expect(value).toBe('string');
+            }
           }
         }
       }
@@ -196,11 +196,11 @@ describe('parsers/StringParser', () => {
             accept({ value, parser: { options } }: Scope) {
               expect(value).toBe(options.schema.contentMediaType);
             }
-          }
-        },
-        descriptor: {
-          kind({ value, parser: { field } }: Scope) {
-            expect(value).toBe(field.kind);
+          },
+          descriptor: {
+            kind({ value, parser: { field } }: Scope) {
+              expect(value).toBe(field.kind);
+            }
           }
         }
       }
@@ -225,11 +225,11 @@ describe('parsers/StringParser', () => {
             accept({ value, parser: { options } }: Scope) {
               expect(value).toBe(options.schema.contentMediaType);
             }
-          }
-        },
-        descriptor: {
-          kind({ value, parser: { field } }: Scope) {
-            expect(value).toBe(field.kind);
+          },
+          descriptor: {
+            kind({ value, parser: { field } }: Scope) {
+              expect(value).toBe(field.kind);
+            }
           }
         }
       }

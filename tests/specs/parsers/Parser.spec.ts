@@ -3,43 +3,46 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 
 import { Parser } from '@/parsers/Parser';
-import { Dict, ObjectField, StringField, UnknowParser, ParserOptions } from '@/types';
 import { ScalarUIDescriptor } from '@/descriptors/ScalarUIDescriptor';
 import { ObjectUIDescriptor } from '@/descriptors/ObjectUIDescriptor';
+
+import {
+  Dict,
+  ObjectField,
+  ObjectDescriptor,
+  StringField,
+  UnknowParser,
+  ParserOptions,
+  ScalarDescriptor
+} from '@/types';
 
 import { Options } from '../../lib/Options';
 import { TestParser, Scope } from '../../lib/TestParser';
 
-class FakeParser extends Parser<any, StringField, ScalarUIDescriptor> {
-  constructor(options: ParserOptions<any, any>, parent?: UnknowParser) {
+class FakeParser extends Parser<any, StringField, ScalarDescriptor, ScalarUIDescriptor> {
+  constructor(options: ParserOptions<any, any, ScalarDescriptor>, parent?: UnknowParser) {
     super('string', options, parent);
   }
-
-  parse() {}
 }
 
-class ObjectFakeParser extends Parser<Dict, ObjectField, ObjectUIDescriptor> {
-  constructor(options: ParserOptions<Dict, any>, parent?: UnknowParser) {
+class ObjectFakeParser extends Parser<Dict, ObjectField, ObjectDescriptor, ObjectUIDescriptor> {
+  constructor(options: ParserOptions<Dict, any, ObjectDescriptor>, parent?: UnknowParser) {
     super('object', options, parent);
   }
 
   parseValue(data: any): any {
     return data || {};
   }
-
-  parse() {}
 }
 
-class InputFakeParser extends Parser<string, StringField, ScalarUIDescriptor> {
-  constructor(options: ParserOptions<string, any>, parent?: UnknowParser) {
+class InputFakeParser extends Parser<string, StringField, ScalarDescriptor, ScalarUIDescriptor> {
+  constructor(options: ParserOptions<string, any, ScalarDescriptor>, parent?: UnknowParser) {
     super('string', options, parent);
   }
 
   parseValue(data: any): string {
     return data;
   }
-
-  parse() {}
 }
 
 const ParserValidator = {
@@ -79,26 +82,26 @@ const ParserValidator = {
       commit: ({ value }: Scope) => expect(value).toBeInstanceOf(Function),
       reset: ({ value }: Scope) => expect(value).toBeInstanceOf(Function),
       clear: ({ value }: Scope) => expect(value).toBeInstanceOf(Function),
-      requestRender: ({ value }: Scope) => expect(value).toBeInstanceOf(Function)
-    },
-    descriptor: {
-      attrs: {
-        'aria-labelledby': ({ value, descriptor: { labelAttrs } }: Scope) => expect(value).toBe(labelAttrs.id),
-        'aria-describedby': ({ value, descriptor: { helperAttrs } }: Scope) => expect(value).toBe(helperAttrs.id)
-      },
-      label({ value, options, schema }: Scope) {
-        expect(value).toBe(options.descriptor.label || schema.title || '');
-      },
-      helper({ value, options, schema }: Scope) {
-        expect(value).toBe(options.descriptor.helper || schema.description || '');
-      },
-      component: ({ value }: Scope) => expect(value).toBeDefined(),
-      labelAttrs: {
-        id: ({ value }: Scope) => typeof value === 'undefined' || expect(value.endsWith('-label')).toBeTruthy(),
-        for: ({ value, field }: Scope) => expect(value).toBe(field.attrs.id)
-      },
-      helperAttrs: {
-        id: ({ value }: Scope) => typeof value === 'undefined' || expect(value.endsWith('-helper')).toBeTruthy()
+      requestRender: ({ value }: Scope) => expect(value).toBeInstanceOf(Function),
+      descriptor: {
+        attrs: {
+          'aria-labelledby': ({ value, descriptor: { labelAttrs } }: Scope) => expect(value).toBe(labelAttrs.id),
+          'aria-describedby': ({ value, descriptor: { helperAttrs } }: Scope) => expect(value).toBe(helperAttrs.id)
+        },
+        label({ value, options, schema }: Scope) {
+          expect(value).toBe(options.descriptor.label || schema.title || '');
+        },
+        helper({ value, options, schema }: Scope) {
+          expect(value).toBe(options.descriptor.helper || schema.description || '');
+        },
+        component: ({ value }: Scope) => expect(value).toBeDefined(),
+        labelAttrs: {
+          id: ({ value }: Scope) => typeof value === 'undefined' || expect(value.endsWith('-label')).toBeTruthy(),
+          for: ({ value, field }: Scope) => expect(value).toBe(field.attrs.id)
+        },
+        helperAttrs: {
+          id: ({ value }: Scope) => typeof value === 'undefined' || expect(value.endsWith('-helper')).toBeTruthy()
+        }
       }
     }
   }
@@ -131,30 +134,6 @@ describe('parsers/Parser', () => {
 
       Parser.register('string', InputFakeParser);
       expect(Parser.get(options)).toBeInstanceOf(InputFakeParser);
-    });
-
-    it('Parser.get() should successfully return the registered parser with its parent', () => {
-      Parser.register('object', ObjectFakeParser);
-      Parser.register('string', InputFakeParser);
-
-      const options: any = {
-        schema: {
-          type: 'object',
-          properties: {
-            name: { type: 'string' }
-          }
-        }
-      };
-
-      const childOptions: any = {
-        schema: options.schema.properties.name
-      };
-
-      const parent: any = Parser.get(options);
-      const child: any = Parser.get(childOptions, parent);
-
-      expect(child).toBeInstanceOf(InputFakeParser);
-      expect(child.parent).toBeInstanceOf(ObjectFakeParser);
     });
   });
 

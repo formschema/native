@@ -30,27 +30,27 @@ describe('parsers/ListParser', () => {
         ]),
         field: {
           value: ({ value }: Scope) => expect(value).toBe('arya'),
-          items: ({ value, parser }: Scope<ListParser>) => expect(value).toEqual(parser.items)
-        },
-        descriptor: {
-          kind: ({ value }: Scope) => expect(value).toBe('list'),
-          options: ({ value }: Scope) => expect(value).toEqual([
-            {
-              value: '',
-              selected: false,
-              label: undefined
-            },
-            {
-              value: 'jon',
-              selected: false,
-              label: 'jon'
-            },
-            {
-              value: 'arya',
-              selected: true,
-              label: 'arya'
-            }
-          ])
+          items: ({ value, parser }: Scope<ListParser>) => expect(value).toEqual(parser.items),
+          descriptor: {
+            kind: ({ value }: Scope) => expect(value).toBe('list'),
+            options: ({ value }: Scope) => expect(value).toEqual([
+              {
+                value: '',
+                selected: false,
+                label: undefined
+              },
+              {
+                value: 'jon',
+                selected: false,
+                label: 'jon'
+              },
+              {
+                value: 'arya',
+                selected: true,
+                label: 'arya'
+              }
+            ])
+          }
         }
       }
     }
@@ -71,8 +71,10 @@ describe('parsers/ListParser', () => {
     }),
     expected: {
       parser: {
-        descriptor: {
-          kind: ({ value }: Scope) => expect(value).toBe('enum')
+        field: {
+          descriptor: {
+            kind: ({ value }: Scope) => expect(value).toBe('enum')
+          }
         }
       }
     }
@@ -103,26 +105,26 @@ describe('parsers/ListParser', () => {
           }
         ]),
         field: {
-          value: ({ value }: Scope) => expect(value).toBe(true)
-        },
-        descriptor: {
-          options: ({ value }: Scope) => expect(value).toEqual([
-            {
-              value: '',
-              selected: false,
-              label: undefined
-            },
-            {
-              value: 'true',
-              selected: true,
-              label: 'true'
-            },
-            {
-              value: 'false',
-              selected: false,
-              label: 'false'
-            }
-          ])
+          value: ({ value }: Scope) => expect(value).toBe(true),
+          descriptor: {
+            options: ({ value }: Scope) => expect(value).toEqual([
+              {
+                value: '',
+                selected: false,
+                label: undefined
+              },
+              {
+                value: 'true',
+                selected: true,
+                label: 'true'
+              },
+              {
+                value: 'false',
+                selected: false,
+                label: 'false'
+              }
+            ])
+          }
         }
       }
     }
@@ -153,26 +155,26 @@ describe('parsers/ListParser', () => {
           }
         ]),
         field: {
-          value: ({ value }: Scope) => expect(value).toBe(null)
-        },
-        descriptor: {
-          options: ({ value }: Scope) => expect(value).toEqual([
-            {
-              value: '',
-              selected: false,
-              label: undefined
-            },
-            {
-              value: 'null',
-              selected: true,
-              label: 'null'
-            },
-            {
-              value: 'null',
-              selected: true,
-              label: 'null'
-            }
-          ])
+          value: ({ value }: Scope) => expect(value).toBe(null),
+          descriptor: {
+            options: ({ value }: Scope) => expect(value).toEqual([
+              {
+                value: '',
+                selected: false,
+                label: undefined
+              },
+              {
+                value: 'null',
+                selected: true,
+                label: 'null'
+              },
+              {
+                value: 'null',
+                selected: true,
+                label: 'null'
+              }
+            ])
+          }
         }
       }
     }
@@ -210,26 +212,26 @@ describe('parsers/ListParser', () => {
           }
         ]),
         field: {
-          value: ({ value }: Scope) => expect(value).toBe(undefined)
-        },
-        descriptor: {
-          options: ({ value }: Scope) => expect(value).toEqual([
-            {
-              value: '',
-              selected: false,
-              label: undefined
-            },
-            {
-              value: 'jon',
-              selected: false,
-              label: 'Jon Snow'
-            },
-            {
-              value: 'arya',
-              selected: false,
-              label: 'Arya Stark'
-            }
-          ])
+          value: ({ value }: Scope) => expect(value).toBe(undefined),
+          descriptor: {
+            options: ({ value }: Scope) => expect(value).toEqual([
+              {
+                value: '',
+                selected: false,
+                label: undefined
+              },
+              {
+                value: 'jon',
+                selected: false,
+                label: 'Jon Snow'
+              },
+              {
+                value: 'arya',
+                selected: false,
+                label: 'Arya Stark'
+              }
+            ])
+          }
         }
       }
     }

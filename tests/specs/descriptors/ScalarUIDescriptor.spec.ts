@@ -31,32 +31,31 @@ describe('descriptors/ScalarUIDescriptor', () => {
           kind: ({ value }: Scope) => expect(value).toBe('string'),
           value: ({ value, parser: { options } }: Scope) => expect(value).toEqual(options.model),
           attrs: {
-            id: ({ value, options }: Scope) => expect(value).toBe(options.descriptor.attrs.id),
+            id: ({ value, options }: Scope) => expect(value.startsWith(`${options.name}-`)).toBeTruthy(),
             type: ({ value }: Scope) => expect(value).toBe('text'),
             name: ({ value, options }: Scope) => expect(value).toBe(options.name),
-            required: ({ value, options }: Scope) => expect(value).toBe(options.required),
-            'aria-labelledby': ({ value, parser }: Scope) => expect(value).toBe(parser.descriptor.labelAttrs.id),
-            'aria-describedby': ({ value, parser }: Scope) => expect(value).toBe(parser.descriptor.helperAttrs.id)
-          }
-        },
-        descriptor: {
-          kind: ({ value, parser }: Scope) => expect(value).toBe(parser.field.kind),
-          label: ({ value, options }: Scope) => expect(value).toBe(options.descriptor.label),
-          helper: ({ value, options }: Scope) => expect(value).toBe(options.descriptor.helper),
-          field: ({ value, parser }: Scope) => expect(value).toBe(parser.field),
-          components: ({ value }: Scope) => expect(value).toBe(NativeElements),
-          component: ({ value }: Scope) => expect(value).toBe(InputElement),
-          props: ({ value, options }: Scope) => expect(value).toEqual(options.descriptor.props),
-          attrs({ value, parser, options }: any) {
-            expect(value).not.toEqual(parser.field.attrs);
-            expect(value.id).toBe(options.descriptor.attrs.id);
+            required: ({ value, options }: Scope) => expect(value).toBe(options.required)
           },
-          labelAttrs: {
-            id: ({ value }: Scope) => expect(value).toBeDefined(),
-            for: ({ value }: Scope) => expect(value).toBeDefined()
-          },
-          helperAttrs: {
-            id: ({ value }: Scope) => expect(value).toBeDefined()
+          descriptor: {
+            kind: ({ value, parser }: Scope) => expect(value).toBe(parser.field.kind),
+            label: ({ value, options }: Scope) => expect(value).toBe(options.descriptor.label),
+            helper: ({ value, options }: Scope) => expect(value).toBe(options.descriptor.helper),
+            components: ({ value }: Scope) => expect(value).toBe(NativeElements),
+            component: ({ value }: Scope) => expect(value).toBe(InputElement),
+            props: ({ value, options }: Scope) => expect(value).toEqual(options.descriptor.props),
+            attrs({ value, field, options, descriptor }: any) {
+              expect(value).not.toEqual(field.attrs);
+              expect(value.id).toBe(options.descriptor.attrs.id);
+              expect(value['aria-labelledby']).toBe(descriptor.labelAttrs.id);
+              expect(value['aria-describedby']).toBe(descriptor.helperAttrs.id);
+            },
+            labelAttrs: {
+              id: ({ value }: Scope) => expect(value).toBeDefined(),
+              for: ({ value }: Scope) => expect(value).toBeDefined()
+            },
+            helperAttrs: {
+              id: ({ value }: Scope) => expect(value).toBeDefined()
+            }
           }
         }
       }
@@ -89,19 +88,22 @@ describe('descriptors/ScalarUIDescriptor', () => {
       parser: {
         field: {
           attrs: {
-            id: ({ value, options }: Scope) => expect(value).toBe(options.descriptor.attrs.id),
+            id: ({ value, options }: Scope) => expect(value.startsWith(`${options.name}-`)).toBeTruthy(),
             type: ({ value }: Scope) => expect(value).toBe('hidden'),
             name: ({ value, options }: Scope) => expect(value).toBe(options.name),
-            required: ({ value, options }: Scope) => expect(value).toBe(options.required),
-            'aria-labelledby': ({ value, parser }: Scope) => expect(value).toBe(parser.descriptor.labelAttrs.id),
-            'aria-describedby': ({ value, parser }: Scope) => expect(value).toBe(parser.descriptor.helperAttrs.id)
+            required: ({ value, options }: Scope) => expect(value).toBe(options.required)
+          },
+          descriptor: {
+            attrs: {
+              id: ({ value, options }: Scope) => expect(value).toBe(options.descriptor.attrs.id),
+              'aria-labelledby': ({ value, descriptor }: Scope) => expect(value).toBe(descriptor.labelAttrs.id),
+              'aria-describedby': ({ value, descriptor }: Scope) => expect(value).toBe(descriptor.helperAttrs.id)
+            },
+            kind: ({ value, parser }: Scope) => expect(value).toBe(parser.field.kind),
+            label: ({ value, options }: Scope) => expect(value).toBe(options.descriptor.label),
+            helper: ({ value, options }: Scope) => expect(value).toBe(options.descriptor.helper),
+            component: ({ value }: Scope) => expect(value).toBe('input')
           }
-        },
-        descriptor: {
-          kind: ({ value, parser }: Scope) => expect(value).toBe(parser.field.kind),
-          label: ({ value, options }: Scope) => expect(value).toBe(options.descriptor.label),
-          helper: ({ value, options }: Scope) => expect(value).toBe(options.descriptor.helper),
-          component: ({ value }: Scope) => expect(value).toBe('input')
         }
       }
     }

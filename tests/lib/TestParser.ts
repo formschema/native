@@ -45,7 +45,7 @@ function toEqual(parser: any, prefix: string, actual: any, expected: Dict<any>, 
           options: parser.options,
           field: parser.field,
           schema: parser.schema,
-          descriptor: parser.descriptor,
+          descriptor: parser.field.descriptor,
           given
         }) !== false;
 

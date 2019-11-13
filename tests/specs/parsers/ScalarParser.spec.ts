@@ -21,11 +21,11 @@ describe('parsers/ScalarParser', () => {
             arya: {
               kind: ({ value }: Scope) => expect(value).toBe('radio')
             }
-          }
-        },
-        descriptor: {
-          kind({ value, parser: { field } }: Scope) {
-            expect(value).toBe(field.kind);
+          },
+          descriptor: {
+            kind({ value, parser: { field } }: Scope) {
+              expect(value).toBe(field.kind);
+            }
           }
         }
       }
@@ -47,11 +47,11 @@ describe('parsers/ScalarParser', () => {
           attrs: {
             type: ({ value }: Scope) => expect(value).toBe('text'),
             pattern: ({ value }: Scope) => expect(value).toBe('hello\\?')
-          }
-        },
-        descriptor: {
-          kind({ value, parser: { field } }: Scope) {
-            expect(value).toBe(field.kind);
+          },
+          descriptor: {
+            kind({ value, parser: { field } }: Scope) {
+              expect(value).toBe(field.kind);
+            }
           }
         }
       }
@@ -69,11 +69,11 @@ describe('parsers/ScalarParser', () => {
       parser: {
         kind: ({ value }: Scope) => expect(value).toBe('string'),
         field: {
-          kind: ({ value }: Scope) => expect(value).toBe('string')
-        },
-        descriptor: {
-          kind({ value, parser: { field } }: Scope) {
-            expect(value).toBe(field.kind);
+          kind: ({ value }: Scope) => expect(value).toBe('string'),
+          descriptor: {
+            kind({ value, parser: { field } }: Scope) {
+              expect(value).toBe(field.kind);
+            }
           }
         }
       }

@@ -161,13 +161,15 @@ describe('parsers/ObjectParser', () => {
         properties: ({ value }: Scope) => expect(value).toEqual({}),
         dependencies: ({ value }: Scope) => expect(value).toEqual({}),
         childrenParsers: ({ value }: Scope) => expect(value).toEqual({}),
-        descriptor: {
-          properties: ({ value }: Scope) => expect(value).toEqual({}),
-          schemaProperties: ({ value }: Scope) => expect(value).toEqual({}),
-          groups: ({ value }: Scope) => expect(value).toEqual({}),
-          order: ({ value }: Scope) => expect(value).toEqual([]),
-          orderedProperties: ({ value }: Scope) => expect(value).toEqual([]),
-          parsedGroups: ({ value }: Scope) => expect(value).toEqual([])
+        field: {
+          descriptor: {
+            properties: ({ value }: Scope) => expect(value).toEqual({}),
+            schemaProperties: ({ value }: Scope) => expect(value).toEqual({}),
+            groups: ({ value }: Scope) => expect(value).toEqual({}),
+            order: ({ value }: Scope) => expect(value).toEqual([]),
+            orderedProperties: ({ value }: Scope) => expect(value).toEqual([]),
+            parsedGroups: ({ value }: Scope) => expect(value).toEqual([])
+          }
         }
       }
     }
@@ -242,8 +244,10 @@ describe('parsers/ObjectParser', () => {
     },
     expected: {
       parser: {
-        descriptor: {
-          orderedProperties: ({ value }: Scope) => expect(value).toEqual([ 'lastName', 'dateBirth', 'firstName' ])
+        field: {
+          descriptor: {
+            orderedProperties: ({ value }: Scope) => expect(value).toEqual([ 'lastName', 'dateBirth', 'firstName' ])
+          }
         }
       }
     }
@@ -267,8 +271,10 @@ describe('parsers/ObjectParser', () => {
     },
     expected: {
       parser: {
-        descriptor: {
-          orderedProperties: ({ value }: Scope) => expect(value).toEqual([ 'firstName', 'lastName' ])
+        field: {
+          descriptor: {
+            orderedProperties: ({ value }: Scope) => expect(value).toEqual([ 'firstName', 'lastName' ])
+          }
         }
       }
     }

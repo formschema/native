@@ -4,10 +4,10 @@ const MockData = {
   props: {
     field: {
       attrs: {},
-      setValue: jest.fn()
-    },
-    descriptor: {
-      attrs: {}
+      setValue: jest.fn(),
+      descriptor: {
+        attrs: {}
+      }
     }
   }
 };

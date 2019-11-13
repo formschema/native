@@ -3,7 +3,6 @@ import { Vue, CreateElement } from 'vue/types/vue';
 
 import {
   Component as VueComponent,
-  FunctionalComponentOptions,
   ComponentOptions,
   RenderContext,
   AsyncComponent,
@@ -480,7 +479,7 @@ export type Accessors<T, V> = {
   [K in keyof T]: ((this: V) => T[K]) | ComputedOptions<T[K]>
 }
 
-export type Props = Record<string, unknown>;
+export type Props = Record<string, any>;
 export type WatchHandler<V extends Vue, T> = (this: V, val: T, oldVal: T) => void;
 
 export interface WatchOptionsWithHandler<V extends Vue, T> extends WatchOptions {
@@ -497,6 +496,12 @@ export interface SubmitEvent extends Event {
 
 export interface ButtonElementProps extends ElementProps<UnknowField> {
   button: ButtonDescriptor<Function>;
+}
+
+export interface FunctionalComponentOptions<Props> {
+  name: string;
+  functional: true;
+  render?(this: undefined, createElement: CreateElement, context: RenderContext<Props>): VNode | VNode[];
 }
 
 export type ArrayButtonComponent = FunctionalComponentOptions<ButtonElementProps>;

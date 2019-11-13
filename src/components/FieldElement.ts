@@ -13,7 +13,7 @@ export const FieldElement: FieldComponent = {
       return children;
     }
 
-    const type = field.attrs.type || field.kind;
+    const type = descriptor.attrs.type || field.kind;
     const attrs: Dict = {
       'data-fs-kind': field.kind,
       'data-fs-type': type,

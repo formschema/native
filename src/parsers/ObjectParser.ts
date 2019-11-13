@@ -18,7 +18,7 @@ export class ObjectParser extends SetParser<Dict, ObjectField, ObjectDescriptor,
   }
 
   get initialValue(): Dict {
-    const value = this.options.model || this.schema.default;
+    const value = this.options.model || this.schema.default as object;
 
     return Objects.isObject(value) ? { ...value } as any : {};
   }
