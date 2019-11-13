@@ -2,22 +2,29 @@ import { FieldsetComponent } from '@/types';
 import { HelperElement } from '@/components/HelperElement';
 import { FieldElement } from '@/components/FieldElement';
 import { Objects } from '@/lib/Objects';
-import { Elements } from '@/lib/Elements';
+import { Fieldset } from '@/lib/Fieldset';
+import { Field } from '@/lib/Field';
 
 export const FieldsetElement: FieldsetComponent = {
   name: 'FieldsetElement',
   functional: true,
   render(h, { data, props, slots }) {
-    const descriptor = props.descriptor;
-    const nodes = descriptor.kind === 'object' && !Objects.isEmpty(descriptor.groups)
-      ? Elements.renderGroups(h, descriptor)
-      : slots().default || Elements.renderChildren(h, descriptor, descriptor.children);
+    const field = props.field;
+    const descriptor = props.field.descriptor;
 
-    if (!props.field.isRoot) {
+    const nodes = descriptor.kind === 'object' && !Objects.isEmpty(descriptor.groups)
+      ? Fieldset.renderGroups(h, field)
+      : slots().default || Fieldset.renderChildren(h, field);
+
+    if (descriptor.definition.kind === 'hidden') {
+      return nodes;
+    }
+
+    if (!field.isRoot) {
       return h(FieldElement, data, nodes);
     }
 
-    const attrs = { ...props.field.attrs, ...(data.attrs || {}) };
+    const attrs = { ...descriptor.attrs };
     const helper = h(HelperElement, data);
 
     if (helper.tag) {
@@ -31,8 +38,8 @@ export const FieldsetElement: FieldsetComponent = {
       nodes.unshift(legend);
     }
 
-    Elements.renderMessages(h, descriptor, nodes, props.field.isRoot);
+    Field.renderMessages(h, field, nodes, field.isRoot);
 
-    return h('fieldset', { attrs }, nodes);
+    return h(descriptor.layout, { props, attrs }, nodes);
   }
 };

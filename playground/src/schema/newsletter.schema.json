@@ -3,22 +3,27 @@
     "title": "Newsletter Subscription",
     "description": "Sign up for free newsletters and get more delivered to your inbox",
     "properties": {
-      "name": {
+      "profile": {
         "type": "object",
-        "title": "Full Name",
         "properties": {
-          "first_name": {
-            "type": "string",
-            "title": "First Name",
-            "minLength": 3,
-            "maxLength": 80
-          },
-          "last_name": {
-            "type": "string",
-            "title": "Last Name"
+          "name": {
+            "type": "object",
+            "title": "Full Name",
+            "properties": {
+              "first_name": {
+                "type": "string",
+                "title": "First Name",
+                "minLength": 3,
+                "maxLength": 80
+              },
+              "last_name": {
+                "type": "string",
+                "title": "Last Name"
+              }
+            },
+            "required": ["first_name"]
           }
-        },
-        "required": ["first_name"]
+        }
       },
       "date": {
         "type": "object",

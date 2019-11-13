@@ -6,7 +6,7 @@ export abstract class ItemUIDescriptor<
   TField extends Field<any, any>,
   TChildField extends Field<any, any>,
   TDescriptor extends ItemsDescriptor<ItemKind>
-> extends UIDescriptor<TField> implements IItemsUIDescriptor<TField, TChildField> {
+> extends UIDescriptor<TField, TDescriptor> implements IItemsUIDescriptor<TField, TChildField, TDescriptor> {
   items: Dict<ScalarDescriptor>;
 
   constructor(options: TDescriptor, field: Readonly<TField>, components: Components) {

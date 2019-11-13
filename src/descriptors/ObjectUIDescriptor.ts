@@ -11,43 +11,46 @@ import {
   ObjectGroupDescriptor,
   IObjectDescriptor,
   ObjectFieldChild,
-  IObjectChildDescriptor
+  IObjectChildDescriptor,
+  IObjectGroupItem,
+  Component
 } from '@/types';
 
-export class ObjectUIDescriptor extends UIDescriptor<ObjectField> implements IObjectDescriptor {
+export class ObjectUIDescriptor extends UIDescriptor<ObjectField, ObjectDescriptor> implements IObjectDescriptor {
+  readonly layout: Component;
   readonly properties: Dict<DescriptorInstance>;
   readonly schemaProperties: Dict<DescriptorInstance>;
   readonly groups: Dict<ObjectGroupDescriptor>;
   readonly order: string[] = [];
   readonly orderedProperties: string[] = [];
   readonly parsedGroups = [];
+  readonly children: IObjectChildDescriptor[] = [];
+  readonly childrenGroups: IObjectGroupItem[] = [];
 
   constructor(options: ObjectDescriptor, field: Readonly<ObjectField>, components: Components) {
     super(options, field, components);
 
+    this.layout = options.layout || 'fieldset';
     this.schemaProperties = field.schema.properties || {};
     this.properties = options.properties || {};
     this.groups = options.groups || {};
 
     if (options.order instanceof Array) {
-      this.order = [ ...options.order ];
+      this.order.push(...options.order);
     }
-
-    this.parseOrder();
-    this.parseDependencies();
-    this.parseSchemaProperties();
   }
 
-  get children() {
-    return this.getChildren(this.orderedProperties);
+  getChildren(field: Readonly<ObjectField>) {
+    return this.getChildrenProperties(field, this.orderedProperties)
+      .map((childField) => this.getChildDescriptor(childField));;
   }
 
-  get childrenGroups() {
+  getChildrenGroups(field: Readonly<ObjectField>) {
     const groupsIds: string[] = [];
     const ordoredGroups: Dict<string[]> = {};
 
     if (Objects.isEmpty(this.groups)) {
-      const groupId = UniqueId.get(this.field.name);
+      const groupId = UniqueId.get(field.name);
 
       ordoredGroups[groupId] = this.orderedProperties;
 
@@ -65,7 +68,7 @@ export class ObjectUIDescriptor extends UIDescriptor<ObjectField> implements IOb
       // generate groups
       for (let i = 0; i < this.orderedProperties.length; i++) {
         const property = this.orderedProperties[i];
-        const groupId = reverseGroups[property] || UniqueId.get(this.field.name);
+        const groupId = reverseGroups[property] || UniqueId.get(field.name);
 
         if (this.groups[groupId]) {
           if (!ordoredGroups[groupId]) {
@@ -92,22 +95,25 @@ export class ObjectUIDescriptor extends UIDescriptor<ObjectField> implements IOb
     return groupsIds.map((groupId) => ({
       id: groupId,
       label: this.groups[groupId] ? this.groups[groupId].label : undefined,
-      children: this.getChildren(ordoredGroups[groupId])
+      children: this.getChildrenProperties(field, ordoredGroups[groupId])
     }));
   }
 
-  getChildren(properties: string[]) {
-    return properties
-      .map((property) => this.field.children[property])
-      .map((field) => this.getDescriptor(field));
+  getChildrenProperties(field: Readonly<ObjectField>, properties: string[]) {
+    return properties.map((property) => field.children[property]);
   }
 
-  getDescriptor(field: ObjectFieldChild): IObjectChildDescriptor {
-    const options = this.properties[field.property] || {};
-    const descriptor = UIDescriptor.get(options, field, this.components);
+  getChildDescriptor(childField: ObjectFieldChild): IObjectChildDescriptor {
+    const options = this.properties[childField.property] || {};
+
+    if (this.definition.kind === 'hidden') {
+      options.kind = this.definition.kind;
+    }
+
+    const descriptor = UIDescriptor.get(options, childField, this.components);
 
     return descriptor === null
-      ? UIDescriptor.get({ kind: 'string' }, field, this.components) as any
+      ? UIDescriptor.get({ kind: 'string' }, childField, this.components) as any
       : descriptor;
   }
 
@@ -132,7 +138,7 @@ export class ObjectUIDescriptor extends UIDescriptor<ObjectField> implements IOb
   }
 
   parseDependencies() {
-    const dependencies = this.field.schema.dependencies;
+    const dependencies = this.schema.dependencies;
 
     if (dependencies) {
       Object.keys(dependencies).forEach((key) => {
@@ -152,6 +158,17 @@ export class ObjectUIDescriptor extends UIDescriptor<ObjectField> implements IOb
         }
       });
     }
+  }
+
+  parse(field: ObjectField) {
+    super.parse(field);
+
+    this.parseOrder();
+    this.parseDependencies();
+    this.parseSchemaProperties();
+
+    this.children.push(...this.getChildren(field));
+    this.childrenGroups.push(...this.getChildrenGroups(field));
   }
 }
 

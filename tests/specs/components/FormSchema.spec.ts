@@ -21,7 +21,7 @@ import { UniqueId as UniqueIdLib } from '@/lib/UniqueId';
 import { Objects as ObjectsLib } from '@/lib/Objects';
 import { Components as ComponentsLib } from '@/lib/Components';
 import { NativeComponents as NativeComponentsLib } from '@/lib/NativeComponents';
-import { Elements as ElementsLib } from '@/lib/Elements';
+import { Elements as ElementsLib } from '@/lib/Fieldset';
 import { Parser as ParserLib } from '@/parsers/Parser';
 import { UIDescriptor as UIDescriptorLib } from '@/descriptors/UIDescriptor';
 

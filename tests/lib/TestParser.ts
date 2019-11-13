@@ -1,4 +1,4 @@
-import { Dict, IParser, IDescriptor } from '@/types';
+import { Dict, IParser, IUIDescriptor } from '@/types';
 import { Parser } from '@/parsers/Parser';
 
 import '@/parsers';
@@ -24,7 +24,7 @@ type TestCaseOptions = {
 
 export interface Scope<
   P extends TParser = TParser,
-  D extends IDescriptor = IDescriptor
+  D extends IUIDescriptor = IUIDescriptor
 > {
   value: any;
   parser: any;

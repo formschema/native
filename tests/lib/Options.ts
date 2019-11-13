@@ -4,7 +4,7 @@ import {
   ParserOptions,
   DescriptorInstance,
   UnknowField,
-  IDescriptor,
+  IUIDescriptor,
   UnknowParser
 } from '@/types';
 
@@ -18,7 +18,7 @@ export interface GetOptions extends ParserOptions<any, any> {
 export interface Context {
   props: {
     field: UnknowField;
-    descriptor: IDescriptor;
+    descriptor: IUIDescriptor;
   };
 }
 
@@ -26,7 +26,7 @@ export interface GetResult {
   context: Context;
   parser: UnknowParser;
   field: UnknowField;
-  descriptor: IDescriptor;
+  descriptor: IUIDescriptor;
   schema: any;
   options: any;
 }
@@ -40,7 +40,7 @@ export const Options = {
     }
 
     const { field } = parser;
-    const { descriptor } = parser;
+    const { descriptor } = field;
 
     const context = {
       props: { field, descriptor }

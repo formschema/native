@@ -1,18 +1,18 @@
 import { HelperElement } from '@/components/HelperElement';
 import { Dict, FieldComponent } from '@/types';
-import { Elements } from '@/lib/Elements';
+import { Field } from '@/lib/Field';
 
 export const FieldElement: FieldComponent = {
   name: 'FieldElement',
   functional: true,
   render(h, { data, props, children }) {
     const field = props.field;
+    const descriptor = props.field.descriptor;
 
-    if (field.kind === 'hidden') {
+    if (field.kind === 'hidden' || descriptor.definition.kind === 'hidden') {
       return children;
     }
 
-    const descriptor = props.descriptor;
     const type = field.attrs.type || field.kind;
     const attrs: Dict = {
       'data-fs-kind': field.kind,
@@ -39,7 +39,7 @@ export const FieldElement: FieldComponent = {
       nodes.push(helperNode);
     }
 
-    Elements.renderMessages(h, descriptor, nodes);
+    Field.renderMessages(h, field, nodes);
 
     const wrapperElement = nodes.length === 1
       ? nodes

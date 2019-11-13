@@ -5,7 +5,7 @@ export const HelperElement: HelperComponent = {
   functional: true,
   render(h, { props }) {
     const field = props.field;
-    const descriptor = props.descriptor;
+    const descriptor = props.field.descriptor;
 
     if (descriptor.helper) {
       const tag = field.isRoot ? 'p' : 'span';

@@ -76,7 +76,7 @@
 
   import PrismEditor from 'vue-prism-editor';
   import PlaygroundPanel from './PlaygroundPanel';
-  import FormSchema, { UniqueId } from '../../../dist/FormSchema.esm.min.js';
+  import FormSchema, { UniqueId } from 'FormSchema.esm.min.js';
 
   import InputHiddenSchema from '@/schema/input.hidden.schema';
   import InputHiddenDescriptor from '@/schema/input.hidden.descriptor';

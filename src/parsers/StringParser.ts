@@ -72,8 +72,6 @@ export class StringParser extends ScalarParser<string, StringField> {
   }
 
   parse() {
-    super.parse();
-
     if (this.field.attrs.type === 'file') {
       this.field.attrs.accept = this.schema.contentMediaType;
     }
@@ -94,6 +92,7 @@ export class StringParser extends ScalarParser<string, StringField> {
     this.field.attrs.maxlength = this.schema.maxLength;
 
     this.commit();
+    super.parse();
   }
 
   parseValue(data: unknown) {

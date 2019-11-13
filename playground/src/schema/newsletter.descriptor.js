@@ -1,17 +1,22 @@
 export default {
   properties: {
-    name: {
+    profile: {
+      kind: 'hidden',
       properties: {
-        first_name: {
-          attrs: {
-            placeholder: 'Your First Name',
-            title: 'Please enter your first name'
-          }
-        },
-        last_name: {
-          attrs: {
-            placeholder: 'Your Last Name',
-            title: 'Please enter your last name'
+        name: {
+          properties: {
+            first_name: {
+              attrs: {
+                placeholder: 'Your First Name',
+                title: 'Please enter your first name'
+              }
+            },
+            last_name: {
+              attrs: {
+                placeholder: 'Your Last Name',
+                title: 'Please enter your last name'
+              }
+            }
           }
         }
       }

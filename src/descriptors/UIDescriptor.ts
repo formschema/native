@@ -1,37 +1,45 @@
 import { NativeElements } from '@/lib/NativeElements';
+import { JsonSchema } from '@/types/jsonschema';
 
 import {
   Dict,
-  IDescriptor,
+  IUIDescriptor,
   FieldKind,
   UnknowField,
   Component,
   HelperAttributes,
   LabelAttributes,
-  Descriptor,
+  DescriptorDefinition,
   IComponents
 } from '@/types';
 
 const DESCRIPTORS: Dict<any> = {};
 
-export abstract class UIDescriptor<TField extends UnknowField> implements IDescriptor {
+export abstract class UIDescriptor<
+  TField extends UnknowField,
+  TDescriptor extends DescriptorDefinition,
+  TFieldKind extends FieldKind = FieldKind
+> implements IUIDescriptor<TDescriptor> {
   readonly label: string;
   readonly helper: string;
-  readonly field: TField;
   readonly component: Component;
   readonly props: Dict;
   readonly attrs: Dict<any>;
   readonly labelAttrs: LabelAttributes;
   readonly helperAttrs: HelperAttributes;
   readonly components: IComponents;
+  readonly definition: TDescriptor;
+  readonly visible: boolean;
+  readonly kind: TFieldKind;
+  readonly schema: JsonSchema;
 
   static register(kind: FieldKind, parserClass: any) {
     DESCRIPTORS[kind] = parserClass;
   }
 
   static get<
-    T extends Descriptor = Descriptor
-  >(options: T, field: Readonly<UnknowField>, components?: IComponents): IDescriptor {
+    T extends DescriptorDefinition = DescriptorDefinition
+  >(options: T, field: Readonly<UnknowField>, components?: IComponents): IUIDescriptor {
     if (!DESCRIPTORS.hasOwnProperty(field.kind)) {
       throw new TypeError(`Unknow descriptor kind '${field.kind}'`);
     }
@@ -39,39 +47,36 @@ export abstract class UIDescriptor<TField extends UnknowField> implements IDescr
     return new DESCRIPTORS[field.kind](options, field, components);
   }
 
-  constructor(options: Descriptor, field: TField, components?: IComponents) {
-    this.field = field;
-    this.attrs = options.attrs || {};
-    this.props = options.props || {};
+  constructor(definition: TDescriptor, field: TField, components?: IComponents) {
+    this.visible = typeof definition.visible === 'boolean' ? definition.visible : true;
+    this.kind = field.kind;
+    this.attrs = { ...field.attrs, ...(definition.attrs || {}) };
+    this.props = definition.props || {};
     this.components = components || NativeElements;
-    this.component = options.component || this.components.get(this.kind) || NativeElements.get(this.kind);
+    this.component = definition.component || this.components.get(this.kind) || NativeElements.get(this.kind);
+    this.schema = field.schema;
+    this.definition = definition;
 
-    for (const key in this.attrs) {
-      this.field.attrs[key] = this.attrs[key];
-    }
-
-    this.label = options.hasOwnProperty('label')
-      ? options.label || ''
+    this.label = definition.hasOwnProperty('label')
+      ? definition.label || ''
       : field.schema.title || '';
 
-    this.helper = options.hasOwnProperty('helper')
-      ? options.helper || ''
+    this.helper = definition.hasOwnProperty('helper')
+      ? definition.helper || ''
       : field.schema.description || '';
-
-    const self = this;
 
     this.labelAttrs = {
       get id() {
-        return self.label ? `${field.attrs.id}-label` : undefined;
+        return definition.label ? `${field.attrs.id}-label` : undefined;
       },
       get for() {
-        return field.attrs.id;
+        return field.attrs.id as string;
       }
     };
 
     this.helperAttrs = {
       get id() {
-        return self.helper ? `${field.attrs.id}-helper` : undefined;
+        return field.descriptor.helper ? `${field.attrs.id}-helper` : undefined;
       }
     };
 
@@ -80,7 +85,7 @@ export abstract class UIDescriptor<TField extends UnknowField> implements IDescr
      * associate instructions with form controls
      * @see https://www.w3.org/WAI/tutorials/forms/instructions/#providing-instructions-outside-labels
      */
-    Object.defineProperties(this.field.attrs, {
+    Object.defineProperties(this.attrs, {
       'aria-labelledby': {
         enumerable: true,
         configurable: true,
@@ -94,7 +99,6 @@ export abstract class UIDescriptor<TField extends UnknowField> implements IDescr
     });
   }
 
-  get kind() {
-    return this.field.kind;
+  parse(field: TField) {
   }
 }

@@ -17,8 +17,6 @@ export class BooleanParser extends ScalarParser<boolean, BooleanField> {
   }
 
   parse() {
-    super.parse();
-
     if (this.field.attrs.type !== 'radio') {
       Object.defineProperty(this.field.attrs, 'checked', {
         enumerable: true,
@@ -31,6 +29,7 @@ export class BooleanParser extends ScalarParser<boolean, BooleanField> {
     };
 
     this.commit();
+    super.parse();
   }
 
   parseValue(checked: boolean) {

@@ -2,7 +2,7 @@ import { Parser } from '@/parsers/Parser';
 import { ListField, ListItemModel, ParserOptions, UnknowParser, ListDescriptor } from '@/types';
 import { ListUIDescriptor } from '@/descriptors/ListUIDescriptor';
 
-export class ListParser extends Parser<unknown, ListField, ListUIDescriptor> {
+export class ListParser extends Parser<unknown, ListField, ListDescriptor, ListUIDescriptor> {
   constructor(options: ParserOptions<unknown, ListField, ListDescriptor>, parent?: UnknowParser) {
     super('list', options, parent);
 
@@ -39,6 +39,7 @@ export class ListParser extends Parser<unknown, ListField, ListUIDescriptor> {
     this.field.items = this.items;
 
     this.commit();
+    super.parse();
   }
 }
 

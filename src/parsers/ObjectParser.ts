@@ -8,7 +8,7 @@ import { Value } from '@/lib/Value';
 import { Dict, ObjectField, ParserOptions, ObjectFieldChild, UnknowParser, ObjectDescriptor, UnknowField } from '@/types';
 import { ObjectUIDescriptor } from '@/descriptors/ObjectUIDescriptor';
 
-export class ObjectParser extends SetParser<Dict, ObjectField, ObjectUIDescriptor> {
+export class ObjectParser extends SetParser<Dict, ObjectField, ObjectDescriptor, ObjectUIDescriptor> {
   properties: Dict<JsonSchema> = {};
   dependencies: Dict<string[]> = {};
   childrenParsers: Dict<UnknowParser> = {};
@@ -26,7 +26,11 @@ export class ObjectParser extends SetParser<Dict, ObjectField, ObjectUIDescripto
   get children(): Dict<ObjectFieldChild> {
     const name = this.options.name;
     const fields: Dict<ObjectFieldChild> = {};
-    const descriptorProperties = this.descriptor.properties || {};
+
+    const descriptorProperties = this.options.descriptor
+      ? this.options.descriptor.properties || {}
+      : {};
+
     const requiredFields = this.schema.required instanceof Array
       ? this.schema.required
       : [];
@@ -171,6 +175,7 @@ export class ObjectParser extends SetParser<Dict, ObjectField, ObjectUIDescripto
     }
 
     this.commit();
+    super.parse();
   }
 
   parseDependencies() {

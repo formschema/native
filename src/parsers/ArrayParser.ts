@@ -6,7 +6,7 @@ import { Value } from '@/lib/Value';
 import { ArrayField, ParserOptions, FieldKind, ArrayItemField, UnknowParser, ArrayDescriptor } from '@/types';
 import { ArrayUIDescriptor } from '@/descriptors/ArrayUIDescriptor';
 
-export class ArrayParser extends SetParser<any, ArrayField, ArrayUIDescriptor> {
+export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, ArrayUIDescriptor> {
   readonly items: JsonSchema[] = [];
   additionalItems?: JsonSchema;
   minItems = 0;
@@ -121,9 +121,11 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayUIDescriptor> {
       ? itemSchema.default
       : this.model[index];
 
-    const descriptorItem = this.descriptor.items instanceof Array
-      ? this.descriptor.items[index]
-      : this.descriptor.items || { kind };
+    const descriptorItem = this.options.descriptor && this.options.descriptor.items
+      ? this.options.descriptor.items instanceof Array
+        ? this.options.descriptor.items[index]
+        : this.options.descriptor.items
+      : { kind };
 
     const itemName = this.options.name || itemModel;
     const name = kind === 'enum' && this.radioIndex++
@@ -136,7 +138,7 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayUIDescriptor> {
       model: itemModel,
       id: `${this.id}-${index}`,
       name: this.getFieldItemName(name),
-      descriptor: descriptorItem,
+      descriptor: descriptorItem as any,
       components: this.root.options.components
     }, this);
 
@@ -313,7 +315,9 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayUIDescriptor> {
 
     this.parseUniqueItems();
     this.setCount(this.count);
+
     this.commit();
+    super.parse();
   }
 
   parseCheckboxField(parser: any, itemModel: unknown) {

@@ -3,7 +3,7 @@ import { FormSchemaComponent, SubmitEvent } from '@/types';
 import { UniqueId as UniqueIdLib } from '@/lib/UniqueId';
 import { Objects as ObjectsLib } from '@/lib/Objects';
 import { Components as ComponentsLib } from '@/lib/Components';
-import { Elements as ElementsLib } from '@/lib/Elements';
+import { Fieldset as ElementsLib } from '@/lib/Fieldset';
 import { Parser as ParserLib } from '@/parsers/Parser';
 import { NativeElements as NativeElementsLib } from '@/lib/NativeElements';
 import { NativeComponents as NativeComponentsLib } from '@/lib/NativeComponents';
@@ -192,17 +192,16 @@ const FormSchema: FormSchemaComponent = {
     }
 
     const attrs = {
-      ...this.parser.field.attrs,
+      ...this.parser.field.descriptor.attrs,
       disabled: this.disabled
     };
 
     const props = {
-      field: this.parser.field,
-      descriptor: this.parser.descriptor
+      field: this.parser.field
     };
 
     const key = this.key;
-    const element = createElement(this.parser.descriptor.component, { key, attrs, props });
+    const element = createElement(props.field.descriptor.component, { key, attrs, props });
     const nodes = [ element ];
 
     if (this.$slots.default) {

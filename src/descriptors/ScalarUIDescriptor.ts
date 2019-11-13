@@ -1,8 +1,9 @@
 import { UIDescriptor } from '@/descriptors/UIDescriptor';
-import { ScalarField, IScalarDescriptor } from '@/types';
+import { ScalarField, IScalarDescriptor, ScalarDescriptor, ScalarKind } from '@/types';
 
-export class ScalarUIDescriptor extends UIDescriptor<ScalarField> implements IScalarDescriptor {
-}
+export class ScalarUIDescriptor
+  extends UIDescriptor<ScalarField, ScalarDescriptor, ScalarKind>
+  implements IScalarDescriptor {}
 
 UIDescriptor.register('string', ScalarUIDescriptor);
 UIDescriptor.register('password', ScalarUIDescriptor);

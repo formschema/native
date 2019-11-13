@@ -8,7 +8,7 @@ export const StateElement: StateComponent = {
     return h(FieldElement, data, [
       h('input', {
         key: field.key,
-        attrs: field.attrs,
+        attrs: field.descriptor.attrs,
         on: {
           change: ({ target }: InputEvent) => field.setValue(target.checked)
         }

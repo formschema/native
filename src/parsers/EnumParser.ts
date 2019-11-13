@@ -13,7 +13,7 @@ import {
   Dict
 } from '@/types';
 
-export class EnumParser extends SetParser<unknown, EnumField, EnumUIDescriptor> {
+export class EnumParser extends SetParser<unknown, EnumField, EnumDescriptor, EnumUIDescriptor> {
   childrenParsers: UnknowParser[] = [];
 
   constructor(options: ParserOptions<unknown, EnumField, EnumDescriptor>, parent?: UnknowParser) {
@@ -27,7 +27,10 @@ export class EnumParser extends SetParser<unknown, EnumField, EnumUIDescriptor> 
 
     const radioId = this.options.id || UniqueId.get();
     const radioName = this.options.name || UniqueId.get();
-    const descriptorItems = this.descriptor.items || {};
+
+    const descriptorItems = this.options.descriptor && this.options.descriptor.items
+      ? this.options.descriptor.items
+      : {};
 
     this.childrenParsers.splice(0);
 
@@ -101,6 +104,7 @@ export class EnumParser extends SetParser<unknown, EnumField, EnumUIDescriptor> 
 
     this.updateInputsState();
     this.commit();
+    super.parse();
   }
 }
 

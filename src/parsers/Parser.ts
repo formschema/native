@@ -13,8 +13,9 @@ import {
   UnknowParser,
   Field,
   UnknowField,
-  IDescriptor,
-  Message
+  IUIDescriptor,
+  Message,
+  DescriptorDefinition
 } from '@/types';
 
 const PARSERS: Dict<any> = {};
@@ -22,8 +23,9 @@ const PARSERS: Dict<any> = {};
 export abstract class Parser<
   TModel,
   TField extends Field<any, any, any>,
-  TDescriptor extends IDescriptor
-> implements IParser<TModel, TField> {
+  TDescriptor extends DescriptorDefinition,
+  TUIDescriptor extends IUIDescriptor
+> implements IParser<TModel, TField, TDescriptor> {
   readonly id: string;
   readonly isRoot: boolean;
   readonly parent?: UnknowParser;
@@ -31,9 +33,8 @@ export abstract class Parser<
   model: TModel;
   rawValue: TModel;
   readonly field: TField;
-  readonly options: ParserOptions<TModel, TField>;
+  readonly options: ParserOptions<TModel, TField, TDescriptor>;
   readonly schema: JsonSchema;
-  readonly descriptor: TDescriptor;
 
   static register(kind: ParserKind, parserClass: any) {
     PARSERS[kind] = parserClass;
@@ -73,7 +74,7 @@ export abstract class Parser<
     return parser;
   }
 
-  constructor(kind: FieldKind, options: ParserOptions<TModel, TField>, parent?: UnknowParser) {
+  constructor(kind: FieldKind, options: ParserOptions<TModel, TField, TDescriptor>, parent?: UnknowParser) {
     this.id = options.id || UniqueId.get(options.name);
     this.parent = parent;
     this.options = options;
@@ -147,8 +148,6 @@ export abstract class Parser<
         this.messages.splice(0);
       }
     } as TField;
-
-    this.descriptor = UIDescriptor.get(options.descriptor || {}, this.field, options.components) as any;
   }
 
   get root() {
@@ -209,5 +208,9 @@ export abstract class Parser<
     }
   }
 
-  abstract parse(): void;
+  parse() {
+    this.field.descriptor = UIDescriptor.get(this.options.descriptor || {}, this.field, this.options.components) as TUIDescriptor;
+
+    this.field.descriptor.parse(this.field);
+  }
 }

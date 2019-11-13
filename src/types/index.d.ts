@@ -96,6 +96,7 @@ export interface Message {
 
 export interface Field<
   TKind extends FieldKind,
+  TDescriptor extends IUIDescriptor = IUIDescriptor,
   TAttributes extends Attributes = Attributes,
   TModel = any
 > {
@@ -111,6 +112,7 @@ export interface Field<
   root: Field<any>;
   attrs: TAttributes;
   hasChildren: boolean;
+  descriptor: TDescriptor;
 
   // Value
   initialValue: TModel;
@@ -133,7 +135,7 @@ export interface ScalarField<
   TKind extends ScalarKind = ScalarKind,
   TAttributes extends Attributes = Attributes,
   TModel extends Scalar | unknown = unknown
-> extends Field<ScalarKind, Attributes, Scalar> {
+> extends Field<ScalarKind, IScalarDescriptor, Attributes, Scalar> {
   hasChildren: false;
 }
 
@@ -147,14 +149,15 @@ export type NullField = ScalarField<'null', NullAttributes, null>;
 export type StringField = ScalarField<'string', StringAttributes, string>;
 export type RadioField = ScalarField<'radio', RadioAttributes, string>;
 export type InputField = BooleanField | NumberField | NullField | StringField | RadioField;
-export type UnknowField = Field<any, Attributes, any>;
+export type UnknowField = Field<any>;
 
 export interface SetField<
   TKind extends FieldKind,
+  TSetDescriptor extends ISetDescriptor,
   TModel,
   TChildField extends UnknowField,
   TAttributes extends Attributes = Attributes,
-> extends Field<TKind, TAttributes, TModel> {
+> extends Field<TKind, TSetDescriptor, TAttributes, TModel> {
   hasChildren: true;
   children: Dict<TChildField>;
   childrenList: TChildField[];
@@ -167,12 +170,12 @@ export interface SetField<
   getField: (path: string) => UnknowField | null;
 }
 
-export type UnknowSetField = SetField<any, unknown, any>;
+export type UnknowSetField = SetField<any, ISetDescriptor, unknown, any>;
 
-export interface EnumField extends SetField<'enum', unknown, RadioField> {
+export interface EnumField extends SetField<'enum', IEnumDescriptor, unknown, RadioField> {
 }
 
-export interface ArrayItemField extends Field<any, Attributes> {
+export interface ArrayItemField extends Field<any, IArrayDescriptor, Attributes> {
   buttons: {
     moveUp: ActionButton<ActionMoveTrigger>;
     moveDown: ActionButton<ActionMoveTrigger>;
@@ -189,7 +192,7 @@ export interface ActionButton<T extends Function> {
   trigger: T;
 }
 
-export interface ArrayField extends SetField<'array', any[], ArrayItemField> {
+export interface ArrayField extends SetField<'array', IArrayDescriptor, any[], ArrayItemField> {
   uniqueItems: boolean;
   sortable: boolean;
   pushButton: ActionButton<ActionPushTrigger>;
@@ -200,22 +203,22 @@ export interface ListItemModel {
   selected: boolean;
 }
 
-export interface ListField extends Field<'enum', Attributes> {
+export interface ListField extends Field<'enum', IListDescriptor, Attributes> {
   items: ListItemModel[];
   hasChildren: false;
 }
 
-export interface ObjectFieldChild extends Field<any, Attributes> {
+export interface ObjectFieldChild extends Field<any, IObjectDescriptor, Attributes> {
   property: string;
 }
 
-export interface ObjectField extends SetField<'object', Dict, ObjectFieldChild> {
+export interface ObjectField extends SetField<'object', IObjectDescriptor, Dict, ObjectFieldChild> {
 }
 
 export interface ParserOptions<
   TModel,
   TField extends Field<any, any, any> = UnknowField,
-  TDescriptor extends Descriptor = Descriptor
+  TDescriptor extends DescriptorDefinition = DescriptorDefinition
 > {
   kind?: FieldKind;
   readonly key?: string;
@@ -228,18 +231,19 @@ export interface ParserOptions<
   components?: IComponents;
   readonly bracketedObjectInputName?: boolean;
   onChange?: (value: TModel, field: TField) => void;
-  requestRender?: (updatedFields: Field<any, any, TModel>[]) => void;
+  requestRender?: (updatedFields: Field<any, IUIDescriptor, any, TModel>[]) => void;
 }
 
 export type UnknowParser = IParser<any>;
 
 export interface IParser<
   TModel,
-  TField extends Field<any, Attributes, any> = any
+  TField extends Field<any> = any,
+  TDescriptor extends DescriptorDefinition = DescriptorDefinition
 > {
   readonly id: string;
   readonly isRoot: boolean;
-  readonly options: ParserOptions<TModel, TField>;
+  readonly options: ParserOptions<TModel, TField, TDescriptor>;
   readonly parent?: UnknowParser;
   readonly root: UnknowParser;
   readonly initialValue: TModel | unknown;
@@ -248,7 +252,6 @@ export interface IParser<
   readonly kind: string;
   readonly field: TField;
   readonly schema: JsonSchema;
-  readonly descriptor: IDescriptor;
   parse: () => void;
   reset: () => void;
   clear: () => void;
@@ -258,50 +261,55 @@ export interface IParser<
 
 export interface ISetParser<
   TModel,
-  TField extends SetField<any, TModel, UnknowField>
-> extends IParser<TModel, TField> {
+  TField extends SetField<any, ISetDescriptor, TModel, UnknowField>,
+  TDescriptor extends DescriptorDefinition = DescriptorDefinition
+> extends IParser<TModel, TField, TDescriptor> {
 }
 
-export interface DescriptorProperties<TField extends Field<any, any>> {
-  readonly field: TField;
+export interface DescriptorProperties<TDescriptor extends DescriptorDefinition = DescriptorDefinition> {
   readonly labelAttrs: LabelAttributes;
   readonly helperAttrs: HelperAttributes;
   readonly components: IComponents;
+  readonly definition: TDescriptor;
 }
 
-export interface IDescriptor<
-  T extends Field<any, any> = UnknowField
-> extends Required<Descriptor>, DescriptorProperties<T> {
+export interface IUIDescriptor<
+  TDescriptor extends DescriptorDefinition = DescriptorDefinition
+> extends Required<DescriptorDefinition>, DescriptorProperties<TDescriptor> {
 }
 
-export interface IScalarDescriptor extends DescriptorProperties<ScalarField>, Required<ScalarDescriptor> {}
+export interface IScalarDescriptor extends DescriptorProperties<ScalarDescriptor>, Required<ScalarDescriptor> {}
 
-export interface IObjectDescriptor extends DescriptorProperties<ObjectField>, Required<ObjectDescriptor> {
+export interface IObjectDescriptor extends DescriptorProperties<ObjectDescriptor>, Required<ObjectDescriptor> {
   readonly children: IObjectChildDescriptor[];
   readonly childrenGroups: IObjectGroupItem[];
+  getChildDescriptor: (childField: ObjectFieldChild) => IObjectChildDescriptor;
 }
 
-export interface IObjectChildDescriptor extends IDescriptor<ObjectFieldChild> {}
+export interface IObjectChildDescriptor extends IUIDescriptor<ObjectFieldChild> {}
 
 export interface IObjectGroupItem {
   id: string;
   label?: string;
-  children: IObjectChildDescriptor[];
+  children: ObjectFieldChild[];
 }
 
-export interface IArrayChildDescriptor extends IDescriptor<ArrayItemField> {
+export interface IArrayChildDescriptor extends IUIDescriptor<ArrayItemField> {
   buttons: ButtonDescriptor<Function>[];
 }
 
-export interface IArrayDescriptor extends DescriptorProperties<ArrayField>, Required<ArrayDescriptor> {
-  children: IArrayChildDescriptor[];
+export interface IArrayDescriptor extends DescriptorProperties<ArrayDescriptor>, Required<ArrayDescriptor> {
+  readonly children: IArrayChildDescriptor[];
 }
 
-export type IEnumItemDescriptor = IDescriptor<RadioField>;
+export type IEnumItemDescriptor = IUIDescriptor<RadioField>;
 export type ISetDescriptor = IEnumDescriptor | IArrayDescriptor | IObjectDescriptor;
 
-export interface IItemsUIDescriptor<T extends Field<any, any>, S extends Field<any, any>> extends IDescriptor<T> {
-}
+export interface IItemsUIDescriptor<
+  T extends Field<any, any>,
+  S extends Field<any, any>,
+  D extends DescriptorDefinition = DescriptorDefinition
+> extends IUIDescriptor<D> {}
 
 export interface IEnumDescriptor extends IItemsUIDescriptor<EnumField, RadioField> {
   readonly children: IEnumItemDescriptor[];
@@ -318,10 +326,11 @@ export interface ListFieldItemDescriptor extends ListItemModel {
 export type SetDescriptor = EnumDescriptor | ArrayDescriptor | ObjectDescriptor;
 export type DescriptorInstance = ScalarDescriptor | SetDescriptor | ListDescriptor;
 
-export interface Descriptor<TKind extends FieldKind = FieldKind> {
+export interface DescriptorDefinition<TKind extends FieldKind = FieldKind> {
   kind?: TKind;
   label?: string;
   helper?: string;
+  visible?: boolean; // by default true. If false, component will be ignored on rendering
   component?: Component;
   attrs?: {
     [attr: string]: unknown;
@@ -336,20 +345,21 @@ export interface Descriptor<TKind extends FieldKind = FieldKind> {
  * boolean, null, hidden field, textarea element, image and file
  * inputs, radio and checkbox elements
  */
-export interface ScalarDescriptor extends Descriptor<ScalarKind> {
+export interface ScalarDescriptor extends DescriptorDefinition<ScalarKind> {
 }
 
 /**
  * Use to describe grouped object properties
  */
-export interface ObjectGroupDescriptor extends Descriptor {
+export interface ObjectGroupDescriptor extends DescriptorDefinition {
   properties: string[];
 }
 
 /**
  * Describe JSON Schema with type `object`
  */
-export interface ObjectDescriptor extends Descriptor {
+export interface ObjectDescriptor extends DescriptorDefinition {
+  layout?: Component; // default: 'fieldset'
   properties?: {
     [schemaProperty: string]: DescriptorInstance;
   };
@@ -362,7 +372,7 @@ export interface ObjectDescriptor extends Descriptor {
 /**
  * Describe JSON Schema with key `enum`
  */
-export interface ItemsDescriptor<TKind extends ItemKind> extends Descriptor<TKind> {
+export interface ItemsDescriptor<TKind extends ItemKind> extends DescriptorDefinition<TKind> {
   items?: {
     [itemValue: string]: ScalarDescriptor;
   };
@@ -392,7 +402,7 @@ export interface ButtonDescriptor<T extends Function> extends ActionButton<T> {
 /**
  * Describe JSON Schema with type `array`
  */
-export interface ArrayDescriptor extends Descriptor {
+export interface ArrayDescriptor extends DescriptorDefinition {
   items?: DescriptorInstance[] | DescriptorInstance;
   pushButton: ButtonDescriptor<ActionPushTrigger>;
   buttons: {
@@ -423,7 +433,7 @@ export interface FormSchemaVue extends Vue {
   search: boolean;
   disabled: boolean;
   components: IComponents;
-  descriptor: DescriptorInstance | IDescriptor;
+  descriptor: DescriptorInstance | IUIDescriptor;
   validator: (field: UnknowField) => boolean;
 
   // data
@@ -477,30 +487,29 @@ export interface WatchOptionsWithHandler<V extends Vue, T> extends WatchOptions 
   handler: WatchHandler<V, T>;
 }
 
-export interface ElementProps<T extends Field<any>, D extends IDescriptor> {
+export interface ElementProps<T extends Field<any>> {
   field: T;
-  descriptor: D;
 }
 
 export interface SubmitEvent extends Event {
   field: UnknowField;
 }
 
-export interface ButtonElementProps extends ElementProps<UnknowField, IDescriptor> {
+export interface ButtonElementProps extends ElementProps<UnknowField> {
   button: ButtonDescriptor<Function>;
 }
 
 export type ArrayButtonComponent = FunctionalComponentOptions<ButtonElementProps>;
 export type MessageComponent = FunctionalComponentOptions<Required<Message>>;
-export type ArrayComponent = FunctionalComponentOptions<ElementProps<ArrayField, IArrayDescriptor>>;
-export type BooleanComponent = FunctionalComponentOptions<ElementProps<BooleanField, IScalarDescriptor>>;
-export type InputComponent = FunctionalComponentOptions<ElementProps<InputField, IScalarDescriptor>>;
-export type StateComponent = FunctionalComponentOptions<ElementProps<CheckboxField, IScalarDescriptor>>;
-export type FieldComponent = FunctionalComponentOptions<ElementProps<UnknowField, IScalarDescriptor>>;
-export type FieldsetComponent = FunctionalComponentOptions<ElementProps<ObjectField, IObjectDescriptor>>;
-export type HelperComponent = FunctionalComponentOptions<ElementProps<UnknowField, IDescriptor>>;
-export type ListComponent = FunctionalComponentOptions<ElementProps<ListField, IListDescriptor>>;
-export type TextareaComponent = FunctionalComponentOptions<ElementProps<StringField, IScalarDescriptor>>;
+export type ArrayComponent = FunctionalComponentOptions<ElementProps<ArrayField>>;
+export type BooleanComponent = FunctionalComponentOptions<ElementProps<BooleanField>>;
+export type InputComponent = FunctionalComponentOptions<ElementProps<InputField>>;
+export type StateComponent = FunctionalComponentOptions<ElementProps<CheckboxField>>;
+export type FieldComponent = FunctionalComponentOptions<ElementProps<UnknowField>>;
+export type FieldsetComponent = FunctionalComponentOptions<ElementProps<ObjectField>>;
+export type HelperComponent = FunctionalComponentOptions<ElementProps<UnknowField>>;
+export type ListComponent = FunctionalComponentOptions<ElementProps<ListField>>;
+export type TextareaComponent = FunctionalComponentOptions<ElementProps<StringField>>;
 
 export interface InputEvent extends Event {
   readonly target: any;

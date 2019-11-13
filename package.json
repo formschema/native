@@ -58,7 +58,7 @@
     "rollup-plugin-typescript": "^1.0.1",
     "ts-jest": "^24.1.0",
     "tslib": "^1.10.0",
-    "typescript": "^3.6.3",
+    "typescript": "^3.7.2",
     "typescript-eslint-parser": "^22.0.0",
     "vue": "^2.6.10",
     "vue-template-compiler": "^2.6.10"

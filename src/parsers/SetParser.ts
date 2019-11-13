@@ -22,12 +22,13 @@ function getFieldByIndex(field: UnknowSetField, index: string) {
 
 export abstract class SetParser<
   TModel,
-  TField extends SetField<any, TModel, UnknowField>,
-  TDescriptor extends ISetDescriptor
-> extends Parser<TModel, TField, TDescriptor> implements ISetParser<TModel, TField> {
+  TField extends SetField<any, ISetDescriptor, TModel, UnknowField>,
+  TSetDescriptor extends SetDescriptor,
+  TSetUIDescriptor extends ISetDescriptor
+> extends Parser<TModel, TField, TSetDescriptor, TSetUIDescriptor> implements ISetParser<TModel, TField, TSetDescriptor> {
   constructor(
     kind: 'enum' | 'array' | 'object',
-    options: ParserOptions<TModel, TField, SetDescriptor>,
+    options: ParserOptions<TModel, TField, TSetDescriptor>,
     parent?: UnknowParser
   ) {
     super(kind, options, parent);
