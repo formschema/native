@@ -45,6 +45,7 @@ module.exports = {
     'no-debugger': 'error',
     'no-lonely-if': 'error',
     'no-plusplus': 'off',
+    'no-continue': 'off',
     'lines-between-class-members': 'off',
     'class-methods-use-this': ['error', {
       exceptMethods: ['type', 'kind', 'parseValue']

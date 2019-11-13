@@ -1,12 +1,12 @@
 import { CreateElement } from 'vue';
-import { IObjectChildDescriptor, ObjectField, ObjectFieldChild } from '@/types';
+import { ObjectField, ObjectFieldChild } from '@/types';
 
 export const Fieldset = {
   renderChildren(h: CreateElement, field: ObjectField, children: ObjectFieldChild[] = field.childrenList) {
     return children
       .map((childField) => ({
         childField,
-        childDescriptor: field.descriptor.getChildDescriptor(childField),
+        childDescriptor: field.descriptor.getChildDescriptor(childField)
       }))
       .filter(({ childDescriptor }) => childDescriptor.visible)
       .map(({ childDescriptor, childField }) => h(childDescriptor.component, {

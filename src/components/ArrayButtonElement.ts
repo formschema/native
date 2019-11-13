@@ -3,7 +3,7 @@ import { ArrayButtonComponent } from '@/types';
 export const ArrayButtonElement: ArrayButtonComponent = {
   functional: true,
   name: 'ArrayButtonElement',
-  render(h, { props: { button, field } }) {
+  render(h, { props: { button } }) {
     return h('button', {
       attrs: {
         type: 'button',

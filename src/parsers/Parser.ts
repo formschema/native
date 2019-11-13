@@ -209,7 +209,11 @@ export abstract class Parser<
   }
 
   parse() {
-    this.field.descriptor = UIDescriptor.get(this.options.descriptor || {}, this.field, this.options.components) as TUIDescriptor;
+    this.field.descriptor = UIDescriptor.get(
+      this.options.descriptor || {},
+      this.field,
+      this.options.components
+    ) as TUIDescriptor;
 
     this.field.descriptor.parse(this.field);
   }

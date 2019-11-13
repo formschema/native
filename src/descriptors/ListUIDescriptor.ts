@@ -1,14 +1,9 @@
 import { UIDescriptor } from '@/descriptors/UIDescriptor';
 import { ListDescriptor, ListField, ListFieldItemDescriptor, UnknowField, IListDescriptor } from '@/types';
 import { ItemUIDescriptor } from './ItemUIDescriptor';
-import { Components } from '@/lib/Components';
 
 export class ListUIDescriptor extends ItemUIDescriptor<ListField, UnknowField, ListDescriptor> implements IListDescriptor {
   readonly options: ListFieldItemDescriptor[] = [];
-
-  constructor(options: ListDescriptor, field: Readonly<ListField>, components: Components) {
-    super(options, field, components);
-  }
 
   getLabel(value: unknown) {
     const item = this.items[value as any];
