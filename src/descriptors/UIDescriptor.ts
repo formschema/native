@@ -83,5 +83,8 @@ export abstract class UIDescriptor<
     this.attrs['aria-describedby'] = this.helperAttrs.id;
   }
 
-  parse(field: TField) {}
+  parse(field: TField) {
+    // Make sure descriptor.attrs is sync with field.attrs
+    Object.assign(this.attrs, field.attrs, this.definition.attrs || {});
+  }
 }

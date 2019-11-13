@@ -381,6 +381,7 @@ export interface ItemsDescriptor<TKind extends ItemKind> extends DescriptorDefin
  * Describe HTML Radio Elements
  */
 export interface EnumDescriptor extends ItemsDescriptor<'enum'> {
+  layout?: Component; // default: 'fieldset'
 }
 
 /**
@@ -402,6 +403,7 @@ export interface ButtonDescriptor<T extends Function> extends ActionButton<T> {
  * Describe JSON Schema with type `array`
  */
 export interface ArrayDescriptor extends DescriptorDefinition {
+  layout?: Component; // default: 'fieldset'
   items?: DescriptorInstance[] | DescriptorInstance;
   pushButton: ButtonDescriptor<ActionPushTrigger>;
   buttons: {

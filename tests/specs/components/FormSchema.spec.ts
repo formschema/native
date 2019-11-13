@@ -9,7 +9,7 @@ import FormSchema, {
   UniqueId,
   Objects,
   Components,
-  Elements,
+  Fieldset,
   Parser,
   UIDescriptor,
   NativeComponents
@@ -21,7 +21,7 @@ import { UniqueId as UniqueIdLib } from '@/lib/UniqueId';
 import { Objects as ObjectsLib } from '@/lib/Objects';
 import { Components as ComponentsLib } from '@/lib/Components';
 import { NativeComponents as NativeComponentsLib } from '@/lib/NativeComponents';
-import { Elements as ElementsLib } from '@/lib/Fieldset';
+import { Fieldset as FieldsetLib } from '@/lib/Fieldset';
 import { Parser as ParserLib } from '@/parsers/Parser';
 import { UIDescriptor as UIDescriptorLib } from '@/descriptors/UIDescriptor';
 
@@ -54,7 +54,7 @@ const schema: JsonSchema = {
 
 describe('components/FormSchema', () => {
   describe('exported libraries', () => {
-    it('should successfully export the GLOBAL.Elements library', () => {
+    it('should successfully export the GLOBAL.Fieldset library', () => {
       expect(GLOBAL.Elements).toBe(NativeElements);
     });
 
@@ -74,8 +74,8 @@ describe('components/FormSchema', () => {
       expect(NativeComponents).toBe(NativeComponentsLib);
     });
 
-    it('should successfully export the Elements library', () => {
-      expect(Elements).toBe(ElementsLib);
+    it('should successfully export the Fieldset library', () => {
+      expect(Fieldset).toBe(FieldsetLib);
     });
 
     it('should successfully export the Parser library', () => {

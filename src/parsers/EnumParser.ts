@@ -35,7 +35,7 @@ export class EnumParser extends SetParser<unknown, EnumField, EnumDescriptor, En
     this.childrenParsers.splice(0);
 
     return this.schema.enum
-      .map((item: any): JsonSchema => ({
+      .map((item: unknown): JsonSchema => ({
         ...this.schema,
         default: item,
         const: undefined,
@@ -67,7 +67,7 @@ export class EnumParser extends SetParser<unknown, EnumField, EnumDescriptor, En
             this.commit();
           };
 
-          fields[itemSchema.default as any] = parser.field;
+          fields[item] = parser.field;
           this.childrenParsers.push(parser);
         }
 
@@ -91,10 +91,12 @@ export class EnumParser extends SetParser<unknown, EnumField, EnumDescriptor, En
   }
 
   updateInputsState() {
-    for (const key in this.field.children) {
-      const item = this.field.children[key];
+    for (const itemField of this.field.childrenList) {
+      itemField.attrs.checked = itemField.value === this.model;
 
-      item.attrs.checked = item.value === this.model;
+      if (itemField.attrs.checked) {
+        itemField.descriptor.attrs.checked = 'checked';
+      }
     }
   }
 

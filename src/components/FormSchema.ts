@@ -3,7 +3,7 @@ import { FormSchemaComponent, SubmitEvent } from '@/types';
 import { UniqueId as UniqueIdLib } from '@/lib/UniqueId';
 import { Objects as ObjectsLib } from '@/lib/Objects';
 import { Components as ComponentsLib } from '@/lib/Components';
-import { Fieldset as ElementsLib } from '@/lib/Fieldset';
+import { Fieldset as FieldsetLib } from '@/lib/Fieldset';
 import { Parser as ParserLib } from '@/parsers/Parser';
 import { NativeElements as NativeElementsLib } from '@/lib/NativeElements';
 import { NativeComponents as NativeComponentsLib } from '@/lib/NativeComponents';
@@ -19,7 +19,7 @@ export const GLOBAL = {
 export const Objects = ObjectsLib;
 export const UniqueId = UniqueIdLib;
 export const Components = ComponentsLib;
-export const Elements = ElementsLib;
+export const Fieldset = FieldsetLib;
 export const Parser = ParserLib;
 export const UIDescriptor = UIDescriptorLib;
 export const NativeComponents = NativeComponentsLib;

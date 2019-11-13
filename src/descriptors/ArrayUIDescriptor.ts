@@ -8,7 +8,8 @@ import {
   ButtonDescriptor,
   ActionPushTrigger,
   DescriptorInstance,
-  IArrayChildDescriptor
+  IArrayChildDescriptor,
+  Component
 } from '@/types';
 
 function parseActionButton(type: string, button: any, itemField: any): any {
@@ -40,6 +41,7 @@ const BUTTONS: any = {
 };
 
 export class ArrayUIDescriptor extends UIDescriptor<ArrayField, ArrayDescriptor> implements IArrayDescriptor {
+  readonly layout: Component;
   items: DescriptorInstance[] | DescriptorInstance = [];
   pushButton: ButtonDescriptor<ActionPushTrigger> = {} as any;
   buttons: any = {};
@@ -47,6 +49,8 @@ export class ArrayUIDescriptor extends UIDescriptor<ArrayField, ArrayDescriptor>
 
   constructor(options: ArrayDescriptor, field: Readonly<ArrayField>, components: Components) {
     super(options, field, components);
+
+    this.layout = options.layout || 'fieldset';
 
     if (options.items) {
       this.items = options.items;

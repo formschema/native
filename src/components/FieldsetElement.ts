@@ -24,14 +24,14 @@ export const FieldsetElement: FieldsetComponent = {
       return h(FieldElement, data, nodes);
     }
 
-    const attrs = { ...descriptor.attrs };
+    const attrs = { ...(data.attrs || {}), ...descriptor.attrs };
     const helper = h(HelperElement, data);
 
     if (helper.tag) {
       nodes.unshift(helper);
     }
 
-    if (descriptor.label) {
+    if (descriptor.label && descriptor.layout === 'fieldset') {
       const attrs = descriptor.labelAttrs;
       const legend = h('legend', { attrs }, descriptor.label);
 

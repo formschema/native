@@ -1,26 +1,20 @@
 import { UIDescriptor } from '@/descriptors/UIDescriptor';
-import { EnumField, RadioField, IEnumItemDescriptor, EnumDescriptor, ScalarKind } from '@/types';
+import { EnumField, RadioField, IEnumItemDescriptor, EnumDescriptor, ScalarKind, Component } from '@/types';
 import { ItemUIDescriptor } from './ItemUIDescriptor';
 import { Components } from '@/lib/Components';
 
 export class EnumUIDescriptor extends ItemUIDescriptor<EnumField, RadioField, EnumDescriptor> {
+  readonly layout: Component;
   readonly children: IEnumItemDescriptor[] = [];
 
   constructor(options: EnumDescriptor, field: Readonly<EnumField>, components: Components) {
     super(options, field, components);
+
+    this.layout = options.layout || 'fieldset';
   }
 
   getChildren(field: Readonly<EnumField>): IEnumItemDescriptor[] {
-    const items = [];
-
-    for (const key in field.children) {
-      const childField = field.children[key];
-      const descriptor = this.getChildDescriptor(childField);
-
-      items.push(descriptor);
-    }
-
-    return items;
+    return field.childrenList.map((childField) => this.getChildDescriptor(childField));
   }
 
   getChildDescriptor(field: Readonly<RadioField>): IEnumItemDescriptor {

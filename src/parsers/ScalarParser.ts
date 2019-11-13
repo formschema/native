@@ -44,8 +44,11 @@ export abstract class ScalarParser <
     super(kind, options, parent);
 
     this.field.hasChildren = false;
-    this.field.attrs.type = type;
-    this.field.attrs.value = this.model;
+
+    if (type) {
+      this.field.attrs.type = type;
+      this.field.attrs.value = this.model;
+    }
   }
 
   parse() {
