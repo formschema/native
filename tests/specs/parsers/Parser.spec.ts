@@ -4,12 +4,8 @@
 
 import { Parser } from '@/parsers/Parser';
 import { ScalarUIDescriptor } from '@/descriptors/ScalarUIDescriptor';
-import { ObjectUIDescriptor } from '@/descriptors/ObjectUIDescriptor';
 
 import {
-  Dict,
-  ObjectField,
-  ObjectDescriptor,
   StringField,
   UnknowParser,
   ParserOptions,
@@ -22,16 +18,6 @@ import { TestParser, Scope } from '../../lib/TestParser';
 class FakeParser extends Parser<any, StringField, ScalarDescriptor, ScalarUIDescriptor> {
   constructor(options: ParserOptions<any, any, ScalarDescriptor>, parent?: UnknowParser) {
     super('string', options, parent);
-  }
-}
-
-class ObjectFakeParser extends Parser<Dict, ObjectField, ObjectDescriptor, ObjectUIDescriptor> {
-  constructor(options: ParserOptions<Dict, any, ObjectDescriptor>, parent?: UnknowParser) {
-    super('object', options, parent);
-  }
-
-  parseValue(data: any): any {
-    return data || {};
   }
 }
 
