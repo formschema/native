@@ -137,7 +137,7 @@ const FormSchema: FormSchemaComponent = {
         required: true,
         descriptor: this.descriptor,
         components: this.components,
-        bracketedObjectInputName: this.bracketedArrayInputName,
+        bracketedObjectInputName: this.bracketedObjectInputName,
         onChange: this.emitInputEvent,
         requestRender: this.update
       };

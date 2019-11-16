@@ -600,7 +600,8 @@ describe('parsers/ArrayParser', () => {
     expected: {
       parser: {
         children({ value: items }: Scope) {
-          items.forEach(({ name }: any) => expect(name).toBe('array[]'));
+          expect(items.length).toBe(2);
+          items.forEach(({ name }: any, index: number) => expect(name).toBe(`array[${index}]`));
         }
       }
     }

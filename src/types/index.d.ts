@@ -432,7 +432,7 @@ export interface FormSchemaVue extends Vue {
   value?: unknown;
   id: string;
   name?: string;
-  bracketedArrayInputName: boolean;
+  bracketedObjectInputName: boolean;
   search: boolean;
   disabled: boolean;
   components: IComponents;

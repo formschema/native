@@ -171,7 +171,8 @@ export class ObjectParser extends SetParser<Dict, ObjectField, ObjectDescriptor,
 
     if (this.isRoot) {
       /**
-       * attribute `name` is not applicable here
+       * attribute `name` is not applicable here since the
+       * parent form element already use it
        */
       delete this.field.attrs.name;
     }

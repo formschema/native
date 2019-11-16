@@ -106,8 +106,8 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
     this.childrenParsers.forEach((parser) => parser.clear());
   }
 
-  getFieldItemName(name: string) {
-    return this.root.options.bracketedObjectInputName ? `${name}[]` : name;
+  getFieldItemName(name: string, index: number) {
+    return this.root.options.bracketedObjectInputName ? `${name}[${index}]` : name;
   }
 
   getFieldItem(itemSchema: JsonSchema, index: number): ArrayItemField | null {
@@ -135,7 +135,7 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
       schema: itemSchema,
       model: itemModel,
       id: `${this.id}-${index}`,
-      name: this.getFieldItemName(name),
+      name: this.getFieldItemName(name, index),
       descriptor: descriptorItem as any,
       components: this.root.options.components
     }, this);
@@ -252,6 +252,7 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
     }
 
     this.count = value;
+    this.radioIndex = 0;
 
     this.childrenParsers.splice(0);
 
