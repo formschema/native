@@ -47,7 +47,7 @@ export const ArrayElement: ArrayComponent = {
       return h(childDescriptor.component, childData, buttonsWrapper);
     });
 
-    if (!props.field.uniqueItems && props.field.maxItems > 1) {
+    if (!props.field.uniqueItems && props.field.childrenList.length < props.field.maxItems) {
       nodes.push(h(ArrayButtonElement, {
         props: {
           button: props.field.descriptor.pushButton,
