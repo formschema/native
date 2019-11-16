@@ -701,7 +701,7 @@ describe('parsers/ArrayParser', () => {
     expected: {
       parser: {
         reset({ parser }: Scope) {
-          const { onChange } = parser.options;
+          const onChange = parser.options.onChange;
           const expected = [
             [ 'arya' ],
             [ 'jon' ]
@@ -752,7 +752,7 @@ describe('parsers/ArrayParser', () => {
     expected: {
       parser: {
         clear({ parser }: Scope) {
-          const { onChange } = parser.options;
+          const onChange = parser.options.onChange;
           const expected = [
             [ 'arya' ],
             [ 'jon' ]

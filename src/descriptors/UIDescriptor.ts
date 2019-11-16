@@ -87,4 +87,9 @@ export abstract class UIDescriptor<
     // Make sure descriptor.attrs is sync with field.attrs
     Object.assign(this.attrs, field.attrs, this.definition.attrs || {});
   }
+
+  // eslint-disable-next-line
+  update(field: TField) {
+    // do nothing by default, inherited class will override this if needed
+  }
 }

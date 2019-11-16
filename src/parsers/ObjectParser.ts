@@ -151,7 +151,9 @@ export class ObjectParser extends SetParser<Dict, ObjectField, ObjectDescriptor,
     return key;
   }
 
-  parse() {
+  parseField() {
+    super.parseField();
+
     if (this.schema.properties) {
       this.properties = { ...this.schema.properties };
     }
@@ -173,9 +175,6 @@ export class ObjectParser extends SetParser<Dict, ObjectField, ObjectDescriptor,
        */
       delete this.field.attrs.name;
     }
-
-    this.commit();
-    super.parse();
   }
 
   parseDependencies() {

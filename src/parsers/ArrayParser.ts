@@ -247,8 +247,8 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
   }
 
   setCount(value: number) {
-    if (this.field.maxItems && value > this.field.maxItems) {
-      return;
+    if (this.schema.maxItems && value > this.field.maxItems) {
+      return false;
     }
 
     this.count = value;
@@ -266,9 +266,13 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
     this.setValue(this.rawValue);
 
     this.field.childrenList.forEach((itemField) => this.setButtons(itemField));
+
+    return true;
   }
 
-  parse() {
+  parseField() {
+    super.parseField();
+
     this.field.sortable = false;
     this.field.minItems = this.schema.minItems || (this.field.required ? 1 : 0);
     this.field.maxItems = typeof this.schema.maxItems === 'number' && this.schema.maxItems > 0
@@ -296,10 +300,7 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
       get disabled() {
         return self.count === self.max || self.items.length === 0;
       },
-      trigger: () => {
-        this.setCount(this.count + 1);
-        this.requestRender();
-      }
+      trigger: () => this.setCount(this.count + 1) && this.requestRender()
     };
 
     this.count = this.field.minItems > this.model.length
@@ -308,15 +309,12 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
 
     // force render update for ArrayField
     this.field.reset = () => {
-      resetField();
+      resetField.call(this.field);
       this.requestRender();
     };
 
     this.parseUniqueItems();
     this.setCount(this.count);
-
-    this.commit();
-    super.parse();
   }
 
   parseCheckboxField(parser: any, itemModel: unknown) {

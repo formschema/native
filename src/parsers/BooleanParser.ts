@@ -16,7 +16,9 @@ export class BooleanParser extends ScalarParser<boolean, BooleanField> {
     return typeof data !== 'boolean';
   }
 
-  parse() {
+  parseField() {
+    super.parseField();
+
     if (this.field.attrs.type !== 'radio') {
       Object.defineProperty(this.field.attrs, 'checked', {
         enumerable: true,
@@ -27,9 +29,6 @@ export class BooleanParser extends ScalarParser<boolean, BooleanField> {
     this.field.toggle = () => {
       this.field.setValue(!this.model);
     };
-
-    this.commit();
-    super.parse();
   }
 
   parseValue(checked: boolean) {

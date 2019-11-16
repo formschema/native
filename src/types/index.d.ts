@@ -21,7 +21,7 @@ export type ScalarKind = 'string' | 'password' | 'number' | 'integer' | 'null' |
 | 'hidden' | 'textarea' | 'image' | 'file' | 'radio' | 'checkbox';
 export type ItemKind = 'enum' | 'list';
 export type FieldKind = SchemaType | ScalarKind | ItemKind;
-export type ComponentsType = 'form' | 'message' | 'button' | FieldKind;
+export type ComponentsType = 'form' | 'message' | 'button' | 'helper' | FieldKind;
 export type Component = string | VueComponent | AsyncComponent;
 
 export interface Attributes {

@@ -8,43 +8,43 @@ export const ArrayElement: ArrayComponent = {
   functional: true,
   render(h, { data, props }) {
     const ArrayButtonElement = props.field.descriptor.components.get('button');
-    const nodes: any = props.field.descriptor.children.map((descriptor, index) => {
-      const field = props.field.childrenList[index];
+    const nodes: any = props.field.descriptor.children.map((childDescriptor, index) => {
       const buttonsWrapper: VNode[] = [];
 
+      const childField = props.field.childrenList[index];
+      const childData = {
+        key: childField.key,
+        attrs: childDescriptor.attrs,
+        props: { field: childField }
+      };
+
       if (!props.field.uniqueItems && props.field.sortable) {
-        const buttonsNodes = descriptor.buttons.map((button) => h(ArrayButtonElement, {
-          props: { button, field }
+        const buttons = childDescriptor.buttons;
+        const buttonsNodes = buttons.map((button) => h(ArrayButtonElement, {
+          props: { button, field: childField }
         }));
 
         buttonsWrapper.push(h('div', {
-          key: props.field.key + field.key,
+          key: props.field.key + childField.key,
           attrs: {
             'data-fs-buttons': buttonsNodes.length
           }
         }, buttonsNodes));
       }
 
-      if (descriptor.kind === 'object') {
-        return h(FieldElement, {
+      if (childDescriptor.kind === 'object') {
+        const componentNode = h(childDescriptor.component, childData);
+        const fieldsetData = {
           props: {
-            field: { ...field, helper: {} } // remove the duplicate bottom helper
+            // TODO this sounds deprecated. The field object no longer has a helper property
+            field: { ...childField, helper: {} } // remove the duplicate bottom helper
           }
-        }, [
-          h(descriptor.component, {
-            key: field.key,
-            attrs: descriptor.attrs,
-            props: { field }
-          }),
-          buttonsWrapper
-        ]);
+        };
+
+        return h(FieldElement, fieldsetData, [ componentNode, buttonsWrapper ]);
       }
 
-      return h(descriptor.component, {
-        key: field.key,
-        attrs: descriptor.attrs,
-        props: { field }
-      }, buttonsWrapper);
+      return h(childDescriptor.component, childData, buttonsWrapper);
     });
 
     if (!props.field.uniqueItems && props.field.maxItems > 1) {

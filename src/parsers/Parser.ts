@@ -32,7 +32,7 @@ export abstract class Parser<
   kind: FieldKind;
   model: TModel;
   rawValue: TModel;
-  readonly field: TField;
+  field: TField = {} as any;
   readonly options: ParserOptions<TModel, TField, TDescriptor>;
   readonly schema: JsonSchema;
 
@@ -84,70 +84,6 @@ export abstract class Parser<
     this.kind = kind;
     this.rawValue = this.parseValue(this.initialValue) as TModel;
     this.model = this.parseValue(this.initialValue) as TModel;
-
-    const self = this;
-
-    this.field = {
-      id: this.id,
-      key: UniqueId.get(options.id),
-      kind: this.kind,
-      name: options.name,
-      isRoot: this.isRoot,
-      schema: options.schema,
-      required: options.required || false,
-      deep: this.parent ? this.parent.field.deep + 1 : 0,
-      attrs: {
-        id: this.id,
-        type: undefined,
-        name: options.name,
-        readonly: this.schema.readOnly,
-        get required() {
-          return self.field.required;
-        },
-
-        /**
-         * Add support with web browsers that don’t communicate the required
-         * attribute to assistive technology
-         * @see https://www.w3.org/WAI/tutorials/forms/validation/#validating-required-input
-         */
-        get 'aria-required'() {
-          return this.required ? 'true' : undefined;
-        }
-      },
-      get value() {
-        return self.model;
-      },
-      setValue: (value, emitChange = true) => {
-        this.setValue(value);
-
-        if (emitChange) {
-          this.commit();
-        }
-      },
-      commit: () => this.commit(),
-      hasChildren: false,
-      initialValue: this.initialValue,
-      reset: () => {
-        this.reset();
-        this.commit();
-      },
-      clear: () => {
-        this.clear();
-        this.commit();
-      },
-      parent: parent ? parent.field : undefined,
-      get root() {
-        return self.root.field;
-      },
-      messages: [] as Required<Message>[],
-      requestRender: () => this.requestRender(),
-      addMessage(text, type = 3) {
-        this.messages.push({ text, type });
-      },
-      clearMessages() {
-        this.messages.splice(0);
-      }
-    } as TField;
   }
 
   get root() {
@@ -204,11 +140,78 @@ export abstract class Parser<
         fields = [ this.field ];
       }
 
+      this.field.descriptor.update(this.field);
       this.root.options.requestRender(fields);
     }
   }
 
-  parse() {
+  parseField() {
+    const self = this;
+
+    this.field = {
+      id: this.id,
+      key: UniqueId.get(this.options.id),
+      kind: this.kind,
+      name: this.options.name,
+      isRoot: this.isRoot,
+      schema: this.options.schema,
+      required: this.options.required || false,
+      deep: this.parent ? this.parent.field.deep + 1 : 0,
+      attrs: {
+        id: this.id,
+        type: undefined,
+        name: this.options.name,
+        readonly: this.schema.readOnly,
+        get required() {
+          return self.field.required;
+        },
+
+        /**
+         * Add support with web browsers that don’t communicate the required
+         * attribute to assistive technology
+         * @see https://www.w3.org/WAI/tutorials/forms/validation/#validating-required-input
+         */
+        get 'aria-required'() {
+          return this.required ? 'true' : undefined;
+        }
+      },
+      get value() {
+        return self.model;
+      },
+      setValue: (value, emitChange = true) => {
+        this.setValue(value);
+
+        if (emitChange) {
+          this.commit();
+        }
+      },
+      commit: () => this.commit(),
+      hasChildren: false,
+      initialValue: this.initialValue,
+      reset: () => {
+        this.reset();
+        this.commit();
+      },
+      clear: () => {
+        this.clear();
+        this.commit();
+      },
+      parent: this.parent ? this.parent.field : undefined,
+      get root() {
+        return self.root.field;
+      },
+      messages: [] as Required<Message>[],
+      requestRender: () => this.requestRender(),
+      addMessage(text, type = 3) {
+        this.messages.push({ text, type });
+      },
+      clearMessages() {
+        this.messages.splice(0);
+      }
+    } as TField;
+  }
+
+  parseDescriptor() {
     this.field.descriptor = UIDescriptor.get(
       this.options.descriptor || {},
       this.field,
@@ -216,5 +219,11 @@ export abstract class Parser<
     ) as TUIDescriptor;
 
     this.field.descriptor.parse(this.field);
+  }
+
+  parse() {
+    this.parseField();
+    this.parseDescriptor();
+    this.commit();
   }
 }

@@ -173,6 +173,66 @@ describe('components/ArrayElement', () => {
     expect(parser.rawValue).toEqual([ 'Goku', 'Freezer', undefined ]);
   });
 
+  it('clicking to the push button should successfully render a new array item', () => {
+    const { context, parser } = Options.get({
+      id: 'id-characters',
+      name: 'characters',
+      schema: {
+        type: 'array',
+        title: 'Characters',
+        description: 'Your characters',
+        items: [
+          { type: 'string', default: 'Goku', title: 'First' },
+          { type: 'string', default: 'Freezer', title: 'Last' }
+        ]
+      },
+      model: []
+    });
+
+    const wrapper = mount(ArrayElement, { context });
+    const button = wrapper.find('button[data-fs-button=push]');
+
+    // initial state: the fieldset is rendered with the push button
+    expect(parser.model).toEqual([]);
+    expect(wrapper.html()).toMatchSnapshot(`
+      <fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper">
+        <legend id="id-characters-label" for="id-characters">Characters</legend>
+        <p id="id-characters-helper" data-fs-helper="true">Your characters</p>
+        <button type="button" data-fs-button="push">+</button>
+      </fieldset>
+    `);
+
+    // first push button click: render the first input
+    button.trigger('click');
+    expect(parser.model).toEqual([ 'Goku' ]);
+    expect(wrapper.html()).toMatchSnapshot(`
+      <fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper">
+        <legend id="id-characters-label" for="id-characters">Characters</legend>
+        <div data-fs-kind="string" data-fs-type="text" data-fs-field="characters">
+          <label for="id-characters-0">First</label>
+          <div data-fs-input="text"><input id="id-characters-0" type="text" name="characters" value="Goku"></div>
+        </div>
+        <button type="button" data-fs-button="push">+</button>
+      </fieldset>
+    `);
+
+    // second push button click: render the last input and disable the push button (no more item to add)
+    button.trigger('click');
+    expect(parser.model).toEqual([ 'Goku', 'Freezer' ]);
+    expect(wrapper.html()).toMatchSnapshot(`
+      <fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper">
+        <legend id="id-characters-label" for="id-characters">Characters</legend>
+        <div data-fs-kind="string" data-fs-type="text" data-fs-field="characters">
+          <label for="id-characters-0">First</label>
+          <div data-fs-input="text"><input id="id-characters-0" type="text" name="characters" value="Goku"></div>
+          <label for="id-characters-1">Last</label>
+          <div data-fs-input="text"><input id="id-characters-1" type="text" name="characters" value="Freeze"></div>
+        </div>
+        <button type="button" data-fs-button="push" disabled="disabled">+</button>
+      </fieldset>
+    `);
+  });
+
   describe('should successfully render enum array schema', () => {
     const onChangeMock = jest.fn();
     const { context, schema } = Options.get({

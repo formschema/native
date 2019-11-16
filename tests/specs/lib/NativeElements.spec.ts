@@ -16,7 +16,8 @@ const items: any = {
   list: 'ListElement',
   textarea: 'TextareaElement',
   message: 'MessageElement',
-  button: 'ArrayButtonElement'
+  button: 'ArrayButtonElement',
+  helper: 'HelperElement'
 };
 
 describe('lib/NativeElements', () => {

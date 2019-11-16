@@ -201,8 +201,9 @@ describe('parsers/Parser', () => {
         rawValue: 'jon',
         options: {
           onChange({ value: onChange }: Scope) {
-            expect(onChange.mock.calls.length).toBe(1);
-            expect(onChange.mock.calls[0][0]).toBe('jon');
+            expect(onChange.mock.calls.length).toBe(2);
+            expect(onChange.mock.calls[0][0]).toBe('');
+            expect(onChange.mock.calls[1][0]).toBe('jon');
           }
         }
       }
@@ -229,12 +230,13 @@ describe('parsers/Parser', () => {
         rawValue: 'jon',
         options: {
           onChange({ value: onChange, parser }: Scope) {
-            expect(onChange.mock.calls.length).toBe(0);
+            expect(onChange.mock.calls.length).toBe(1);
+            expect(onChange.mock.calls[0][0]).toBe('');
 
             parser.field.commit();
 
-            expect(onChange.mock.calls.length).toBe(1);
-            expect(onChange.mock.calls[0][0]).toBe('jon');
+            expect(onChange.mock.calls.length).toBe(2);
+            expect(onChange.mock.calls[1][0]).toBe('jon');
           }
         }
       }
@@ -468,12 +470,20 @@ describe('parsers/Parser', () => {
           expect(parser.rawValue).toBe('arya');
           expect(parser.model).toBe('arya');
 
+          parser.field.setValue('jon');
+
+          expect(parser.rawValue).toBe('jon');
+          expect(parser.model).toBe('jon');
+
           parser.field.reset(); // reset with calling onChange
 
-          const { onChange } = parser.options;
+          expect(parser.rawValue).toBe('arya');
+          expect(parser.model).toBe('arya');
+
+          const onChange = parser.options.onChange;
           const result = onChange.mock.calls.map(([ value ]: any) => value);
 
-          expect(result).toEqual([ 'jon', 'arya' ]);
+          expect(result).toEqual([ 'arya', 'jon', 'jon', 'arya' ]);
         }
       }
     }
@@ -507,10 +517,13 @@ describe('parsers/Parser', () => {
 
           parser.field.clear(); // clear with calling onChange
 
-          const { onChange } = parser.options;
+          expect(parser.rawValue).toBeUndefined();
+          expect(parser.model).toBeUndefined();
+
+          const onChange = parser.options.onChange;
           const result = onChange.mock.calls.map(([ value ]: any) => value);
 
-          expect(result).toEqual([ 'jon', undefined ]);
+          expect(result).toEqual([ 'arya', 'jon', undefined ]);
         }
       }
     }

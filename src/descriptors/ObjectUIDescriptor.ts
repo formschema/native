@@ -166,6 +166,12 @@ export class ObjectUIDescriptor extends UIDescriptor<ObjectField, ObjectDescript
     this.parseOrder();
     this.parseDependencies();
     this.parseSchemaProperties();
+    this.update(field);
+  }
+
+  update(field: ObjectField) {
+    this.children.splice(0);
+    this.childrenGroups.splice(0);
 
     this.children.push(...this.getChildren(field));
     this.childrenGroups.push(...this.getChildrenGroups(field));

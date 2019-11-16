@@ -1,4 +1,3 @@
-import { HelperElement } from '@/components/HelperElement';
 import { Dict, FieldComponent } from '@/types';
 import { Field } from '@/lib/Field';
 
@@ -29,11 +28,12 @@ export const FieldElement: FieldComponent = {
     const fieldElement = h('div', {
       attrs: {
         'data-fs-input': type
-      }
+      },
+      props: { field }
     }, children);
 
     const nodes = [ fieldElement ];
-    const helperNode = h(HelperElement, data);
+    const helperNode = h(descriptor.components.get('helper'), data);
 
     if (helperNode.tag) {
       nodes.push(helperNode);

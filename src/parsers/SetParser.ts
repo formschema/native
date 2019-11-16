@@ -26,12 +26,17 @@ export abstract class SetParser<
   TSetDescriptor extends SetDescriptor,
   TSetUIDescriptor extends ISetDescriptor
 > extends Parser<TModel, TField, TSetDescriptor, TSetUIDescriptor> implements ISetParser<TModel, TField, TSetDescriptor> {
+  // eslint-disable-next-line no-useless-constructor
   constructor(
     kind: 'enum' | 'array' | 'object',
     options: ParserOptions<TModel, TField, TSetDescriptor>,
     parent?: UnknowParser
   ) {
     super(kind, options, parent);
+  }
+
+  parseField() {
+    super.parseField();
 
     this.field.hasChildren = true;
 

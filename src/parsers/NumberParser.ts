@@ -26,7 +26,9 @@ export class NumberParser extends ScalarParser<number, NumberField> {
     }
   }
 
-  parse() {
+  parseField() {
+    super.parseField();
+
     Object.defineProperty(this.field.attrs, 'value', {
       enumerable: true,
       get: () => (this.isEmpty(this.model) ? undefined : `${this.model}`)
@@ -37,8 +39,6 @@ export class NumberParser extends ScalarParser<number, NumberField> {
     this.field.attrs.step = this.schema.multipleOf;
 
     this.parseExclusiveKeywords();
-    this.commit();
-    super.parse();
   }
 
   parseValue(data: unknown) {

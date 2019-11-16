@@ -127,7 +127,11 @@ export class ArrayUIDescriptor extends UIDescriptor<ArrayField, ArrayDescriptor>
 
     this.parseButtons(this.definition);
     this.parsePushButton(field);
+    this.update(field);
+  }
 
+  update(field: ArrayField) {
+    this.children.splice(0);
     this.children.push(...this.getChildren(field));
   }
 }

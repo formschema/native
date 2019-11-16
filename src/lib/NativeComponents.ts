@@ -7,6 +7,7 @@ import { ListElement } from '@/components/ListElement';
 import { TextareaElement } from '@/components/TextareaElement';
 import { MessageElement } from '@/components/MessageElement';
 import { ArrayButtonElement } from '@/components/ArrayButtonElement';
+import { HelperElement } from '@/components/HelperElement';
 
 export class NativeComponents extends Components {
   constructor() {
@@ -27,6 +28,7 @@ export class NativeComponents extends Components {
     this.set('list', ListElement);
     this.set('textarea', TextareaElement);
     this.set('message', MessageElement);
+    this.set('helper', HelperElement);
     this.set('button', ArrayButtonElement);
   }
 }

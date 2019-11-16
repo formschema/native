@@ -1,5 +1,4 @@
 import { FieldsetComponent } from '@/types';
-import { HelperElement } from '@/components/HelperElement';
 import { FieldElement } from '@/components/FieldElement';
 import { Objects } from '@/lib/Objects';
 import { Fieldset } from '@/lib/Fieldset';
@@ -24,9 +23,10 @@ export const FieldsetElement: FieldsetComponent = {
       return h(FieldElement, data, nodes);
     }
 
-    const attrs = { ...(data.attrs || {}), ...descriptor.attrs };
-    const helper = h(HelperElement, data);
+    const attrs = { ...descriptor.attrs, ...(data.attrs || {}) };
+    const helper = h(descriptor.components.get('helper'), data);
 
+    // avoid rendering of <!-- --> by only confidering defined herper
     if (helper.tag) {
       nodes.unshift(helper);
     }

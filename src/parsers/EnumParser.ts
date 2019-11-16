@@ -100,13 +100,13 @@ export class EnumParser extends SetParser<unknown, EnumField, EnumDescriptor, En
     }
   }
 
-  parse() {
+  parseField() {
+    super.parseField();
+
     this.field.children = this.children;
     this.field.childrenList = Object.values(this.field.children);
 
     this.updateInputsState();
-    this.commit();
-    super.parse();
   }
 }
 

@@ -121,7 +121,8 @@ const FormSchema: FormSchemaComponent = {
     ref: UniqueId.get('formschema'),
     initialModel: undefined,
     ready: false,
-    parser: null
+    parser: null,
+    field: null
   }),
   computed: {
     fieldId() {
@@ -173,17 +174,17 @@ const FormSchema: FormSchemaComponent = {
   },
   watch: {
     schema: {
+      immediate: true,
       handler() {
         this.ready = false;
         this.initialModel = Objects.clone(this.value as any);
-      },
-      immediate: true
+      }
     },
     options: {
+      immediate: true,
       handler(options) {
         this.parser = Parser.get(options);
-      },
-      immediate: true
+      }
     }
   },
   render(createElement) {
@@ -192,7 +193,6 @@ const FormSchema: FormSchemaComponent = {
     }
 
     const attrs = {
-      ...this.parser.field.descriptor.attrs,
       disabled: this.disabled
     };
 
@@ -200,8 +200,7 @@ const FormSchema: FormSchemaComponent = {
       field: this.parser.field
     };
 
-    const key = this.key;
-    const element = createElement(props.field.descriptor.component, { key, attrs, props });
+    const element = createElement(props.field.descriptor.component, { attrs, props });
     const nodes = [ element ];
 
     if (this.$slots.default) {
@@ -210,6 +209,7 @@ const FormSchema: FormSchemaComponent = {
 
     return createElement(this.components.get('form'), {
       ref: this.ref,
+      key: this.key,
       attrs: {
         id: this.id,
         name: this.name,

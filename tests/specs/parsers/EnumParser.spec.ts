@@ -187,7 +187,7 @@ describe('parsers/EnumParser', () => {
     expected: {
       parser: {
         reset({ parser }: Scope) {
-          const { onChange } = parser.options;
+          const onChange = parser.options.onChange;
           const expected = [
             'arya',
             'jon'
@@ -237,7 +237,7 @@ describe('parsers/EnumParser', () => {
     expected: {
       parser: {
         clear({ parser }: Scope) {
-          const { onChange } = parser.options;
+          const onChange = parser.options.onChange;
 
           expect(parser.rawValue).toEqual('arya');
           expect(parser.model).toEqual('arya');
