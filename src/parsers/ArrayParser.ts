@@ -9,8 +9,6 @@ import { ArrayUIDescriptor } from '@/descriptors/ArrayUIDescriptor';
 export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, ArrayUIDescriptor> {
   readonly items: JsonSchema[] = [];
   additionalItems?: JsonSchema;
-  minItems = 0;
-  maxItems?: number;
   max = -1;
   count = 0;
   radioIndex = 0;
@@ -31,7 +29,7 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
       return this.items.length;
     }
 
-    if (this.count < this.minItems || !Array.isArray(this.schema.items)) {
+    if (this.count < this.field.minItems || !Array.isArray(this.schema.items)) {
       return this.count;
     }
 
@@ -249,7 +247,7 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
   }
 
   setCount(value: number) {
-    if (this.maxItems && value > this.maxItems) {
+    if (this.field.maxItems && value > this.field.maxItems) {
       return;
     }
 
@@ -272,6 +270,10 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
 
   parse() {
     this.field.sortable = false;
+    this.field.minItems = this.schema.minItems || (this.field.required ? 1 : 0);
+    this.field.maxItems = typeof this.schema.maxItems === 'number' && this.schema.maxItems > 0
+      ? this.schema.maxItems
+      : Number.MAX_SAFE_INTEGER;
 
     if (this.schema.items) {
       if (this.schema.items instanceof Array) {
@@ -287,9 +289,6 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
       }
     }
 
-    this.maxItems = this.schema.maxItems;
-    this.minItems = this.schema.minItems || (this.field.required ? 1 : 0);
-
     const self = this;
     const resetField = this.field.reset;
 
@@ -303,8 +302,8 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
       }
     };
 
-    this.count = this.minItems > this.model.length
-      ? this.minItems
+    this.count = this.field.minItems > this.model.length
+      ? this.field.minItems
       : this.model.length;
 
     // force render update for ArrayField
@@ -339,8 +338,8 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
 
       if (itemSchema.enum instanceof Array) {
         this.field.uniqueItems = true;
-        this.maxItems = itemSchema.enum.length;
-        this.count = this.maxItems;
+        this.field.maxItems = itemSchema.enum.length;
+        this.count = this.field.maxItems;
 
         this.items.splice(0);
         itemSchema.enum.forEach((value) => this.items.push({
@@ -352,10 +351,10 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
 
         this.max = this.items.length;
       } else {
-        this.max = this.maxItems || this.items.length;
+        this.max = this.schema.maxItems || this.items.length;
       }
-    } else if (this.maxItems) {
-      this.max = this.maxItems;
+    } else if (this.schema.maxItems) {
+      this.max = this.field.maxItems;
     } else if (this.schema.items instanceof Array) {
       this.max = this.additionalItems ? -1 : this.items.length;
     } else {

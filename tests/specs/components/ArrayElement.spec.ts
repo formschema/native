@@ -15,9 +15,14 @@ describe('components/ArrayElement', () => {
     });
 
     const wrapper = mount(ArrayElement, { context });
-    const expected = '<fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper"><legend id="id-characters-label" for="id-characters">Empty array</legend><p id="id-characters-helper" data-fs-helper="true">Your characters</p><button type="button" disabled="disabled" data-fs-button="push">+</button></fieldset>';
 
-    expect(wrapper.html()).toMatchSnapshot(expected);
+    expect(wrapper.html()).toMatchSnapshot(`
+      <fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper">
+        <legend id="id-characters-label" for="id-characters">Empty array</legend>
+        <p id="id-characters-helper" data-fs-helper="true">Your characters</p>
+        <button type="button" disabled="disabled" data-fs-button="push">+</button>
+      </fieldset>
+    `);
   });
 
   it('should successfully render component with an empty array with a defined model', () => {
@@ -80,6 +85,67 @@ describe('components/ArrayElement', () => {
     expect(wrapper.html()).toMatchSnapshot(expected);
   });
 
+  it('should successfully render component without the push button when maxItems <= 1', () => {
+    const { context } = Options.get({
+      id: 'id-characters',
+      name: 'characters',
+      schema: {
+        type: 'array',
+        title: 'Characters',
+        description: 'Your characters',
+        maxItems: 1,
+        items: {
+          type: 'string'
+        },
+        default: [ 'Goku' ]
+      }
+    });
+
+    const wrapper = mount(ArrayElement, { context });
+
+    expect(wrapper.html()).toMatchSnapshot(`
+      <fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper">
+        <legend id="id-characters-label" for="id-characters">Characters</legend>
+        <p id="id-characters-helper" data-fs-helper="true">Your characters</p>
+        <div data-fs-kind="string" data-fs-type="text" data-fs-field="characters"><label for="id-characters-0"></label>
+          <div data-fs-input="text"><input id="id-characters-0" type="text" name="characters" value="Goku">
+            <div data-fs-buttons="3"><button type="button" disabled="disabled" data-fs-button="moveUp">↑</button><button type="button" disabled="disabled" data-fs-button="moveDown">↓</button><button type="button" data-fs-button="delete">-</button></div>
+          </div>
+        </div>
+      </fieldset>
+    `);
+  });
+
+  it('clicking to the push button should successfully update the parser model', () => {
+    const { context, parser } = Options.get({
+      id: 'id-characters',
+      name: 'characters',
+      schema: {
+        type: 'array',
+        title: 'Characters',
+        description: 'Your characters',
+        minItems: 0,
+        maxItems: 3,
+        items: [
+          { type: 'string', default: 'Goku' },
+          { type: 'string', default: 'Freezer' }
+        ]
+      },
+      model: []
+    });
+
+    const wrapper = mount(ArrayElement, { context });
+    const button = wrapper.find('button[data-fs-button=push]');
+
+    expect(parser.model).toEqual([]);
+
+    button.trigger('click');
+    expect(parser.model).toEqual([ 'Goku' ]);
+
+    button.trigger('click');
+    expect(parser.model).toEqual([ 'Goku', 'Freezer' ]);
+  });
+
   it('clicking to the push button should successfully trigger the options.onChange callback', () => {
     const { context, parser } = Options.get({
       id: 'id-characters',
@@ -98,10 +164,12 @@ describe('components/ArrayElement', () => {
     const wrapper = mount(ArrayElement, { context });
     const button = wrapper.find('button[data-fs-button=push]');
 
+    expect(parser.model).toEqual([ 'Goku', 'Freezer' ]);
     expect(parser.rawValue).toEqual([ 'Goku', 'Freezer' ]);
 
     button.trigger('click');
 
+    expect(parser.model).toEqual([ 'Goku', 'Freezer' ]);
     expect(parser.rawValue).toEqual([ 'Goku', 'Freezer', undefined ]);
   });
 

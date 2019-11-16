@@ -33,6 +33,7 @@ export const ArrayElement: ArrayComponent = {
         }, [
           h(descriptor.component, {
             key: field.key,
+            attrs: descriptor.attrs,
             props: { field }
           }),
           buttonsWrapper
@@ -46,7 +47,7 @@ export const ArrayElement: ArrayComponent = {
       }, buttonsWrapper);
     });
 
-    if (!props.field.uniqueItems) {
+    if (!props.field.uniqueItems && props.field.maxItems > 1) {
       nodes.push(h(ArrayButtonElement, {
         props: {
           button: props.field.descriptor.pushButton,

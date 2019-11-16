@@ -15,8 +15,6 @@ describe('parsers/ArrayParser', () => {
         kind: 'array',
         items: [],
         additionalItems: undefined,
-        minItems: 0,
-        maxItems: undefined,
         max: -2,
         count: 0,
         model: [],
@@ -25,6 +23,8 @@ describe('parsers/ArrayParser', () => {
         children: [],
         field: {
           sortable: false,
+          minItems: 0,
+          maxItems: Number.MAX_SAFE_INTEGER,
           pushButton: {
             disabled: true
           }
@@ -128,8 +128,6 @@ describe('parsers/ArrayParser', () => {
       parser: {
         items: [],
         additionalItems: undefined,
-        minItems: 0,
-        maxItems: undefined,
         max: -2,
         get count() {
           return this.rawValue.length;
@@ -140,6 +138,8 @@ describe('parsers/ArrayParser', () => {
         children: [],
         field: {
           uniqueItems: undefined,
+          minItems: 0,
+          maxItems: Number.MAX_SAFE_INTEGER,
           pushButton: {
             disabled: true
           }
@@ -205,7 +205,7 @@ describe('parsers/ArrayParser', () => {
   });
 
   TestParser.Case({
-    case: '3',
+    case: '3.0',
     description: 'with options.required === true',
     given: {
       parser: new ArrayParser({
@@ -223,8 +223,6 @@ describe('parsers/ArrayParser', () => {
       parser: {
         items: [ { type: 'string' } ],
         additionalItems: undefined,
-        minItems: 1,
-        maxItems: undefined,
         max: 1,
         count: 1,
         model: [],
@@ -237,6 +235,8 @@ describe('parsers/ArrayParser', () => {
           required: true,
           uniqueItems: undefined,
           sortable: false,
+          minItems: 1,
+          maxItems: Number.MAX_SAFE_INTEGER,
           pushButton: {
             disabled: true
           }
@@ -267,10 +267,8 @@ describe('parsers/ArrayParser', () => {
           { type: 'string' }
         ],
         additionalItems: undefined,
-        minItems: 1,
-        maxItems: 2,
         get max() {
-          return this.maxItems;
+          return this.field.maxItems;
         },
         count: 1,
         model: [],
@@ -283,6 +281,8 @@ describe('parsers/ArrayParser', () => {
         },
         field: {
           uniqueItems: undefined,
+          minItems: 1,
+          maxItems: 2,
           pushButton: {
             disabled: false
           }
@@ -383,8 +383,6 @@ describe('parsers/ArrayParser', () => {
           { type: 'string', default: 'd', title: 'd' }
         ],
         additionalItems: undefined,
-        minItems: 0,
-        maxItems: 4,
         max: 4,
         count: 4,
         model: [ 'b', 'd' ],
@@ -398,6 +396,8 @@ describe('parsers/ArrayParser', () => {
             // expect(field0.descriptor.kind).toBe('checkbox');
             expect(field0.attrs.type).toBe('checkbox');
           },
+          minItems: 0,
+          maxItems: 4,
           pushButton: {
             disabled: true
           }
@@ -487,8 +487,6 @@ describe('parsers/ArrayParser', () => {
           { type: 'string' }
         ],
         additionalItems: undefined,
-        minItems: 3,
-        maxItems: 4,
         max: 4,
         count: 3,
         model: [ 'a', 'd' ],
@@ -499,6 +497,8 @@ describe('parsers/ArrayParser', () => {
         children: ({ value }: Scope) => expect(value.length).toBe(3),
         field: {
           uniqueItems: undefined,
+          minItems: 3,
+          maxItems: 4,
           pushButton: {
             disabled: false
           }
@@ -528,8 +528,6 @@ describe('parsers/ArrayParser', () => {
           { type: 'string' }
         ],
         additionalItems: { type: 'number' },
-        minItems: 0,
-        maxItems: undefined,
         max: -1,
         count() {
           return this.rawValue.length;
@@ -545,6 +543,8 @@ describe('parsers/ArrayParser', () => {
         field: {
           required: false,
           uniqueItems: undefined,
+          minItems: 0,
+          maxItems: Number.MAX_SAFE_INTEGER,
           pushButton: {
             disabled: false
           }

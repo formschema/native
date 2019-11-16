@@ -36,9 +36,37 @@ exports[`components/ArrayElement should successfully render component with an em
 </fieldset>
 `;
 
-exports[`components/ArrayElement should successfully render component with an empty array: <fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper"><legend id="id-characters-label" for="id-characters">Empty array</legend><p id="id-characters-helper" data-fs-helper="true">Your characters</p><button type="button" disabled="disabled" data-fs-button="push">+</button></fieldset> 1`] = `
+exports[`components/ArrayElement should successfully render component with an empty array: 
+      <fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper">
+        <legend id="id-characters-label" for="id-characters">Empty array</legend>
+        <p id="id-characters-helper" data-fs-helper="true">Your characters</p>
+        <button type="button" disabled="disabled" data-fs-button="push">+</button>
+      </fieldset>
+     1`] = `
 <fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper">
   <legend id="id-characters-label" for="id-characters">Empty array</legend>
   <p id="id-characters-helper" data-fs-helper="true">Your characters</p><button type="button" disabled="disabled" data-fs-button="push">+</button>
+</fieldset>
+`;
+
+exports[`components/ArrayElement should successfully render component without the push button when maxItems <= 1: 
+      <fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper">
+        <legend id="id-characters-label" for="id-characters">Characters</legend>
+        <p id="id-characters-helper" data-fs-helper="true">Your characters</p>
+        <div data-fs-kind="string" data-fs-type="text" data-fs-field="characters"><label for="id-characters-0"></label>
+          <div data-fs-input="text"><input id="id-characters-0" type="text" name="characters" value="Goku">
+            <div data-fs-buttons="3"><button type="button" disabled="disabled" data-fs-button="moveUp">↑</button><button type="button" disabled="disabled" data-fs-button="moveDown">↓</button><button type="button" data-fs-button="delete">-</button></div>
+          </div>
+        </div>
+      </fieldset>
+     1`] = `
+<fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper">
+  <legend id="id-characters-label" for="id-characters">Characters</legend>
+  <p id="id-characters-helper" data-fs-helper="true">Your characters</p>
+  <div data-fs-kind="string" data-fs-type="text" data-fs-field="characters"><label for="id-characters-0"></label>
+    <div data-fs-input="text"><input id="id-characters-0" type="text" name="characters" value="Goku">
+      <div data-fs-buttons="3"><button type="button" disabled="disabled" data-fs-button="moveUp">↑</button><button type="button" disabled="disabled" data-fs-button="moveDown">↓</button><button type="button" data-fs-button="delete">-</button></div>
+    </div>
+  </div>
 </fieldset>
 `;
