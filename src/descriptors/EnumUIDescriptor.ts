@@ -14,7 +14,7 @@ export class EnumUIDescriptor extends ItemUIDescriptor<EnumField, RadioField, En
   }
 
   getChildren(field: Readonly<EnumField>): IEnumItemDescriptor[] {
-    return field.childrenList.map((childField) => this.getChildDescriptor(childField));
+    return field.children.map((childField) => this.getChildDescriptor(childField));
   }
 
   getChildDescriptor(field: Readonly<RadioField>): IEnumItemDescriptor {

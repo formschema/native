@@ -1,6 +1,7 @@
 import { UniqueId } from '@/lib/UniqueId';
 import { JsonSchema } from '@/types/jsonschema';
 import { Value } from '@/lib/Value';
+import { Objects } from '@/lib/Objects';
 
 import { UIDescriptor } from '@/descriptors/UIDescriptor';
 
@@ -32,9 +33,9 @@ export abstract class Parser<
   kind: FieldKind;
   model: TModel;
   rawValue: TModel;
-  field: TField = {} as any;
+  readonly field: TField;
   readonly options: ParserOptions<TModel, TField, TDescriptor>;
-  readonly schema: JsonSchema;
+  schema: JsonSchema;
 
   static register(kind: ParserKind, parserClass: any) {
     PARSERS[kind] = parserClass;
@@ -79,73 +80,11 @@ export abstract class Parser<
     this.parent = parent;
     this.options = options;
     this.isRoot = !parent;
-    this.schema = options.schema;
-
+    this.schema = Objects.clone(options.schema);
     this.kind = kind;
     this.rawValue = this.parseValue(this.initialValue) as TModel;
     this.model = this.parseValue(this.initialValue) as TModel;
-  }
 
-  get root() {
-    return this.parent ? this.parent.root : this;
-  }
-
-  get initialValue(): TModel | unknown {
-    return typeof this.options.model === 'undefined'
-      ? this.schema.const || this.schema.default
-      : this.options.model;
-  }
-
-  isEmpty(data: unknown = this.model) {
-    return typeof data === 'undefined';
-  }
-
-  parseValue(data: unknown): unknown {
-    const type = this.schema.type;
-
-    if (Value.hasOwnProperty(type)) {
-      if (type === 'boolean' && typeof data === 'string') {
-        data = data === 'true';
-      }
-
-      return (Value as any)[type](data);
-    }
-
-    return data as any;
-  }
-
-  setValue(value: unknown) {
-    this.rawValue = value as any;
-    this.model = this.parseValue(value) as TModel;
-  }
-
-  reset() {
-    this.setValue(this.parseValue(this.initialValue) as any);
-  }
-
-  clear() {
-    this.setValue(this.parseValue(undefined) as any);
-  }
-
-  commit() {
-    if (typeof this.options.onChange === 'function') {
-      this.options.onChange(this.model, this.field);
-    }
-  }
-
-  requestRender(fields?: UnknowField[]) {
-    if (typeof this.root.options.requestRender === 'function') {
-      if (!fields) {
-        this.field.key = UniqueId.get(this.options.name);
-        fields = [ this.field ];
-      }
-
-      this.field.descriptor.update(this.field);
-      this.root.options.requestRender(fields);
-    }
-  }
-
-  parseField() {
     const self = this;
 
     this.field = {
@@ -210,6 +149,67 @@ export abstract class Parser<
       }
     } as TField;
   }
+
+  get root() {
+    return this.parent ? this.parent.root : this;
+  }
+
+  get initialValue(): TModel | unknown {
+    return typeof this.options.model === 'undefined'
+      ? this.schema.const || this.schema.default
+      : this.options.model;
+  }
+
+  isEmpty(data: unknown = this.model) {
+    return typeof data === 'undefined';
+  }
+
+  parseValue(data: unknown): unknown {
+    const type = this.schema.type;
+
+    if (Value.hasOwnProperty(type)) {
+      if (type === 'boolean' && typeof data === 'string') {
+        data = data === 'true';
+      }
+
+      return (Value as any)[type](data);
+    }
+
+    return data as any;
+  }
+
+  setValue(value: unknown) {
+    this.rawValue = value as any;
+    this.model = this.parseValue(value) as TModel;
+  }
+
+  reset() {
+    this.setValue(this.parseValue(this.initialValue) as any);
+  }
+
+  clear() {
+    this.setValue(this.parseValue(undefined) as any);
+  }
+
+  commit() {
+    if (typeof this.options.onChange === 'function') {
+      this.options.onChange(this.model, this.field);
+    }
+  }
+
+  requestRender(fields?: UnknowField[]) {
+    if (typeof this.root.options.requestRender === 'function') {
+      if (!fields) {
+        this.field.key = UniqueId.get(this.options.name);
+        fields = [ this.field ];
+      }
+
+      this.field.descriptor.update(this.field);
+      this.root.options.requestRender(fields);
+    }
+  }
+
+  abstract parseField(): void;
 
   parseDescriptor() {
     this.field.descriptor = UIDescriptor.get(

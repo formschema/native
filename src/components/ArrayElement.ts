@@ -11,7 +11,7 @@ export const ArrayElement: ArrayComponent = {
     const nodes: any = props.field.descriptor.children.map((childDescriptor, index) => {
       const buttonsWrapper: VNode[] = [];
 
-      const childField = props.field.childrenList[index];
+      const childField = props.field.children[index];
       const childData = {
         key: childField.key,
         attrs: childDescriptor.attrs,
@@ -47,7 +47,7 @@ export const ArrayElement: ArrayComponent = {
       return h(childDescriptor.component, childData, buttonsWrapper);
     });
 
-    if (!props.field.uniqueItems && props.field.childrenList.length < props.field.maxItems) {
+    if (!props.field.uniqueItems && props.field.children.length < props.field.maxItems) {
       nodes.push(h(ArrayButtonElement, {
         props: {
           button: props.field.descriptor.pushButton,

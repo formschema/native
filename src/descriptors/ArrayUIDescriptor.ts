@@ -58,7 +58,7 @@ export class ArrayUIDescriptor extends UIDescriptor<ArrayField, ArrayDescriptor>
   }
 
   getChildren(field: ArrayField): IArrayChildDescriptor[] {
-    return field.childrenList
+    return field.children
       .map((childField, index) => ({
         childField,
         childDescriptor: this.getChildDescriptor(field, index)
@@ -106,7 +106,7 @@ export class ArrayUIDescriptor extends UIDescriptor<ArrayField, ArrayDescriptor>
   }
 
   getChildDescriptor(field: Readonly<ArrayField>, index: number): IArrayChildDescriptor {
-    const childField = field.children[index];
+    const childField = field.fields[index];
     const options = this.items instanceof Array
       ? this.items[index] || {}
       : this.items || {};

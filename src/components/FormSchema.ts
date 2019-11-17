@@ -121,8 +121,7 @@ const FormSchema: FormSchemaComponent = {
     ref: UniqueId.get('formschema'),
     initialModel: undefined,
     ready: false,
-    parser: null,
-    field: null
+    parser: null
   }),
   computed: {
     fieldId() {
@@ -139,6 +138,7 @@ const FormSchema: FormSchemaComponent = {
         components: this.components,
         bracketedObjectInputName: this.bracketedObjectInputName,
         onChange: this.emitInputEvent,
+        validator: this.validator,
         requestRender: this.update
       };
     },

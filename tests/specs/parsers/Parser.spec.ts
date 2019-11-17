@@ -19,6 +19,8 @@ class FakeParser extends Parser<any, StringField, ScalarDescriptor, ScalarUIDesc
   constructor(options: ParserOptions<any, any, ScalarDescriptor>, parent?: UnknowParser) {
     super('string', options, parent);
   }
+
+  parseField() {}
 }
 
 class InputFakeParser extends Parser<string, StringField, ScalarDescriptor, ScalarUIDescriptor> {
@@ -29,6 +31,8 @@ class InputFakeParser extends Parser<string, StringField, ScalarDescriptor, Scal
   parseValue(data: any): string {
     return data;
   }
+
+  parseField() {}
 }
 
 const ParserValidator = {
@@ -40,7 +44,10 @@ const ParserValidator = {
       expect(typeof value).toBe('object');
       expect(value).not.toBeNull();
     },
-    schema: ({ value, parser: { options } }: Scope) => expect(value).toBe(options.schema),
+    schema: ({ value, parser: { options } }: Scope) => {
+      expect(value).not.toBe(options.schema);
+      expect(value).toEqual(options.schema);
+    },
     model: ({ value, parser: { initialValue } }: Scope<FakeParser>) => expect(value).toBe(initialValue),
     rawValue: ({ value, parser: { initialValue } }: Scope<FakeParser>) => expect(value).toBe(initialValue),
     kind: ({ value, schema }: Scope) => expect(value).toBe(schema.type),

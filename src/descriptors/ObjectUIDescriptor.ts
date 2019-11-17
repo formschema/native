@@ -16,10 +16,6 @@ import {
   Component
 } from '@/types';
 
-function getChildrenProperties(field: Readonly<ObjectField>, properties: string[]) {
-  return properties.map((property) => field.children[property]);
-}
-
 export class ObjectUIDescriptor extends UIDescriptor<ObjectField, ObjectDescriptor> implements IObjectDescriptor {
   readonly layout: Component;
   readonly properties: Dict<DescriptorInstance>;
@@ -45,7 +41,8 @@ export class ObjectUIDescriptor extends UIDescriptor<ObjectField, ObjectDescript
   }
 
   getChildren(field: Readonly<ObjectField>) {
-    return getChildrenProperties(field, this.orderedProperties)
+    return this.orderedProperties
+      .map((property) => field.fields[property])
       .map((childField) => this.getChildDescriptor(childField));
   }
 
@@ -99,7 +96,7 @@ export class ObjectUIDescriptor extends UIDescriptor<ObjectField, ObjectDescript
     return groupsIds.map((groupId) => ({
       id: groupId,
       label: this.groups[groupId] ? this.groups[groupId].label : undefined,
-      children: getChildrenProperties(field, ordoredGroups[groupId])
+      children: ordoredGroups[groupId].map((property) => field.fields[property])
     }));
   }
 

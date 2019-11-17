@@ -21,7 +21,7 @@ describe('descriptors/ObjectDescriptor', () => {
     expected: {
       parser: {
         kind: ({ value }: Scope) => expect(value).toBe('object'),
-        children({ value }: Scope) {
+        fields({ value }: Scope) {
           for (const key in value) {
             expect(value[key].property).toBe(key);
             expect(value[key].deep).toBe(1);
@@ -34,7 +34,7 @@ describe('descriptors/ObjectDescriptor', () => {
             required: ({ value }: Scope) => expect(value).toBeUndefined()
           },
           deep: ({ value }: Scope) => expect(value).toBe(0),
-          children({ value }: Scope) {
+          fields({ value }: Scope) {
             for (const key in value) {
               expect(value[key].property).toBe(key);
               expect(value[key].deep).toBe(1);

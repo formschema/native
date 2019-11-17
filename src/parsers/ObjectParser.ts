@@ -10,11 +10,14 @@ import { ObjectUIDescriptor } from '@/descriptors/ObjectUIDescriptor';
 
 export class ObjectParser extends SetParser<Dict, ObjectField, ObjectDescriptor, ObjectUIDescriptor> {
   properties: Dict<JsonSchema> = {};
-  dependencies: Dict<string[]> = {};
-  childrenParsers: Dict<UnknowParser> = {};
+  readonly dependencies: Dict<string[]> = {};
+  readonly childrenParsers: Dict<UnknowParser> = {};
+  readonly initialSchema: JsonSchema;
 
   constructor(options: ParserOptions<Dict, ObjectField, ObjectDescriptor>, parent?: UnknowParser) {
     super('object', options, parent);
+
+    this.initialSchema = Objects.clone(this.schema);
   }
 
   get initialValue(): Dict {
@@ -23,7 +26,7 @@ export class ObjectParser extends SetParser<Dict, ObjectField, ObjectDescriptor,
     return Objects.isObject(value) ? { ...value } as any : {};
   }
 
-  get children(): Dict<ObjectFieldChild> {
+  get fields(): Dict<ObjectFieldChild> {
     const name = this.options.name;
     const fields: Dict<ObjectFieldChild> = {};
 
@@ -67,8 +70,15 @@ export class ObjectParser extends SetParser<Dict, ObjectField, ObjectDescriptor,
          */
         parser.options.onChange = (value: unknown) => {
           update(value);
-          this.commit();
-          this.updateDependencies(key, parser);
+
+          if (this.schema.if) {
+            this.parseConditional();
+            this.parseField();
+            this.parseDescriptor();
+          } else {
+            this.commit();
+            this.updateDependencies(key, parser);
+          }
         };
 
         fields[key] = field;
@@ -152,16 +162,14 @@ export class ObjectParser extends SetParser<Dict, ObjectField, ObjectDescriptor,
   }
 
   parseField() {
-    super.parseField();
-
     if (this.schema.properties) {
       this.properties = { ...this.schema.properties };
     }
 
     this.parseDependencies();
 
-    this.field.children = this.children;
-    this.field.childrenList = Object.values(this.field.children);
+    this.field.fields = this.fields;
+    this.field.children = Object.values(this.field.fields);
 
     /**
      * attributes `required` and `aria-required` are not applicable here
@@ -175,6 +183,77 @@ export class ObjectParser extends SetParser<Dict, ObjectField, ObjectDescriptor,
        * parent form element already use it
        */
       delete this.field.attrs.name;
+    }
+  }
+
+  parseConditional() {
+    /* istanbul ignore else */
+    if (this.initialSchema.if && this.initialSchema.then) {
+      this.schema = Objects.clone(this.initialSchema);
+
+      this.parseConditionalSchema(this.initialSchema);
+    }
+  }
+
+  validateConditionalSchemaValue(conditionalSchema: JsonSchema) {
+    /* istanbul ignore else */
+    if (conditionalSchema.properties) {
+      const properties = conditionalSchema.properties;
+
+      for (const prop in properties) {
+        if (!properties[prop] || this.model[prop] !== properties[prop].const) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
+  mergeConditionalSchema(conditionalSchema: JsonSchema) {
+    /* istanbul ignore else */
+    if (conditionalSchema.properties) {
+      const properties = conditionalSchema.properties;
+
+      /* istanbul ignore if */
+      if (!this.schema.properties) {
+        this.schema.properties = {};
+      }
+
+      for (const prop in properties) {
+        const property = properties[prop];
+
+        Object.assign(this.schema.properties[prop], property);
+
+        /* istanbul ignore else */
+        if (property.hasOwnProperty('default')) {
+          const childField = this.field.getField(`.${prop}`);
+
+          /* istanbul ignore else */
+          if (childField) {
+            childField.setValue(property.default, false);
+            this.setKeyValue(prop, property.default);
+          }
+        }
+      }
+    }
+  }
+
+  parseConditionalSchema(inputSchema: JsonSchema) {
+    /* istanbul ignore else */
+    if (inputSchema.if && inputSchema.then) {
+      if (this.validateConditionalSchemaValue(inputSchema.if)) {
+        this.mergeConditionalSchema(inputSchema.then);
+      } else {
+        /* istanbul ignore else */
+        if (inputSchema.else) {
+          if (inputSchema.else.if) {
+            this.parseConditionalSchema(inputSchema.else);
+          } else {
+            this.mergeConditionalSchema(inputSchema.else);
+          }
+        }
+      }
     }
   }
 

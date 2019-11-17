@@ -233,7 +233,11 @@
       validator(field) {
         field.clearMessages(true);
 
-        if (!this.validate(field.value)) {
+        const validate = field.schema === this.dereferencedSchema
+          ? this.validate
+          : this.ajv.compile(field.schema);
+
+        if (!validate(field.value)) {
           this.validate.errors.forEach(({ dataPath, message }) => {
             const errorField = field.hasChildren
               ? field.getField(dataPath) || field

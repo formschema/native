@@ -16,8 +16,6 @@ export abstract class ScalarParser <
   TModel,
   TField extends ScalarField
 > extends Parser<TModel, TField, ScalarDescriptor, ScalarUIDescriptor> {
-  type?: string;
-
   static getKind(schema: JsonSchema, parent?: UnknowParser): FieldKind | null {
     if (parent && parent.schema.enum instanceof Array) {
       return 'radio';
@@ -45,18 +43,14 @@ export abstract class ScalarParser <
   ) {
     super(kind, options, parent);
 
-    this.type = type;
+    if (type) {
+      this.field.attrs.type = type;
+      this.field.attrs.value = this.model;
+    }
   }
 
   parseField() {
-    super.parseField();
-
     this.field.hasChildren = false;
-
-    if (this.type) {
-      this.field.attrs.type = this.type;
-      this.field.attrs.value = this.model;
-    }
 
     if (this.schema.const) {
       this.field.attrs.pattern = Pattern.escape(`${this.schema.const}`);

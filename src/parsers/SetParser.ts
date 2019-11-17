@@ -15,7 +15,7 @@ const RE_ARRAY_PATH = /(.+)?\[(\d+)\]$/;
 
 function getFieldByIndex(field: UnknowSetField, index: string) {
   const parsedIndex = Number.parseInt(index, 10);
-  const indexField = field.childrenList[parsedIndex];
+  const indexField = field.children[parsedIndex];
 
   return indexField || null;
 }
@@ -26,17 +26,12 @@ export abstract class SetParser<
   TSetDescriptor extends SetDescriptor,
   TSetUIDescriptor extends ISetDescriptor
 > extends Parser<TModel, TField, TSetDescriptor, TSetUIDescriptor> implements ISetParser<TModel, TField, TSetDescriptor> {
-  // eslint-disable-next-line no-useless-constructor
   constructor(
     kind: 'enum' | 'array' | 'object',
     options: ParserOptions<TModel, TField, TSetDescriptor>,
     parent?: UnknowParser
   ) {
     super(kind, options, parent);
-  }
-
-  parseField() {
-    super.parseField();
 
     this.field.hasChildren = true;
 
@@ -44,7 +39,7 @@ export abstract class SetParser<
       this.field.messages.splice(0);
 
       if (recursive) {
-        this.field.childrenList.forEach((child) => child.clearMessages(true));
+        this.field.children.forEach((child) => child.clearMessages(true));
       }
     };
 
@@ -56,7 +51,7 @@ export abstract class SetParser<
       }
 
       const paths = formatedPath.split('.');
-      let children = this.field.children;
+      let fields = this.field.fields;
       let foundField: UnknowField | null = null;
 
       for (let currentPath of paths) {
@@ -73,16 +68,16 @@ export abstract class SetParser<
           }
         }
 
-        for (const key in children) {
+        for (const key in fields) {
           if (key === currentPath) {
-            foundField = children[key];
+            foundField = fields[key];
 
             if (match) {
               foundField = getFieldByIndex(foundField as UnknowSetField, match[2]);
             }
 
             if (foundField && foundField.hasChildren) {
-              children = (foundField as any).children;
+              fields = (foundField as any).fields;
 
               break;
             }

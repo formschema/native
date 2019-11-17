@@ -2,7 +2,7 @@ import { CreateElement } from 'vue';
 import { ObjectField, ObjectFieldChild } from '@/types';
 
 export const Fieldset = {
-  renderChildren(h: CreateElement, field: ObjectField, children: ObjectFieldChild[] = field.childrenList) {
+  renderChildren(h: CreateElement, field: ObjectField, children: ObjectFieldChild[] = field.children) {
     return children
       .map((childField) => ({
         childField,

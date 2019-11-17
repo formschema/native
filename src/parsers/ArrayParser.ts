@@ -181,7 +181,7 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
   }
 
   move(from: number, to: number) {
-    const items = this.field.childrenList;
+    const items = this.field.children;
 
     if (items[from] && items[to]) {
       const movedField = Arrays.swap<ArrayItemField>(items, from, to);
@@ -198,18 +198,18 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
   }
 
   isDisabled([ from, to ]: [ number, number ]) {
-    return !this.field.sortable || !this.field.childrenList[from] || !this.field.childrenList[to];
+    return !this.field.sortable || !this.field.children[from] || !this.field.children[to];
   }
 
   upIndexes(itemField: ArrayItemField): [ number, number ] {
-    const from = Arrays.index(this.field.childrenList, itemField);
+    const from = Arrays.index(this.field.children, itemField);
     const to = from - 1;
 
     return [ from, to ];
   }
 
   downIndexes(itemField: ArrayItemField): [ number, number ] {
-    const from = Arrays.index(this.field.childrenList, itemField);
+    const from = Arrays.index(this.field.children, itemField);
     const to = from + 1;
 
     return [ from, to ];
@@ -228,8 +228,8 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
       delete: {
         disabled: !this.field.sortable,
         trigger: () => {
-          const index = Arrays.index(this.field.childrenList, itemField);
-          const deletedField = this.field.childrenList.splice(index, 1).pop();
+          const index = Arrays.index(this.field.children, itemField);
+          const deletedField = this.field.children.splice(index, 1).pop();
 
           if (deletedField) {
             this.rawValue.splice(index, 1);
@@ -256,24 +256,22 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
 
     this.childrenParsers.splice(0);
 
-    this.field.children = {};
-    this.field.childrenList = this.children;
+    this.field.fields = {};
+    this.field.children = this.children;
 
-    this.field.childrenList.forEach((item, i) => {
-      this.field.children[i] = item;
+    this.field.children.forEach((item, i) => {
+      this.field.fields[i] = item;
     });
 
     // apply array's model
     this.setValue(this.rawValue);
 
-    this.field.childrenList.forEach((itemField) => this.setButtons(itemField));
+    this.field.children.forEach((itemField) => this.setButtons(itemField));
 
     return true;
   }
 
   parseField() {
-    super.parseField();
-
     this.field.sortable = false;
     this.field.minItems = this.schema.minItems || (this.field.required ? 1 : 0);
     this.field.maxItems = typeof this.schema.maxItems === 'number' && this.schema.maxItems > 0

@@ -167,8 +167,8 @@ describe('parsers/ArrayParser', () => {
         field: {
           getField({ value, field }: Scope) {
             expect(value('.[]')).toBeNull();
-            expect(value('.[0]')).toBe(field.childrenList[0]);
-            expect(value('.[1]')).toBe(field.childrenList[1]);
+            expect(value('.[0]')).toBe(field.children[0]);
+            expect(value('.[1]')).toBe(field.children[1]);
             expect(value('.[3]')).toBeNull();
           }
         }
@@ -392,7 +392,7 @@ describe('parsers/ArrayParser', () => {
         field: {
           required: false,
           uniqueItems: true,
-          childrenList: ({ value: [ field0 ] }: Scope) => {
+          children: ({ value: [ field0 ] }: Scope) => {
             // expect(field0.descriptor.kind).toBe('checkbox');
             expect(field0.attrs.type).toBe('checkbox');
           },
@@ -454,7 +454,7 @@ describe('parsers/ArrayParser', () => {
         const parser = new ArrayParser(options5);
 
         parser.parse();
-        parser.field.children[0].setValue(true);
+        parser.field.fields[0].setValue(true);
 
         return parser;
       }
@@ -677,7 +677,7 @@ describe('parsers/ArrayParser', () => {
       parser: {
         field: {
           deep: ({ value }: Scope) => expect(value).toBe(0),
-          childrenList({ value }: Scope) {
+          children({ value }: Scope) {
             value.forEach(({ deep }: any) => expect(deep).toBe(1));
           }
         }
@@ -713,7 +713,7 @@ describe('parsers/ArrayParser', () => {
           expect(onChange.mock.calls.length).toBe(1);
           expect(onChange.mock.calls[0][0]).toEqual(expected[0]);
 
-          parser.field.childrenList[0].setValue('jon');
+          parser.field.children[0].setValue('jon');
 
           expect(onChange.mock.calls.length).toBe(2);
           expect(onChange.mock.calls[1][0]).toEqual(expected[1]);
@@ -764,7 +764,7 @@ describe('parsers/ArrayParser', () => {
           expect(onChange.mock.calls.length).toBe(1);
           expect(onChange.mock.calls[0][0]).toEqual(expected[0]);
 
-          parser.field.childrenList[0].setValue('jon');
+          parser.field.children[0].setValue('jon');
 
           expect(onChange.mock.calls.length).toBe(2);
           expect(onChange.mock.calls[1][0]).toEqual(expected[1]);

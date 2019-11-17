@@ -20,7 +20,7 @@ export class EnumParser extends SetParser<unknown, EnumField, EnumDescriptor, En
     super('enum', options, parent);
   }
 
-  get children(): Dict<RadioField> {
+  get fields(): Dict<RadioField> {
     if (!Array.isArray(this.schema.enum)) {
       return {};
     }
@@ -91,7 +91,7 @@ export class EnumParser extends SetParser<unknown, EnumField, EnumDescriptor, En
   }
 
   updateInputsState() {
-    for (const itemField of this.field.childrenList) {
+    for (const itemField of this.field.children) {
       itemField.attrs.checked = itemField.value === this.model;
 
       if (itemField.attrs.checked) {
@@ -101,10 +101,8 @@ export class EnumParser extends SetParser<unknown, EnumField, EnumDescriptor, En
   }
 
   parseField() {
-    super.parseField();
-
-    this.field.children = this.children;
-    this.field.childrenList = Object.values(this.field.children);
+    this.field.fields = this.fields;
+    this.field.children = Object.values(this.field.fields);
 
     this.updateInputsState();
   }

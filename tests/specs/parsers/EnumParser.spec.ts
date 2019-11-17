@@ -21,14 +21,14 @@ describe('parsers/EnumParser', () => {
         kind: ({ value }: Scope) => expect(value).toBe('enum'),
         field: {
           value: 'jon',
-          children({ parser }: Scope) {
-            // children should be defined
-            const models = Object.keys(parser.field.children);
+          fields({ parser }: Scope) {
+            // fields should be defined
+            const models = Object.keys(parser.field.fields);
 
             expect(models).toEqual([ 'jon', 'arya', 'bran', 'ned' ]);
 
-            // children's field.attrs.checked should be defined
-            const checkStates = models.map((key) => parser.field.children[key].attrs.checked);
+            // fields's field.attrs.checked should be defined
+            const checkStates = models.map((key) => parser.field.fields[key].attrs.checked);
 
             expect(checkStates).toEqual([ true, false, false, false ]);
           },
@@ -40,13 +40,13 @@ describe('parsers/EnumParser', () => {
             // field.attrs.checked should be updated when using field.setValue()
             parser.field.setValue('bran');
 
-            const models = Object.keys(parser.field.children);
-            const checkStates = models.map((key) => parser.field.children[key].attrs.checked);
+            const models = Object.keys(parser.field.fields);
+            const checkStates = models.map((key) => parser.field.fields[key].attrs.checked);
 
             expect(checkStates).toEqual([ false, false, true, false ]);
 
             // field.value should be updated when a child is checked
-            const childField: any = parser.field.children[models.slice(-1).pop() as any];
+            const childField: any = parser.field.fields[models.slice(-1).pop() as any];
 
             childField.setValue(childField.value);
             expect(parser.field.value).toBe('ned');
@@ -99,7 +99,7 @@ describe('parsers/EnumParser', () => {
 
   TestParser.Case({
     case: '2.2',
-    description: 'field.children should be equal to an empty array with missing schema.enum',
+    description: 'field.fields should be empty with missing schema.enum',
     given: {
       parser: new EnumParser({
         schema: { type: 'string' },
@@ -109,7 +109,7 @@ describe('parsers/EnumParser', () => {
     expected: {
       parser: {
         field: {
-          children: ({ value }: Scope) => expect(value).toEqual({})
+          fields: ({ value }: Scope) => expect(value).toEqual({})
         }
       }
     }
@@ -117,7 +117,7 @@ describe('parsers/EnumParser', () => {
 
   TestParser.Case({
     case: '2.3',
-    description: 'field.children should be defined with provided field.descriptor.items',
+    description: 'field.fields should be defined with provided field.descriptor.items',
     given: {
       parser: new EnumParser({
         schema: {
@@ -139,7 +139,7 @@ describe('parsers/EnumParser', () => {
     },
     expected: {
       parser: {
-        children: {
+        fields: {
           jon: {
             value: ({ value }: Scope) => expect(value).toBe('jon')
           },
@@ -148,7 +148,7 @@ describe('parsers/EnumParser', () => {
           }
         },
         field: {
-          children: {
+          fields: {
             jon: {
               value: ({ value }: Scope) => expect(value).toBe('jon')
             },
@@ -198,7 +198,7 @@ describe('parsers/EnumParser', () => {
           expect(onChange.mock.calls.length).toBe(1);
           expect(onChange.mock.calls[0][0]).toEqual(expected[0]);
 
-          parser.field.children.jon.setValue(true);
+          parser.field.fields.jon.setValue(true);
 
           expect(onChange.mock.calls.length).toBe(2);
           expect(onChange.mock.calls[1][0]).toEqual(expected[1]);
@@ -244,7 +244,7 @@ describe('parsers/EnumParser', () => {
           expect(onChange.mock.calls.length).toBe(1);
           expect(onChange.mock.calls[0][0]).toEqual('arya');
 
-          parser.field.children.jon.setValue(true);
+          parser.field.fields.jon.setValue(true);
 
           expect(onChange.mock.calls.length).toBe(2);
           expect(onChange.mock.calls[1][0]).toEqual('jon');

@@ -23,7 +23,7 @@
  */
 
 export interface JsonSchema {
-  [key: string]: unknown;
+  [key: string]: any;
   $ref?: string;
   // ///////////////////////////////////////////////
   // Schema Metadata
@@ -50,7 +50,7 @@ export interface JsonSchema {
    * Default json for the object represented by
    * this schema
    */
-  'default'?: unknown;
+  'default'?: any;
 
   /**
    * The value of this keyword MAY be of any type,
@@ -59,7 +59,7 @@ export interface JsonSchema {
    * keyword if its value is equal to the value of
    * the keyword.
    */
-  const?: unknown;
+  const?: any;
 
   // ///////////////////////////////////////////////
   // Number Validation

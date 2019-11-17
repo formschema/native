@@ -37,7 +37,7 @@ describe('parsers/ObjectParser', () => {
     expected: {
       parser: {
         kind: ({ value }: Scope) => expect(value).toBe('object'),
-        children({ value }: Scope) {
+        fields({ value }: Scope) {
           for (const key in value) {
             expect(value[key].property).toBe(key);
             expect(value[key].deep).toBe(1);
@@ -50,14 +50,14 @@ describe('parsers/ObjectParser', () => {
             required: ({ value }: Scope) => expect(value).toBeUndefined()
           },
           deep: ({ value }: Scope) => expect(value).toBe(0),
-          children({ value }: Scope) {
+          fields({ value }: Scope) {
             for (const key in value) {
               expect(value[key].property).toBe(key);
               expect(value[key].deep).toBe(1);
             }
           },
           getField({ value, field }: Scope) {
-            expect(value('.name')).toBe(field.children.name);
+            expect(value('.name')).toBe(field.fields.name);
             expect(value('.unexisting')).toBeNull();
           }
         }
@@ -92,10 +92,10 @@ describe('parsers/ObjectParser', () => {
       parser: {
         field: {
           getField({ value, field }: Scope) {
-            expect(value('.lastName')).toBe(field.children.lastName);
-            expect(value('.firstName')).toBe(field.children.firstName);
-            expect(value('.firstName[0]')).toBe(field.children.firstName.childrenList[0]);
-            expect(value('.firstName[1]')).toBe(field.children.firstName.childrenList[1]);
+            expect(value('.lastName')).toBe(field.fields.lastName);
+            expect(value('.firstName')).toBe(field.fields.firstName);
+            expect(value('.firstName[0]')).toBe(field.fields.firstName.children[0]);
+            expect(value('.firstName[1]')).toBe(field.fields.firstName.children[1]);
             expect(value('.firstName[3]')).toBeNull();
           }
         }
@@ -305,8 +305,8 @@ describe('parsers/ObjectParser', () => {
     expected: {
       parser: {
         field({ parser }: Scope) {
-          // field.children.name should have a defined attrs.name
-          expect(parser.field.children.name.attrs.name).toBe('name');
+          // field.fields.name should have a defined attrs.name
+          expect(parser.field.fields.name.attrs.name).toBe('name');
 
           // field.value should be defined as an empty object with nested properties
           expect(parser.field.value).toEqual({
@@ -318,8 +318,8 @@ describe('parsers/ObjectParser', () => {
           });
 
           // field.value should be updated when setting a child model
-          parser.field.children.dateBirth.setValue('-8600/01/02');
-          parser.field.children.name.children.firstName.setValue('Jon');
+          parser.field.fields.dateBirth.setValue('-8600/01/02');
+          parser.field.fields.name.fields.firstName.setValue('Jon');
 
           expect(parser.field.value).toEqual({
             name: {
@@ -376,8 +376,8 @@ describe('parsers/ObjectParser', () => {
       parser: {
         field: {
           getField({ value, field }: Scope) {
-            expect(value('.name')).toBe(field.children.name);
-            expect(value('.name.children.firstName')).toBe(field.children.name.children.firstName);
+            expect(value('.name')).toBe(field.fields.name);
+            expect(value('.name.fields.firstName')).toBe(field.fields.name.fields.firstName);
           }
         }
       }
@@ -413,10 +413,10 @@ describe('parsers/ObjectParser', () => {
       parser: {
         field: {
           deep: ({ value }: Scope) => expect(value).toBe(0),
-          children: {
+          fields: {
             name: {
               deep: ({ value }: Scope) => expect(value).toBe(1),
-              children: {
+              fields: {
                 first: {
                   deep: ({ value }: Scope) => expect(value).toBe(2)
                 },
@@ -442,10 +442,10 @@ describe('parsers/ObjectParser', () => {
     },
     expected: {
       parser: {
-        children: {
+        fields: {
           name: {
             name: ({ value }: Scope) => expect(value).toBe('user[name]'),
-            children: {
+            fields: {
               first: {
                 name: ({ value }: Scope) => expect(value).toBe('user[name][first]')
               },
@@ -470,10 +470,10 @@ describe('parsers/ObjectParser', () => {
     },
     expected: {
       parser: {
-        children: {
+        fields: {
           name: {
             name: ({ value }: Scope) => expect(value).toBe('user.name'),
-            children: {
+            fields: {
               first: {
                 name: ({ value }: Scope) => expect(value).toBe('user.name.first')
               },
@@ -640,7 +640,7 @@ describe('parsers/ObjectParser', () => {
         const parser = new ObjectParser({ ...options100, requestRender });
 
         parser.parse();
-        parser.field.children.credit_card.setValue(123);
+        parser.field.fields.credit_card.setValue(123);
 
         return parser;
       }
@@ -695,9 +695,9 @@ describe('parsers/ObjectParser', () => {
         const parser = new ObjectParser({ schema, requestRender });
 
         parser.parse();
-        parser.field.children.credit_card.setValue(123);
-        parser.field.children.billing_address.setValue('Darling Street');
-        parser.field.children.billing_address.setValue('');
+        parser.field.fields.credit_card.setValue(123);
+        parser.field.fields.billing_address.setValue('Darling Street');
+        parser.field.fields.billing_address.setValue('');
 
         return parser;
       }
@@ -751,7 +751,7 @@ describe('parsers/ObjectParser', () => {
           expect(onChange.mock.calls.length).toBe(1);
           expect(onChange.mock.calls[0][0]).toEqual(expected[0]);
 
-          parser.field.children.name.setValue('jon');
+          parser.field.fields.name.setValue('jon');
 
           expect(onChange.mock.calls.length).toBe(2);
           expect(onChange.mock.calls[1][0]).toEqual(expected[1]);
@@ -802,7 +802,7 @@ describe('parsers/ObjectParser', () => {
           expect(onChange.mock.calls.length).toBe(1);
           expect(onChange.mock.calls[0][0]).toEqual(expected[0]);
 
-          parser.field.children.name.setValue('jon');
+          parser.field.fields.name.setValue('jon');
 
           expect(onChange.mock.calls.length).toBe(2);
           expect(onChange.mock.calls[1][0]).toEqual(expected[1]);
@@ -879,14 +879,14 @@ describe('parsers/ObjectParser', () => {
     expected: {
       parser: {
         addMessage({ field }: Scope) {
-          field.children.name.children.firstName.addMessage('message from nested field', 1);
+          field.fields.name.fields.firstName.addMessage('message from nested field', 1);
 
-          expect(field.children.name.children.firstName.messages).toEqual([
+          expect(field.fields.name.fields.firstName.messages).toEqual([
             { text: 'message from nested field', type: 1 }
           ]);
 
-          field.children.name.children.firstName.clearMessages();
-          expect(field.children.name.children.firstName.messages).toEqual([]);
+          field.fields.name.fields.firstName.clearMessages();
+          expect(field.fields.name.fields.firstName.messages).toEqual([]);
         }
       }
     }
@@ -915,12 +915,186 @@ describe('parsers/ObjectParser', () => {
       parser: {
         addMessage({ field }: Scope) {
           field.addMessage('with default type');
-          field.children.name.children.firstName.addMessage('message from nested field', 1);
+          field.fields.name.fields.firstName.addMessage('message from nested field', 1);
 
           field.clearMessages(true);
 
           expect(field.messages).toEqual([]);
-          expect(field.children.name.children.firstName.messages).toEqual([]);
+          expect(field.fields.name.fields.firstName.messages).toEqual([]);
+        }
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '15.0',
+    description: 'conditional schema',
+    given: {
+      parser: new ObjectParser({
+        schema: {
+          type: 'object',
+          properties: {
+            sections: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  type: {
+                    type: 'string',
+                    enum: [
+                      'string',
+                      'html',
+                      'image',
+                      'any'
+                    ]
+                  },
+                  value: {
+                    type: 'string'
+                  }
+                },
+                if: {
+                  properties: {
+                    type: {
+                      const: 'string'
+                    }
+                  }
+                },
+                then: {
+                  properties: {
+                    value: {
+                      default: 'text/plain'
+                    }
+                  }
+                },
+                else: {
+                  if: {
+                    properties: {
+                      type: {
+                        const: 'html'
+                      }
+                    }
+                  },
+                  then: {
+                    properties: {
+                      value: {
+                        default: 'text/html'
+                      }
+                    }
+                  },
+                  else: {
+                    if: {
+                      properties: {
+                        type: {
+                          const: 'image'
+                        }
+                      }
+                    },
+                    then: {
+                      properties: {
+                        value: {
+                          default: 'image/jpeg'
+                        }
+                      }
+                    },
+                    else: {
+                      properties: {
+                        value: {
+                          default: 'text/plain'
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      })
+    },
+    expected: {
+      parser: {
+        parseConditional({ field, parser: { schema } }: Scope) {
+          const SectionsSchema = schema.properties.sections;
+          const ItemsSchema = SectionsSchema.items;
+          const TypeSchema = ItemsSchema.properties.type;
+
+          // initially, model is empty
+          expect(field.value).toEqual({
+            sections: []
+          });
+
+          /**
+           * scope: section
+           * action: click to the push button
+           * expected: an empty section
+           */
+          field.fields.sections.pushButton.trigger();
+          expect(field.value).toEqual({
+            sections: [
+              { type: undefined, value: undefined }
+            ]
+          });
+
+          /**
+           * scope: first section
+           * action: check the first radio button
+           * expected: conditional process updates the section.value field
+           *           with the default value defined in the 'then' schema
+           */
+          field.fields.sections.children[0].fields.type.setValue(TypeSchema.enum[0])
+          expect(field.value).toEqual({
+            sections: [
+              { type: TypeSchema.enum[0], value: ItemsSchema.then.properties.value.default }
+            ]
+          });
+
+          /**
+           * scope: second section
+           * action: add a second section and check its second radio button
+           * expected: conditional process updates the section.value field
+           *           with the default value defined in the 'else.then' schema
+           */
+          field.fields.sections.pushButton.trigger();
+          field.fields.sections.children[1].fields.type.setValue(TypeSchema.enum[1])
+          expect(field.value).toEqual({
+            sections: [
+              { type: TypeSchema.enum[0], value: ItemsSchema.then.properties.value.default },
+              { type: TypeSchema.enum[1], value: ItemsSchema.else.then.properties.value.default }
+            ]
+          });
+
+          /**
+           * scope: third section
+           * action: add a third section and check its third radio button
+           * expected: conditional process updates the section.value field
+           *           with the default value defined in the 'else.else.then' schema
+           */
+          field.fields.sections.pushButton.trigger();
+          field.fields.sections.children[2].fields.type.setValue(TypeSchema.enum[2])
+          expect(field.value).toEqual({
+            sections: [
+              { type: TypeSchema.enum[0], value: ItemsSchema.then.properties.value.default },
+              { type: TypeSchema.enum[1], value: ItemsSchema.else.then.properties.value.default },
+              { type: TypeSchema.enum[2], value: ItemsSchema.else.else.then.properties.value.default }
+            ]
+          });
+
+          /**
+           * scope: lat section
+           * action: add a new section and check its last radio button
+           * expected: conditional process updates the section.value field
+           *           with the default value defined in the 'else.else.else' schema
+           */
+          field.fields.sections.pushButton.trigger();
+          field.fields.sections.children[3].fields.type.setValue(TypeSchema.enum[3])
+          expect(field.value).toEqual({
+            sections: [
+              { type: TypeSchema.enum[0], value: ItemsSchema.then.properties.value.default },
+              { type: TypeSchema.enum[1], value: ItemsSchema.else.then.properties.value.default },
+              { type: TypeSchema.enum[2], value: ItemsSchema.else.else.then.properties.value.default },
+              { type: TypeSchema.enum[3], value: ItemsSchema.else.else.else.properties.value.default }
+            ]
+          });
         }
       }
     }

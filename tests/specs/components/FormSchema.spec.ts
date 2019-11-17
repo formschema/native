@@ -293,7 +293,7 @@ describe('components/FormSchema', () => {
     const previousKey = vm.key;
 
     vm.update = jest.fn();
-    vm.parser.field.children.credit_card.setValue(123);
+    vm.parser.field.fields.credit_card.setValue(123);
 
     expect(vm.key).not.toBe(previousKey);
   });

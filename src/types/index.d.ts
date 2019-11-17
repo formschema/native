@@ -158,8 +158,8 @@ export interface SetField<
   TAttributes extends Attributes = Attributes,
 > extends Field<TKind, TSetDescriptor, TAttributes, TModel> {
   hasChildren: true;
-  children: Dict<TChildField>;
-  childrenList: TChildField[];
+  fields: Dict<TChildField>;
+  children: TChildField[];
 
   /**
    * @param {string} path - The path of the requested field.
@@ -232,6 +232,7 @@ export interface ParserOptions<
   components?: IComponents;
   readonly bracketedObjectInputName?: boolean;
   onChange?: (value: TModel, field: TField) => void;
+  validator?: (field: TField) => boolean;
   requestRender?: (updatedFields: Field<any, IUIDescriptor, any, TModel>[]) => void;
 }
 

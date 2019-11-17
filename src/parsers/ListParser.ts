@@ -34,8 +34,6 @@ export class ListParser extends Parser<unknown, ListField, ListDescriptor, ListU
   }
 
   parseField() {
-    super.parseField();
-
     this.field.hasChildren = false;
     this.field.items = this.items;
   }
