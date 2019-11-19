@@ -15,7 +15,7 @@ export class Components implements IComponents {
     this.$[kind] = component;
   }
 
-  get(kind: ComponentsType) {
-    return this.$[kind] || this.$.default;
+  get(kind: ComponentsType, fallbackComponent = this.$.default) {
+    return this.$[kind] || fallbackComponent;
   }
 }

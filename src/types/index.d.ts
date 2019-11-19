@@ -297,7 +297,7 @@ export interface IObjectGroupItem {
 }
 
 export interface IArrayChildDescriptor extends IUIDescriptor<ArrayItemField> {
-  buttons: ButtonDescriptor<Function>[];
+  buttons: ArrayItemButton[];
 }
 
 export interface IArrayDescriptor extends DescriptorProperties<ArrayDescriptor>, Required<ArrayDescriptor> {
@@ -396,11 +396,24 @@ export interface ListDescriptor extends ItemsDescriptor<'list'> {
 /**
  * Describe buttons for array schema
  */
-export interface ButtonDescriptor<T extends Function> extends ActionButton<T> {
-  type: string;
+export interface ButtonDescriptor<T extends string, A extends Function> extends Partial<ActionButton<A>> {
+  type: T;
   label: string;
   tooltip?: string;
+  component?: Component;
 }
+
+export type PushButtonDescriptor = ButtonDescriptor<'push', ActionPushTrigger>;
+export type MoveUpButtonDescriptor = ButtonDescriptor<'moveUp', ActionPushTrigger>;
+export type MoveDownButtonDescriptor = ButtonDescriptor<'moveDown', ActionPushTrigger>;
+export type DeleteButtonDescriptor = ButtonDescriptor<'delete', ActionPushTrigger>;
+export type UnknownButtonDescriptor = ButtonDescriptor<string, ActionPushTrigger>;
+
+export type ArrayItemButton =
+  MoveUpButtonDescriptor
+  | MoveDownButtonDescriptor
+  | DeleteButtonDescriptor
+  | UnknownButtonDescriptor;
 
 /**
  * Describe JSON Schema with type `array`
@@ -408,12 +421,8 @@ export interface ButtonDescriptor<T extends Function> extends ActionButton<T> {
 export interface ArrayDescriptor extends DescriptorDefinition {
   layout?: Component; // default: 'fieldset'
   items?: DescriptorInstance[] | DescriptorInstance;
-  pushButton: ButtonDescriptor<ActionPushTrigger>;
-  buttons: {
-    moveUp: ButtonDescriptor<ActionMoveTrigger>;
-    moveDown: ButtonDescriptor<ActionMoveTrigger>;
-    delete: ButtonDescriptor<ActionDeleteTrigger>;
-  };
+  pushButton: PushButtonDescriptor;
+  buttons: ArrayItemButton[];
 }
 
 /**
@@ -421,7 +430,7 @@ export interface ArrayDescriptor extends DescriptorDefinition {
  */
 export interface IComponents {
   set(kind: ComponentsType, component: Component): void;
-  get(kind: ComponentsType): Component;
+  get(kind: ComponentsType, fallbackComponent?: Component): Component;
 }
 
 /**
@@ -500,7 +509,7 @@ export interface SubmitEvent extends Event {
 }
 
 export interface ButtonElementProps extends ElementProps<UnknowField> {
-  button: ButtonDescriptor<Function>;
+  button: UnknownButtonDescriptor;
 }
 
 export interface FunctionalComponentOptions<Props> {

@@ -1,3 +1,4 @@
+import { Parser } from '@/parsers/Parser';
 import { SetParser } from '@/parsers/SetParser';
 import { UniqueId } from '@/lib/UniqueId';
 import { JsonSchema } from '@/types/jsonschema';
@@ -46,9 +47,10 @@ export class EnumParser extends SetParser<unknown, EnumField, EnumDescriptor, En
       .reduce((fields, itemSchema) => {
         const item: any = itemSchema.default;
 
-        const parser = SetParser.get({
+        const parser = Parser.get({
           id: `${radioId}-${UniqueId.parse(item)}`,
           name: radioName,
+          kind: 'radio',
           schema: itemSchema,
           model: itemSchema.default,
           descriptor: descriptorItems[item],

@@ -1,6 +1,18 @@
 import { Dict } from '@/types';
+import { JsonSchema } from '@/types/jsonschema';
 
 export const Value = {
+  parseValue(data: unknown, { type }: JsonSchema): unknown {
+    if (this.hasOwnProperty(type)) {
+      if (type === 'boolean' && typeof data === 'string') {
+        data = data === 'true';
+      }
+
+      return (Value as any)[type](data);
+    }
+
+    return data as any;
+  },
   null() {
     return null;
   },

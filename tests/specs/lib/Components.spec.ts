@@ -19,9 +19,15 @@ describe('lib/Components', () => {
     expect(components.get('enum')).toEqual('enumc');
   });
 
-  it('should successfully get undefined kind', () => {
+  it('should successfully get unknown kind', () => {
     const components = new Components();
 
     expect(components.get('enum')).toEqual('input');
+  });
+
+  it('should successfully get fallback component with unknown kind', () => {
+    const components = new Components();
+
+    expect(components.get('enum', 'span')).toEqual('span');
   });
 });

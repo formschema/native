@@ -11,7 +11,7 @@ import { ObjectUIDescriptor } from '@/descriptors/ObjectUIDescriptor';
 export class ObjectParser extends SetParser<Dict, ObjectField, ObjectDescriptor, ObjectUIDescriptor> {
   properties: Dict<JsonSchema> = {};
   readonly dependencies: Dict<string[]> = {};
-  readonly childrenParsers: Dict<UnknowParser> = {};
+  readonly childrenParsers: Dict<Parser<any, any, any, any>> = {};
   readonly initialSchema: JsonSchema;
 
   constructor(options: ParserOptions<Dict, ObjectField, ObjectDescriptor>, parent?: UnknowParser) {
@@ -70,13 +70,9 @@ export class ObjectParser extends SetParser<Dict, ObjectField, ObjectDescriptor,
          */
         parser.options.onChange = (value: unknown) => {
           update(value);
+          this.commit();
 
-          if (this.schema.if) {
-            this.parseConditional();
-            this.parseField();
-            this.parseDescriptor();
-          } else {
-            this.commit();
+          if (!this.parseConditional()) {
             this.updateDependencies(key, parser);
           }
         };
@@ -161,6 +157,11 @@ export class ObjectParser extends SetParser<Dict, ObjectField, ObjectDescriptor,
     return key;
   }
 
+  parse() {
+    super.parse();
+    this.parseConditional();
+  }
+
   parseField() {
     if (this.schema.properties) {
       this.properties = { ...this.schema.properties };
@@ -188,22 +189,30 @@ export class ObjectParser extends SetParser<Dict, ObjectField, ObjectDescriptor,
 
   parseConditional() {
     /* istanbul ignore else */
-    if (this.initialSchema.if && this.initialSchema.then) {
-      this.schema = Objects.clone(this.initialSchema);
+    if (this.initialSchema.if) {
+      const cachedSchema = Objects.clone(this.schema);
 
       this.parseConditionalSchema(this.initialSchema);
+
+      if (Objects.equal(cachedSchema, this.schema)) {
+        return false;
+      }
+
+      this.resetConditionalSchemaProperties(this.schema);
+      this.parseField();
+
+      return true;
     }
+
+    return false;
   }
 
   validateConditionalSchemaValue(conditionalSchema: JsonSchema) {
-    /* istanbul ignore else */
-    if (conditionalSchema.properties) {
-      const properties = conditionalSchema.properties;
+    const properties = conditionalSchema.properties || {};
 
-      for (const prop in properties) {
-        if (!properties[prop] || this.model[prop] !== properties[prop].const) {
-          return false;
-        }
+    for (const prop in properties) {
+      if (!properties[prop] || this.model[prop] !== properties[prop].const) {
+        return false;
       }
     }
 
@@ -213,45 +222,67 @@ export class ObjectParser extends SetParser<Dict, ObjectField, ObjectDescriptor,
   mergeConditionalSchema(conditionalSchema: JsonSchema) {
     /* istanbul ignore else */
     if (conditionalSchema.properties) {
-      const properties = conditionalSchema.properties;
+      const conditionalProperties = conditionalSchema.properties || {};
+      const schemaProperties = this.schema.properties || {};
+      const schemaRequired = this.schema.required || [];
 
-      /* istanbul ignore if */
-      if (!this.schema.properties) {
-        this.schema.properties = {};
-      }
+      Object.assign(this.schema, conditionalSchema);
 
-      for (const prop in properties) {
-        const property = properties[prop];
+      this.schema.properties = schemaProperties;
+      this.schema.required = schemaRequired;
 
-        Object.assign(this.schema.properties[prop], property);
+      for (const prop in conditionalProperties) {
+        const property = conditionalProperties[prop];
 
         /* istanbul ignore else */
-        if (property.hasOwnProperty('default')) {
-          const childField = this.field.getField(`.${prop}`);
+        if (this.schema.properties[prop]) {
+          Object.assign(this.schema.properties[prop], property);
+        } else {
+          this.schema.properties[prop] = property;
+        }
+      }
 
-          /* istanbul ignore else */
-          if (childField) {
-            childField.setValue(property.default, false);
-            this.setKeyValue(prop, property.default);
-          }
+      if (conditionalSchema.required) {
+        this.schema.required.push(...conditionalSchema.required);
+      }
+    }
+  }
+
+  resetConditionalSchemaProperties(conditionalSchema: JsonSchema) {
+    /* istanbul ignore else */
+    if (conditionalSchema.properties) {
+      const initialSchemaProperties = this.initialSchema.properties || {};
+
+      for (const prop in conditionalSchema.properties) {
+        if (initialSchemaProperties[prop]) {
+          continue;
+        }
+
+        /* istanbul ignore else */
+        if (this.field.fields.hasOwnProperty(prop)) {
+          const property = conditionalSchema.properties[prop];
+          const defaultSchemaValue = property.default;
+
+          this.field.fields[prop].setValue(defaultSchemaValue, false);
+          this.setKeyValue(prop, defaultSchemaValue);
         }
       }
     }
   }
 
-  parseConditionalSchema(inputSchema: JsonSchema) {
+  parseConditionalSchema(conditionalSchema: JsonSchema) {
     /* istanbul ignore else */
-    if (inputSchema.if && inputSchema.then) {
-      if (this.validateConditionalSchemaValue(inputSchema.if)) {
-        this.mergeConditionalSchema(inputSchema.then);
-      } else {
+    if (conditionalSchema.if) {
+      if (this.validateConditionalSchemaValue(conditionalSchema.if)) {
         /* istanbul ignore else */
-        if (inputSchema.else) {
-          if (inputSchema.else.if) {
-            this.parseConditionalSchema(inputSchema.else);
-          } else {
-            this.mergeConditionalSchema(inputSchema.else);
-          }
+        if (conditionalSchema.then) {
+          this.mergeConditionalSchema(conditionalSchema.then);
+        }
+      } else if (conditionalSchema.else) {
+        if (conditionalSchema.else.if) {
+          this.parseConditionalSchema(conditionalSchema.else);
+        } else {
+          this.mergeConditionalSchema(conditionalSchema.else);
         }
       }
     }

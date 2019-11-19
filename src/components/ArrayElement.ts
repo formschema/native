@@ -20,7 +20,7 @@ export const ArrayElement: ArrayComponent = {
 
       if (!props.field.uniqueItems && props.field.sortable) {
         const buttons = childDescriptor.buttons;
-        const buttonsNodes = buttons.map((button) => h(ArrayButtonElement, {
+        const buttonsNodes = buttons.map((button) => h(button.component || ArrayButtonElement, {
           props: { button, field: childField }
         }));
 

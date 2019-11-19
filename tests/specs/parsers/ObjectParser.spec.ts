@@ -947,9 +947,6 @@ describe('parsers/ObjectParser', () => {
                       'image',
                       'any'
                     ]
-                  },
-                  value: {
-                    type: 'string'
                   }
                 },
                 if: {
@@ -962,6 +959,7 @@ describe('parsers/ObjectParser', () => {
                 then: {
                   properties: {
                     value: {
+                      type: 'string',
                       default: 'text/plain'
                     }
                   }
@@ -977,6 +975,7 @@ describe('parsers/ObjectParser', () => {
                   then: {
                     properties: {
                       value: {
+                        type: 'string',
                         default: 'text/html'
                       }
                     }
@@ -992,6 +991,7 @@ describe('parsers/ObjectParser', () => {
                     then: {
                       properties: {
                         value: {
+                          type: 'string',
                           default: 'image/jpeg'
                         }
                       }
@@ -999,7 +999,8 @@ describe('parsers/ObjectParser', () => {
                     else: {
                       properties: {
                         value: {
-                          default: 'text/plain'
+                          type: 'string',
+                          default: 'text/any'
                         }
                       }
                     }
@@ -1024,14 +1025,14 @@ describe('parsers/ObjectParser', () => {
           });
 
           /**
-           * scope: section
+           * scope: default section
            * action: click to the push button
            * expected: an empty section
            */
           field.fields.sections.pushButton.trigger();
           expect(field.value).toEqual({
             sections: [
-              { type: undefined, value: undefined }
+              { type: undefined, value: 'text/any' }
             ]
           });
 
@@ -1041,7 +1042,7 @@ describe('parsers/ObjectParser', () => {
            * expected: conditional process updates the section.value field
            *           with the default value defined in the 'then' schema
            */
-          field.fields.sections.children[0].fields.type.setValue(TypeSchema.enum[0])
+          field.fields.sections.children[0].fields.type.setValue(TypeSchema.enum[0]);
           expect(field.value).toEqual({
             sections: [
               { type: TypeSchema.enum[0], value: ItemsSchema.then.properties.value.default }
@@ -1055,7 +1056,7 @@ describe('parsers/ObjectParser', () => {
            *           with the default value defined in the 'else.then' schema
            */
           field.fields.sections.pushButton.trigger();
-          field.fields.sections.children[1].fields.type.setValue(TypeSchema.enum[1])
+          field.fields.sections.children[1].fields.type.setValue(TypeSchema.enum[1]);
           expect(field.value).toEqual({
             sections: [
               { type: TypeSchema.enum[0], value: ItemsSchema.then.properties.value.default },
@@ -1070,7 +1071,7 @@ describe('parsers/ObjectParser', () => {
            *           with the default value defined in the 'else.else.then' schema
            */
           field.fields.sections.pushButton.trigger();
-          field.fields.sections.children[2].fields.type.setValue(TypeSchema.enum[2])
+          field.fields.sections.children[2].fields.type.setValue(TypeSchema.enum[2]);
           expect(field.value).toEqual({
             sections: [
               { type: TypeSchema.enum[0], value: ItemsSchema.then.properties.value.default },
@@ -1086,13 +1087,88 @@ describe('parsers/ObjectParser', () => {
            *           with the default value defined in the 'else.else.else' schema
            */
           field.fields.sections.pushButton.trigger();
-          field.fields.sections.children[3].fields.type.setValue(TypeSchema.enum[3])
+          field.fields.sections.children[3].fields.type.setValue(TypeSchema.enum[3]);
           expect(field.value).toEqual({
             sections: [
               { type: TypeSchema.enum[0], value: ItemsSchema.then.properties.value.default },
               { type: TypeSchema.enum[1], value: ItemsSchema.else.then.properties.value.default },
               { type: TypeSchema.enum[2], value: ItemsSchema.else.else.then.properties.value.default },
               { type: TypeSchema.enum[3], value: ItemsSchema.else.else.else.properties.value.default }
+            ]
+          });
+        }
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '15.1',
+    description: 'conditional schema with default values',
+    given: {
+      parser: new ObjectParser({
+        schema: {
+          type: 'object',
+          properties: {
+            sections: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  type: {
+                    type: 'string',
+                    default: 'html',
+                    enum: [
+                      'string',
+                      'html'
+                    ]
+                  },
+                  value: {
+                    type: 'string',
+                    default: 'text/html'
+                  }
+                },
+                if: {
+                  properties: {
+                    type: {
+                      const: 'html'
+                    }
+                  }
+                },
+                then: {
+                  properties: {
+                    value: {
+                      default: 'text/html'
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      })
+    },
+    expected: {
+      parser: {
+        parseConditional({ field, parser: { schema } }: Scope) {
+          const SectionsSchema = schema.properties.sections;
+          const ItemsSchema = SectionsSchema.items;
+          const TypeSchema = ItemsSchema.properties.type;
+          const ValueSchema = ItemsSchema.properties.value;
+
+          // initially, model is empty
+          expect(field.value).toEqual({
+            sections: []
+          });
+
+          /**
+           * scope: default section
+           * action: click to the push button
+           * expected: a section with default values
+           */
+          field.fields.sections.pushButton.trigger();
+          expect(field.value).toEqual({
+            sections: [
+              { type: TypeSchema.default, value: ValueSchema.default }
             ]
           });
         }

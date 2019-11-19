@@ -9,6 +9,32 @@ export const Objects = {
     return value !== null && typeof value === 'object';
   },
 
+  equal(x: Dict<any>, y: Dict<any>) {
+    if (x === y) {
+      return true;
+    }
+
+    if ((typeof x === 'object' && x != null) && (typeof y === 'object' && y !== null)) {
+      if (Object.keys(x).length !== Object.keys(y).length) {
+        return false;
+      }
+
+      for (const prop in x) {
+        if (y.hasOwnProperty(prop)) {
+          if (!Objects.equal(x[prop], y[prop])) {
+            return false;
+          }
+        } else {
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+    return false;
+  },
+
   assign<T extends Dict = Dict<any>>(dest: any, src: T): T {
     Object.keys(src).forEach((key) => {
       const value = src[key];
@@ -51,27 +77,5 @@ export const Objects = {
     for (const key in object) {
       delete object[key];
     }
-  },
-
-  assignProperties(...objects: Record<string, any>[]) {
-    const result: Record<string, any> = {};
-
-    objects.reverse().forEach((object) => {
-      for (const key in object) {
-        if (result.hasOwnProperty(key)) {
-          continue;
-        }
-
-        const descriptor = Object.getOwnPropertyDescriptor(object, key);
-
-        if (descriptor) {
-          Object.defineProperty(result, key, descriptor);
-        } else {
-          result[key] = undefined;
-        }
-      }
-    });
-
-    return result;
   }
 };

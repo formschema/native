@@ -1,7 +1,9 @@
 import { UIDescriptor } from '@/descriptors/UIDescriptor';
-import { EnumField, RadioField, IEnumItemDescriptor, EnumDescriptor, ScalarKind, Component } from '@/types';
+import { EnumField, RadioField, IEnumItemDescriptor, EnumDescriptor, Component, ScalarKind } from '@/types';
 import { ItemUIDescriptor } from './ItemUIDescriptor';
 import { Components } from '@/lib/Components';
+
+const DEFAULT_KIND: ScalarKind = 'radio';
 
 export class EnumUIDescriptor extends ItemUIDescriptor<EnumField, RadioField, EnumDescriptor> {
   readonly layout: Component;
@@ -21,11 +23,11 @@ export class EnumUIDescriptor extends ItemUIDescriptor<EnumField, RadioField, En
     const options = this.items[`${field.value}`] || {};
 
     if (!options.kind) {
-      options.kind = field.schema.type as ScalarKind;
+      options.kind = DEFAULT_KIND;
     }
 
     return UIDescriptor.get(options, field, this.components) as IEnumItemDescriptor
-      || UIDescriptor.get({ kind: 'string' }, field, this.components) as IEnumItemDescriptor;
+      || UIDescriptor.get({ kind: DEFAULT_KIND }, field, this.components) as IEnumItemDescriptor;
   }
 
   parse(field: EnumField) {

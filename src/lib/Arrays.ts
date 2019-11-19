@@ -6,5 +6,14 @@ export const Arrays = {
     [ items[from], items[to] ] = [ items[to], items[from] ];
 
     return items[to];
+  },
+  remove<T = unknown>(items: T[], item: T) {
+    const index = this.index<T>(items, item);
+
+    if (index > -1) {
+      return items.splice(index, 1).pop();
+    }
+
+    return undefined;
   }
 };

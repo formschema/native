@@ -82,6 +82,7 @@ export abstract class Parser<
     this.isRoot = !parent;
     this.schema = Objects.clone(options.schema);
     this.kind = kind;
+
     this.rawValue = this.parseValue(this.initialValue) as TModel;
     this.model = this.parseValue(this.initialValue) as TModel;
 
@@ -165,17 +166,7 @@ export abstract class Parser<
   }
 
   parseValue(data: unknown): unknown {
-    const type = this.schema.type;
-
-    if (Value.hasOwnProperty(type)) {
-      if (type === 'boolean' && typeof data === 'string') {
-        data = data === 'true';
-      }
-
-      return (Value as any)[type](data);
-    }
-
-    return data as any;
+    return Value.parseValue(data, this.schema);
   }
 
   setValue(value: unknown) {
