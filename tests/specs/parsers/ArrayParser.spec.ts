@@ -26,8 +26,10 @@ describe('parsers/ArrayParser', () => {
           minItems: 0,
           maxItems: Number.MAX_SAFE_INTEGER,
           pushButton: {
-            disabled: true
-          }
+            disabled: true,
+            trigger: ({ value }: Scope) => expect(value).toBeInstanceOf(Function)
+          },
+          addItemValue: ({ value }: Scope) => expect(value).toBeInstanceOf(Function)
         }
       }
     }
@@ -782,6 +784,42 @@ describe('parsers/ArrayParser', () => {
 
           expect(onChange.mock.calls.length).toBe(3);
           expect(onChange.mock.calls[2][0]).toEqual([]);
+        }
+      }
+    }
+  });
+
+  TestParser.Case({
+    case: '13.0',
+    description: 'field.addItemValue()',
+    given: {
+      parser: new ArrayParser({
+        schema: {
+          type: 'array',
+          maxItems: 1,
+          items: { type: 'string', default: 'arya' }
+        },
+        model: []
+      })
+    },
+    expected: {
+      parser: {
+        field: {
+          addItemValue: ({ value: addItemValue, field }: Scope) => {
+            /**
+             * scenario: successfully add a new item
+             */
+            expect(field.value).toEqual([]);
+            addItemValue('jon');
+            expect(field.value).toEqual([ 'jon' ]);
+
+            /**
+             * scenario: failed to add a new item when the push button is disabled
+             */
+            expect(field.pushButton.disabled).toBeTruthy();
+            addItemValue('baryon');
+            expect(field.value).toEqual([ 'jon' ]);
+          }
         }
       }
     }

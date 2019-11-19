@@ -48,7 +48,7 @@ export const ArrayElement: ArrayComponent = {
     });
 
     if (!props.field.uniqueItems && props.field.children.length < props.field.maxItems) {
-      nodes.push(h(ArrayButtonElement, {
+      nodes.push(h(props.field.descriptor.pushButton.component || ArrayButtonElement, {
         props: {
           button: props.field.descriptor.pushButton,
           field: props.field

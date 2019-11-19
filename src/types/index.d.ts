@@ -197,6 +197,10 @@ export interface ArrayField extends SetField<'array', IArrayDescriptor, any[], A
   pushButton: ActionButton<ActionPushTrigger>;
   minItems: number; // default value: Number.MAX_SAFE_INTEGER
   maxItems: number; // default value: 1 if the field is required, 0 otherwise
+  /**
+   * Add a new item value and return `true` if succeed, else return `false`
+   */
+  addItemValue: (itemValue: any) => boolean;
 }
 
 export interface ListItemModel {

@@ -307,6 +307,19 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
       : this.model.length;
 
     // force render update for ArrayField
+    this.field.addItemValue = (itemValue: any) => {
+      if (this.field.pushButton.disabled) {
+        return false;
+      }
+
+      this.rawValue.push(itemValue);
+      this.setValue(this.rawValue);
+      this.field.pushButton.trigger();
+
+      return true;
+    };
+
+    // force render update for ArrayField
     this.field.reset = () => {
       resetField.call(this.field);
       this.requestRender();
