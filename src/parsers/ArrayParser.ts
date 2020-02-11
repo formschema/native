@@ -136,7 +136,7 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
       model: itemModel,
       id: `${this.id}-${index}`,
       name: this.getFieldItemName(name, index),
-      descriptor: descriptorItem as any,
+      descriptor: descriptorItem,
       components: this.root.options.components
     }, this);
 

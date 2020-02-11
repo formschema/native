@@ -4,14 +4,10 @@ import { ObjectField, ObjectFieldChild } from '@/types';
 export const Fieldset = {
   renderChildren(h: CreateElement, field: ObjectField, children: ObjectFieldChild[] = field.children) {
     return children
-      .map((childField) => ({
-        childField,
-        childDescriptor: field.descriptor.getChildDescriptor(childField)
-      }))
-      .filter(({ childDescriptor }) => childDescriptor.visible)
-      .map(({ childDescriptor, childField }) => h(childDescriptor.component, {
+      .filter((childField) => childField.descriptor.visible)
+      .map((childField) => h(childField.descriptor.component, {
         key: childField.key,
-        attrs: childDescriptor.attrs,
+        attrs: childField.descriptor.attrs,
         props: {
           field: childField
         }

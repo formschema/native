@@ -50,7 +50,7 @@ const BUTTONS: Record<string, ArrayItemButton> = {
 
 export class ArrayUIDescriptor extends UIDescriptor<ArrayField, ArrayDescriptor> implements IArrayDescriptor {
   readonly layout: Component;
-  readonly items: DescriptorInstance[] | DescriptorInstance = [];
+  readonly items: DescriptorInstance[] | DescriptorInstance = {};
   readonly pushButton: PushButtonDescriptor = { type: 'push', label: '+' } as any;
   readonly buttons: ArrayItemButton[] = [];
   readonly children: IArrayChildDescriptor[] = [];
@@ -59,25 +59,15 @@ export class ArrayUIDescriptor extends UIDescriptor<ArrayField, ArrayDescriptor>
     super(definition, field, components);
 
     this.layout = definition.layout || 'fieldset';
-
-    if (definition.items) {
-      this.items = definition.items;
-    }
+    this.items = definition.items || {};
   }
 
-  getChildren(field: ArrayField): IArrayChildDescriptor[] {
-    return field.children
-      .map((childField, index) => ({
-        childField,
-        childDescriptor: this.getChildDescriptor(field, index)
-      }))
-      .map(({ childField, childDescriptor }) => {
-        if (!field.uniqueItems && field.sortable) {
-          childDescriptor.buttons = parseActionButton(childField, childField.descriptor.buttons || this.buttons);
-        }
-
-        return childDescriptor;
-      });
+  loadButtons(field: ArrayField) {
+    field.children.forEach((childField) => {
+      if (!field.uniqueItems && field.sortable) {
+        childField.descriptor.buttons = parseActionButton(childField, childField.descriptor.definition.buttons || this.buttons);
+      }
+    });
   }
 
   parseButtons() {
@@ -103,34 +93,19 @@ export class ArrayUIDescriptor extends UIDescriptor<ArrayField, ArrayDescriptor>
     }
   }
 
-  getChildDescriptor(field: Readonly<ArrayField>, index: number): IArrayChildDescriptor {
-    const childField = field.fields[index];
-    const options = this.items instanceof Array
-      ? this.items[index] || {}
-      : this.items || {};
-
-    if (this.definition.kind === 'hidden') {
-      options.kind = this.definition.kind;
-    }
-
-    const descriptor = UIDescriptor.get(options, childField, this.components);
-
-    return descriptor === null
-      ? UIDescriptor.get({ kind: 'string' }, childField, this.components) as any
-      : descriptor;
-  }
-
   parse(field: ArrayField) {
     super.parse(field);
-
     this.parseButtons();
-    this.parsePushButton(field);
+
+    if (this.definition.pushButton !== null) {
+      this.parsePushButton(field);
+    }
+
     this.update(field);
   }
 
   update(field: ArrayField) {
-    this.children.splice(0);
-    this.children.push(...this.getChildren(field));
+    this.loadButtons(field);
   }
 }
 

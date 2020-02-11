@@ -10,7 +10,6 @@ import {
   DescriptorInstance,
   ObjectGroupDescriptor,
   IObjectDescriptor,
-  ObjectFieldChild,
   IObjectChildDescriptor,
   IObjectGroupItem,
   Component
@@ -24,7 +23,6 @@ export class ObjectUIDescriptor extends UIDescriptor<ObjectField, ObjectDescript
   readonly order: string[] = [];
   readonly orderedProperties: string[] = [];
   readonly parsedGroups = [];
-  readonly children: IObjectChildDescriptor[] = [];
   readonly childrenGroups: IObjectGroupItem[] = [];
 
   constructor(options: ObjectDescriptor, field: Readonly<ObjectField>, components: Components) {
@@ -38,12 +36,6 @@ export class ObjectUIDescriptor extends UIDescriptor<ObjectField, ObjectDescript
     if (options.order instanceof Array) {
       this.order.push(...options.order);
     }
-  }
-
-  getChildren(field: Readonly<ObjectField>) {
-    return this.orderedProperties
-      .map((property) => field.fields[property])
-      .map((childField) => this.getChildDescriptor(childField));
   }
 
   getChildrenGroups(field: Readonly<ObjectField>) {
@@ -100,20 +92,6 @@ export class ObjectUIDescriptor extends UIDescriptor<ObjectField, ObjectDescript
     }));
   }
 
-  getChildDescriptor(childField: ObjectFieldChild): IObjectChildDescriptor {
-    const options = this.properties[childField.property] || {};
-
-    if (this.definition.kind === 'hidden') {
-      options.kind = this.definition.kind;
-    }
-
-    const descriptor = UIDescriptor.get(options, childField, this.components);
-
-    return descriptor === null
-      ? UIDescriptor.get({ kind: 'string' }, childField, this.components) as any
-      : descriptor;
-  }
-
   parseOrder() {
     if (this.order.length === 0) {
       this.order.push(...Object.keys(this.schemaProperties));
@@ -167,10 +145,7 @@ export class ObjectUIDescriptor extends UIDescriptor<ObjectField, ObjectDescript
   }
 
   update(field: ObjectField) {
-    this.children.splice(0);
     this.childrenGroups.splice(0);
-
-    this.children.push(...this.getChildren(field));
     this.childrenGroups.push(...this.getChildrenGroups(field));
   }
 }

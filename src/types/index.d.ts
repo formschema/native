@@ -287,9 +287,7 @@ export interface IUIDescriptor<
 export interface IScalarDescriptor extends DescriptorProperties<ScalarDescriptor>, Required<ScalarDescriptor> {}
 
 export interface IObjectDescriptor extends DescriptorProperties<ObjectDescriptor>, Required<ObjectDescriptor> {
-  readonly children: IObjectChildDescriptor[];
   readonly childrenGroups: IObjectGroupItem[];
-  getChildDescriptor: (childField: ObjectFieldChild) => IObjectChildDescriptor;
 }
 
 export interface IObjectChildDescriptor extends IUIDescriptor<ObjectFieldChild> {}
@@ -306,6 +304,7 @@ export interface IArrayChildDescriptor extends IUIDescriptor<ArrayItemField> {
 
 export interface IArrayDescriptor extends DescriptorProperties<ArrayDescriptor>, Required<ArrayDescriptor> {
   readonly children: IArrayChildDescriptor[];
+  readonly pushButton: PushButtonDescriptor;
 }
 
 export type IEnumItemDescriptor = IUIDescriptor<RadioField>;
@@ -425,7 +424,7 @@ export type ArrayItemButton =
 export interface ArrayDescriptor extends DescriptorDefinition {
   layout?: Component; // default: 'fieldset'
   items?: DescriptorInstance[] | DescriptorInstance;
-  pushButton: PushButtonDescriptor;
+  pushButton: PushButtonDescriptor | null;
   buttons: ArrayItemButton[];
 }
 

@@ -8,32 +8,32 @@ export const ArrayElement: ArrayComponent = {
   functional: true,
   render(h, { data, props }) {
     const ArrayButtonElement = props.field.descriptor.components.get('button');
-    const nodes: any = props.field.descriptor.children.map((childDescriptor, index) => {
+    const nodes = props.field.children.map((childField) => {
       const buttonsWrapper: VNode[] = [];
-
-      const childField = props.field.children[index];
       const childData = {
         key: childField.key,
-        attrs: childDescriptor.attrs,
+        attrs: childField.descriptor.attrs,
         props: { field: childField }
       };
 
       if (!props.field.uniqueItems && props.field.sortable) {
-        const buttons = childDescriptor.buttons;
-        const buttonsNodes = buttons.map((button) => h(button.component || ArrayButtonElement, {
-          props: { button, field: childField }
-        }));
+        if (childField.descriptor.buttons.length) {
+          const buttons = childField.descriptor.buttons;
+          const buttonsNodes = buttons.map((button) => h(button.component || ArrayButtonElement, {
+            props: { button, field: childField }
+          }));
 
-        buttonsWrapper.push(h('div', {
-          key: props.field.key + childField.key,
-          attrs: {
-            'data-fs-buttons': buttonsNodes.length
-          }
-        }, buttonsNodes));
+          buttonsWrapper.push(h('div', {
+            key: props.field.key + childField.key,
+            attrs: {
+              'data-fs-buttons': buttonsNodes.length
+            }
+          }, buttonsNodes));
+        }
       }
 
-      if (childDescriptor.kind === 'object') {
-        const componentNode = h(childDescriptor.component, childData);
+      if (childField.descriptor.kind === 'object') {
+        const componentNode = h(childField.descriptor.component, childData);
         const fieldsetData = {
           props: {
             // TODO this sounds deprecated. The field object no longer has a helper property
@@ -44,16 +44,18 @@ export const ArrayElement: ArrayComponent = {
         return h(FieldElement, fieldsetData, [ componentNode, buttonsWrapper ]);
       }
 
-      return h(childDescriptor.component, childData, buttonsWrapper);
+      return h(childField.descriptor.component, childData, buttonsWrapper);
     });
 
     if (!props.field.uniqueItems && props.field.children.length < props.field.maxItems) {
-      nodes.push(h(props.field.descriptor.pushButton.component || ArrayButtonElement, {
-        props: {
-          button: props.field.descriptor.pushButton,
-          field: props.field
-        }
-      }));
+      if (props.field.descriptor.definition.pushButton !== null) {
+        nodes.push(h(props.field.descriptor.pushButton.component || ArrayButtonElement, {
+          props: {
+            button: props.field.descriptor.pushButton,
+            field: props.field
+          }
+        }));
+      }
     }
 
     return h(FieldsetElement, data, nodes);

@@ -12,7 +12,7 @@ export const ArrayButtonElement: ArrayButtonComponent = {
         'data-fs-button': button.type
       },
       on: {
-        click: button.trigger
+        click: button.trigger as any
       }
     }, button.label);
   }
