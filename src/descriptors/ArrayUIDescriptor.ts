@@ -65,7 +65,9 @@ export class ArrayUIDescriptor extends UIDescriptor<ArrayField, ArrayDescriptor>
   loadButtons(field: ArrayField) {
     field.children.forEach((childField) => {
       if (!field.uniqueItems && field.sortable) {
-        childField.descriptor.buttons = parseActionButton(childField, childField.descriptor.definition.buttons || this.buttons);
+        const buttons = childField.descriptor.definition.buttons || this.buttons;
+
+        childField.descriptor.buttons = parseActionButton(childField, buttons);
       }
     });
   }

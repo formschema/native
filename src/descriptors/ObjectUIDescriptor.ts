@@ -10,7 +10,6 @@ import {
   DescriptorInstance,
   ObjectGroupDescriptor,
   IObjectDescriptor,
-  IObjectChildDescriptor,
   IObjectGroupItem,
   Component
 } from '@/types';
