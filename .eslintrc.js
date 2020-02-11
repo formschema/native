@@ -26,6 +26,7 @@ module.exports = {
   },
   rules: {
     'import/no-unresolved': 'error',
+    'import/extensions': 'off',
     '@typescript-eslint/indent': ['error', 2],
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-explicit-any': 'off',

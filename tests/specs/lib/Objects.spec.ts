@@ -2,7 +2,7 @@ import { Objects } from '@/lib/Objects';
 
 describe('lib/Objects', () => {
   describe('Objects.isObject(value)', () => {
-    [ 'hello', 123, true, undefined, null, [], () => {} ].forEach((value) => {
+    [ 'hello', 123, true, undefined, null, [], () => { return 1; } ].forEach((value) => {
       it(`should return false for '${value}' as scalar value`, () => {
         expect(Objects.isObject(value)).toBeFalsy();
       });

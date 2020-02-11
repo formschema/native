@@ -48,6 +48,6 @@ describe('components/HelperElement', () => {
 
     const wrapper = mount(HelperElement, { context });
 
-    expect(wrapper.html()).toBeUndefined();
+    expect(wrapper.html()).toBe('');
   });
 });

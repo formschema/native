@@ -1,7 +1,7 @@
 import { UIDescriptor } from '@/descriptors/UIDescriptor';
+import { Components } from '@/lib/Components';
 import { EnumField, RadioField, IEnumItemDescriptor, EnumDescriptor, Component, ScalarKind } from '@/types';
 import { ItemUIDescriptor } from './ItemUIDescriptor';
-import { Components } from '@/lib/Components';
 
 const DEFAULT_KIND: ScalarKind = 'radio';
 

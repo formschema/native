@@ -88,14 +88,12 @@ describe('components/FormSchema', () => {
   });
 
   describe('props/computed', () => {
-    it('should have setted schema', (done) => {
+    it('should have setted schema', async () => {
       const wrapper = getWrapper({ schema });
       const { vm } = wrapper;
 
-      Vue.nextTick(() => {
-        expect(vm.schema).toBe(schema);
-        done();
-      });
+      await Vue.nextTick();
+      expect(vm.schema).toBe(schema);
     });
 
     it('vm.id should be defined', () => {
@@ -157,12 +155,12 @@ describe('components/FormSchema', () => {
   });
 
   describe('should successfully render component', () => {
-    it('as an undefined VNode when before the nextTick', () => {
+    it('as an empty VNode when before the nextTick', () => {
       const wrapper = getWrapper({ schema });
       const { vm } = wrapper;
 
       expect(vm.ready).toBeFalsy();
-      expect(wrapper.html()).toBeUndefined();
+      expect(wrapper.html()).toBe('');
     });
 
     it('after the nextTick', () => {
@@ -192,10 +190,10 @@ describe('components/FormSchema', () => {
       expect(wrapper.emitted().input).toEqual([ [ value ] ]);
     });
 
-    it('as an undefined VNode with an undefined schema.type', () => {
+    it('as an empty VNode with an undefined schema.type', () => {
       const wrapper = getWrapper({ schema: { ...schema, type: undefined } });
 
-      expect(wrapper.html()).toBeUndefined();
+      expect(wrapper.html()).toBe('');
     });
 
     it('with a default slot', () => {
@@ -213,7 +211,7 @@ describe('components/FormSchema', () => {
       return Vue.nextTick().then(() => expect(wrapper.html()).toMatchSnapshot(expected));
     });
 
-    it('with a non scalar schema', (done) => {
+    it('with a non scalar schema', async () => {
       const objectSchema = {
         type: 'object',
         properties: {
@@ -224,24 +222,20 @@ describe('components/FormSchema', () => {
       const wrapper = getWrapper({ schema: objectSchema });
       const expected = { id: 'id-form' };
 
-      Vue.nextTick(() => {
-        expect(wrapper.attributes()).toEqual(expected);
-        done();
-      });
+      await Vue.nextTick();
+      expect(wrapper.attributes()).toEqual(expected);
     });
 
-    it('with { schema, search }', (done) => {
+    it('with { schema, search }', async () => {
       const search = true;
       const wrapper = getWrapper({ schema, search });
       const expected = { id: 'id-form', role: 'search' };
 
-      Vue.nextTick(() => {
-        expect(wrapper.attributes()).toEqual(expected);
-        done();
-      });
+      await Vue.nextTick();
+      expect(wrapper.attributes()).toEqual(expected);
     });
 
-    it('with { schema, disabled }', (done) => {
+    it('with { schema, disabled }', async () => {
       const objectSchema = {
         type: 'object',
         properties: {
@@ -252,22 +246,19 @@ describe('components/FormSchema', () => {
       const wrapper = getWrapper({ schema: objectSchema, disabled: true });
       const expected = '<form id="id-form"><fieldset id="id-form-field" disabled="disabled"><div data-fs-kind="string" data-fs-type="text" data-fs-field="string"><label id="id-form-field-string-label" for="id-form-field-string">String</label><div data-fs-wrapper="2"><div data-fs-input="text"><input id="id-form-field-string" type="text" name="string" aria-labelledby="id-form-field-string-label" aria-describedby="id-form-field-string-helper"></div><span id="id-form-field-string-helper" data-fs-helper="true">A String</span></div></div></fieldset></form>';
 
-      Vue.nextTick(() => {
-        expect(wrapper.html()).toMatchSnapshot(expected);
-        done();
-      });
+      await Vue.nextTick();
+      expect(wrapper.html()).toMatchSnapshot(expected);
     });
   });
 
-  it('vm.form() should be return a defined VNode', (done) => {
+  it('vm.form() should be return a defined VNode', async () => {
     const wrapper = getWrapper({ schema });
 
-    Vue.nextTick(() => {
-      const { vm } = wrapper.find('form');
+    await Vue.nextTick();
 
-      expect(vm.form()).toBeDefined();
-      done();
-    });
+    const form = wrapper.find('form');
+
+    expect(form.vm.form()).toBeDefined();
   });
 
   it('vm.update(updatedFields) should be called', () => {
