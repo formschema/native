@@ -20,7 +20,7 @@ export const FieldsetElement: FieldsetComponent = {
     }
 
     if (!field.isRoot) {
-      return h(FieldElement, data, nodes);
+      return h(descriptor.definition.layout || FieldElement, data, nodes);
     }
 
     const attrs = { ...descriptor.attrs, ...(data.attrs || {}) };

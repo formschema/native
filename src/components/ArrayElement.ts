@@ -1,4 +1,4 @@
-import { VNode } from 'vue';
+import { VNode, VNodeData } from 'vue';
 import { ArrayComponent } from '@/types';
 import { FieldElement } from '@/components/FieldElement';
 import { FieldsetElement } from '@/components/FieldsetElement';
@@ -9,16 +9,17 @@ export const ArrayElement: ArrayComponent = {
   render(h, { data, props }) {
     const ArrayButtonElement = props.field.descriptor.components.get('button');
     const nodes = props.field.children.map((childField) => {
+      const childDescriptor = childField.descriptor;
       const buttonsWrapper: VNode[] = [];
-      const childData = {
+      const childData: VNodeData = {
         key: childField.key,
-        attrs: childField.descriptor.attrs,
+        attrs: childDescriptor.attrs,
         props: { field: childField }
       };
 
       if (!props.field.uniqueItems && props.field.sortable) {
-        if (childField.descriptor.buttons.length) {
-          const buttons = childField.descriptor.buttons;
+        if (childDescriptor.buttons.length) {
+          const buttons = childDescriptor.buttons;
           const buttonsNodes = buttons.map((button) => h(button.component || ArrayButtonElement, {
             props: { button, field: childField }
           }));
@@ -32,8 +33,8 @@ export const ArrayElement: ArrayComponent = {
         }
       }
 
-      if (childField.descriptor.kind === 'object') {
-        const componentNode = h(childField.descriptor.component, childData);
+      if (childDescriptor.kind === 'object') {
+        const componentNode = h(FieldsetElement, childData);
         const fieldsetData = {
           props: {
             // TODO this sounds deprecated. The field object no longer has a helper property
@@ -44,7 +45,7 @@ export const ArrayElement: ArrayComponent = {
         return h(FieldElement, fieldsetData, [ componentNode, buttonsWrapper ]);
       }
 
-      return h(childField.descriptor.component, childData, buttonsWrapper);
+      return h(childDescriptor.component, childData, buttonsWrapper);
     });
 
     if (!props.field.uniqueItems && props.field.children.length < props.field.maxItems) {

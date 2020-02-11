@@ -119,7 +119,7 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
       ? itemSchema.default
       : this.model[index];
 
-    const descriptorItem = this.options.descriptor && this.options.descriptor.items
+    const itemDescriptor = this.options.descriptor && this.options.descriptor.items
       ? this.options.descriptor.items instanceof Array
         ? this.options.descriptor.items[index]
         : this.options.descriptor.items
@@ -130,13 +130,13 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
       ? `${itemName}-${this.radioIndex}`
       : itemName;
 
-    const parser = SetParser.get({
+    const itemParser = SetParser.get({
       kind: kind,
       schema: itemSchema,
       model: itemModel,
       id: `${this.id}-${index}`,
       name: this.getFieldItemName(name, index),
-      descriptor: descriptorItem,
+      descriptor: itemDescriptor,
       components: this.root.options.components
     }, this);
 
@@ -144,21 +144,21 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
       this.rawValue.push(undefined);
     }
 
-    if (parser) {
-      this.childrenParsers.push(parser);
+    if (itemParser) {
+      this.childrenParsers.push(itemParser);
 
       if (kind === 'boolean') {
-        this.parseCheckboxField(parser, itemModel);
+        this.parseCheckboxField(itemParser, itemModel);
       }
 
       // update the index raw value
-      this.rawValue[index] = parser.model;
+      this.rawValue[index] = itemParser.model;
 
       // set the onChange option after the parser initialization
       // to prevent first field value emit
-      parser.options.onChange = this.field.sortable
+      itemParser.options.onChange = this.field.sortable
         ? (value) => {
-          this.setFieldValue(parser.field, value);
+          this.setFieldValue(itemParser.field, value);
           this.commit();
         }
         : (value) => {
@@ -166,7 +166,7 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
           this.commit();
         };
 
-      return parser.field;
+      return itemParser.field;
     }
 
     return null;
