@@ -401,7 +401,6 @@ describe('parsers/Parser', () => {
             parser.requestRender([ parser.field ]);
             expect(parser.field.key).toEqual(oldFieldKey);
 
-
             // calling requestRender() with arguments after
             // updated the field.key value have no effect
             parser.field.key = 'random-key';
