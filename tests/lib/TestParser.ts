@@ -62,9 +62,7 @@ function toEqual(parser: any, prefix: string, actual: any, expected: Dict<any>, 
 }
 
 export const TestParser = {
-  Case({
-    description, given, expected, ...args
-  }: TestCaseOptions) {
+  Case({ description, given, expected, ...args }: TestCaseOptions): void {
     const p = typeof given.parser === 'function'
       ? given.parser()
       : given.parser instanceof Parser

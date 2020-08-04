@@ -6,7 +6,7 @@ import { FieldsetElement } from '@/components/FieldsetElement';
 export const ArrayElement: ArrayComponent = {
   name: 'ArrayElement',
   functional: true,
-  render(h, { data, props }) {
+  render(h, { data, props }): VNode | VNode[] {
     const ArrayButtonElement = props.field.descriptor.components.get('button');
     const nodes = props.field.children.map((childField) => {
       const childDescriptor = childField.descriptor;

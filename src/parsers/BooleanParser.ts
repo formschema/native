@@ -12,11 +12,11 @@ export class BooleanParser extends ScalarParser<boolean, BooleanField> {
     super(kind, type, options, parent);
   }
 
-  isEmpty(data: unknown = this.model) {
+  isEmpty(data: unknown = this.model): boolean {
     return typeof data !== 'boolean';
   }
 
-  parseField() {
+  parseField(): void {
     super.parseField();
 
     if (this.field.attrs.type !== 'radio') {
@@ -31,7 +31,7 @@ export class BooleanParser extends ScalarParser<boolean, BooleanField> {
     };
   }
 
-  parseValue(checked: boolean) {
+  parseValue(checked: boolean): boolean {
     return Value.boolean(checked);
   }
 }

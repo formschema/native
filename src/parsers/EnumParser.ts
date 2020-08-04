@@ -77,22 +77,22 @@ export class EnumParser extends SetParser<unknown, EnumField, EnumDescriptor, En
       }, {} as Dict<RadioField>);
   }
 
-  setValue(value: unknown) {
+  setValue(value: unknown): void {
     super.setValue(value);
     this.updateInputsState();
   }
 
-  reset() {
+  reset(): void {
     super.reset();
     this.childrenParsers.forEach((parser) => parser.reset());
   }
 
-  clear() {
+  clear(): void {
     super.clear();
     this.childrenParsers.forEach((parser) => parser.clear());
   }
 
-  updateInputsState() {
+  updateInputsState(): void {
     for (const itemField of this.field.children) {
       itemField.attrs.checked = itemField.value === this.model;
 
@@ -102,7 +102,7 @@ export class EnumParser extends SetParser<unknown, EnumField, EnumDescriptor, En
     }
   }
 
-  parseField() {
+  parseField(): void {
     this.field.fields = this.fields;
     this.field.children = Object.values(this.field.fields);
 

@@ -3,7 +3,7 @@ import { NumberParser } from '@/parsers/NumberParser';
 import { Value } from '@/lib/Value';
 
 export class IntegerParser extends NumberParser {
-  parseExclusiveKeywords() {
+  parseExclusiveKeywords(): void {
     if (this.schema.hasOwnProperty('exclusiveMinimum')) {
       const exclusiveMinimum = this.schema.exclusiveMinimum as number;
 
@@ -17,7 +17,7 @@ export class IntegerParser extends NumberParser {
     }
   }
 
-  parseValue(data: unknown) {
+  parseValue(data: unknown): number | undefined {
     return Value.integer(data);
   }
 }

@@ -5,6 +5,7 @@ import { Arrays } from '@/lib/Arrays';
 import { Value } from '@/lib/Value';
 import { ArrayField, ParserOptions, FieldKind, ArrayItemField, UnknowParser, ArrayDescriptor } from '@/types';
 import { ArrayUIDescriptor } from '@/descriptors/ArrayUIDescriptor';
+import { Parser } from './Parser';
 
 export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, ArrayUIDescriptor> {
   readonly items: JsonSchema[] = [];
@@ -61,7 +62,7 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
     return fields;
   }
 
-  setFieldValue(field: ArrayItemField, value: unknown) {
+  setFieldValue(field: ArrayItemField, value: unknown): void {
     // since it's possible to order children fields, the
     // current field's index must be computed each time
     // TODO: an improvement can be done by using a caching index table
@@ -70,17 +71,17 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
     this.setIndexValue(index, value);
   }
 
-  setIndexValue(index: number, value: unknown) {
+  setIndexValue(index: number, value: unknown): void {
     this.rawValue[index] = value;
 
     this.setValue(this.rawValue);
   }
 
-  isEmpty(data: unknown = this.model) {
+  isEmpty(data: unknown = this.model): boolean {
     return data instanceof Array && data.length === 0;
   }
 
-  clearModel() {
+  clearModel(): void {
     for (let i = 0; i < this.rawValue.length; i++) {
       this.rawValue[i] = undefined;
     }
@@ -88,25 +89,25 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
     this.model.splice(0);
   }
 
-  setValue(value: unknown[]) {
+  setValue(value: unknown[]): void {
     this.rawValue = value as any;
 
     this.model.splice(0);
     this.model.push(...this.parseValue(this.rawValue) as any);
   }
 
-  reset() {
+  reset(): void {
     this.clearModel();
     this.initialValue.forEach((value, index) => this.setIndexValue(index, value));
     this.childrenParsers.forEach((parser) => parser.reset());
   }
 
-  clear() {
+  clear(): void {
     this.clearModel();
     this.childrenParsers.forEach((parser) => parser.clear());
   }
 
-  getFieldItemName(name: string, index: number) {
+  getFieldItemName(name: string, index: number): string {
     return this.root.options.bracketedObjectInputName ? `${name}[${index}]` : name;
   }
 
@@ -148,7 +149,7 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
       this.childrenParsers.push(itemParser);
 
       if (kind === 'boolean') {
-        this.parseCheckboxField(itemParser, itemModel);
+        this.parseCheckboxField(itemParser as Parser<any, any, any, any>, itemModel);
       }
 
       // update the index raw value
@@ -172,7 +173,7 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
     return null;
   }
 
-  getFieldIndex(index: number) {
+  getFieldIndex(index: number): ArrayItemField | null {
     const itemSchema = this.schema.items instanceof Array || this.field.uniqueItems
       ? this.items[index]
       : this.items[0];
@@ -180,7 +181,7 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
     return this.getFieldItem(itemSchema, index);
   }
 
-  move(from: number, to: number) {
+  move(from: number, to: number): ArrayItemField | undefined {
     const items = this.field.children;
 
     if (items[from] && items[to]) {
@@ -197,7 +198,7 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
     return undefined;
   }
 
-  isDisabled([ from, to ]: [ number, number ]) {
+  isDisabled([ from, to ]: [ number, number ]): boolean {
     return !this.field.sortable || !this.field.children[from] || !this.field.children[to];
   }
 
@@ -215,7 +216,7 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
     return [ from, to ];
   }
 
-  setButtons(itemField: ArrayItemField) {
+  setButtons(itemField: ArrayItemField): void {
     itemField.buttons = {
       moveUp: {
         disabled: this.isDisabled(this.upIndexes(itemField)),
@@ -246,7 +247,7 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
     };
   }
 
-  setCount(value: number) {
+  setCount(value: number): boolean {
     if (this.schema.maxItems && value > this.field.maxItems) {
       return false;
     }
@@ -271,7 +272,7 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
     return true;
   }
 
-  parseField() {
+  parseField(): void {
     this.field.sortable = false;
     this.field.minItems = this.schema.minItems || (this.field.required ? 1 : 0);
     this.field.maxItems = typeof this.schema.maxItems === 'number' && this.schema.maxItems > 0
@@ -329,7 +330,7 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
     this.setCount(this.count);
   }
 
-  parseCheckboxField(parser: any, itemModel: unknown) {
+  parseCheckboxField(parser: Parser<any, any, any, any>, itemModel: unknown): void {
     const isChecked = this.initialValue.includes(itemModel);
 
     parser.field.attrs.type = 'checkbox';
@@ -342,7 +343,7 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
     parser.setValue(isChecked);
   }
 
-  parseUniqueItems() {
+  parseUniqueItems(): void {
     if (this.schema.uniqueItems === true && this.items.length === 1) {
       const itemSchema = this.items[0];
 
@@ -387,7 +388,7 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
     }
   }
 
-  parseValue(data: unknown[]) {
+  parseValue(data: unknown[]): unknown[] {
     return Value.array(data);
   }
 }

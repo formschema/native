@@ -12,7 +12,7 @@ export class NumberParser extends ScalarParser<number, NumberField> {
     super(kind, type, options, parent);
   }
 
-  parseExclusiveKeywords() {
+  parseExclusiveKeywords(): void {
     if (this.schema.hasOwnProperty('exclusiveMinimum')) {
       const exclusiveMinimum = this.schema.exclusiveMinimum as number;
 
@@ -26,7 +26,7 @@ export class NumberParser extends ScalarParser<number, NumberField> {
     }
   }
 
-  parseField() {
+  parseField(): void {
     super.parseField();
 
     Object.defineProperty(this.field.attrs, 'value', {
@@ -41,7 +41,7 @@ export class NumberParser extends ScalarParser<number, NumberField> {
     this.parseExclusiveKeywords();
   }
 
-  parseValue(data: unknown) {
+  parseValue(data: unknown): number | undefined {
     return Value.number(data);
   }
 }

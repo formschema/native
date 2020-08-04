@@ -67,11 +67,11 @@ export class StringParser extends ScalarParser<string, StringField> {
     super(kind, type, options, parent);
   }
 
-  isEmpty(data: unknown = this.model) {
+  isEmpty(data: unknown = this.model): boolean {
     return typeof data === 'string' ? data.length === 0 : true;
   }
 
-  parseField() {
+  parseField(): void {
     super.parseField();
 
     if (this.field.attrs.type === 'file') {
@@ -94,7 +94,7 @@ export class StringParser extends ScalarParser<string, StringField> {
     this.field.attrs.maxlength = this.schema.maxLength;
   }
 
-  parseValue(data: unknown) {
+  parseValue(data: unknown): string | undefined {
     return Value.string(data);
   }
 }

@@ -1,8 +1,8 @@
-import { CreateElement } from 'vue';
+import { CreateElement, VNode } from 'vue';
 import { ObjectField, ObjectFieldChild } from '@/types';
 
 export const Fieldset = {
-  renderChildren(h: CreateElement, field: ObjectField, children: ObjectFieldChild[] = field.children) {
+  renderChildren(h: CreateElement, field: ObjectField, children: ObjectFieldChild[] = field.children): VNode[] {
     return children
       .filter((childField) => childField.descriptor.visible)
       .map((childField) => h(childField.descriptor.component, {
@@ -14,7 +14,7 @@ export const Fieldset = {
       }));
   },
 
-  renderGroups(h: CreateElement, field: ObjectField) {
+  renderGroups(h: CreateElement, field: ObjectField): VNode[] {
     return field.descriptor.childrenGroups.map(({ id, label, children }) => {
       const childrenNodes = Fieldset.renderChildren(h, field, children);
       const nodes = [

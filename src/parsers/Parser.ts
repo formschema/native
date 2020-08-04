@@ -37,7 +37,7 @@ export abstract class Parser<
   readonly options: ParserOptions<TModel, TField, TDescriptor>;
   schema: JsonSchema;
 
-  static register(kind: ParserKind, parserClass: any) {
+  static register(kind: ParserKind, parserClass: unknown): void {
     PARSERS[kind] = parserClass;
   }
 
@@ -151,7 +151,7 @@ export abstract class Parser<
     } as TField;
   }
 
-  get root() {
+  get root(): UnknowParser {
     return this.parent ? this.parent.root : this;
   }
 
@@ -161,7 +161,7 @@ export abstract class Parser<
       : this.options.model;
   }
 
-  isEmpty(data: unknown = this.model) {
+  isEmpty(data: unknown = this.model): boolean {
     return typeof data === 'undefined';
   }
 
@@ -169,26 +169,26 @@ export abstract class Parser<
     return Value.parseValue(data, this.schema);
   }
 
-  setValue(value: unknown) {
+  setValue(value: unknown): void {
     this.rawValue = value as any;
     this.model = this.parseValue(value) as TModel;
   }
 
-  reset() {
+  reset(): void {
     this.setValue(this.parseValue(this.initialValue) as any);
   }
 
-  clear() {
+  clear(): void {
     this.setValue(this.parseValue(undefined) as any);
   }
 
-  commit() {
+  commit(): void {
     if (typeof this.options.onChange === 'function') {
       this.options.onChange(this.model, this.field);
     }
   }
 
-  requestRender(fields?: UnknowField[]) {
+  requestRender(fields?: UnknowField[]): void {
     if (typeof this.root.options.requestRender === 'function') {
       if (!fields) {
         this.field.key = UniqueId.get(this.options.name);
@@ -202,7 +202,7 @@ export abstract class Parser<
 
   abstract parseField(): void;
 
-  parseDescriptor() {
+  parseDescriptor(): void {
     this.field.descriptor = UIDescriptor.get(
       this.options.descriptor || {},
       this.field,
@@ -212,7 +212,7 @@ export abstract class Parser<
     this.field.descriptor.parse(this.field);
   }
 
-  parse() {
+  parse(): void {
     this.parseField();
     this.parseDescriptor();
     this.commit();

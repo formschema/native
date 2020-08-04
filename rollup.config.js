@@ -17,8 +17,7 @@ const TerserPlugin = terser({
   compress: true,
   output: {
     comments: new RegExp(`^ ${pkg.name}`)
-  },
-  sourcemap: true
+  }
 });
 
 const CopyPlugin = copy({

@@ -11,11 +11,11 @@ export class Components implements IComponents {
     };
   }
 
-  set(kind: ComponentsType, component: Component) {
+  set(kind: ComponentsType, component: Component): void {
     this.$[kind] = component;
   }
 
-  get(kind: ComponentsType, fallbackComponent = this.$.default) {
+  get(kind: ComponentsType, fallbackComponent = this.$.default): Component {
     return this.$[kind] || fallbackComponent;
   }
 }

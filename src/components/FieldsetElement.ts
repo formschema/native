@@ -1,3 +1,4 @@
+import { VNode } from 'vue';
 import { FieldsetComponent } from '@/types';
 import { FieldElement } from '@/components/FieldElement';
 import { Objects } from '@/lib/Objects';
@@ -7,7 +8,7 @@ import { Field } from '@/lib/Field';
 export const FieldsetElement: FieldsetComponent = {
   name: 'FieldsetElement',
   functional: true,
-  render(h, { data, props, slots }) {
+  render(h, { data, props, slots }): VNode | VNode[] {
     const field = props.field;
     const descriptor = props.field.descriptor;
 

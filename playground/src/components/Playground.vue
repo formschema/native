@@ -246,10 +246,10 @@
             errorField.addMessage(message, 3);
           });
 
-          return false;
+          return Promise.resolve(false);
         }
 
-        return true;
+        return Promise.resolve(true);
       },
       updateRenderKey() {
         this.renderKey = UniqueId.get('code');

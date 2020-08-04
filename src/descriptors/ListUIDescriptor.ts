@@ -5,7 +5,7 @@ import { ItemUIDescriptor } from './ItemUIDescriptor';
 export class ListUIDescriptor extends ItemUIDescriptor<ListField, UnknowField, ListDescriptor> implements IListDescriptor {
   readonly options: ListFieldItemDescriptor[] = [];
 
-  getLabel(value: unknown) {
+  getLabel(value: unknown): string {
     const item = this.items[value as any];
 
     return item ? item.label : value as any;
@@ -25,7 +25,7 @@ export class ListUIDescriptor extends ItemUIDescriptor<ListField, UnknowField, L
     ];
   }
 
-  parse(field: ListField) {
+  parse(field: ListField): void {
     super.parse(field);
 
     this.options.push(...this.getOptions(field));

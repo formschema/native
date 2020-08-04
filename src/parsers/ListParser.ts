@@ -20,7 +20,7 @@ export class ListParser extends Parser<unknown, ListField, ListDescriptor, ListU
     return [];
   }
 
-  parseItem(item: unknown) {
+  parseItem(item: unknown): unknown {
     switch (this.schema.type) {
       case 'boolean':
         return item === true ? 'true' : 'false';
@@ -33,7 +33,7 @@ export class ListParser extends Parser<unknown, ListField, ListDescriptor, ListU
     }
   }
 
-  parseField() {
+  parseField(): void {
     this.field.hasChildren = false;
     this.field.items = this.items;
   }

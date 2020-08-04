@@ -33,7 +33,7 @@ export abstract class UIDescriptor<
   readonly kind: TFieldKind;
   readonly schema: JsonSchema;
 
-  static register(kind: FieldKind, parserClass: any) {
+  static register(kind: FieldKind, parserClass: Dict<any>): void {
     DESCRIPTORS[kind] = parserClass;
   }
 
@@ -83,13 +83,13 @@ export abstract class UIDescriptor<
     this.attrs['aria-describedby'] = this.helperAttrs.id;
   }
 
-  parse(field: TField) {
+  parse(field: TField): void {
     // Make sure descriptor.attrs is sync with field.attrs
     Object.assign(this.attrs, field.attrs, this.definition.attrs || {});
   }
 
   // eslint-disable-next-line
-  update(field: TField) {
+  update(field: TField): void {
     // do nothing by default, inherited class will override this if needed
   }
 }

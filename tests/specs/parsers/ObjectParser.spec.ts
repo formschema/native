@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
-
 import { ObjectParser } from '@/parsers/ObjectParser';
 import { ParserOptions } from '@/types';
 import { JsonSchema } from '@/types/jsonschema';

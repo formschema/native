@@ -1,10 +1,11 @@
+import { VNode } from 'vue';
 import { Dict, FieldComponent } from '@/types';
 import { Field } from '@/lib/Field';
 
 export const FieldElement: FieldComponent = {
   name: 'FieldElement',
   functional: true,
-  render(h, { data, props, children }) {
+  render(h, { data, props, children }): VNode | VNode[] {
     const field = props.field;
     const descriptor = props.field.descriptor;
 

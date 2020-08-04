@@ -49,7 +49,7 @@ export abstract class ScalarParser <
     }
   }
 
-  parseField() {
+  parseField(): void {
     this.field.hasChildren = false;
 
     if (this.schema.const) {

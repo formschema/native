@@ -30,9 +30,8 @@ export class EnumUIDescriptor extends ItemUIDescriptor<EnumField, RadioField, En
       || UIDescriptor.get({ kind: DEFAULT_KIND }, field, this.components) as IEnumItemDescriptor;
   }
 
-  parse(field: EnumField) {
+  parse(field: EnumField): void {
     super.parse(field);
-
     this.children.push(...this.getChildren(field));
   }
 }

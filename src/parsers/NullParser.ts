@@ -11,13 +11,13 @@ export class NullParser extends ScalarParser<null, NullField> {
     super(kind, type, options, parent);
   }
 
-  parseField() {
+  parseField(): void {
     super.parseField();
 
     this.field.attrs.value = '\u0000';
   }
 
-  parseValue() {
+  parseValue(): null {
     return null;
   }
 }

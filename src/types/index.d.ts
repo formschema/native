@@ -82,15 +82,33 @@ export interface StringAttributes extends InputAttributes {
   accept?: string;
 }
 
-export type MessageInfo = 0;
-export type MessageSuccess = 1;
-export type MessageWarining = 2;
-export type MessageError = 3;
-export type MessageType = MessageInfo | MessageSuccess | MessageWarining | MessageError;
+export enum MessageType {
+  Info = 0,
+  Success = 1,
+  Warining = 2,
+  Error = 3
+}
 
 export interface Message {
   type?: MessageType;
   text: string;
+}
+
+interface GenericField<TModel = any> {
+  id: string;
+  key: string;
+  name?: string;
+  isRoot: boolean;
+  schema: JsonSchema;
+  required: boolean;
+  hasChildren: boolean;
+  initialValue: TModel;
+  value: TModel;
+  readonly messages: Required<Message>[];
+  clear(): void; // clear field
+  reset(): void; // reset initial field value
+  addMessage(message: string, type?: MessageType): void;
+  clearMessages(recursive?: boolean): void;
 }
 
 export interface Field<
@@ -98,36 +116,21 @@ export interface Field<
   TDescriptor extends IUIDescriptor = IUIDescriptor,
   TAttributes extends Attributes = Attributes,
   TModel = any
-> {
-  id: string;
-  key: string;
+> extends GenericField<TModel> {
   kind: TKind;
-  name?: string;
-  isRoot: boolean;
-  schema: JsonSchema;
-  required: boolean;
   deep: number;
   parent?: Field<any>;
   root: Field<any>;
   attrs: TAttributes;
-  hasChildren: boolean;
   descriptor: TDescriptor;
+  readonly messages: Required<Message>[];
 
   // Value
-  initialValue: TModel;
-  value: TModel;
-  setValue: (value: TModel, emitChange?: boolean) => void;
-  commit: () => void;
-  clear: () => void;
-  reset: () => void;
+  setValue(value: TModel, emitChange?: boolean): void;
+  commit(): void;
 
   // Rendering
-  requestRender: () => void;
-
-  // Message handling
-  readonly messages: Required<Message>[];
-  addMessage: (message: string, type?: MessageType) => void;
-  clearMessages: (recursive?: boolean) => void;
+  requestRender(): void;
 }
 
 export interface ScalarField<
@@ -164,7 +167,7 @@ export interface SetField<
   /**
    * @param {string} path - The path of the requested field.
    *                        It's formated as JavaScript property access
-   *                        notation (e.g., ".prop.propArray[1].subProp")
+   *                        notation (e.g., ".userProp.addressesProp[1].nameProp")
    */
   getField: (path: string) => UnknowField | null;
 }
@@ -220,6 +223,8 @@ export interface ObjectFieldChild extends Field<any, IObjectDescriptor, Attribut
 export interface ObjectField extends SetField<'object', IObjectDescriptor, Dict, ObjectFieldChild> {
 }
 
+export type ValidatorFunction<T = UnknowField> = (field: T) => Promise<boolean>;
+
 export interface ParserOptions<
   TModel,
   TField extends Field<any, any, any> = UnknowField,
@@ -236,7 +241,7 @@ export interface ParserOptions<
   components?: IComponents;
   readonly bracketedObjectInputName?: boolean;
   onChange?: (value: TModel, field: TField) => void;
-  validator?: (field: TField) => boolean;
+  validator?: ValidatorFunction<TField>;
   requestRender?: (updatedFields: Field<any, IUIDescriptor, any, TModel>[]) => void;
 }
 
@@ -450,7 +455,7 @@ export interface FormSchemaVue extends Vue {
   disabled: boolean;
   components: IComponents;
   descriptor: DescriptorInstance | IUIDescriptor;
-  validator: (field: UnknowField) => boolean;
+  validator: ValidatorFunction;
 
   // data
   key: string;

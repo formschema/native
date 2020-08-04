@@ -13,9 +13,10 @@ Vue component form based on JSON Schema and Native HTML
 - [Supported Keywords](#supported-keywords)
 - [Irrelevant (ignored) Keywords](#irrelevant-ignored-keywords)
 - [FormSchema API](#formschema-api)
-  * [props](#props)
-  * [events](#events)
-  * [methods](#methods)
+  * [Props](#props)
+  * [Events](#events)
+  * [Methods](#methods)
+    + [form()](#form)
 - [Working with Async Schema](#working-with-async-schema)
 - [Working with Vue Router](#working-with-vue-router)
 - [Workind with JSON Schema $ref Pointers](#workind-with-json-schema-ref-pointers)
@@ -24,7 +25,9 @@ Vue component form based on JSON Schema and Native HTML
   * [Custom Validation API](#custom-validation-api)
   * [Custom Validation with AJV](#custom-validation-with-ajv)
   * [Disable Native HTML5 Validation](#disable-native-html5-validation)
-- [Translate Labels](#translate-labels)
+    + [Example: Disable Form Validation using `novalidate`](#example-disable-form-validation-using-novalidate)
+    + [Usecase: Implement Save, Cancel and Submit](#usecase-implement-save-cancel-and-submit)
+- [Labels Translation](#labels-translation)
 - [Render Form Elements](#render-form-elements)
   * [Textarea](#textarea)
   * [File Input](#file-input)
@@ -145,68 +148,70 @@ are irrelevant:
 
 ## FormSchema API
 
-### props
+### Props
 
-- `schema` ***Object*** (*required*)
+| Name                          | Type                                          | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | Default            |
+| ----------------------------- | --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
+| `schema` *required*           | `Object`                                      | The input JSON Schema object.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |                    |
+| `v-model`                     | `any`                                         | Use this directive to create two-way data bindings with the component. It automatically picks the correct way to update the element based on the input type.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | `undefined`        |
+| `id`                          | `String`                                      | The id property of the Element interface represents the form's identifier, reflecting the id global attribute.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | `Random unique ID` |
+| `name`                        | `String`                                      | The name of the form. It must be unique among the forms in a document.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | `undefined`        |
+| `bracketed-object-input-name` | `Boolean`                                     | When set to `true` (default), checkbox inputs and nested object inputs will * automatically include brackets at the end of their names (e.g. `name="grouped-checkbox-fields[]"`). Setting this property to `false`, disables this behaviour.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | `true`             |
+| `search`                      | `Boolean`                                     | Use this prop to enable `search` landmark role to identify a section of the page used to search the page, site, or collection of sites.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | `false`            |
+| `disabled`                    | `Boolean`                                     | Indicates whether the form elements are disabled or not.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | `false`            |
+| `components`                  | `ComponentsLib`                               | Use this prop to overwrite the default Native HTML Elements with custom components.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | `GLOBAL.Elements`  |
+| `descriptor`                  | [`DescriptorInstance`](#descriptor-interface) | UI Schema Descriptor to use for rendering.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | `{}`               |
+| `validator`                   | `Function`                                    | The validator function to use to validate data before to emit the `input` event.<br>**Syntax**<br><code class="language-ts">validator(field: GenericField): Promise<boolean></code><br>**Parameters**<br><ul><li>**`field`**  The field that requests validation </li><li>**`field.id`**  The input value for validation </li><li>**`field.name`**  The input value for validation </li><li>**`field.value`**  The input value for validation </li><li>**`field.schema`**  The input value for validation </li><li>**`field.required`**  The input value for validation </li><li>**`field.hasChildren`**  The input value for validation </li><li>**`field.initialValue`**  The input value for validation </li><li>**`field.messages`**  The input value for validation </li></ul>**Return value**<br>A promise that return `true` if validation success and `false` otherwise<br> | `null`             |
 
-  The input JSON Schema object.
+### Events
 
-- `v-model` ***Number|String|Array|Object|Boolean*** (*optional*) `default: undefined`
+| Name    | Description                                                                                                         |
+| ------- | ------------------------------------------------------------------------------------------------------------------- |
+| `input` | Fired synchronously when the value of an element is changed.<br>**Arguments**<br><ul><li>**`value: any`**</li></ul> |
 
-  Use this directive to create two-way data bindings with the
-  component. It automatically picks the correct way to update the
-  element based on the input type.
+### Methods
 
-- `id` ***String*** (*optional*)
+#### form()
 
-  The id property of the Element interface represents the form's identifier,
-  reflecting the id global attribute.
+Get the HTML form object reference.
 
-- `name` ***String*** (*optional*) `default: undefined`
+**Example**
 
-  The name of the form. It must be unique among the forms in a document.
+```html
+<template>
+  <FormSchema ref="formSchema" :schema="schema"/>
+</template>
 
-- `bracketed-object-input-name` ***Boolean*** (*optional*) `default: true`
+<script>
+  import FormSchema from '@formschema/native'
 
-  When set to true (default), checkbox inputs will automatically include
-  brackets at the end of their names (e.g. name="Multicheckbox-Value1[]".
-  Setting this property to false, disables this behaviour.
+  export default {
+    components: { FormSchema },
+    data: () => ({
+      schema: { type: 'string' }
+    }),
+    mounted() {
+      console.log(this.$refs.formSchema.form())
+    }
+  };
+</script>
+```
 
-- `search` ***Boolean*** (*optional*) `default: false`
+**Syntax**
 
-  Use this prop to enable `search` landmark role to identify a section
-  of the page used to search the page, site, or collection of sites.
+```ts
+form(): HTMLFormElement | VNode | undefined
+```
 
-- `disabled` ***Boolean*** (*optional*) `default: false`
+**Return value**
 
-  Indicates whether the form elements are disabled or not.
-
-- `components` ***Components*** (*optional*) `default: GLOBAL.components`
-
-  Use this prop to overwrite the default Native HTML Elements with
-  custom components.
-
-### events
-
-- `input`
-
-  Fired synchronously when the value of an element is changed.
-
-### methods
-
-- `form()`
-
-  Get the HTML form reference.
-
-   **return value:**
-
-     - **HTMLFormElement|VNode|undefined** -  Returns the HTML form element or `undefined` for empty object
+ An `HTMLFormElement` object or a `VNode` object describing the form element object, or `undefined` for input JSON schema object.
 
 ## Working with Async Schema
 
 ```html
 <template>
-  <FormSchema v-model="schema"/>
+  <FormSchema :schema="schema"/>
 </template>
 
 <script>
@@ -233,7 +238,7 @@ Load an async schema on the `beforeRouterEnter` hook:
 
 ```html
 <template>
-  <FormSchema v-model="schema"/>
+  <FormSchema :schema="schema"/>
 </template>
 
 <script>
@@ -296,42 +301,37 @@ dedicated JSON Schema validator if you want to validate complex schema.
 
 ### Custom Validation API
 
+For custom validation, you need to provide a [validation function prop](#props).
+
+Bellow the custom validation API:
+
 ```ts
-/**
- * FormSchema prop to set to enable custom validation
- * @param {Field} field - The field that requests validation
- * @return {boolean} Return `true` to accept changes and perform the `input` event,
- *                   or `false` to cancel the `input` event.
- */
-type validator = (field: Field) => boolean;
-
-interface Field {
-  readonly value: any;
-  readonly hasChildren: boolean;
-  readonly messages: Message[];
-
-  /**
-   * @param {string} path - The path of the requested field.
-   *                        It's formated as JavaScript property access
-   *                        notation (e.g., ".prop.propArray[1].subProp")
-   */
-  getField?: (path: string) => Field | null;
-
-  // Message handling
-  addMessage: (message: string, type: MessageType = MessageError) => void;
-  clearMessages: (recursive?: boolean) => void;
-}
-
 type MessageInfo = 0;
 type MessageSuccess = 1;
 type MessageWarining = 2;
 type MessageError = 3;
-
 type MessageType = MessageInfo | MessageSuccess | MessageWarining | MessageError;
 
 interface Message {
-  type: MessageType;
+  type?: MessageType;
   text: string;
+}
+
+interface GenericField<TModel = any> {
+  readonly id: string;
+  readonly key: string;
+  readonly name: string;
+  readonly isRoot: boolean;
+  readonly schema: JsonSchema;
+  readonly required: boolean;
+  readonly hasChildren: boolean;
+  readonly initialValue: TModel;
+  readonly value: TModel;
+  readonly messages: Required<Message>[];
+  clear(): void; // clear field
+  reset(): void; // reset initial field value
+  addMessage(message: string, type: MessageType = MessageError): void;
+  clearMessages(recursive: boolean = false): void;
 }
 ```
 
@@ -381,11 +381,11 @@ validator:
           // validation success, submit code here
         }
       },
-      validator(data, field) {
+      validator(field) {
         // Clear all messages
         field.clearMessages(true);
 
-        if (!this.validate(this.model)) {
+        if (!this.validate(field.value)) {
           this.validate.errors.forEach(({ dataPath, message }) => {
             const errorField = field.hasChildren
               ? field.getField(dataPath) || field
@@ -404,11 +404,11 @@ validator:
           });
 
           // Return `false` to cancel the `input` event
-          return false;
+          return Promise.resolve(false);
         }
 
         // Return `true` to trigger the `input` event
-        return true;
+        return Promise.resolve(true);
       }
     },
     components: { FormSchema }
@@ -430,7 +430,7 @@ Since FormSchema use the native HTML Form element, attributes `novalidate` and
   [form owner](https://dev.w3.org/html5/spec-LC/association-of-controls-and-forms.html#form-owner)'s
   `novalidate` attribute is present, and `false` otherwise.
 
-**Example: Disable Form Validation using `novalidate`**
+#### Example: Disable Form Validation using `novalidate`
 
 ```html
 <template>
@@ -440,7 +440,7 @@ Since FormSchema use the native HTML Form element, attributes `novalidate` and
 </template>
 ```
 
-**Usecase: Implement Save, Cancel and Submit**
+#### Usecase: Implement Save, Cancel and Submit
 
 Disable the form validation constraints could be useful when implementing a
 *save* feature to the form:
@@ -459,9 +459,9 @@ Disable the form validation constraints could be useful when implementing a
 </template>
 ```
 
-## Translate Labels
+## Labels Translation
 
-The simple way to translate labels without change the JSON Schema file is to
+The simple way to translate labels without to change the JSON Schema file is to
 use a descriptor.
 
 Here an example with [Vue I18n](https://kazupon.github.io/vue-i18n):
@@ -790,12 +790,13 @@ properties for the rendering:
 type SchemaType = 'object' | 'array' | 'string' | 'number' | 'integer' | 'boolean' | 'null';
 type ScalarKind = 'string' | 'password' | 'number' | 'integer' | 'null' | 'boolean' | 'hidden' | 'textarea' | 'image' | 'file' | 'radio' | 'checkbox';
 type ItemKind = 'enum' | 'list';
-type ComponentsType = 'form' | 'message' | SchemaType | ScalarKind | ItemKind;
-type Component = string | VueComponent | AsyncComponent;
+type FieldKind = SchemaType | ScalarKind | ItemKind;
+type ComponentsType = 'form' | 'message' | 'button' | 'helper' | FieldKind;
+type Component = string | VueComponent | VueAsyncComponent;
 
 interface IComponents {
   set(kind: ComponentsType, component: Component): void;
-  get(kind: ComponentsType): Component;
+  get(kind: ComponentsType, fallbackComponent?: Component): Component;
 }
 ```
 
@@ -873,18 +874,22 @@ export class MyCustomComponents extends NativeComponents {
 ## Descriptor Interface
 
 ```ts
-export type SchemaType = 'object' | 'array' | 'string' | 'number' | 'integer' | 'boolean' | 'null';
-export type ScalarKind = 'string' | 'password' | 'number' | 'integer' | 'null' | 'boolean' | 'hidden' | 'textarea' | 'image' | 'file' | 'radio' | 'checkbox';
-export type ItemKind = 'enum' | 'list';
-export type FieldKind = SchemaType | ScalarKind | ItemKind;
-export type Component = string | VueComponent | AsyncComponent;
+type SchemaType = 'object' | 'array' | 'string' | 'number' | 'integer' | 'boolean' | 'null';
+type ParserKind = SchemaType | 'enum' | 'list' | 'textarea' | 'image' | 'file' | 'password';
+type ScalarKind = 'string' | 'password' | 'number' | 'integer' | 'null' | 'boolean' | 'hidden' | 'textarea' | 'image' | 'file' | 'radio' | 'checkbox';
+type ItemKind = 'enum' | 'list';
+type FieldKind = SchemaType | ScalarKind | ItemKind;
+type ComponentsType = 'form' | 'message' | 'button' | 'helper' | FieldKind;
+type Component = string | VueComponent | AsyncVueComponent;
 
-export type DescriptorInstance = ScalarDescriptor | EnumDescriptor | ListDescriptor | ObjectDescriptor | ArrayDescriptor;
+type SetDescriptor = EnumDescriptor | ArrayDescriptor | ObjectDescriptor;
+type DescriptorInstance = ScalarDescriptor | SetDescriptor | ListDescriptor;
 
-export interface Descriptor<TKind extends FieldKind = FieldKind> {
+interface DescriptorDefinition<TKind extends FieldKind = FieldKind> {
   kind?: TKind;
   label?: string;
   helper?: string;
+  visible?: boolean; // by default true. If false, component will be ignored on rendering
   component?: Component;
   attrs?: {
     [attr: string]: unknown;
@@ -899,20 +904,21 @@ export interface Descriptor<TKind extends FieldKind = FieldKind> {
  * boolean, null, hidden field, textarea element, image and file
  * inputs, radio and checkbox elements
  */
-export interface ScalarDescriptor extends Descriptor<ScalarKind> {
+interface ScalarDescriptor extends Descriptor<ScalarKind> {
 }
 
 /**
  * Use to describe grouped object properties
  */
-export interface ObjectGroupDescriptor extends Descriptor {
+interface ObjectGroupDescriptor extends DescriptorDefinition {
   properties: string[];
 }
 
 /**
  * Describe JSON Schema with type `object`
  */
-export interface ObjectDescriptor extends Descriptor {
+interface ObjectDescriptor extends DescriptorDefinition {
+  layout?: Component; // default: 'fieldset'
   properties?: {
     [schemaProperty: string]: DescriptorInstance;
   };
@@ -925,7 +931,7 @@ export interface ObjectDescriptor extends Descriptor {
 /**
  * Describe JSON Schema with key `enum`
  */
-export interface ItemsDescriptor<TKind extends ItemKind> extends Descriptor<TKind> {
+interface ItemsDescriptor<TKind extends ItemKind> extends DescriptorDefinition<TKind> {
   items?: {
     [itemValue: string]: ScalarDescriptor;
   };
@@ -934,35 +940,46 @@ export interface ItemsDescriptor<TKind extends ItemKind> extends Descriptor<TKin
 /**
  * Describe HTML Radio Elements
  */
-export interface EnumDescriptor extends ItemsDescriptor<'enum'> {
+interface EnumDescriptor extends ItemsDescriptor<'enum'> {
+  layout?: Component; // default: 'fieldset'
 }
 
 /**
  * Describe HTML Select Element
  */
-export interface ListDescriptor extends ItemsDescriptor<'list'> {
+interface ListDescriptor extends ItemsDescriptor<'list'> {
 }
 
 /**
  * Describe buttons for array schema
  */
-export interface ButtonDescriptor<T extends Function> extends ActionButton<T> {
+interface ButtonDescriptor<T extends Function> extends ActionButton<T> {
   type: string;
   label: string;
   tooltip?: string;
 }
 
+type ActionPushTrigger = () => void;
+
+type PushButtonDescriptor = ButtonDescriptor<'push', ActionPushTrigger>;
+type MoveUpButtonDescriptor = ButtonDescriptor<'moveUp', ActionPushTrigger>;
+type MoveDownButtonDescriptor = ButtonDescriptor<'moveDown', ActionPushTrigger>;
+type DeleteButtonDescriptor = ButtonDescriptor<'delete', ActionPushTrigger>;
+type UnknownButtonDescriptor = ButtonDescriptor<string, ActionPushTrigger>;
+
+type ArrayItemButton = MoveUpButtonDescriptor
+  | MoveDownButtonDescriptor
+  | DeleteButtonDescriptor
+  | UnknownButtonDescriptor;
+
 /**
  * Describe JSON Schema with type `array`
  */
-export interface ArrayDescriptor extends Descriptor {
+interface ArrayDescriptor extends DescriptorDefinition {
+  layout?: Component; // default: 'fieldset'
   items?: DescriptorInstance[] | DescriptorInstance;
-  pushButton: ButtonDescriptor<ActionPushTrigger>;
-  buttons: {
-    moveUp: ButtonDescriptor<ActionMoveTrigger>;
-    moveDown: ButtonDescriptor<ActionMoveTrigger>;
-    delete: ButtonDescriptor<ActionDeleteTrigger>;
-  };
+  pushButton: PushButtonDescriptor | null;
+  buttons: ArrayItemButton[];
 }
 ```
 

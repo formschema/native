@@ -83,21 +83,21 @@ export class ObjectParser extends SetParser<Dict, ObjectField, ObjectDescriptor,
     return fields;
   }
 
-  setKeyValue(key: string, value: unknown) {
+  setKeyValue(key: string, value: unknown): void {
     this.rawValue[key] = value;
     this.model[key] = value;
   }
 
-  isEmpty(data: Dict = this.model) {
+  isEmpty(data: Dict = this.model): boolean {
     return Objects.isEmpty(data);
   }
 
-  clearModel() {
+  clearModel(): void {
     Objects.clear(this.rawValue);
     Objects.clear(this.model);
   }
 
-  reset() {
+  reset(): void {
     this.clearModel();
 
     for (const key in this.childrenParsers) {
@@ -106,7 +106,7 @@ export class ObjectParser extends SetParser<Dict, ObjectField, ObjectDescriptor,
     }
   }
 
-  clear() {
+  clear(): void {
     this.clearModel();
 
     for (const key in this.childrenParsers) {
@@ -114,7 +114,7 @@ export class ObjectParser extends SetParser<Dict, ObjectField, ObjectDescriptor,
     }
   }
 
-  updateDependencies(key: string, parser: UnknowParser) {
+  updateDependencies(key: string, parser: UnknowParser): void {
     if (this.dependencies[key]) {
       const needUpdate = [ parser.field ];
       const isRequired = !parser.isEmpty();
@@ -133,13 +133,13 @@ export class ObjectParser extends SetParser<Dict, ObjectField, ObjectDescriptor,
     }
   }
 
-  hasFilledDependency(key: string) {
+  hasFilledDependency(key: string): boolean {
     return Object.keys(this.dependencies).some((prop) => {
       return this.dependencies[prop].includes(key) && !this.childrenParsers[prop].isEmpty();
     });
   }
 
-  setRequiredDependency(key: string, parser: UnknowParser, required: boolean) {
+  setRequiredDependency(key: string, parser: UnknowParser, required: boolean): void {
     if (parser.isEmpty(this.model[key])) {
       parser.field.key = UniqueId.get(key);
     }
@@ -147,7 +147,7 @@ export class ObjectParser extends SetParser<Dict, ObjectField, ObjectDescriptor,
     parser.field.required = required;
   }
 
-  getChildName(key: string, name?: string) {
+  getChildName(key: string, name?: string): string {
     if (name) {
       return this.root.options.bracketedObjectInputName
         ? `${name}[${key}]`
@@ -157,12 +157,12 @@ export class ObjectParser extends SetParser<Dict, ObjectField, ObjectDescriptor,
     return key;
   }
 
-  parse() {
+  parse(): void {
     super.parse();
     this.parseConditional();
   }
 
-  parseField() {
+  parseField(): void {
     if (this.schema.properties) {
       this.properties = { ...this.schema.properties };
     }
@@ -187,7 +187,7 @@ export class ObjectParser extends SetParser<Dict, ObjectField, ObjectDescriptor,
     }
   }
 
-  parseConditional() {
+  parseConditional(): boolean {
     /* istanbul ignore else */
     if (this.initialSchema.if) {
       const cachedSchema = Objects.clone(this.schema);
@@ -207,7 +207,7 @@ export class ObjectParser extends SetParser<Dict, ObjectField, ObjectDescriptor,
     return false;
   }
 
-  validateConditionalSchemaValue(conditionalSchema: JsonSchema) {
+  validateConditionalSchemaValue(conditionalSchema: JsonSchema): boolean {
     const properties = conditionalSchema.properties || {};
 
     for (const prop in properties) {
@@ -219,7 +219,7 @@ export class ObjectParser extends SetParser<Dict, ObjectField, ObjectDescriptor,
     return true;
   }
 
-  mergeConditionalSchema(conditionalSchema: JsonSchema) {
+  mergeConditionalSchema(conditionalSchema: JsonSchema): void {
     /* istanbul ignore else */
     if (conditionalSchema.properties) {
       const conditionalProperties = conditionalSchema.properties || {};
@@ -248,7 +248,7 @@ export class ObjectParser extends SetParser<Dict, ObjectField, ObjectDescriptor,
     }
   }
 
-  resetConditionalSchemaProperties(conditionalSchema: JsonSchema) {
+  resetConditionalSchemaProperties(conditionalSchema: JsonSchema): void {
     /* istanbul ignore else */
     if (conditionalSchema.properties) {
       const initialSchemaProperties = this.initialSchema.properties || {};
@@ -270,7 +270,7 @@ export class ObjectParser extends SetParser<Dict, ObjectField, ObjectDescriptor,
     }
   }
 
-  parseConditionalSchema(conditionalSchema: JsonSchema) {
+  parseConditionalSchema(conditionalSchema: JsonSchema): void {
     /* istanbul ignore else */
     if (conditionalSchema.if) {
       if (this.validateConditionalSchemaValue(conditionalSchema.if)) {
@@ -288,7 +288,7 @@ export class ObjectParser extends SetParser<Dict, ObjectField, ObjectDescriptor,
     }
   }
 
-  parseDependencies() {
+  parseDependencies(): void {
     const dependencies = this.schema.dependencies;
 
     if (dependencies) {
@@ -310,7 +310,7 @@ export class ObjectParser extends SetParser<Dict, ObjectField, ObjectDescriptor,
     }
   }
 
-  parseValue(data: unknown) {
+  parseValue(data: unknown): Dict<unknown> {
     return Value.object(data);
   }
 }

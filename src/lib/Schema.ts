@@ -10,7 +10,7 @@ const SCALAR_TYPES: SchemaType[] = [
 ];
 
 export const Schema = {
-  isScalar(schema: JsonSchema) {
+  isScalar(schema: JsonSchema): boolean {
     return SCALAR_TYPES.includes(schema.type);
   }
 };

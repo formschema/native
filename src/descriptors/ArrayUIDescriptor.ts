@@ -62,7 +62,7 @@ export class ArrayUIDescriptor extends UIDescriptor<ArrayField, ArrayDescriptor>
     this.items = definition.items || {};
   }
 
-  loadButtons(field: ArrayField) {
+  loadButtons(field: ArrayField): void {
     field.children.forEach((childField) => {
       if (!field.uniqueItems && field.sortable) {
         const buttons = childField.descriptor.definition.buttons || this.buttons;
@@ -72,7 +72,7 @@ export class ArrayUIDescriptor extends UIDescriptor<ArrayField, ArrayDescriptor>
     });
   }
 
-  parseButtons() {
+  parseButtons(): void {
     const buttons = this.definition.buttons || Object.values(BUTTONS);
 
     for (const button of buttons) {
@@ -80,7 +80,7 @@ export class ArrayUIDescriptor extends UIDescriptor<ArrayField, ArrayDescriptor>
     }
   }
 
-  parsePushButton(field: Readonly<ArrayField>) {
+  parsePushButton(field: Readonly<ArrayField>): void {
     if (this.definition.pushButton) {
       Object.assign(this.pushButton, this.definition.pushButton);
     }
@@ -95,7 +95,7 @@ export class ArrayUIDescriptor extends UIDescriptor<ArrayField, ArrayDescriptor>
     }
   }
 
-  parse(field: ArrayField) {
+  parse(field: ArrayField): void {
     super.parse(field);
     this.parseButtons();
 
@@ -106,7 +106,7 @@ export class ArrayUIDescriptor extends UIDescriptor<ArrayField, ArrayDescriptor>
     this.update(field);
   }
 
-  update(field: ArrayField) {
+  update(field: ArrayField): void {
     this.loadButtons(field);
   }
 }

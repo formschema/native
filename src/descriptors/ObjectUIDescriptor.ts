@@ -11,8 +11,15 @@ import {
   ObjectGroupDescriptor,
   IObjectDescriptor,
   IObjectGroupItem,
-  Component
+  Component,
+  ObjectFieldChild
 } from '@/types';
+
+type ObjectChild = {
+  id: string;
+  label: string | undefined;
+  children: ObjectFieldChild[];
+};
 
 export class ObjectUIDescriptor extends UIDescriptor<ObjectField, ObjectDescriptor> implements IObjectDescriptor {
   readonly layout: Component;
@@ -37,7 +44,7 @@ export class ObjectUIDescriptor extends UIDescriptor<ObjectField, ObjectDescript
     }
   }
 
-  getChildrenGroups(field: Readonly<ObjectField>) {
+  getChildrenGroups(field: Readonly<ObjectField>): ObjectChild[] {
     const groupsIds: string[] = [];
     const ordoredGroups: Dict<string[]> = {};
 
@@ -91,13 +98,13 @@ export class ObjectUIDescriptor extends UIDescriptor<ObjectField, ObjectDescript
     }));
   }
 
-  parseOrder() {
+  parseOrder(): void {
     if (this.order.length === 0) {
       this.order.push(...Object.keys(this.schemaProperties));
     }
   }
 
-  parseSchemaProperties() {
+  parseSchemaProperties(): void {
     const keys = Object.keys(this.schemaProperties);
 
     this.orderedProperties.push(...this.order);
@@ -111,7 +118,7 @@ export class ObjectUIDescriptor extends UIDescriptor<ObjectField, ObjectDescript
     }
   }
 
-  parseDependencies() {
+  parseDependencies(): void {
     const dependencies = this.schema.dependencies;
 
     if (dependencies) {
@@ -134,7 +141,7 @@ export class ObjectUIDescriptor extends UIDescriptor<ObjectField, ObjectDescript
     }
   }
 
-  parse(field: ObjectField) {
+  parse(field: ObjectField): void {
     super.parse(field);
 
     this.parseOrder();
@@ -143,7 +150,7 @@ export class ObjectUIDescriptor extends UIDescriptor<ObjectField, ObjectDescript
     this.update(field);
   }
 
-  update(field: ObjectField) {
+  update(field: ObjectField): void {
     this.childrenGroups.splice(0);
     this.childrenGroups.push(...this.getChildrenGroups(field));
   }

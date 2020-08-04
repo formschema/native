@@ -13,19 +13,19 @@ export const Value = {
 
     return data as any;
   },
-  null() {
+  null(): null {
     return null;
   },
-  boolean(value: unknown) {
+  boolean(value: unknown): boolean {
     return value === true;
   },
-  integer(data: unknown) {
+  integer(data: unknown): number | undefined {
     const value = Number(data);
     const parsedValue = Number.parseInt(data as string, 10);
 
     return Number.isNaN(value) || Number.isNaN(parsedValue) ? undefined : parsedValue;
   },
-  number(data: unknown) {
+  number(data: unknown): number | undefined {
     const value = Number(data);
     const parsedValue = Number.parseFloat(data as string);
 
@@ -34,7 +34,7 @@ export const Value = {
   object(data: unknown): Dict {
     return data as any || {};
   },
-  string(data: unknown) {
+  string(data: unknown): string | undefined {
     return typeof data !== 'undefined' ? `${data}` : undefined;
   },
   array(data: unknown[]): unknown[] {

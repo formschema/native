@@ -34,6 +34,7 @@ module.exports = {
     '@typescript-eslint/interface-name-prefix': 'off',
     '@typescript-eslint/no-empty-interface': 'off',
     '@typescript-eslint/no-this-alias': 'off',
+    '@typescript-eslint/ban-types': 'off',
     'import/prefer-default-export': 'off',
     'import/no-extraneous-dependencies': 'off',
     'import/no-cycle': 'off',
@@ -59,7 +60,8 @@ module.exports = {
         tabWidth: 2,
         ignoreUrls: true,
         ignoreRegExpLiterals: true,
-        ignoreTemplateLiterals: true
+        ignoreTemplateLiterals: true,
+        ignorePattern: '(@returns|@param)'
       }
     ],
     'complexity': [ 'error', { max: 40 } ],

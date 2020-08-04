@@ -1,15 +1,15 @@
 import { Dict } from '@/types';
 
 export const Objects = {
-  isObject(value: unknown) {
+  isObject(value: unknown): boolean {
     return Objects.isGenericObject(value) && !Array.isArray(value);
   },
 
-  isGenericObject(value: unknown) {
+  isGenericObject(value: unknown): boolean {
     return value !== null && typeof value === 'object';
   },
 
-  equal(x: Dict<any>, y: Dict<any>) {
+  equal(x: Dict<any>, y: Dict<any>): boolean {
     if (x === y) {
       return true;
     }
@@ -35,7 +35,7 @@ export const Objects = {
     return false;
   },
 
-  assign<T extends Dict = Dict<any>>(dest: any, src: T): T {
+  assign<T extends Dict = Dict<any>>(dest: Record<string, any>, src: T): T {
     Object.keys(src).forEach((key) => {
       const value = src[key];
 
@@ -52,10 +52,10 @@ export const Objects = {
       }
     });
 
-    return dest;
+    return dest as T;
   },
 
-  clone(value: any) {
+  clone<T = any>(value: T): T {
     if (Objects.isObject(value)) {
       const object = value instanceof Array ? [] : {};
 
@@ -65,7 +65,7 @@ export const Objects = {
     return value;
   },
 
-  isEmpty<T extends Dict = Dict<any>>(object: T) {
+  isEmpty<T extends Dict = Dict<any>>(object: T): boolean {
     for (const key in object) {
       return false;
     }
@@ -73,7 +73,7 @@ export const Objects = {
     return true;
   },
 
-  clear<T extends Dict = Dict<any>>(object: T) {
+  clear<T extends Dict = Dict<any>>(object: T): void {
     for (const key in object) {
       delete object[key];
     }

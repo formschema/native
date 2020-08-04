@@ -1,4 +1,4 @@
-import { VNodeData, CreateElement, VNodeChildren } from 'vue';
+import { VNodeData, CreateElement, VNodeChildren, VNode } from 'vue';
 import { Field, ElementProps, InputEvent } from '@/types';
 
 export const CreateInput = <T extends Field<any>>(
@@ -7,7 +7,7 @@ export const CreateInput = <T extends Field<any>>(
   data: VNodeData,
   children: VNodeChildren | number = [],
   event: 'input' | 'change' = 'input'
-) => {
+): VNode => {
   const props = data.props as ElementProps<T>;
 
   return h(tag, {

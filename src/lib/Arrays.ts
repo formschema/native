@@ -1,13 +1,13 @@
 export const Arrays = {
-  index<T = unknown>(items: T[], item: T) {
+  index<T = unknown>(items: T[], item: T): number {
     return items.findIndex((currentItem) => currentItem === item);
   },
-  swap<T = unknown>(items: T[], from: number, to: number) {
+  swap<T = unknown>(items: T[], from: number, to: number): T {
     [ items[from], items[to] ] = [ items[to], items[from] ];
 
     return items[to];
   },
-  remove<T = unknown>(items: T[], item: T) {
+  remove<T = unknown>(items: T[], item: T): T | undefined {
     const index = this.index<T>(items, item);
 
     if (index > -1) {
