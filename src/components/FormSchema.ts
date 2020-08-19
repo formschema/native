@@ -128,6 +128,7 @@ const FormSchema: FormSchemaComponent = {
      * The validator function to use to validate data before to emit the
      * `input` event.
      *
+     * @kind function
      * @param {GenericField} field - The field that requests validation
      * @param {string} field.id - The input value for validation
      * @param {string} field.name - The input value for validation
