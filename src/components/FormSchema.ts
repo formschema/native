@@ -128,17 +128,18 @@ const FormSchema: FormSchemaComponent = {
      * The validator function to use to validate data before to emit the
      * `input` event.
      *
+     * @see [Custom Validation API](#custom-validation-api)
      * @kind function
      * @param {GenericField} field - The field that requests validation
-     * @param {string} field.id - The input value for validation
-     * @param {string} field.name - The input value for validation
+     * @param {string} field.id - The input ID attribute value
+     * @param {string} field.name - The input name attribute value
      * @param {any} field.value - The input value for validation
-     * @param {JsonSchema} field.schema - The input value for validation
-     * @param {boolean} field.required - The input value for validation
-     * @param {boolean} field.hasChildren - The input value for validation
-     * @param {any} field.initialValue - The input value for validation
+     * @param {JsonSchema} field.schema - The JSON Schema object of the input
+     * @param {boolean} field.required - Boolean indicating whether or not the field is mandatory
+     * @param {boolean} field.hasChildren - Boolean indicating whether or not the field has children
+     * @param {any} field.initialValue - The initial input value
      * @param {Message[]} field.messages - The input value for validation
-     * @return {Promise<boolean>} A promise that return `true` if validation success and `false` otherwise
+     * @returns {Promise<boolean>} A promise that return `true` if validation success and `false` otherwise
      */
     validator: {
       type: Function,
