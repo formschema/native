@@ -13,7 +13,7 @@
     "lint": "eslint src/**/* tests/**/*.ts tests/**/specs/**/*.ts",
     "lint:fix": "eslint --fix src/**/* tests/**/*.ts tests/**/specs/**/*.ts",
     "gimtoc": "gimtoc -f README.md -s 'Table of Contents' -o README.md",
-    "readme": "vuedoc.md src/components/FormSchema.ts --config vuedoc.config.js --ignore-name --ignore-data --section 'FormSchema API' --output README.md && npm run gimtoc",
+    "readme": "vuedoc.md -c && npm run gimtoc && git diff README.md",
     "build": "rollup -c"
   },
   "repository": {
