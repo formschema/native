@@ -62,8 +62,7 @@ describe('components/FieldsetElement', () => {
     const wrapper = mount(FieldsetElement, { context });
     const radioInput = wrapper.find('input[value="goku"]');
 
-    // radioInput.setChecked(true);
-    radioInput.trigger('click');
+    radioInput.setChecked(true);
 
     const [ [ initialValue ], [ changedValue ] ] = options.onChange.mock.calls;
 
