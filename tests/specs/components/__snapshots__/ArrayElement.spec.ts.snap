@@ -46,6 +46,16 @@ exports[`components/ArrayElement should successfully render component with an ar
 </fieldset>
 `;
 
+exports[`components/ArrayElement should successfully render component with an array schema with a model and value.length === 1 and minItem === 0 1`] = `
+<fieldset id="id-characters" name="characters">
+  <div data-fs-kind="string" data-fs-type="text" data-fs-field="characters"><label for="id-characters-0"></label>
+    <div data-fs-input="text"><input id="id-characters-0" type="text" name="characters" value="goku">
+      <div data-fs-buttons="3"><button type="button" disabled="disabled" data-fs-button="moveUp">↑</button><button type="button" disabled="disabled" data-fs-button="moveDown">↓</button><button type="button" data-fs-button="delete">-</button></div>
+    </div>
+  </div><button type="button" data-fs-button="push">+</button>
+</fieldset>
+`;
+
 exports[`components/ArrayElement should successfully render component with an array schema with a model and value.length > 1 1`] = `
 <fieldset id="id-characters" name="characters">
   <div data-fs-kind="string" data-fs-type="text" data-fs-field="characters"><label for="id-characters-0"></label>

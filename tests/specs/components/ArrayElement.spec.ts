@@ -76,6 +76,23 @@ describe('components/ArrayElement', () => {
     expect(wrapper.html()).toMatchSnapshot();
   });
 
+  it('should successfully render component with an array schema with a model and value.length === 1 and minItem === 0', () => {
+    const { context } = Options.get({
+      id: 'id-characters',
+      name: 'characters',
+      schema: {
+        type: 'array',
+        minItems: 0,
+        items: { type: 'string' }
+      },
+      model: [ 'goku' ]
+    });
+
+    const wrapper = mount(ArrayElement, { context });
+
+    expect(wrapper.html()).toMatchSnapshot();
+  });
+
   it('should successfully render component with an array schema with a model and value.length === 1', () => {
     const { context } = Options.get({
       id: 'id-characters',
