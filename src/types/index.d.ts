@@ -29,7 +29,7 @@ export interface Attributes {
   name?: string;
   type?: string;
   readonly?: boolean;
-  required: boolean;
+  required?: boolean;
   disabled?: boolean;
   'aria-required'?: 'true';
   [key: string]: any;
