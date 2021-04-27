@@ -1,4 +1,4 @@
-image: node:11.10.1
+image: node:lts-alpine
 
 stages:
   - test
@@ -30,8 +30,11 @@ npm outdated:
 security scan:
   stage: dependencies
   script:
-    - npm audit --only=prod
-  allow_failure: true
+    # upgrade the NPM version to the latest to be sure
+    # the `npm audit` supports the --production flag
+    - npm i -g npm
+    - npm audit --production
+  allow_failure: false
 
 rollup build:
   stage: build

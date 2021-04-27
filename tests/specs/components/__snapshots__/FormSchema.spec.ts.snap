@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components/FormSchema should successfully render component after the nextTick 1`] = `
+<form id="id-form">
+  <div data-fs-kind="string" data-fs-type="text" data-fs-required="true"><label id="id-form-field-label" for="id-form-field">String</label>
+    <div data-fs-wrapper="2">
+      <div data-fs-input="text"><input id="id-form-field" type="text" required="required" aria-required="true" aria-labelledby="id-form-field-label" aria-describedby="id-form-field-helper"></div>
+      <p id="id-form-field-helper" data-fs-helper="true">A String</p>
+    </div>
+  </div>
+</form>
+`;
+
+exports[`components/FormSchema should successfully render component with { schema, disabled } 1`] = `
+<form id="id-form">
+  <fieldset id="id-form-field" disabled="disabled">
+    <div data-fs-kind="string" data-fs-type="text" data-fs-field="string"><label id="id-form-field-string-label" for="id-form-field-string">String</label>
+      <div data-fs-wrapper="2">
+        <div data-fs-input="text"><input id="id-form-field-string" type="text" name="string" aria-labelledby="id-form-field-string-label" aria-describedby="id-form-field-string-helper"></div><span id="id-form-field-string-helper" data-fs-helper="true">A String</span>
+      </div>
+    </div>
+  </fieldset>
+</form>
+`;
+
+exports[`components/FormSchema should successfully render component with a default slot 1`] = `
+<form id="id-form">
+  <div data-fs-kind="string" data-fs-type="text" data-fs-required="true"><label id="id-form-field-label" for="id-form-field">String</label>
+    <div data-fs-wrapper="2">
+      <div data-fs-input="text"><input id="id-form-field" type="text" required="required" aria-required="true" aria-labelledby="id-form-field-label" aria-describedby="id-form-field-helper"></div>
+      <p id="id-form-field-helper" data-fs-helper="true">A String</p>
+    </div>
+  </div>checking...
+</form>
+`;
+
+exports[`components/FormSchema should successfully render component with only a scalar schema 1`] = `
+<form id="id-form">
+  <div data-fs-kind="string" data-fs-type="text" data-fs-required="true"><label id="id-form-field-label" for="id-form-field">String</label>
+    <div data-fs-wrapper="2">
+      <div data-fs-input="text"><input id="id-form-field" type="text" required="required" aria-required="true" aria-labelledby="id-form-field-label" aria-describedby="id-form-field-helper"></div>
+      <p id="id-form-field-helper" data-fs-helper="true">A String</p>
+    </div>
+  </div>
+</form>
+`;

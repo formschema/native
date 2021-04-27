@@ -1,0 +1,125 @@
+  {
+    "type": "object",
+    "title": "Newsletter Subscription",
+    "description": "Sign up for free newsletters and get more delivered to your inbox",
+    "properties": {
+      "profile": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "object",
+            "title": "Full Name",
+            "properties": {
+              "first_name": {
+                "type": "string",
+                "title": "First Name",
+                "minLength": 3,
+                "maxLength": 80
+              },
+              "last_name": {
+                "type": "string",
+                "title": "Last Name"
+              }
+            },
+            "required": ["first_name"]
+          }
+        }
+      },
+      "date": {
+        "type": "object",
+        "title": "Date",
+        "description": "Horizontal field",
+        "properties": {
+          "day": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 31,
+            "title": "Day"
+          },
+          "month": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 12,
+            "title": "Month"
+          },
+          "year": {
+            "type": "integer",
+            "minimum": 1900,
+            "maximum": 2900,
+            "title": "Year"
+          }
+        }
+      },
+      "array": {
+        "title": "Custom array of strings",
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 3
+        },
+        "minItems": 1
+      },
+      "hiddenField": {
+        "type": "string",
+        "default": "Hidden Field Value"
+      },
+      "float": {
+        "type": "number",
+        "title": "Float",
+        "default": 12.5
+      },
+      "email": {
+        "type": "string",
+        "format": "email",
+        "maxLength": 120,
+        "title": "Email",
+        "default": "hello@example.com"
+      },
+      "day": {
+        "type": "string",
+        "title": "Day",
+        "default": "tuesday",
+        "enum": [
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday",
+          "saturday",
+          "sunday"
+        ]
+      },
+      "source": {
+        "type": "string",
+        "maxLength": 120
+      },
+      "password": {
+        "type": "string",
+        "title": "password",
+        "default": "hello"
+      },
+      "regex": {
+        "type": "string",
+        "title": "regex",
+        "pattern": "[a-e]+"
+      },
+      "frequence": {
+        "type": "string",
+        "title": "Frequence",
+        "default": "weekly",
+        "enum": [
+          "daily",
+          "weekly"
+        ]
+      },
+      "agree": {
+        "type": "boolean",
+        "title": "Agree",
+        "description": "You agree to receive occasional updates.",
+        "default": false,
+        "const": true
+      }
+    },
+    "additionalProperties": false,
+    "required": ["name", "email", "agree"]
+  }
