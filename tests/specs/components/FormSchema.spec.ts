@@ -163,13 +163,12 @@ describe('components/FormSchema', () => {
 
     it('after the nextTick', () => {
       const wrapper = getWrapper({ schema });
-      const expected = '<form id="id-form"><div data-fs-kind="string" data-fs-type="text" data-fs-required="true"><label id="id-form-field-label" for="id-form-field">String</label><div data-fs-wrapper="2"><div data-fs-input="text"><input id="id-form-field" type="text" required="required" aria-required="true" aria-labelledby="id-form-field-label" aria-describedby="id-form-field-helper"></div><p id="id-form-field-helper" data-fs-helper="true">A String</p></div></div></form>';
 
       return Vue.nextTick().then(() => {
         const { vm } = wrapper;
 
         expect(vm.ready).toBeTruthy();
-        expect(wrapper.html()).toMatchSnapshot(expected);
+        expect(wrapper.html()).toMatchSnapshot();
       });
     });
 
@@ -197,16 +196,14 @@ describe('components/FormSchema', () => {
     it('with a default slot', () => {
       const children = 'checking...';
       const wrapper = getWrapper({ schema, children });
-      const expected = '<form id="id-form"><div data-fs-kind="string" data-fs-type="text" data-fs-required="true"><label id="id-form-field-label" for="id-form-field">String</label><div data-fs-wrapper="2"><div data-fs-input="text"><input id="id-form-field" type="text" required="required" aria-required="true" aria-labelledby="id-form-field-label" aria-describedby="id-form-field-helper"></div><p id="id-form-field-helper" data-fs-helper="true">A String</p></div></div>checking...</form>';
 
-      return Vue.nextTick().then(() => expect(wrapper.html()).toMatchSnapshot(expected));
+      return Vue.nextTick().then(() => expect(wrapper.html()).toMatchSnapshot());
     });
 
     it('with only a scalar schema', () => {
       const wrapper = getWrapper({ schema });
-      const expected = '<form id="id-form"><div data-fs-kind="string" data-fs-type="text" data-fs-required="true"><label id="id-form-field-label" for="id-form-field">String</label><div data-fs-wrapper="2"><div data-fs-input="text"><input id="id-form-field" type="text" required="required" aria-required="true" aria-labelledby="id-form-field-label" aria-describedby="id-form-field-helper"></div><p id="id-form-field-helper" data-fs-helper="true">A String</p></div></div></form>';
 
-      return Vue.nextTick().then(() => expect(wrapper.html()).toMatchSnapshot(expected));
+      return Vue.nextTick().then(() => expect(wrapper.html()).toMatchSnapshot());
     });
 
     it('with a non scalar schema', async () => {
@@ -242,10 +239,9 @@ describe('components/FormSchema', () => {
       };
 
       const wrapper = getWrapper({ schema: objectSchema, disabled: true });
-      const expected = '<form id="id-form"><fieldset id="id-form-field" disabled="disabled"><div data-fs-kind="string" data-fs-type="text" data-fs-field="string"><label id="id-form-field-string-label" for="id-form-field-string">String</label><div data-fs-wrapper="2"><div data-fs-input="text"><input id="id-form-field-string" type="text" name="string" aria-labelledby="id-form-field-string-label" aria-describedby="id-form-field-string-helper"></div><span id="id-form-field-string-helper" data-fs-helper="true">A String</span></div></div></fieldset></form>';
 
       await Vue.nextTick();
-      expect(wrapper.html()).toMatchSnapshot(expected);
+      expect(wrapper.html()).toMatchSnapshot();
     });
   });
 

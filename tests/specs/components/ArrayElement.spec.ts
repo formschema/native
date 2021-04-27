@@ -16,13 +16,7 @@ describe('components/ArrayElement', () => {
 
     const wrapper = mount(ArrayElement, { context });
 
-    expect(wrapper.html()).toMatchSnapshot(`
-      <fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper">
-        <legend id="id-characters-label" for="id-characters">Empty array</legend>
-        <p id="id-characters-helper" data-fs-helper="true">Your characters</p>
-        <button type="button" disabled="disabled" data-fs-button="push">+</button>
-      </fieldset>
-    `);
+    expect(wrapper.html()).toMatchSnapshot();
   });
 
   it('should successfully render component with an empty array with a defined model', () => {
@@ -38,9 +32,8 @@ describe('components/ArrayElement', () => {
     });
 
     const wrapper = mount(ArrayElement, { context });
-    const expected = '<fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper"><legend id="id-characters-label" for="id-characters">Empty array</legend><p id="id-characters-helper" data-fs-helper="true">Your characters</p><button type="button" disabled="disabled" data-fs-button="push">+</button></fieldset>';
 
-    expect(wrapper.html()).toMatchSnapshot(expected);
+    expect(wrapper.html()).toMatchSnapshot();
   });
 
   it('should successfully render component with an array schema with an empty model', () => {
@@ -59,9 +52,60 @@ describe('components/ArrayElement', () => {
     });
 
     const wrapper = mount(ArrayElement, { context });
-    const expected = '<fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper"><legend id="id-characters-label" for="id-characters">Characters</legend><p id="id-characters-helper" data-fs-helper="true">Your characters</p><div data-fs-kind="string" data-fs-type="text" data-fs-field="characters"><label for="id-characters-0"></label><div data-fs-input="text"><input id="id-characters-0" type="text" name="characters"><div data-fs-buttons="3"><button type="button" disabled="disabled">↑</button><button type="button" disabled="disabled">↓</button><button type="button">-</button></div></div></div><button type="button" data-fs-button="push">+</button></fieldset>';
 
-    expect(wrapper.html()).toMatchSnapshot(expected);
+    expect(wrapper.html()).toMatchSnapshot();
+  });
+
+  it('should successfully render component with an array schema with an empty model and minItem === maxItem', () => {
+    const { context } = Options.get({
+      id: 'id-characters',
+      name: 'characters',
+      schema: {
+        type: 'array',
+        title: 'Characters',
+        description: 'Your characters',
+        minItems: 1,
+        maxItems: 1,
+        items: { type: 'string' }
+      },
+      model: []
+    });
+
+    const wrapper = mount(ArrayElement, { context });
+
+    expect(wrapper.html()).toMatchSnapshot();
+  });
+
+  it('should successfully render component with an array schema with a model and value.length === 1', () => {
+    const { context } = Options.get({
+      id: 'id-characters',
+      name: 'characters',
+      schema: {
+        type: 'array',
+        items: { type: 'string' }
+      },
+      model: [ 'goku' ]
+    });
+
+    const wrapper = mount(ArrayElement, { context });
+
+    expect(wrapper.html()).toMatchSnapshot();
+  });
+
+  it('should successfully render component with an array schema with a model and value.length > 1', () => {
+    const { context } = Options.get({
+      id: 'id-characters',
+      name: 'characters',
+      schema: {
+        type: 'array',
+        items: { type: 'string' }
+      },
+      model: [ 'goku', 'goten' ]
+    });
+
+    const wrapper = mount(ArrayElement, { context });
+
+    expect(wrapper.html()).toMatchSnapshot();
   });
 
   it('should successfully render component with an array schema with a defined model', () => {
@@ -80,9 +124,8 @@ describe('components/ArrayElement', () => {
     });
 
     const wrapper = mount(ArrayElement, { context });
-    const expected = '<fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper"><legend id="id-characters-label" for="id-characters">Characters</legend><p id="id-characters-helper" data-fs-helper="true">Your characters</p><div data-fs-kind="string" data-fs-type="text" data-fs-field="characters"><label for="id-characters-0"></label><div data-fs-input="text"><input id="id-characters-0" type="text" name="characters" value="Goku"><div data-fs-buttons="3"><button type="button" disabled="disabled">↑</button><button type="button">↓</button><button type="button">-</button></div></div></div><div data-fs-kind="string" data-fs-type="text" data-fs-field="characters"><label for="id-characters-1"></label><div data-fs-input="text"><input id="id-characters-1" type="text" name="characters" value="Freezer"><div data-fs-buttons="3"><button type="button">↑</button><button type="button" disabled="disabled">↓</button><button type="button">-</button></div></div></div><button type="button" data-fs-button="push">+</button></fieldset>';
 
-    expect(wrapper.html()).toMatchSnapshot(expected);
+    expect(wrapper.html()).toMatchSnapshot();
   });
 
   it('should successfully render component without the push button when maxItems <= 1', () => {
@@ -103,17 +146,29 @@ describe('components/ArrayElement', () => {
 
     const wrapper = mount(ArrayElement, { context });
 
-    expect(wrapper.html()).toMatchSnapshot(`
-      <fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper">
-        <legend id="id-characters-label" for="id-characters">Characters</legend>
-        <p id="id-characters-helper" data-fs-helper="true">Your characters</p>
-        <div data-fs-kind="string" data-fs-type="text" data-fs-field="characters"><label for="id-characters-0"></label>
-          <div data-fs-input="text"><input id="id-characters-0" type="text" name="characters" value="Goku">
-            <div data-fs-buttons="3"><button type="button" disabled="disabled" data-fs-button="moveUp">↑</button><button type="button" disabled="disabled" data-fs-button="moveDown">↓</button><button type="button" data-fs-button="delete">-</button></div>
-          </div>
-        </div>
-      </fieldset>
-    `);
+    expect(wrapper.html()).toMatchSnapshot();
+  });
+
+  it('should successfully render component without the push button when maxItems <= 1 and minItems === 1', () => {
+    const { context } = Options.get({
+      id: 'id-characters',
+      name: 'characters',
+      schema: {
+        type: 'array',
+        title: 'Characters',
+        description: 'Your characters',
+        minItems: 1,
+        maxItems: 1,
+        items: {
+          type: 'string'
+        },
+        default: [ 'Goku' ]
+      }
+    });
+
+    const wrapper = mount(ArrayElement, { context });
+
+    expect(wrapper.html()).toMatchSnapshot();
   });
 
   it('clicking to the push button should successfully update the parser model', () => {
@@ -194,43 +249,17 @@ describe('components/ArrayElement', () => {
 
     // initial state: the fieldset is rendered with the push button
     expect(parser.model).toEqual([]);
-    expect(wrapper.html()).toMatchSnapshot(`
-      <fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper">
-        <legend id="id-characters-label" for="id-characters">Characters</legend>
-        <p id="id-characters-helper" data-fs-helper="true">Your characters</p>
-        <button type="button" data-fs-button="push">+</button>
-      </fieldset>
-    `);
+    expect(wrapper.html()).toMatchSnapshot();
 
     // first push button click: render the first input
     button.trigger('click');
     expect(parser.model).toEqual([ 'Goku' ]);
-    expect(wrapper.html()).toMatchSnapshot(`
-      <fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper">
-        <legend id="id-characters-label" for="id-characters">Characters</legend>
-        <div data-fs-kind="string" data-fs-type="text" data-fs-field="characters">
-          <label for="id-characters-0">First</label>
-          <div data-fs-input="text"><input id="id-characters-0" type="text" name="characters" value="Goku"></div>
-        </div>
-        <button type="button" data-fs-button="push">+</button>
-      </fieldset>
-    `);
+    expect(wrapper.html()).toMatchSnapshot();
 
     // second push button click: render the last input and disable the push button (no more item to add)
     button.trigger('click');
     expect(parser.model).toEqual([ 'Goku', 'Freezer' ]);
-    expect(wrapper.html()).toMatchSnapshot(`
-      <fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper">
-        <legend id="id-characters-label" for="id-characters">Characters</legend>
-        <div data-fs-kind="string" data-fs-type="text" data-fs-field="characters">
-          <label for="id-characters-0">First</label>
-          <div data-fs-input="text"><input id="id-characters-0" type="text" name="characters" value="Goku"></div>
-          <label for="id-characters-1">Last</label>
-          <div data-fs-input="text"><input id="id-characters-1" type="text" name="characters" value="Freeze"></div>
-        </div>
-        <button type="button" data-fs-button="push" disabled="disabled">+</button>
-      </fieldset>
-    `);
+    expect(wrapper.html()).toMatchSnapshot();
   });
 
   describe('should successfully render enum array schema', () => {

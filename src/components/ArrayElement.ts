@@ -18,7 +18,7 @@ export const ArrayElement: ArrayComponent = {
       };
 
       if (!props.field.uniqueItems && props.field.sortable) {
-        if (childDescriptor.buttons.length) {
+        if (childDescriptor.buttons.length && props.field.value.length > 1) {
           const buttons = childDescriptor.buttons;
           const buttonsNodes = buttons.map((button) => h(button.component || ArrayButtonElement, {
             props: { button, field: childField }
