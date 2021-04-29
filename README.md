@@ -956,10 +956,12 @@ interface ListDescriptor extends ItemsDescriptor<'list'> {
 /**
  * Describe buttons for array schema
  */
-interface ButtonDescriptor<T extends Function> extends ActionButton<T> {
-  type: string;
+interface ButtonDescriptor<T extends string, A extends Function> extends Partial<ActionButton<A>> {
+  type: T;
   label: string;
   tooltip?: string;
+  visible?: boolean;
+  component?: Component;
 }
 
 type ActionPushTrigger = () => void;

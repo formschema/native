@@ -49,13 +49,15 @@ export const ArrayElement: ArrayComponent = {
     });
 
     if (!props.field.uniqueItems && props.field.children.length < props.field.maxItems) {
-      if (props.field.descriptor.definition.pushButton !== null) {
-        nodes.push(h(props.field.descriptor.pushButton.component || ArrayButtonElement, {
-          props: {
-            button: props.field.descriptor.pushButton,
-            field: props.field
-          }
-        }));
+      if (props.field.pushButton) {
+        if (props.field.descriptor.definition.pushButton?.visible !== false) {
+          nodes.push(h(props.field.descriptor.pushButton.component || ArrayButtonElement, {
+            props: {
+              button: props.field.descriptor.pushButton,
+              field: props.field
+            }
+          }));
+        }
       }
     }
 

@@ -408,6 +408,7 @@ export interface ButtonDescriptor<T extends string, A extends Function> extends 
   type: T;
   label: string;
   tooltip?: string;
+  visible?: boolean;
   component?: Component;
 }
 
