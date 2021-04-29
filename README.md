@@ -884,7 +884,9 @@ type ComponentsType = 'form' | 'message' | 'button' | 'helper' | FieldKind;
 type Component = string | VueComponent | AsyncVueComponent;
 
 type SetDescriptor = EnumDescriptor | ArrayDescriptor | ObjectDescriptor;
-type DescriptorInstance = ScalarDescriptor | SetDescriptor | ListDescriptor;
+type Descriptor = ScalarDescriptor | SetDescriptor | ListDescriptor;
+type DescriptorConstructor = (field: Field) => Descriptor;
+type DescriptorInstance = Descriptor | DescriptorConstructor;
 
 interface DescriptorDefinition<TKind extends FieldKind = FieldKind> {
   kind?: TKind;

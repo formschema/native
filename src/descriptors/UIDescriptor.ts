@@ -39,9 +39,13 @@ export abstract class UIDescriptor<
 
   static get<
     T extends DescriptorDefinition = DescriptorDefinition
-  >(options: T, field: Readonly<UnknowField>, components?: IComponents): IUIDescriptor {
+  >(options: T | ((f: UnknowField) => T), field: Readonly<UnknowField>, components?: IComponents): IUIDescriptor {
     if (!DESCRIPTORS.hasOwnProperty(field.kind)) {
       throw new TypeError(`Unknow descriptor kind '${field.kind}'`);
+    }
+
+    if (typeof options === 'function') {
+      options = options(field);
     }
 
     return new DESCRIPTORS[field.kind](options, field, components);
