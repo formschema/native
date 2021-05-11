@@ -1,4 +1,4 @@
-image: node:latest
+image: node:lts-alpine
 
 stages:
   - test
@@ -10,18 +10,26 @@ code quality:
   stage: test
   script:
     - npm ci
-    - npm run lint
+    - npm install --save-dev eslint eslint-formatter-gitlab
+    - npm run lint -- --format gitlab .
+  artifacts:
+    reports:
+      codequality: gl-codequality.json
 
 test & coverage:
   stage: test
   script:
-    - npm it
+    - npm ci
+    - npm i -D jest-junit
+    - npm test -- --ci --reporters=default --reporters=jest-junit
   coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
   artifacts:
-    paths:
-      - coverage/
+    when: always
+    reports:
+      junit:
+        - junit.xml
 
-npm outdated:
+outdated:
   stage: dependencies
   script:
     - npm outdated
@@ -30,8 +38,11 @@ npm outdated:
 security scan:
   stage: dependencies
   script:
-    - npm audit --only=prod
-  allow_failure: true
+    # upgrade the NPM version to the latest to be sure
+    # the `npm audit` supports the --production flag
+    - npm i -g npm
+    - npm audit --production
+  allow_failure: false
 
 rollup build:
   stage: build
@@ -43,9 +54,19 @@ rollup build:
       - dist
     expire_in: 4 weeks
 
+package:
+  stage: build
+  only:
+    - tags
+  script:
+    - npm pack
+  artifacts:
+    paths:
+      - ./*.tgz
+
 coverage report:
   stage: publish
-  dependencies:
+  needs:
     - test & coverage
   script:
     - mv coverage/lcov-report/ public/
@@ -59,18 +80,11 @@ coverage report:
     name: coverage report
     url: https://formschema.gitlab.io/native
 
-package:
-  stage: publish
-  only:
-    - tags
-  script:
-    - npm pack
-  artifacts:
-    paths:
-      - ./*.tgz
-
 publish on npm:
   stage: publish
+  needs:
+    - package
+    - rollup build
   only:
     - tags
     - triggers

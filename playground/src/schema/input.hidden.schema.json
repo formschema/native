@@ -1,0 +1,9 @@
+{
+  "type": "object",
+  "properties": {
+    "hidden": {
+      "type": "string",
+      "const": "value of the hidden input"
+    }
+  }
+}

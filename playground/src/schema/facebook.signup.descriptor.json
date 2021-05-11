@@ -1,0 +1,108 @@
+{
+  "label": "Sign Up",
+  "helper": "It’s free and always will be.",
+  "groups": {
+    "birthday": {
+      "label": "Birthday",
+      "properties": [ "birthday_month", "birthday_day", "birthday_year" ]
+    },
+    "custom_gender": {
+      "properties": [ "preferred_pronoun", "custom_gender" ]
+    }
+  },
+  "properties": {
+    "firstname": {
+      "attrs": {
+        "placeholder": "First name",
+        "title": "What's your name?"
+      }
+    },
+    "lastname": {
+      "attrs": {
+        "placeholder": "Last name",
+        "title": "What's your name?"
+      }
+    },
+    "reg_email__": {
+      "attrs": {
+        "placeholder": "Mobile number or email",
+        "title": "You'll use this when you log in and if you ever need to reset your password"
+      }
+    },
+    "reg_email_confirmation__": {
+      "attrs": {
+        "placeholder": "Re-enter email",
+        "title": "Please re-enter your email address."
+      }
+    },
+    "password": {
+      "attrs": {
+        "type": "password",
+        "placeholder": "New password",
+        "title": "Enter a combination of at least six numbers, letters and punctuation marks (like ! and &)."
+      }
+    },
+    "birthday_month": {
+      "kind": "list",
+      "options": {
+        "generateEnumItems": true
+      },
+      "props": {
+        "placeholder": "Month"
+      },
+      "items": {
+        "1": { "label": "Jan" },
+        "2": { "label": "Feb" },
+        "3": { "label": "Mar" },
+        "4": { "label": "Apr" },
+        "5": { "label": "May" },
+        "6": { "label": "Jun" },
+        "7": { "label": "Jul" },
+        "8": { "label": "Aug" },
+        "9": { "label": "Sep" },
+        "10": { "label": "Oct" },
+        "11": { "label": "Nov" },
+        "12": { "label": "Dec" }
+      }
+    },
+    "birthday_day": {
+      "kind": "list",
+      "props": {
+        "placeholder": "Day"
+      }
+    },
+    "birthday_year": {
+      "kind": "list",
+      "props": {
+        "placeholder": "Year"
+      }
+    },
+    "sex": {
+      "items": {
+        "1": { "label": "Female" },
+        "2": { "label": "Male" },
+        "-1": { "label": "Custom" }
+      }
+    },
+    "preferred_pronoun": {
+      "kind": "list",
+      "attrs": {
+        "title": ""
+      },
+      "props": {
+        "placeholder": "Select your pronoun"
+      },
+      "items": {
+        "1": { "label": "She: \"Wish her a happy birthday!\"" },
+        "2": { "label": "He: \"Wish him a happy birthday!\"" },
+        "6": { "label": "They: \"Wish them a happy birthday!\"" }
+      },
+      "helper": "Your pronoun is visible to everyone."
+    },
+    "custom_gender": {
+      "attrs": {
+        "placeholder": "Enter your gender (optional)"
+      }
+    }
+  }
+}

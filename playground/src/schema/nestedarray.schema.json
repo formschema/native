@@ -1,0 +1,30 @@
+{
+  "title": "Relation",
+  "type": "object",
+  "required": [],
+  "properties": {
+    "contacts": {
+      "type": "array",
+      "title": "Contact persons",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "standard",
+              "invoice",
+              "purchase",
+              "person"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

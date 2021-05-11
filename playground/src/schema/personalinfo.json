@@ -1,0 +1,98 @@
+{
+  "type": "object",
+  "title": "Personal Information",
+  "description": "Provide your personal information",
+  "properties": {
+     "name": {
+      "type": "object",
+      "title": "Name",
+      "required": ["first_name", "last_name"],
+      "properties": {
+        "first_name": {
+          "type": "string",
+          "title": "First Name",
+          "maxLength": 80,
+          "attrs": {
+            "placeholder": "Your First Name",
+            "title": "Please enter your first name"
+            }
+        },
+        "last_name": {
+          "type": "string",
+          "title": "Last Name",
+          "maxLength": 80,
+          "attrs": {
+            "placeholder": "Your Last Name",
+            "title": "Please enter your last name"
+            }
+        }
+      }
+    },
+    "contactinfo": {
+      "type": "object",
+      "title": "Contact info",
+      "properties": {
+        "email": {
+          "type": "string",
+          "maxLength": 120,
+          "title": "Email",
+          "default": "jon.snow@got.com",
+          "attrs": {
+            "type": "email",
+            "placeholder": "Your Email",
+            "title": "Please enter your email"
+          }
+        },
+        "phonenumbers": {
+          "type": "object",
+          "title": "Phone numbers",
+          "properties": {
+            "work": {
+              "type": "string",
+              "title": "Work"
+            },
+            "home": {
+              "type": "string",
+              "title": "Home"
+            },
+            "mobile": {
+              "type": "string",
+              "title": "Mobile"
+            }
+          }
+        }
+      }
+    },
+    "address": {
+      "type": "object",
+      "title": "Address",
+      "properties": {
+        "streetaddress": {
+          "type": "string",
+          "title": "Street addres"
+        },
+        "city": {
+          "type": "string",
+          "title": "City"
+        },
+        "stateandzip": {
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": "string",
+              "title": "State",
+              "enum": [ "AL", "AK", "AS", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "FM", "FL", "GA", "GU", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MH", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "MP", "OH", "OK", "OR", "PW", "PA", "PR", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VI", "VA", "WA", "WV", "WI", "WY" ]
+            },
+            "zip": {
+              "type": "string",
+              "title": "ZIP code",
+              "pattern": "[0-9]+"
+            }
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": ["name"]
+}
