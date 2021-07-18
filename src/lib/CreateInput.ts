@@ -1,5 +1,5 @@
-import { VNodeData, CreateElement, VNodeChildren, VNode } from 'vue';
-import { Field, ElementProps, InputEvent } from '@/types';
+import { VNodeData, VNodeChildren, VNode } from 'vue';
+import { CreateElement, Field, ElementProps, InputEvent } from '../../types';
 
 export const CreateInput = <T extends Field<any>>(
   h: CreateElement,

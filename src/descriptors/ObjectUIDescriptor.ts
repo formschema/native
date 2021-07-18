@@ -13,7 +13,7 @@ import {
   IObjectGroupItem,
   Component,
   ObjectFieldChild
-} from '@/types';
+} from '../../types';
 
 type ObjectChild = {
   id: string;

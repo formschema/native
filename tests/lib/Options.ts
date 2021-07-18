@@ -6,7 +6,7 @@ import {
   UnknowField,
   IUIDescriptor,
   UnknowParser
-} from '@/types';
+} from '../../types';
 
 import '@/parsers';
 import '@/descriptors';

@@ -1,6 +1,6 @@
 import { Parser } from '@/parsers/Parser';
-import { ListField, ListItemModel, ParserOptions, UnknowParser, ListDescriptor } from '@/types';
 import { ListUIDescriptor } from '@/descriptors/ListUIDescriptor';
+import { ListField, ListItemModel, ParserOptions, UnknowParser, ListDescriptor } from '../../types';
 
 export class ListParser extends Parser<unknown, ListField, ListDescriptor, ListUIDescriptor> {
   constructor(options: ParserOptions<unknown, ListField, ListDescriptor>, parent?: UnknowParser) {

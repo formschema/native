@@ -1,5 +1,5 @@
 import { VNode } from 'vue';
-import { FormSchemaComponent, SubmitEvent, ParserOptions, UnknowField } from '@/types';
+import { CreateElement } from 'vue/types/umd';
 import { UniqueId as UniqueIdLib } from '@/lib/UniqueId';
 import { Objects as ObjectsLib } from '@/lib/Objects';
 import { Components as ComponentsLib } from '@/lib/Components';
@@ -11,6 +11,94 @@ import { UIDescriptor as UIDescriptorLib } from '@/descriptors/UIDescriptor';
 
 import '@/parsers';
 import '@/descriptors';
+
+import {
+  ComponentOptions,
+  RenderContext,
+  WatchOptions,
+  ComputedOptions
+} from 'vue/types/options';
+
+import {
+  SubmitEvent,
+  ParserOptions,
+  UnknowField,
+  DescriptorInstance,
+  Dict,
+  IComponents,
+  IParser,
+  IUIDescriptor,
+  ValidatorFunction
+} from '../../types';
+
+import { JsonSchema } from '../../types/jsonschema';
+
+/**
+ * FormSchema API
+ */
+interface FormSchemaVue extends Vue {
+  // props
+  schema: JsonSchema;
+  value?: unknown;
+  id: string;
+  name?: string;
+  bracketedObjectInputName: boolean;
+  search: boolean;
+  disabled: boolean;
+  components: IComponents;
+  descriptor: DescriptorInstance | IUIDescriptor;
+  validator: ValidatorFunction;
+
+  // data
+  key: string;
+  ref: string;
+  initialModel: unknown;
+  ready: boolean;
+  parser: IParser<any, UnknowField> | null;
+
+  // computed
+  fieldId: string;
+  listeners: Record<string, Function | Function[]>;
+
+  // methods
+  clone(value: unknown): unknown;
+  form(): HTMLFormElement | VNode | undefined;
+  emitInputEvent(value: unknown, field: UnknowField): void;
+  update(updatedFields: UnknowField[]): void;
+}
+
+interface FormSchemaComponent<V extends FormSchemaVue = FormSchemaVue> extends ComponentOptions<V> {
+  computed: Accessors<Dict, V>;
+  watch?: Record<string, WatchOptionsWithHandler<V, any> | WatchHandler<V, any> | string>;
+
+  render?(this: V, createElement: CreateElement, hack: RenderContext<Props>): VNode;
+  renderError?(this: V, createElement: CreateElement, err: Error): VNode;
+  staticRenderFns?: ((this: V, createElement: CreateElement) => VNode)[];
+
+  beforeCreate?(this: V): void;
+  created?(this: V): void;
+  beforeDestroy?(this: V): void;
+  destroyed?(this: V): void;
+  beforeMount?(this: V): void;
+  mounted?(this: V): void;
+  beforeUpdate?(this: V): void;
+  updated?(this: V): void;
+  activated?(this: V): void;
+  deactivated?(this: V): void;
+  errorCaptured?(err: Error, vm: Vue, info: string): boolean | void;
+  serverPrefetch?(this: V): Promise<void>;
+}
+
+type Accessors<T, V> = {
+  [K in keyof T]: ((this: V) => T[K]) | ComputedOptions<T[K]>
+}
+
+type Props = Record<string, any>;
+type WatchHandler<V extends Vue, T> = (this: V, val: T, oldVal: T) => void;
+
+interface WatchOptionsWithHandler<V extends Vue, T> extends WatchOptions {
+  handler: WatchHandler<V, T>;
+}
 
 export const GLOBAL = {
   Elements: Object.freeze(NativeElementsLib)

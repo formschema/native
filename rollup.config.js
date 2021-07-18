@@ -1,7 +1,6 @@
 import { terser } from 'rollup-plugin-terser';
 import typescript from 'rollup-plugin-typescript';
 import resolve from 'rollup-plugin-node-resolve';
-import copy from 'rollup-plugin-copy';
 import pkg from './package.json';
 
 const DEST = 'dist';
@@ -20,19 +19,12 @@ const TerserPlugin = terser({
   }
 });
 
-const CopyPlugin = copy({
-  targets: [
-    { src: 'src/types/**/*', dest: 'dist/types' }
-  ]
-});
-
 const ES6_PLUGINS = [
   ResolvePlugin,
   typescript({
     target: 'es6'
   }),
-  TerserPlugin,
-  CopyPlugin
+  TerserPlugin
 ];
 
 const ES5_PLUGINS = [
@@ -40,8 +32,7 @@ const ES5_PLUGINS = [
   typescript({
     target: 'es5'
   }),
-  TerserPlugin,
-  CopyPlugin
+  TerserPlugin
 ];
 
 function build (format, suffix = format) {

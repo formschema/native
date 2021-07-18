@@ -1,10 +1,10 @@
 {
   "name": "@formschema/native",
-  "version": "2.0.0-beta.1",
+  "version": "2.0.0-beta.2",
   "description": "Vue component form based on JSON Schema",
   "main": "dist/FormSchema.esm.min.js",
   "browser": "dist/FormSchema.umd.min.js",
-  "types": "dist/types/index.d.ts",
+  "types": "types/index.d.ts",
   "scripts": {
     "playground": "cd playground && npm run serve",
     "playground:install": "cd playground && npm i",
@@ -54,7 +54,6 @@
     "gimtoc": "^1.3.3",
     "jest-serializer-vue": "^2.0.2",
     "rollup": "^2.26.4",
-    "rollup-plugin-copy": "^3.3.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript": "^1.0.1",

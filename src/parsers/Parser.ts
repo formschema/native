@@ -1,9 +1,9 @@
 import { UniqueId } from '@/lib/UniqueId';
-import { JsonSchema } from '@/types/jsonschema';
 import { Value } from '@/lib/Value';
 import { Objects } from '@/lib/Objects';
 
 import { UIDescriptor } from '@/descriptors/UIDescriptor';
+import { JsonSchema } from '../../types/jsonschema';
 
 import {
   ParserOptions,
@@ -17,7 +17,7 @@ import {
   IUIDescriptor,
   Message,
   DescriptorDefinition
-} from '@/types';
+} from '../../types';
 
 const PARSERS: Dict<any> = {};
 

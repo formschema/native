@@ -13,8 +13,6 @@ import FormSchema, {
   NativeComponents
 } from '@/components/FormSchema';
 
-import { JsonSchema } from '@/types/jsonschema';
-
 import { UniqueId as UniqueIdLib } from '@/lib/UniqueId';
 import { Objects as ObjectsLib } from '@/lib/Objects';
 import { Components as ComponentsLib } from '@/lib/Components';
@@ -24,6 +22,7 @@ import { Parser as ParserLib } from '@/parsers/Parser';
 import { UIDescriptor as UIDescriptorLib } from '@/descriptors/UIDescriptor';
 
 import { NativeElements } from '@/lib/NativeElements';
+import { JsonSchema } from '../../../types/jsonschema';
 
 const DEFAULT_ID = 'id-form';
 

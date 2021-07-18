@@ -1,4 +1,4 @@
-import { Dict, Component, ComponentsType, IComponents } from '@/types';
+import { Dict, Component, ComponentsType, IComponents } from '../../types';
 
 export class Components implements IComponents {
   readonly $: Dict<Component>;

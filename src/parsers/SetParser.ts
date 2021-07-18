@@ -9,7 +9,7 @@ import {
   ISetParser,
   UnknowField,
   UnknowSetField
-} from '@/types';
+} from '../../types';
 
 const RE_ARRAY_PATH = /(.+)?\[(\d+)\]$/;
 

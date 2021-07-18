@@ -1,9 +1,9 @@
 import { VNode } from 'vue';
-import { FieldsetComponent } from '@/types';
 import { FieldElement } from '@/components/FieldElement';
 import { Objects } from '@/lib/Objects';
 import { Fieldset } from '@/lib/Fieldset';
 import { Field } from '@/lib/Field';
+import { FieldsetComponent } from '../../types';
 
 export const FieldsetElement: FieldsetComponent = {
   name: 'FieldsetElement',

@@ -1,5 +1,5 @@
-import { Dict, IParser, IUIDescriptor } from '@/types';
 import { Parser } from '@/parsers/Parser';
+import { Dict, IParser, IUIDescriptor } from '../../types';
 
 import '@/parsers';
 import '@/descriptors';

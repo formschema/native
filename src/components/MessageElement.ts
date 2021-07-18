@@ -1,5 +1,5 @@
 import { VNode } from 'vue';
-import { MessageComponent } from '@/types';
+import { MessageComponent } from '../../types';
 
 export const MessageElement: MessageComponent = {
   functional: true,

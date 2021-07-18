@@ -1,7 +1,7 @@
 import { Parser } from '@/parsers/Parser';
 import { ScalarParser } from '@/parsers/ScalarParser';
 import { Value } from '@/lib/Value';
-import { JsonSchema } from '@/types/jsonschema';
+import { JsonSchema } from '../../types/jsonschema';
 
 import {
   Dict,
@@ -10,7 +10,7 @@ import {
   ParserOptions,
   UnknowParser,
   ScalarDescriptor
-} from '@/types';
+} from '../../types';
 
 const TypeFormat: Dict<string> = {
   date: 'date',

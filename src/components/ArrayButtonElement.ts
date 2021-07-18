@@ -1,5 +1,5 @@
 import { VNode } from 'vue';
-import { ArrayButtonComponent } from '@/types';
+import { ArrayButtonComponent } from '../../types';
 
 export const ArrayButtonElement: ArrayButtonComponent = {
   functional: true,

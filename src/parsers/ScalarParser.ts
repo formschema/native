@@ -1,8 +1,8 @@
 import { Parser } from '@/parsers/Parser';
-import { JsonSchema } from '@/types/jsonschema';
 
 import { Pattern } from '@/lib/Pattern';
 import { ScalarUIDescriptor } from '@/descriptors/ScalarUIDescriptor';
+import { JsonSchema } from '../../types/jsonschema';
 
 import {
   FieldKind,
@@ -10,7 +10,7 @@ import {
   ParserOptions,
   UnknowParser,
   ScalarDescriptor
-} from '@/types';
+} from '../../types';
 
 export abstract class ScalarParser <
   TModel,

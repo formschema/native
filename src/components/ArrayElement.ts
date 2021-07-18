@@ -1,7 +1,7 @@
 import { VNode, VNodeData } from 'vue';
-import { ArrayComponent } from '@/types';
 import { FieldElement } from '@/components/FieldElement';
 import { FieldsetElement } from '@/components/FieldsetElement';
+import { ArrayComponent } from '../../types';
 
 export const ArrayElement: ArrayComponent = {
   name: 'ArrayElement',
