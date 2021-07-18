@@ -1,5 +1,5 @@
-import { SchemaType } from '@/types';
-import { JsonSchema } from '@/types/jsonschema';
+import { SchemaType } from '../../types';
+import { JsonSchema } from '../../types/jsonschema';
 
 const SCALAR_TYPES: SchemaType[] = [
   'boolean',

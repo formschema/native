@@ -1,7 +1,7 @@
 import { VNode } from 'vue';
 import { CreateInput } from '@/lib/CreateInput';
 import { FieldElement } from '@/components/FieldElement';
-import { InputComponent, InputField } from '@/types';
+import { InputComponent, InputField } from '../../types';
 
 export const InputElement: InputComponent = {
   name: 'InputElement',

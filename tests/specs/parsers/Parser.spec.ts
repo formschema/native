@@ -10,7 +10,7 @@ import {
   UnknowParser,
   ParserOptions,
   ScalarDescriptor
-} from '@/types';
+} from '../../../types';
 
 import { Options } from '../../lib/Options';
 import { TestParser, Scope } from '../../lib/TestParser';

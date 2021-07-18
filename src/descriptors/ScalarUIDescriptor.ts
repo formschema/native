@@ -1,5 +1,5 @@
 import { UIDescriptor } from '@/descriptors/UIDescriptor';
-import { ScalarField, IScalarDescriptor, ScalarDescriptor, ScalarKind } from '@/types';
+import { ScalarField, IScalarDescriptor, ScalarDescriptor, ScalarKind } from '../../types';
 
 export class ScalarUIDescriptor
   extends UIDescriptor<ScalarField, ScalarDescriptor, ScalarKind>

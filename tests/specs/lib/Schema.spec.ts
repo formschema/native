@@ -1,5 +1,5 @@
 import { Schema } from '@/lib/Schema';
-import { JsonSchema } from '@/types/jsonschema';
+import { JsonSchema } from '../../../types/jsonschema';
 
 describe('lib/Schema', () => {
   describe('Schema.isScalar(schema)', () => {

@@ -1,6 +1,6 @@
 import { VNode } from 'vue';
-import { Dict, FieldComponent } from '@/types';
 import { Field } from '@/lib/Field';
+import { Dict, FieldComponent } from '../../types';
 
 export const FieldElement: FieldComponent = {
   name: 'FieldElement',

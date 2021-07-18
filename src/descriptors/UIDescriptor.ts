@@ -1,5 +1,5 @@
 import { NativeElements } from '@/lib/NativeElements';
-import { JsonSchema } from '@/types/jsonschema';
+import { JsonSchema } from '../../types/jsonschema';
 
 import {
   Dict,
@@ -11,7 +11,7 @@ import {
   LabelAttributes,
   DescriptorDefinition,
   IComponents
-} from '@/types';
+} from '../../types';
 
 const DESCRIPTORS: Dict<any> = {};
 

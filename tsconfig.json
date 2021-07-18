@@ -14,7 +14,7 @@
     "baseUrl": ".",
     "types": [
       "@types/jest",
-      "./src/types"
+      "./types"
     ],
     "paths": {
       "@/*": [

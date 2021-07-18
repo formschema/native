@@ -1,7 +1,7 @@
 import { VNode } from 'vue';
 import { CreateInput } from '@/lib/CreateInput';
 import { FieldElement } from '@/components/FieldElement';
-import { TextareaComponent, InputField } from '@/types';
+import { TextareaComponent, InputField } from '../../types';
 
 export const TextareaElement: TextareaComponent = {
   name: 'TextareaElement',

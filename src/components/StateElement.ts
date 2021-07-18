@@ -1,6 +1,6 @@
 import { VNode } from 'vue';
 import { FieldElement } from '@/components/FieldElement';
-import { StateComponent, InputEvent } from '@/types';
+import { StateComponent, InputEvent } from '../../types';
 
 export const StateElement: StateComponent = {
   name: 'StateElement',

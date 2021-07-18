@@ -1,6 +1,6 @@
 import { ObjectParser } from '@/parsers/ObjectParser';
-import { ParserOptions } from '@/types';
-import { JsonSchema } from '@/types/jsonschema';
+import { ParserOptions } from '../../../types';
+import { JsonSchema } from '../../../types/jsonschema';
 import { TestParser, Scope } from '../../lib/TestParser';
 
 describe('parsers/ObjectParser', () => {

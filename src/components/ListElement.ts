@@ -1,7 +1,7 @@
 import { VNode } from 'vue';
 import { CreateInput } from '@/lib/CreateInput';
 import { FieldElement } from '@/components/FieldElement';
-import { ListComponent } from '@/types';
+import { ListComponent } from '../../types';
 
 export const ListElement: ListComponent = {
   name: 'ListElement',

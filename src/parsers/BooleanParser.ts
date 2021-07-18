@@ -1,7 +1,7 @@
 import { Parser } from '@/parsers/Parser';
 import { ScalarParser } from '@/parsers/ScalarParser';
-import { BooleanField, ParserOptions, UnknowParser, ScalarDescriptor } from '@/types';
 import { Value } from '@/lib/Value';
+import { BooleanField, ParserOptions, UnknowParser, ScalarDescriptor } from '../../types';
 
 export class BooleanParser extends ScalarParser<boolean, BooleanField> {
   constructor(options: ParserOptions<boolean, BooleanField, ScalarDescriptor>, parent?: UnknowParser) {

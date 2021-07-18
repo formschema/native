@@ -1,5 +1,5 @@
 import { VNode } from 'vue';
-import { HelperComponent } from '@/types';
+import { HelperComponent } from '../../types';
 
 export const HelperElement: HelperComponent = {
   name: 'HelperElement',

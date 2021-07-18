@@ -1,9 +1,8 @@
 import { Parser } from '@/parsers/Parser';
 import { SetParser } from '@/parsers/SetParser';
 import { UniqueId } from '@/lib/UniqueId';
-import { JsonSchema } from '@/types/jsonschema';
-
 import { EnumUIDescriptor } from '@/descriptors/EnumUIDescriptor';
+import { JsonSchema } from '../../types/jsonschema';
 
 import {
   EnumField,
@@ -12,7 +11,7 @@ import {
   UnknowParser,
   EnumDescriptor,
   Dict
-} from '@/types';
+} from '../../types';
 
 export class EnumParser extends SetParser<unknown, EnumField, EnumDescriptor, EnumUIDescriptor> {
   childrenParsers: UnknowParser[] = [];

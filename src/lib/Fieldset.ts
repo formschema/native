@@ -1,5 +1,5 @@
-import { CreateElement, VNode } from 'vue';
-import { ObjectField, ObjectFieldChild } from '@/types';
+import { VNode } from 'vue';
+import { CreateElement, ObjectField, ObjectFieldChild } from '../../types';
 
 export const Fieldset = {
   renderChildren(h: CreateElement, field: ObjectField, children: ObjectFieldChild[] = field.children): VNode[] {

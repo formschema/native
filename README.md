@@ -907,7 +907,7 @@ interface DescriptorDefinition<TKind extends FieldKind = FieldKind> {
  * boolean, null, hidden field, textarea element, image and file
  * inputs, radio and checkbox elements
  */
-interface ScalarDescriptor extends Descriptor<ScalarKind> {
+interface ScalarDescriptor extends DescriptorDefinition<ScalarKind> {
 }
 
 /**

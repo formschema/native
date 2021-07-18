@@ -1,5 +1,5 @@
-import { Dict } from '@/types';
-import { JsonSchema } from '@/types/jsonschema';
+import { Dict } from '../../types';
+import { JsonSchema } from '../../types/jsonschema';
 
 export const Value = {
   parseValue(data: unknown, { type }: JsonSchema): unknown {

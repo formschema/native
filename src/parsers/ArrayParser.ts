@@ -1,10 +1,10 @@
 import { SetParser } from '@/parsers/SetParser';
-import { JsonSchema } from '@/types/jsonschema';
 import { Objects } from '@/lib/Objects';
 import { Arrays } from '@/lib/Arrays';
 import { Value } from '@/lib/Value';
-import { ArrayField, ParserOptions, FieldKind, ArrayItemField, UnknowParser, ArrayDescriptor } from '@/types';
 import { ArrayUIDescriptor } from '@/descriptors/ArrayUIDescriptor';
+import { ArrayField, ParserOptions, FieldKind, ArrayItemField, UnknowParser, ArrayDescriptor } from '../../types';
+import { JsonSchema } from '../../types/jsonschema';
 import { Parser } from './Parser';
 
 export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, ArrayUIDescriptor> {

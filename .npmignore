@@ -6,6 +6,7 @@ coverage
 tsconfig.json
 .browserslistrc
 .directory
+.eslintignore
 .gitignore
 *.tgz
 /*.js

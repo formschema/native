@@ -1,7 +1,7 @@
 import { Parser } from '@/parsers/Parser';
 import { ScalarParser } from '@/parsers/ScalarParser';
-import { NumberField, ParserOptions, UnknowParser, ScalarDescriptor } from '@/types';
 import { Value } from '@/lib/Value';
+import { NumberField, ParserOptions, UnknowParser, ScalarDescriptor } from '../../types';
 
 export class NumberParser extends ScalarParser<number, NumberField> {
   constructor(options: ParserOptions<number, NumberField, ScalarDescriptor>, parent?: UnknowParser) {

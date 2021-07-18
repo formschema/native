@@ -1,5 +1,5 @@
 import { UIDescriptor } from '@/descriptors/UIDescriptor';
-import { ListDescriptor, ListField, ListFieldItemDescriptor, UnknowField, IListDescriptor } from '@/types';
+import { ListDescriptor, ListField, ListFieldItemDescriptor, UnknowField, IListDescriptor } from '../../types';
 import { ItemUIDescriptor } from './ItemUIDescriptor';
 
 export class ListUIDescriptor extends ItemUIDescriptor<ListField, UnknowField, ListDescriptor> implements IListDescriptor {

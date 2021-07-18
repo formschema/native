@@ -11,7 +11,7 @@ import {
   PushButtonDescriptor,
   ArrayItemButton,
   ArrayItemField
-} from '@/types';
+} from '../../types';
 
 function parseActionButton(itemField: ArrayItemField, buttons: ArrayItemButton[]): any {
   return buttons.map((button) => {

@@ -1,6 +1,6 @@
 import { Parser } from '@/parsers/Parser';
 import { ScalarParser } from '@/parsers/ScalarParser';
-import { NullField, UnknowParser, ParserOptions, ScalarDescriptor } from '@/types';
+import { NullField, UnknowParser, ParserOptions, ScalarDescriptor } from '../../types';
 
 export class NullParser extends ScalarParser<null, NullField> {
   constructor(options: ParserOptions<null, NullField, ScalarDescriptor>, parent?: UnknowParser) {
