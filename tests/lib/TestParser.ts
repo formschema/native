@@ -52,6 +52,12 @@ function toEqual(parser: any, prefix: string, actual: any, expected: Dict<any>, 
         expect(result).toBeTruthy();
       });
     } else if (typeof expected[key] === 'object' && expected[key] !== null) {
+      if (expected[key] instanceof Array) {
+        expect(actual[key]).toHaveLength(expected[key].length);
+      } else if (Object.keys(expected[key]).length === 0) {
+        expect(Object.keys(actual[key])).toHaveLength(0);
+      }
+
       toEqual(parser, `${prefix}.${key}`, actual[key], expected[key], given);
     } else {
       it(`${prefix}.${key} should be equal to ${JSON.stringify(expected[key])}`, () => {

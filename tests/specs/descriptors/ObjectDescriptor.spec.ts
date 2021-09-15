@@ -10,12 +10,17 @@ describe('descriptors/ObjectDescriptor', () => {
         schema: {
           type: 'object',
           properties: {
-            name: { type: 'string' }
+            lastname: { type: 'string' },
+            city: { type: 'string' },
+            firstname: { type: 'string' }
           },
-          required: [ 'name' ]
+          required: [ 'firstname' ]
         },
-        model: { name: 'Jon Snow' },
-        name: 'profile'
+        model: { firstname: 'Jon', lastname: 'Snow', city: '' },
+        name: 'profile',
+        descriptor: {
+          order: [ 'firstname' ]
+        }
       })
     },
     expected: {
@@ -28,7 +33,7 @@ describe('descriptors/ObjectDescriptor', () => {
           }
         },
         field: {
-          value: ({ value }: Scope) => expect(value).toEqual({ name: 'Jon Snow' }),
+          value: ({ value }: Scope) => expect(value).toEqual({ firstname: 'Jon', lastname: 'Snow', city: '' }),
           attrs: {
             name: ({ value }: Scope) => expect(value).toBeUndefined(),
             required: ({ value }: Scope) => expect(value).toBeUndefined()
@@ -39,6 +44,18 @@ describe('descriptors/ObjectDescriptor', () => {
               expect(value[key].property).toBe(key);
               expect(value[key].deep).toBe(1);
             }
+          },
+          descriptor: {
+            orderedProperties: [ 'firstname', 'lastname', 'city' ],
+            childrenGroups: [
+              {
+                children({ value }: Scope) {
+                  const expectedFieldOrders = [ 'firstname', 'lastname', 'city' ];
+
+                  value.forEach((item: any, index: number) => expect(item.property).toBe(expectedFieldOrders[index]));
+                }
+              }
+            ]
           }
         }
       }

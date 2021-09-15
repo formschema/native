@@ -220,6 +220,39 @@ describe('components/FormSchema', () => {
       expect(wrapper.attributes()).toEqual(expected);
     });
 
+    it('with an object schema by using default schema ordering', async () => {
+      const wrapper = getWrapper({
+        schema: {
+          type: 'object',
+          properties: {
+            lastname: schema,
+            firstname: schema
+          }
+        }
+      });
+
+      await Vue.nextTick();
+      expect(wrapper.html()).toMatchSnapshot();
+    });
+
+    it('with an object schema by using explicit ordering fields', async () => {
+      const wrapper = getWrapper({
+        schema: {
+          type: 'object',
+          properties: {
+            lastname: schema,
+            firstname: schema
+          }
+        },
+        descriptor: {
+          order: [ 'firstname', 'lastname' ]
+        }
+      });
+
+      await Vue.nextTick();
+      expect(wrapper.html()).toMatchSnapshot();
+    });
+
     it('with { schema, search }', async () => {
       const search = true;
       const wrapper = getWrapper({ schema, search });

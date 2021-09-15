@@ -46,12 +46,12 @@ export class ObjectUIDescriptor extends UIDescriptor<ObjectField, ObjectDescript
 
   getChildrenGroups(field: Readonly<ObjectField>): ObjectChild[] {
     const groupsIds: string[] = [];
-    const ordoredGroups: Dict<string[]> = {};
+    const orderedGroups: Dict<string[]> = {};
 
     if (Objects.isEmpty(this.groups)) {
       const groupId = UniqueId.get(field.name);
 
-      ordoredGroups[groupId] = this.orderedProperties;
+      orderedGroups[groupId] = this.orderedProperties;
 
       groupsIds.push(groupId);
     } else {
@@ -70,20 +70,20 @@ export class ObjectUIDescriptor extends UIDescriptor<ObjectField, ObjectDescript
         const groupId = reverseGroups[property] || UniqueId.get(field.name);
 
         if (this.groups[groupId]) {
-          if (!ordoredGroups[groupId]) {
+          if (!orderedGroups[groupId]) {
             groupsIds.push(groupId);
 
-            ordoredGroups[groupId] = this.groups[groupId].properties;
+            orderedGroups[groupId] = this.groups[groupId].properties;
           }
         } else {
           let j = i;
 
-          ordoredGroups[groupId] = [];
+          orderedGroups[groupId] = [];
 
           groupsIds.push(groupId);
 
           do {
-            ordoredGroups[groupId].push(this.orderedProperties[j]);
+            orderedGroups[groupId].push(this.orderedProperties[j]);
           } while (++j < this.orderedProperties.length && !reverseGroups[this.orderedProperties[j]]);
 
           i = j - 1;
@@ -94,7 +94,7 @@ export class ObjectUIDescriptor extends UIDescriptor<ObjectField, ObjectDescript
     return groupsIds.map((groupId) => ({
       id: groupId,
       label: this.groups[groupId] ? this.groups[groupId].label : undefined,
-      children: ordoredGroups[groupId].map((property) => field.fields[property])
+      children: orderedGroups[groupId].map((property) => field.fields[property])
     }));
   }
 
