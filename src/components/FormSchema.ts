@@ -1,5 +1,12 @@
 import { VNode } from 'vue';
 import { CreateElement } from 'vue/types/umd';
+import {
+  ComponentOptions,
+  RenderContext,
+  WatchOptions,
+  ComputedOptions
+} from 'vue/types/options';
+
 import { UniqueId as UniqueIdLib } from '@/lib/UniqueId';
 import { Objects as ObjectsLib } from '@/lib/Objects';
 import { Components as ComponentsLib } from '@/lib/Components';
@@ -11,13 +18,6 @@ import { UIDescriptor as UIDescriptorLib } from '@/descriptors/UIDescriptor';
 
 import '@/parsers';
 import '@/descriptors';
-
-import {
-  ComponentOptions,
-  RenderContext,
-  WatchOptions,
-  ComputedOptions
-} from 'vue/types/options';
 
 import {
   SubmitEvent,
