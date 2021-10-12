@@ -34,10 +34,12 @@ export interface AriaAttributes extends Attributes {
 export interface LabelAttributes {
   id?: string;
   for: string;
+  [key: string]: any;
 }
 
 export interface HelperAttributes {
   id?: string;
+  [key: string]: any;
 }
 
 export interface InputAttributes extends Attributes {
