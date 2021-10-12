@@ -130,16 +130,16 @@ exports[`components/ArrayElement should successfully render enum array schema sh
   <legend id="id-characters-label" for="id-characters">Characters</legend>
   <p id="id-characters-helper" data-fs-helper="true">Your favorite characters</p>
   <div data-fs-kind="boolean" data-fs-type="checkbox" data-fs-field="characters"><label id="id-characters-0-label" for="id-characters-0">Goku</label>
-    <div data-fs-input="checkbox"><input id="id-characters-0" type="checkbox" name="characters" aria-labelledby="id-characters-0-label"></div>
+    <div data-fs-input="checkbox"><input id="id-characters-0" type="checkbox" name="characters" value="Goku" aria-labelledby="id-characters-0-label"></div>
   </div>
   <div data-fs-kind="boolean" data-fs-type="checkbox" data-fs-field="characters"><label id="id-characters-1-label" for="id-characters-1">Gohan</label>
-    <div data-fs-input="checkbox"><input id="id-characters-1" type="checkbox" name="characters" aria-labelledby="id-characters-1-label"></div>
+    <div data-fs-input="checkbox"><input id="id-characters-1" type="checkbox" name="characters" value="Gohan" aria-labelledby="id-characters-1-label"></div>
   </div>
   <div data-fs-kind="boolean" data-fs-type="checkbox" data-fs-field="characters"><label id="id-characters-2-label" for="id-characters-2">Vegeta</label>
-    <div data-fs-input="checkbox"><input id="id-characters-2" type="checkbox" name="characters" aria-labelledby="id-characters-2-label"></div>
+    <div data-fs-input="checkbox"><input id="id-characters-2" type="checkbox" name="characters" value="Vegeta" aria-labelledby="id-characters-2-label"></div>
   </div>
   <div data-fs-kind="boolean" data-fs-type="checkbox" data-fs-field="characters"><label id="id-characters-3-label" for="id-characters-3">Picolo</label>
-    <div data-fs-input="checkbox"><input id="id-characters-3" type="checkbox" name="characters" aria-labelledby="id-characters-3-label"></div>
+    <div data-fs-input="checkbox"><input id="id-characters-3" type="checkbox" name="characters" value="Picolo" aria-labelledby="id-characters-3-label"></div>
   </div>
 </fieldset>
 `;
@@ -149,16 +149,16 @@ exports[`components/ArrayElement should successfully render enum array schema wi
   <legend id="id-characters-label" for="id-characters">Characters</legend>
   <p id="id-characters-helper" data-fs-helper="true">Your favorite characters</p>
   <div data-fs-kind="boolean" data-fs-type="checkbox" data-fs-field="characters"><label id="id-characters-0-label" for="id-characters-0">Goku</label>
-    <div data-fs-input="checkbox"><input id="id-characters-0" type="checkbox" name="characters" aria-labelledby="id-characters-0-label"></div>
+    <div data-fs-input="checkbox"><input id="id-characters-0" type="checkbox" name="characters" value="goku" aria-labelledby="id-characters-0-label"></div>
   </div>
   <div data-fs-kind="boolean" data-fs-type="checkbox" data-fs-field="characters"><label id="id-characters-1-label" for="id-characters-1">gohan</label>
-    <div data-fs-input="checkbox"><input id="id-characters-1" type="checkbox" name="characters" aria-labelledby="id-characters-1-label"></div>
+    <div data-fs-input="checkbox"><input id="id-characters-1" type="checkbox" name="characters" value="gohan" aria-labelledby="id-characters-1-label"></div>
   </div>
   <div data-fs-kind="boolean" data-fs-type="checkbox" data-fs-field="characters"><label id="id-characters-2-label" for="id-characters-2">vegeta</label>
-    <div data-fs-input="checkbox"><input id="id-characters-2" type="checkbox" name="characters" aria-labelledby="id-characters-2-label"></div>
+    <div data-fs-input="checkbox"><input id="id-characters-2" type="checkbox" name="characters" value="vegeta" aria-labelledby="id-characters-2-label"></div>
   </div>
   <div data-fs-kind="boolean" data-fs-type="checkbox" data-fs-field="characters"><label id="id-characters-3-label" for="id-characters-3">Picolo</label>
-    <div data-fs-input="checkbox"><input id="id-characters-3" type="checkbox" name="characters" aria-labelledby="id-characters-3-label"></div>
+    <div data-fs-input="checkbox"><input id="id-characters-3" type="checkbox" name="characters" value="picolo" aria-labelledby="id-characters-3-label"></div>
   </div>
 </fieldset>
 `;
