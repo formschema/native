@@ -333,6 +333,8 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
     const isChecked = this.initialValue.includes(itemModel);
 
     parser.field.attrs.type = 'checkbox';
+    parser.field.attrs.value = itemModel;
+    parser.field.descriptor.attrs.value = itemModel;
 
     parser.setValue = (checked: boolean) => {
       parser.rawValue = checked;

@@ -325,12 +325,12 @@ describe('components/ArrayElement', () => {
     });
 
     it('should have updated model after interaction', () => {
-      inputs.at(1).setChecked(true);
+      inputs.at(2).setChecked(true);
 
       // eslint-disable-next-line no-empty-pattern
       const [ [], [ changedValue ] ] = onChangeMock.mock.calls;
 
-      expect(changedValue).toEqual([ 'Goku', 'Gohan', 'Picolo' ]);
+      expect(changedValue).toEqual([ 'Goku', 'Vegeta', 'Picolo' ]);
       expect(onChangeMock.mock.calls.length).toBe(2);
     });
   });
