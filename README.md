@@ -622,20 +622,35 @@ Password elements.
 
 ### Multiple Checkbox
 
-To define multiple checkbox, use the [JSON Schema keyword `anyOf`](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.27):
+To define multiple checkbox, use the [JSON Schema keyword `enum`](http://json-schema.org/latest/json-schema-validation.html#rfc.section.6.23)
+and [uniqueItems](https://json-schema.org/latest/json-schema-validation.html#rfc.section.6.4.5):
 
 **Example schema.json**
 
 ```json
 {
-  "type": "object",
-  "properties": {
-    "multipleCheckbox": {
-      "type": "array",
-      "anyOf": [
-        "daily",
-        "promotion"
-      ]
+  "type": "array",
+  "uniqueItems": true,
+  "enum": {
+    "type": "string",
+    "enum": [
+      "daily",
+      "promotion"
+    ]
+  }
+}
+```
+
+**Example descriptor.json**
+
+```json
+{
+  "items": {
+    "daily": {
+      "label": "Receive daily updates"
+    },
+    "promotion": {
+      "label": "Receive promotion emails"
     }
   }
 }
@@ -706,7 +721,16 @@ with a `list` descriptor:
 
 ```json
 {
-  "kind": "list"
+  "kind": "list",
+  "items": {
+    "monday": { "label": "Monday" },
+    "tuesday": { "label": "Tuesday" },
+    "wednesday": { "label": "Wednesday" },
+    "thursday": { "label": "Thursday" },
+    "friday": { "label": "Friday" },
+    "saturday": { "label": "Saturday" },
+    "sunday": { "label": "Sunday" }
+  }
 }
 ```
 

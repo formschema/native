@@ -120,11 +120,10 @@ export class ArrayParser extends SetParser<any, ArrayField, ArrayDescriptor, Arr
       ? itemSchema.default
       : this.model[index];
 
-    const itemDescriptor = this.options.descriptor && this.options.descriptor.items
-      ? this.options.descriptor.items instanceof Array
-        ? this.options.descriptor.items[index]
-        : this.options.descriptor.items
-      : { kind };
+    const descriptorItems = this.options.descriptor?.items || { kind };
+    const itemDescriptor = descriptorItems instanceof Array
+      ? descriptorItems[index]
+      : (descriptorItems as any)[itemSchema.default] || descriptorItems;
 
     const itemName = this.options.name || itemModel;
     const name = kind === 'enum' && this.radioIndex++

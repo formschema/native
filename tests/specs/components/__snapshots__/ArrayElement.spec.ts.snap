@@ -1,20 +1,20 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`components/ArrayElement clicking to the push button should successfully render a new array item 1`] = `
+exports[`components/ArrayElement clicking to the push button should successfully render a new array item first push button click: render the first input 1`] = `
 <fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper">
   <legend id="id-characters-label" for="id-characters">Characters</legend>
   <p id="id-characters-helper" data-fs-helper="true">Your characters</p><button type="button" data-fs-button="push">+</button>
 </fieldset>
 `;
 
-exports[`components/ArrayElement clicking to the push button should successfully render a new array item 2`] = `
+exports[`components/ArrayElement clicking to the push button should successfully render a new array item initial state: the fieldset is rendered with the push button 1`] = `
 <fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper">
   <legend id="id-characters-label" for="id-characters">Characters</legend>
   <p id="id-characters-helper" data-fs-helper="true">Your characters</p><button type="button" data-fs-button="push">+</button>
 </fieldset>
 `;
 
-exports[`components/ArrayElement clicking to the push button should successfully render a new array item 3`] = `
+exports[`components/ArrayElement clicking to the push button should successfully render a new array item second push button click: render the last input and disable the push button (no more item to add) 1`] = `
 <fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper">
   <legend id="id-characters-label" for="id-characters">Characters</legend>
   <p id="id-characters-helper" data-fs-helper="true">Your characters</p><button type="button" data-fs-button="push">+</button>
@@ -121,6 +121,44 @@ exports[`components/ArrayElement should successfully render component without th
   <p id="id-characters-helper" data-fs-helper="true">Your characters</p>
   <div data-fs-kind="string" data-fs-type="text" data-fs-field="characters"><label for="id-characters-0"></label>
     <div data-fs-input="text"><input id="id-characters-0" type="text" name="characters" value="Goku"></div>
+  </div>
+</fieldset>
+`;
+
+exports[`components/ArrayElement should successfully render enum array schema should render component 1`] = `
+<fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper">
+  <legend id="id-characters-label" for="id-characters">Characters</legend>
+  <p id="id-characters-helper" data-fs-helper="true">Your favorite characters</p>
+  <div data-fs-kind="boolean" data-fs-type="checkbox" data-fs-field="characters"><label id="id-characters-0-label" for="id-characters-0">Goku</label>
+    <div data-fs-input="checkbox"><input id="id-characters-0" type="checkbox" name="characters" aria-labelledby="id-characters-0-label"></div>
+  </div>
+  <div data-fs-kind="boolean" data-fs-type="checkbox" data-fs-field="characters"><label id="id-characters-1-label" for="id-characters-1">Gohan</label>
+    <div data-fs-input="checkbox"><input id="id-characters-1" type="checkbox" name="characters" aria-labelledby="id-characters-1-label"></div>
+  </div>
+  <div data-fs-kind="boolean" data-fs-type="checkbox" data-fs-field="characters"><label id="id-characters-2-label" for="id-characters-2">Vegeta</label>
+    <div data-fs-input="checkbox"><input id="id-characters-2" type="checkbox" name="characters" aria-labelledby="id-characters-2-label"></div>
+  </div>
+  <div data-fs-kind="boolean" data-fs-type="checkbox" data-fs-field="characters"><label id="id-characters-3-label" for="id-characters-3">Picolo</label>
+    <div data-fs-input="checkbox"><input id="id-characters-3" type="checkbox" name="characters" aria-labelledby="id-characters-3-label"></div>
+  </div>
+</fieldset>
+`;
+
+exports[`components/ArrayElement should successfully render enum array schema with descriptor should render component 1`] = `
+<fieldset id="id-characters" name="characters" aria-labelledby="id-characters-label" aria-describedby="id-characters-helper">
+  <legend id="id-characters-label" for="id-characters">Characters</legend>
+  <p id="id-characters-helper" data-fs-helper="true">Your favorite characters</p>
+  <div data-fs-kind="boolean" data-fs-type="checkbox" data-fs-field="characters"><label id="id-characters-0-label" for="id-characters-0">Goku</label>
+    <div data-fs-input="checkbox"><input id="id-characters-0" type="checkbox" name="characters" aria-labelledby="id-characters-0-label"></div>
+  </div>
+  <div data-fs-kind="boolean" data-fs-type="checkbox" data-fs-field="characters"><label id="id-characters-1-label" for="id-characters-1">gohan</label>
+    <div data-fs-input="checkbox"><input id="id-characters-1" type="checkbox" name="characters" aria-labelledby="id-characters-1-label"></div>
+  </div>
+  <div data-fs-kind="boolean" data-fs-type="checkbox" data-fs-field="characters"><label id="id-characters-2-label" for="id-characters-2">vegeta</label>
+    <div data-fs-input="checkbox"><input id="id-characters-2" type="checkbox" name="characters" aria-labelledby="id-characters-2-label"></div>
+  </div>
+  <div data-fs-kind="boolean" data-fs-type="checkbox" data-fs-field="characters"><label id="id-characters-3-label" for="id-characters-3">Picolo</label>
+    <div data-fs-input="checkbox"><input id="id-characters-3" type="checkbox" name="characters" aria-labelledby="id-characters-3-label"></div>
   </div>
 </fieldset>
 `;

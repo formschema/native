@@ -245,7 +245,7 @@ describe('components/ArrayElement', () => {
     expect(parser.rawValue).toEqual([ 'Goku', 'Freezer', undefined ]);
   });
 
-  it('clicking to the push button should successfully render a new array item', () => {
+  describe('clicking to the push button should successfully render a new array item', () => {
     const { context, parser } = Options.get({
       id: 'id-characters',
       name: 'characters',
@@ -264,19 +264,22 @@ describe('components/ArrayElement', () => {
     const wrapper = mount(ArrayElement, { context });
     const button = wrapper.find('button[data-fs-button=push]');
 
-    // initial state: the fieldset is rendered with the push button
-    expect(parser.model).toEqual([]);
-    expect(wrapper.html()).toMatchSnapshot();
+    it('initial state: the fieldset is rendered with the push button', () => {
+      expect(parser.model).toEqual([]);
+      expect(wrapper.html()).toMatchSnapshot();
+    });
 
-    // first push button click: render the first input
-    button.trigger('click');
-    expect(parser.model).toEqual([ 'Goku' ]);
-    expect(wrapper.html()).toMatchSnapshot();
+    it('first push button click: render the first input', () => {
+      button.trigger('click');
+      expect(parser.model).toEqual([ 'Goku' ]);
+      expect(wrapper.html()).toMatchSnapshot();
+    });
 
-    // second push button click: render the last input and disable the push button (no more item to add)
-    button.trigger('click');
-    expect(parser.model).toEqual([ 'Goku', 'Freezer' ]);
-    expect(wrapper.html()).toMatchSnapshot();
+    it('second push button click: render the last input and disable the push button (no more item to add)', () => {
+      button.trigger('click');
+      expect(parser.model).toEqual([ 'Goku', 'Freezer' ]);
+      expect(wrapper.html()).toMatchSnapshot();
+    });
   });
 
   describe('should successfully render enum array schema', () => {
@@ -302,6 +305,10 @@ describe('components/ArrayElement', () => {
     const pushButton = wrapper.find('button[data-fs-button=push]');
     const inputs: any = wrapper.findAll('input[type=checkbox]');
 
+    it('should render component', () => {
+      expect(wrapper.html()).toMatchSnapshot();
+    });
+
     it('should don\'t have push button', () => {
       expect(pushButton.exists()).toBeFalsy();
     });
@@ -325,6 +332,36 @@ describe('components/ArrayElement', () => {
 
       expect(changedValue).toEqual([ 'Goku', 'Gohan', 'Picolo' ]);
       expect(onChangeMock.mock.calls.length).toBe(2);
+    });
+  });
+
+  describe('should successfully render enum array schema with descriptor', () => {
+    const { context } = Options.get({
+      id: 'id-characters',
+      name: 'characters',
+      schema: {
+        type: 'array',
+        title: 'Characters',
+        description: 'Your favorite characters',
+        items: {
+          type: 'string',
+          enum: [ 'goku', 'gohan', 'vegeta', 'picolo' ]
+        },
+        uniqueItems: true
+      },
+      model: [ 'goku', 'picolo' ],
+      descriptor: {
+        items: {
+          goku: { label: 'Goku' },
+          picolo: { label: 'Picolo' }
+        }
+      }
+    });
+
+    const wrapper = mount(ArrayElement, { context });
+
+    it('should render component', () => {
+      expect(wrapper.html()).toMatchSnapshot();
     });
   });
 });
