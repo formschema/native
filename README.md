@@ -43,6 +43,8 @@ Vue component form based on JSON Schema and Native HTML
   * [Elements API](#elements-api)
   * [Custom Elements Example](#custom-elements-example)
 - [Descriptor Interface](#descriptor-interface)
+- [Usecases](#usecases)
+  * [Grouping fields](#grouping-fields)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -1011,6 +1013,99 @@ interface ArrayDescriptor extends DescriptorDefinition {
   buttons: ArrayItemButton[];
 }
 ```
+
+## Usecases
+
+### Grouping fields
+
+FormSchema can help you organize your form fields by grouping them.
+Please check [ObjectDescriptor definition](#descriptor-interface).
+
+**Example schema.json**
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "lastname": {
+      "type": "string"
+    },
+    "firstname": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    }
+  }
+}
+```
+
+**Example descriptor.json**
+
+```json
+{
+  "groups": {
+    "name": {
+      "label": "Your name",
+      "properties": ["firstname", "lastname"]
+    },
+    "location": {
+      "label": "Your location",
+      "properties": ["city"]
+    }
+  }
+}
+```
+
+<details>
+  <summary>Result without grouping</summary>
+
+  ```html
+  <form id="id-form">
+    <fieldset id="id-form-field">
+      <div data-fs-kind="string" data-fs-type="text" data-fs-field="lastname"><label for="id-form-field-lastname"></label>
+        <div data-fs-input="text"><input id="id-form-field-lastname" type="text" name="lastname"></div>
+      </div>
+      <div data-fs-kind="string" data-fs-type="text" data-fs-field="firstname"><label for="id-form-field-firstname"></label>
+        <div data-fs-input="text"><input id="id-form-field-firstname" type="text" name="firstname"></div>
+      </div>
+      <div data-fs-kind="string" data-fs-type="text" data-fs-field="city"><label for="id-form-field-city"></label>
+        <div data-fs-input="text"><input id="id-form-field-city" type="text" name="city"></div>
+      </div>
+    </fieldset>
+  </form>
+  ```
+</details>
+
+<details>
+  <summary>Result with grouping</summary>
+
+  ```html
+  <form id="id-form">
+    <fieldset id="id-form-field">
+      <div data-fs-group="name">
+        <div data-fs-group-label="name">Your name</div>
+        <div data-fs-group-nodes="2">
+          <div data-fs-kind="string" data-fs-type="text" data-fs-field="firstname"><label for="id-form-field-firstname"></label>
+            <div data-fs-input="text"><input id="id-form-field-firstname" type="text" name="firstname"></div>
+          </div>
+          <div data-fs-kind="string" data-fs-type="text" data-fs-field="lastname"><label for="id-form-field-lastname"></label>
+            <div data-fs-input="text"><input id="id-form-field-lastname" type="text" name="lastname"></div>
+          </div>
+        </div>
+      </div>
+      <div data-fs-group="location">
+        <div data-fs-group-label="location">Your location</div>
+        <div data-fs-group-nodes="1">
+          <div data-fs-kind="string" data-fs-type="text" data-fs-field="city"><label for="id-form-field-city"></label>
+            <div data-fs-input="text"><input id="id-form-field-city" type="text" name="city"></div>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+  ```
+</details>
 
 ## Contributing
 

@@ -253,6 +253,38 @@ describe('components/FormSchema', () => {
       expect(wrapper.html()).toMatchSnapshot();
     });
 
+    it('with an object schema with groups', async () => {
+      const schema: JsonSchema = {
+        type: 'string'
+      };
+
+      const wrapper = getWrapper({
+        schema: {
+          type: 'object',
+          properties: {
+            lastname: schema,
+            firstname: schema,
+            city: schema
+          }
+        },
+        descriptor: {
+          groups: {
+            name: {
+              label: 'Your name',
+              properties: [ 'firstname', 'lastname' ]
+            },
+            location: {
+              label: 'Your location',
+              properties: [ 'city' ]
+            }
+          }
+        }
+      });
+
+      await Vue.nextTick();
+      expect(wrapper.html()).toMatchSnapshot();
+    });
+
     it('with { schema, search }', async () => {
       const search = true;
       const wrapper = getWrapper({ schema, search });

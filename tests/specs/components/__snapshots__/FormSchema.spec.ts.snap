@@ -68,6 +68,32 @@ exports[`components/FormSchema should successfully render component with an obje
 </form>
 `;
 
+exports[`components/FormSchema should successfully render component with an object schema with groups 1`] = `
+<form id="id-form">
+  <fieldset id="id-form-field">
+    <div data-fs-group="name">
+      <div data-fs-group-label="name">Your name</div>
+      <div data-fs-group-nodes="2">
+        <div data-fs-kind="string" data-fs-type="text" data-fs-field="firstname"><label for="id-form-field-firstname"></label>
+          <div data-fs-input="text"><input id="id-form-field-firstname" type="text" name="firstname"></div>
+        </div>
+        <div data-fs-kind="string" data-fs-type="text" data-fs-field="lastname"><label for="id-form-field-lastname"></label>
+          <div data-fs-input="text"><input id="id-form-field-lastname" type="text" name="lastname"></div>
+        </div>
+      </div>
+    </div>
+    <div data-fs-group="location">
+      <div data-fs-group-label="location">Your location</div>
+      <div data-fs-group-nodes="1">
+        <div data-fs-kind="string" data-fs-type="text" data-fs-field="city"><label for="id-form-field-city"></label>
+          <div data-fs-input="text"><input id="id-form-field-city" type="text" name="city"></div>
+        </div>
+      </div>
+    </div>
+  </fieldset>
+</form>
+`;
+
 exports[`components/FormSchema should successfully render component with only a scalar schema 1`] = `
 <form id="id-form">
   <div data-fs-kind="string" data-fs-type="text" data-fs-required="true"><label id="id-form-field-label" for="id-form-field">String</label>
