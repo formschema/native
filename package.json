@@ -1,6 +1,6 @@
 {
   "name": "@formschema/native",
-  "version": "2.0.0-beta.5",
+  "version": "2.0.0-beta.6",
   "description": "Vue component form based on JSON Schema",
   "main": "dist/FormSchema.esm.min.js",
   "browser": "dist/FormSchema.umd.min.js",
