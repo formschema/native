@@ -893,10 +893,29 @@ export class MyCustomComponents extends NativeComponents {
 </script>
 ```
 
-[**ElementUI Example**](https://gitlab.com/formschema/components/elementui)
+### VueMaterial Example
 
-- Definition: https://gitlab.com/formschema/components/elementui/blob/master/lib/ElementUIComponents.js
-- Usage: https://gitlab.com/formschema/components/elementui/blob/master/playground/src/components/Subscription.vue
+- Source: [elements/VueMaterial.js](https://gitlab.com/formschema/native/blob/master/elements/VueMaterial.js)
+
+```html
+<template>
+  <FormSchema v-model="model" :schema="schema" :components="components"/>
+</template>
+
+<script>
+  import FormSchema from '@formschema/native'
+  import VueMaterialComponents from '@formschema/native/elements/VueMaterialComponents'
+
+  export default {
+    data: () => ({
+      schema: { /* ... */ },
+      components: new VueMaterialComponents(),
+      model: {}
+    }),
+    components: { FormSchema }
+  }
+</script>
+```
 
 ## Descriptor Interface
 

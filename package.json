@@ -10,8 +10,8 @@
     "playground:install": "cd playground && npm i",
     "test": "vue-cli-service test:unit",
     "testdebug": "node --inspect-brk ./node_modules/@vue/cli-service/bin/vue-cli-service.js test:unit --runInBand",
-    "lint": "eslint src/**/* tests/**/*.ts tests/**/specs/**/*.ts",
-    "lint:fix": "eslint --fix src/**/* tests/**/*.ts tests/**/specs/**/*.ts",
+    "lint": "eslint elements src/**/* tests/**/*.ts tests/**/specs/**/*.ts",
+    "lint:fix": "eslint --fix elements src/**/* tests/**/*.ts tests/**/specs/**/*.ts",
     "gimtoc": "gimtoc -f README.md -s 'Table of Contents' -o README.md",
     "readme": "vuedoc.md -c && npm run gimtoc && git diff README.md",
     "build": "rollup -c"
