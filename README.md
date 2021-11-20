@@ -20,6 +20,7 @@ Vue component form based on JSON Schema and Native HTML
 - [Working with Async Schema](#working-with-async-schema)
 - [Working with Vue Router](#working-with-vue-router)
 - [Workind with JSON Schema $ref Pointers](#workind-with-json-schema-ref-pointers)
+- [Workind with `allOf` keyword](#workind-with-allof-keyword)
 - [Data Validation](#data-validation)
   * [Native HTML5 Validation](#native-html5-validation)
   * [Custom Validation API](#custom-validation-api)
@@ -42,6 +43,7 @@ Vue component form based on JSON Schema and Native HTML
 - [Custom Form Elements](#custom-form-elements)
   * [Elements API](#elements-api)
   * [Custom Elements Example](#custom-elements-example)
+  * [VueMaterial Example](#vuematerial-example)
 - [Descriptor Interface](#descriptor-interface)
 - [Usecases](#usecases)
   * [Grouping fields](#grouping-fields)
@@ -269,7 +271,8 @@ Load an async schema on the `beforeRouterEnter` hook:
 
 ## Workind with JSON Schema $ref Pointers
 
-To load a JSON Schema with `$ref` pointers, you need to install an additional dependency to resolve them:
+To load a JSON Schema with `$ref` pointers, you need to install an additional
+dependency to resolve them:
 
 ```js
 import $RefParser from 'json-schema-ref-parser';
@@ -292,7 +295,30 @@ export default {
 }
 ```
 
-See [json-schema-ref-parser documentation page](https://www.npmjs.com/package/json-schema-ref-parser) for more details.
+See [json-schema-ref-parser's documentation page](https://www.npmjs.com/package/json-schema-ref-parser)
+for more details.
+
+## Workind with `allOf` keyword
+
+To load a JSON Schema containing `allOf` keyword, you need to install an
+additional dependency [json-schema-merge-allof](https://www.npmjs.com/package/json-schema-merge-allof)
+to help FormSchema to work properly:
+
+```js
+import mergeAllOf from 'json-schema-merge-allof';
+import FormSchema from '@formschema/native';
+import schemaWithAllof from './schema/with-allof.json';
+
+export default {
+  components: { FormSchema },
+  data: () => ({
+    schema: mergeAllOf(schemaWithAllof)
+  })
+}
+```
+
+See [json-schema-merge-allof's documentation page](https://www.npmjs.com/package/json-schema-merge-allof)
+for more details.
 
 ## Data Validation
 
@@ -1094,6 +1120,7 @@ Please check [ObjectDescriptor definition](#descriptor-interface).
     </fieldset>
   </form>
   ```
+
 </details>
 
 <details>
@@ -1124,6 +1151,7 @@ Please check [ObjectDescriptor definition](#descriptor-interface).
     </fieldset>
   </form>
   ```
+
 </details>
 
 ## Contributing
