@@ -1,82 +1,106 @@
 <template>
   <div class="playground">
-    <div class="playground__top">
-      <PlaygroundPanel class="playground__top__schema">
-        <template v-slot:header>
-          <div>Schema</div>
-          <select v-model="schemaKey">
-            <template v-for="key in Object.keys(registry)">
-              <option :key="key" :value="key">
-                {{ registry[key].name }}
-              </option>
-            </template>
-          </select>
-        </template>
-        <template v-slot:body>
-          <PrismEditor :code="rawSchema" language="json" @change="setRawSchema"/>
-        </template>
-      </PlaygroundPanel>
-      <PlaygroundPanel class="playground__top__rendering">
-        <template v-slot:header>Rendering</template>
-        <template v-slot:body>
-          <div class="playground__top__rendering__viewport">
-            <div class="playground__top__rendering__viewport__options">
-              <label>
-                <input type="checkbox" v-model="disabled" @change="updateRenderKey">
-                <span>Disable whole form</span>
-              </label>
-              <label>
-                <input type="checkbox" v-model="search" @change="updateRenderKey">
-                <span>Search</span>
-              </label>
-              <label>
-                <input type="checkbox" v-model="enableDescriptor" @change="updateRenderKey">
-                <span>Enable Descriptor</span>
-              </label>
-              <label>
-                <input type="checkbox" v-model="enableCustomValidation">
-                <span>AJV Validation</span>
-              </label>
-            </div>
-            <div ref="form" class="playground__top__rendering__viewport__card" :key="renderKey">
-              <FormSchema v-bind="props" v-model="model" :novalidate="enableCustomValidation" @input="onInput" @submit.prevent="onSubmit">
-                <div class="playground__top__rendering__viewport__card__buttons">
-                  <button type="submit">Submit</button>
-                  <button type="reset">Reset</button>
-                </div>
-              </FormSchema>
-            </div>
+    <aside class="playground__aside">
+      <md-tabs class="playground__menu md-primary">
+        <md-tab md-label="Schema">
+          <md-field>
+            <label>Schema</label>
+            <md-select v-model="schemaKey">
+              <template v-for="key in Object.keys(registry)">
+                <md-option :key="key" :value="key">
+                  {{ registry[key].name }}
+                </md-option>
+              </template>
+            </md-select>
+          </md-field>
+          <md-content class="md-scrollbar">
+            <PrismEditor
+              class="playground__menu__editor editor"
+              v-model="rawSchema"
+              :highlight="highlighter"
+              @change="setRawSchema"
+              line-numbers/>
+          </md-content>
+        </md-tab>
+        <md-tab md-label="Options">
+          <div class="playground__menu__options">
+            <md-field>
+              <label>Components</label>
+              <md-select v-model="components">
+                <md-option value="vuematerial">VueMaterial</md-option>
+                <md-option value="native">Native</md-option>
+              </md-select>
+            </md-field>
+            <md-switch v-model="disabled">Disable Form</md-switch>
+            <md-switch v-model="enableDescriptor">Enable Descriptor</md-switch>
+            <md-switch v-model="enableCustomValidation">AJV Validation</md-switch>
           </div>
-        </template>
-      </PlaygroundPanel>
-      <PlaygroundPanel class="playground__top__model">
-        <template v-slot:header>Model</template>
-        <template v-slot:body>
-          <PrismEditor :code="rawModel" language="json" readonly/>
-        </template>
-      </PlaygroundPanel>
-    </div>
-    <PlaygroundPanel class="playground__output">
-      <template v-slot:header>Generated HTML</template>
-      <template v-slot:body>
-        <PrismEditor :code="code" language="html" readonly/>
-      </template>
-    </PlaygroundPanel>
+        </md-tab>
+      </md-tabs>
+    </aside>
+    <md-tabs class="playground__render" :md-active-tab="activeTab" md-swipeable>
+      <md-tab id="form" md-label="Rendering">
+        <div class="playground__render__container">
+          <div class="playground__render__container__form">
+            <md-card>
+              <md-card-header>
+                Form
+              </md-card-header>
+              <md-card-content>
+                <div ref="form">
+                  <FormSchema v-bind="props" v-model="model" :disabled="disabled" :novalidate="enableCustomValidation" @input="onInput" @submit.prevent="onSubmit">
+                    <div class="playground__render__form__buttons">
+                      <button type="submit">Submit</button>
+                      <button type="reset">Reset</button>
+                    </div>
+                  </FormSchema>
+                </div>
+              </md-card-content>
+            </md-card>
+          </div>
+          <div class="playground__render__container__model">
+            <md-card>
+              <md-card-header>
+                Model
+              </md-card-header>
+              <md-card-content>
+                <PrismEditor
+                  class="editor"
+                  v-model="rawModel"
+                  :highlight="highlighter"
+                  readonly/>
+                </md-card-content>
+              </md-card>
+          </div>
+        </div>
+      </md-tab>
+      <md-tab id="html" md-label="Generated HTML">
+        <PrismEditor
+          class="editor"
+          v-model="code"
+          :highlight="highlighter"
+          readonly
+          line-numbers/>
+      </md-tab>
+    </md-tabs>
   </div>
 </template>
 
 <script>
-  import '@/libs/Prism';
-  import '@/styles/Prism.css';
-
   import { html } from 'js-beautify';
+  import { PrismEditor } from 'vue-prism-editor';
+  import { highlight, languages } from 'prismjs/components/prism-core';
+
+  import 'vue-prism-editor/dist/prismeditor.min.css';
+  import 'prismjs/components/prism-clike';
+  import 'prismjs/components/prism-javascript';
+  import 'prismjs/themes/prism-coy.css';
 
   import Ajv from 'ajv';
   import $RefParser from 'json-schema-ref-parser';
 
-  import PrismEditor from 'vue-prism-editor';
-  import PlaygroundPanel from './PlaygroundPanel';
-  import FormSchema, { UniqueId } from 'FormSchema.esm.min.js';
+  import FormSchema, { NativeComponents } from 'FormSchema.esm.min.js';
+  import createComponents from '../libs/VueMaterial';
 
   import InputHiddenSchema from '@/schema/input.hidden.schema';
   import InputHiddenDescriptor from '@/schema/input.hidden.descriptor';
@@ -92,21 +116,20 @@
   import FacebookSignupDescriptor from '@/schema/facebook.signup.descriptor';
 
   export default {
-    components: { PlaygroundPanel, PrismEditor, FormSchema },
+    components: { PrismEditor, FormSchema },
     data: () => ({
       model: undefined,
       dereferencedSchema: {},
       code: '',
       formatter: null,
       disabled: false,
-      search: false,
-      renderKey: UniqueId.get('code'),
-      modelKey: UniqueId.get('model'),
       enableDescriptor: true,
       enableCustomValidation: false,
+      components: 'native',
       ajv: new Ajv({ allErrors: true }),
       customSchema: null,
       schemaKey: 'object',
+      activeTab: 0,
       registry: {
         custom: {
           name: 'Custom Schema',
@@ -171,13 +194,21 @@
       rawModel() {
         return JSON.stringify(this.model, null, 2);
       },
+      componentsInstance() {
+        switch (this.components) {
+          case 'vuematerial':
+            return createComponents(NativeComponents)
+
+          default:
+            return undefined;
+        }
+      },
       props() {
         return {
           id: 'form',
           schema: this.dereferencedSchema,
-          search: this.search,
-          disabled: this.disabled,
           validator: this.enableCustomValidation ? this.validator : undefined,
+          components: this.componentsInstance,
           descriptor: this.enableDescriptor
             ? this.registry[this.schemaKey].descriptor
             : undefined
@@ -198,6 +229,9 @@
       this.dereferenceSchema();
     },
     methods: {
+      highlighter(code) {
+        return highlight(code, languages.js);
+      },
       setRawSchema(value) {
         try {
           this.model = undefined;
@@ -214,7 +248,7 @@
       },
       generateCode() {
         setTimeout(() => {
-          this.code = html(this.$refs.form.innerHTML, {
+          this.code = html(this.$refs.form.innerHTML.replace(/<!---->/g, ''), {
             indent_size: 2
           });
         }, 300);
@@ -251,8 +285,10 @@
 
         return Promise.resolve(true);
       },
-      updateRenderKey() {
-        this.renderKey = UniqueId.get('code');
+      updateForm() {
+        this.activeTab = 'form';
+
+        this.$forceUpdate();
       }
     }
   }
@@ -260,117 +296,77 @@
 
 <style lang="stylus">
   .playground
-    text-align: left
-    margin: auto
-    /* display: flex */
-    flex-direction: column
-    color: #f5f5f5
-    background-color: #333333
-    background-color: #2d2d2d
-    overflow: hidden
-
+    display: flex
+    flex-direction: row
     position: relative
-    height: 100%
+    width: 100vw
+    height: 100vh
+    overflow: hidden
+    background-color: #fff
 
-    pre
-      margin: 0
+    &__aside
+      //
 
-    &__top
-      display: flex
-      flex-direction: row
+    .editor
+      font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace
+      font-size: 14px
+      line-height: 1.5
+      padding: 0
 
-      width: 100%
-      height: 70%
+    &__menu
+      position: relative
+      z-index: 1
+      width: 30vw
+      box-shadow: 0 0 10px 0 rgb(136 152 170, .9)
 
-      border-bottom: 1px solid rgba(255, 255, 255, .1)
+      &__editor
+        //
 
-      &__schema
-        min-width: 30%
-        max-width: @min-width
+      &__options
+        display: flex
+        flex-direction: column
 
-      &__rendering
+    &__render
+      flex: 1
+
+      &__container
+        display: flex
+        flex-direction: row
+        gap: 15px
+
+        &__form
+          //
+
+        &__model
+          // flex: 1
+
+  fieldset
+    border: none
+    padding: 10px 0
+    margin-bottom: 10px
+
+  form > fieldset
+    & > legend
+      font-size: 1.7em
+      text-align: center
+      margin-top: 0
+      margin-bottom: .2em
+
+    & > p // main description
+      text-align: center
+      margin-top: 0
+      margin-bottom: 1.5em
+
+    [data-fs-kind="object"]
+      & > legend
+        display: block
+        font-size: 14px
+        text-align: left
         width: 100%
-        border-left: 1px solid rgba(116, 81, 81, 0.1)
-        border-right: 1px solid rgba(255, 255, 255, .1)
+        padding: 0 0 2px
 
-        &__viewport
-          flex: 1
-          padding: 20px 0 40px
-          overflow: auto
-          margin: auto
-          color: #333
-          background-color: #f5f5f5
-          font-size: .8em
-          width: 100%
-
-          &__options
-            text-align: left
-            padding: 0 15px 20px
-
-            display: flex
-            flex-direction: row
-
-            label
-              display: flex
-              flex-direction: row
-              align-items: center
-
-              &:not(:first-child)
-                margin-left: 20px
-
-              span
-                flex: 1
-
-          &__card
-            border-radius: 10px
-            box-shadow: 0 0 2rem 0 rgba(136,152,170, .45)
-            background-color: #fff
-            padding: 20px 20px
-            max-width: 400px
-            margin: auto
-
-            &__buttons
-              text-align: center
-
-              button:not(:first-child)
-                margin-left: 15px
-
-            fieldset
-              border: none
-              padding: 10px 0
-              margin-bottom: 10px
-
-            form > fieldset
-              & > legend
-                font-size: 1.7em
-                text-align: center
-                margin-top: 0
-                margin-bottom: .2em
-
-              & > p // main description
-                text-align: center
-                margin-top: 0
-                margin-bottom: 1.5em
-
-              [data-fs-kind="object"]
-                & > legend
-                  display: block
-                  font-size: 14px
-                  text-align: left
-                  width: 100%
-                  padding: 0 0 2px
-
-              input, textarea, select
-                display: block
-
-      &__model
-        min-width: 280px
-        max-width: @min-width
-        width: 50%
-
-    &__output
-      width: 100%
-      height: 30%
+    input, textarea, select
+      display: block
 
   [data-fs-kind]
     flex: 1
@@ -403,7 +399,7 @@
     align-items: flex-start
 
     select
-      & > option[value=""]:first-child
+      & > md-option[value=""]:first-child
         color: #666
 
   [data-fs-helper]

@@ -20,7 +20,6 @@ Vue component form based on JSON Schema and Native HTML
 - [Working with Async Schema](#working-with-async-schema)
 - [Working with Vue Router](#working-with-vue-router)
 - [Workind with JSON Schema $ref Pointers](#workind-with-json-schema-ref-pointers)
-- [Workind with `allOf` keyword](#workind-with-allof-keyword)
 - [Data Validation](#data-validation)
   * [Native HTML5 Validation](#native-html5-validation)
   * [Custom Validation API](#custom-validation-api)
@@ -43,7 +42,6 @@ Vue component form based on JSON Schema and Native HTML
 - [Custom Form Elements](#custom-form-elements)
   * [Elements API](#elements-api)
   * [Custom Elements Example](#custom-elements-example)
-  * [VueMaterial Example](#vuematerial-example)
 - [Descriptor Interface](#descriptor-interface)
 - [Usecases](#usecases)
   * [Grouping fields](#grouping-fields)
@@ -929,13 +927,13 @@ export class MyCustomComponents extends NativeComponents {
 </template>
 
 <script>
-  import FormSchema from '@formschema/native'
-  import VueMaterialComponents from '@formschema/native/elements/VueMaterialComponents'
+  import FormSchema, { NativeComponents } from '@formschema/native'
+  import createComponents from '@formschema/native/elements/VueMaterial'
 
   export default {
     data: () => ({
       schema: { /* ... */ },
-      components: new VueMaterialComponents(),
+      components: createComponents(NativeComponents),
       model: {}
     }),
     components: { FormSchema }
@@ -1120,7 +1118,6 @@ Please check [ObjectDescriptor definition](#descriptor-interface).
     </fieldset>
   </form>
   ```
-
 </details>
 
 <details>
@@ -1151,7 +1148,6 @@ Please check [ObjectDescriptor definition](#descriptor-interface).
     </fieldset>
   </form>
   ```
-
 </details>
 
 ## Contributing

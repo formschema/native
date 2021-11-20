@@ -1,29 +1,26 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable no-use-before-define */
-// eslint-disable-next-line import/no-unresolved
-import { NativeComponents } from '@formschema/native';
 
 /**
  * VueMaterial Elements sample for FormSchema
  */
-export default class VueMaterialComponents extends NativeComponents {
-  static SwitchElement = SwitchElement;
+export default function createComponents(NativeComponents) {
+  const components = new NativeComponents();
 
-  constructor() {
-    super();
+  components.set('boolean', CheckboxElement);
+  components.set('string', InputElement);
+  components.set('password', InputElement);
+  components.set('file', FileElement);
+  components.set('image', FileElement);
+  components.set('radio', RadioElement);
+  components.set('checkbox', CheckboxElement);
+  components.set('number', InputElement);
+  components.set('integer', InputElement);
+  components.set('list', ListElement);
+  components.set('textarea', TextareaElement);
+  components.set('button', ButtonElement);
 
-    this.set('boolean', CheckboxElement);
-    this.set('string', InputElement);
-    this.set('password', InputElement);
-    this.set('file', FileElement);
-    this.set('image', FileElement);
-    this.set('radio', RadioElement);
-    this.set('checkbox', CheckboxElement);
-    this.set('number', InputElement);
-    this.set('integer', InputElement);
-    this.set('list', ListElement);
-    this.set('textarea', TextareaElement);
-    this.set('button', ButtonElement);
-  }
+  return components;
 }
 
 function computeEvents(field, listeners, type) {
@@ -282,7 +279,7 @@ const ButtonElement = {
   functional: true,
   render(h, { props: { button } }) {
     const children = [
-      h('VxIcon', ButtonType[button.type] || button.type)
+      h('MdIcon', ButtonType[button.type] || button.type)
     ];
 
     const klass = button.type === 'push'
