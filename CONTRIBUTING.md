@@ -6,12 +6,6 @@ The following is a set of guidelines for contributing to FormSchema and its pack
 
 #### Table Of Contents
 
-[I don't want to read this whole thing, I just have a question!!!](#i-dont-want-to-read-this-whole-thing-i-just-have-a-question)
-
-[What should I know before I get started?](#what-should-i-know-before-i-get-started)
-  * [FormSchema and Packages](#formschema-and-packages)
-  * [FormSchema Design Decisions](#design-decisions)
-
 [How Can I Contribute?](#how-can-i-contribute)
   * [Reporting Bugs](#reporting-bugs)
   * [Suggesting Enhancements](#suggesting-enhancements)
@@ -26,39 +20,6 @@ The following is a set of guidelines for contributing to FormSchema and its pack
 
 [Additional Notes](#additional-notes)
   * [Issue and Pull Request Labels](#issue-and-pull-request-labels)
-
-## I don't want to read this whole thing I just have a question!!!
-
-> **Note:** Please don't file an issue to ask a question. You'll get faster results by using the resources below.
-
-We have an official message board with a detailed FAQ and where the community chimes in with helpful advice if you have questions.
-
-If chat is more your speed, you can join the FormSchema Gitter team:
-
-* [Join the FormSchema Team](https://gitter.im/formschemaorg)
-    * Even though Gitter is a chat service, sometimes it takes several hours for community members to respond &mdash; please be patient!
-    * Use the [`general`](https://gitter.im/formschemaorg/general) room for general questions or discussion about FormSchema
-    * Use the [`native`](https://gitter.im/formschemaorg/native) room for questions about `@formschema/native`
-    * Use the [`elementui`](https://gitter.im/formschemaorg/elementui) room for questions about `@formschema/components/elementui`
-    * There are many other rooms available, check the room list
-
-## What should I know before I get started?
-
-### FormSchema
-
-When you initially consider contributing to FormSchema, you might be unsure about which of repositories implements the functionality you want to change or report a bug for. This section should help you with that.
-
-Here's a list of the big ones:
-
-* [formschema/components/core](https://gitlab.com/formschema/components/core) - FormSchema Core
-* [formschema/native](https://gitlab.com/formschema/native) - A native HTML wrapping of FormSchema Core
-* [formschema/components/elementui](https://gitlab.com/formschema/components/components/elementui) - A ElementUI wrapping of FormSchema Core
-
-There are other UI wrappers that aren't being actively maintained:
-
-* [formschema/components/material](https://gitlab.com/formschema/components/components/material) - A VueMaterial wrapping of FormSchema Core
-* [formschema/components/bulma](https://gitlab.com/formschema/components/components/bulma) - A Bulma wrapping of FormSchema Core
-* [formschema/components/buefy](https://gitlab.com/formschema/components/components/buefy) - A Buefy wrapping of FormSchema Core
 
 ## How Can I Contribute?
 
@@ -148,7 +109,6 @@ FormSchema can be developed locally. For that, just fork the project and add you
 * Use the imperative mood ("Move cursor to..." not "Moves cursor to...")
 * Limit the first line to 72 characters or less
 * Reference issues and pull requests liberally after the first line
-* When only changing documentation, include `[ci skip]` in the commit title
 
 ### JavaScript Styleguide
 
