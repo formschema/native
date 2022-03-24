@@ -94,7 +94,7 @@ export class ObjectUIDescriptor extends UIDescriptor<ObjectField, ObjectDescript
     return groupsIds.map((groupId) => ({
       id: groupId,
       label: this.groups[groupId] ? this.groups[groupId].label : undefined,
-      children: orderedGroups[groupId].map((property) => field.fields[property])
+      children: orderedGroups[groupId].map((property) => field.fields[property]).filter((item) => item)
     }));
   }
 
